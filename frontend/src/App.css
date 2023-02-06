@@ -1,0 +1,194 @@
+body {
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.welcome-page {
+  margin: auto;
+  width: 500px;
+  padding-top: 50px;
+  height: 100vh;
+  background-color: white;
+  padding: 50px;
+}
+
+.welcome-page .login {
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.welcome-page .login > div {
+  padding-right: 10px;
+}
+
+.welcome-page .register {
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.welcome-page .register > div {
+  padding-right: 10px;
+}
+
+.page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.page .navigation {
+  padding: 10px;
+  background-color: #064afe;
+  background-color: #330a34;
+}
+
+.page .navigation .item {
+  padding: 6px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.page .main {
+  padding: 10px;
+  flex-grow: 1;
+}
+
+.trash {
+  position: absolute;
+  width: 100%;
+  border: 2px dashed red;
+  height: 80px;
+  line-height: 80px;
+  background-color: rgba(0, 0, 0, 0.1);
+  text-align: center;
+  bottom: 0;
+}
+
+.trash h4 {
+  font-size: 2em;
+  margin: 0;
+  opacity: 0.3;
+}
+
+.lane {
+  border-right: 0px solid #d1d1d1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 0px solid #d1d1d1;
+  border-left: 0px solid #d1d1d1;
+  padding: 0px;
+  background-color: white;
+}
+
+.lane .title {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.lane .canvas {
+  height: 100%;
+  position: relative;
+  border-left: 1px solid #d1d1d1;
+  border-bottom: 1px solid #d1d1d1;
+}
+
+.lane:last-child .canvas {
+  border-right: 1px solid #d1d1d1;
+}
+
+.spacer {
+  text-align: center;
+  line-height: 1.6em;
+  margin-bottom: 1em;
+}
+
+.spacer .dot {
+  background-color: var(--spectrum-global-color-gray-300);
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 5px;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.board .title {
+  padding-bottom: 0px;
+}
+
+.board .lanes {
+  margin-top: 10px;
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+}
+
+.board .lanes .card {
+  margin: 6px;
+  border-radius: 6px;
+  box-shadow: rgba(17, 17, 26, 0.08) 0px 1px 0px,
+    rgba(17, 17, 26, 0.15) 0px 0px 8px;
+  cursor: move;
+  position: relative;
+}
+
+.board .lanes .card .overdue {
+  position: absolute;
+  background-color: orange;
+  width: 6px;
+  height: 100%;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.board .lanes .card .content {
+  padding: 4px 4px 4px 12px;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.board .lanes .card .content .edit {
+  float: right;
+}
+
+.board .lanes .card .content .edit button {
+  background: inherit;
+  padding: 0;
+  border: 0;
+}
+
+.board .lanes .card .content .name {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.card-detail-canvas {
+  border-left: 1px solid grey;
+  box-sizing: border-box;
+  right: 0;
+  position: absolute;
+  z-index: 10;
+  background-color: white;
+  height: 100%;
+  width: 450px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+}
+
+.card-detail-canvas .body {
+  flex-grow: 1;
+  overflow: auto;
+}

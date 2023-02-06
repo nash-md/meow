@@ -1,0 +1,12 @@
+@hostname = 127.0.0.1
+@port = 9001
+@host = {{hostname}}:{{port}}
+
+@domain=monkey-safari.forest.porn
+
+###
+
+POST http://{{host}}/public/login
+content-type: application/json
+
+{"name":"matze", "password": "matze"}
