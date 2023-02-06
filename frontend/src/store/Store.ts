@@ -18,6 +18,9 @@ export const selectBrowserState = (store: RootState) => store.browser.state;
 export const selectToken = (store: RootState) => store.session.token;
 export const selectCards = (store: RootState) => store.cards;
 export const selectName = (store: RootState) => store.session.user.name;
+export const selectCurrency = (store: RootState) =>
+  store.session.account.currency;
+export const selectAccountId = (store: RootState) => store.session.account.id;
 export const selectInterfaceState = (store: RootState) => store.ui.state;
 export const selectInterfaceStateId = (store: RootState) => store.ui.id;
 export const selectCard = (store: ApplicationStore, id: string) =>

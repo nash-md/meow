@@ -15,14 +15,18 @@ export class Account {
   @Column()
   name: string;
 
+  @Column()
+  currency: CurrencyCode;
+
   @Column({ type: 'timestamp' })
   createdAt?: Date;
 
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(name: string) {
+  constructor(name: string, currency: CurrencyCode) {
     this.name = name;
+    this.currency = currency;
   }
 
   @BeforeInsert()
@@ -35,4 +39,11 @@ export class Account {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+// ISO 4217 currency code
+export enum CurrencyCode {
+  USD = 'USD',
+  EUR = 'EUR',
+  SEK = 'SEK',
 }

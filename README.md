@@ -2,8 +2,6 @@
 
 Welcome to the world of free sales funnel management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the funnel. Meow was built to simplify your sales process, giving you a bird's eye view of your entire funnel.
 
-Built with [Typescript](https://www.typescriptlang.org/), [React](https://reactjs.org/) and [MongoDB](https://www.mongodb.com/).
-
 <img src="dashboard.png" alt="Twilio Contact Center" width="800">
 
 ## Try It
@@ -70,6 +68,14 @@ This project was built with [Create React App](https://create-react-app.dev/docs
 `npm run build`
 
 You will find the build artifacts in the `build` directory. Host the static files it on the server of your choice.
+
+### Database Support
+
+The project currently has a few direct dependencies on [MongoDB](https://www.mongodb.com/) for the backend, but it can be easily switched to another database supported by TypeORM.
+
+### Documentation
+
+[Change Log](CHANGELOG.md)
 
 ### License
 

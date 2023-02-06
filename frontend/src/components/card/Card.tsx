@@ -7,8 +7,9 @@ import { DateTime } from 'luxon';
 import { ItemTypes } from '../ItemTypes';
 import { Card as CardEntity } from '../../interfaces/Card';
 import { Lane } from '../../Constants';
-import { store } from '../../store/Store';
+import { selectCurrency, store } from '../../store/Store';
 import { ActionType } from '../../actions/Actions';
+import { useSelector } from 'react-redux';
 
 export interface CardProps {
   card: CardEntity;
@@ -17,6 +18,7 @@ export interface CardProps {
 }
 
 export const Card = ({ card, lane, moveCard }: CardProps) => {
+  const currency = useSelector(selectCurrency);
   const [ago, setAgo] = useState<string | null>(null);
   const [closedAt, setClosedAt] = useState<Date | undefined>();
 
@@ -81,8 +83,12 @@ export const Card = ({ card, lane, moveCard }: CardProps) => {
             />
           </button>
         </div>
-        <div className="name">{card.name}</div>${card.amount} -{' '}
-        {closedAt?.toLocaleDateString()}
+        <div className="name">{card.name}</div>{' '}
+        {card.amount.toLocaleString('en-US', {
+          style: 'currency',
+          currency: currency ?? 'USD',
+        })}{' '}
+        - {closedAt?.toLocaleDateString()}
         <div>
           <b>{ago}</b>
         </div>

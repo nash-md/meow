@@ -21,7 +21,7 @@ export const Login = () => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(process.env.REACT_APP_URL!);
+      const client = new RequestHelper(process.env.REACT_APP_URL);
       const payload = await client.login(name, password);
 
       if (setClient) {

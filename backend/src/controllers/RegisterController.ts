@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider';
-import { Account } from '../entities/Account';
+import { Account, CurrencyCode } from '../entities/Account';
 import { User } from '../entities/User';
 import { TokenHelper } from '../helpers/TokenHelper';
 import { log } from '../logger';
@@ -18,7 +18,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     await isValidPassword(password);
 
     const account = await database.manager.save(
-      new Account(`${name}'s Account`)
+      new Account(`${name}'s Account`, CurrencyCode.USD)
     );
 
     const user = new User(account.id!.toString(), name);

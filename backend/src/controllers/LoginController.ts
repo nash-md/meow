@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider';
+import { Account, CurrencyCode } from '../entities/Account';
 import { User } from '../entities/User';
+import { AccountNotFoundError } from '../errors/AccountNotFoundError';
 import { TokenHelper } from '../helpers/TokenHelper';
 import { log } from '../logger';
 import { database } from '../worker';
@@ -25,6 +27,15 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       );
 
     if (isValidPassword) {
+      const account = await database.manager.findOneById(
+        Account,
+        user.accountId
+      );
+
+      if (!account) {
+        throw new AccountNotFoundError('Account not found');
+      }
+
       const payload = {
         token: TokenHelper.createJwt(user, 14400),
         user: {
@@ -33,6 +44,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
         },
         account: {
           id: user.accountId,
+          currency: account.currency,
         },
       };
 

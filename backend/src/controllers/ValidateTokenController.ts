@@ -35,6 +35,7 @@ const validate = async (req: Request, res: Response) => {
       },
       account: {
         id: user.accountId,
+        currency: account.currency,
       },
     };
 

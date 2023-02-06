@@ -1,3 +1,4 @@
+import { CurrencyCode } from '../interfaces/Account';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 
@@ -8,6 +9,7 @@ export interface ApplicationStore {
     alerts: number;
     account: {
       id: string | undefined;
+      currency: CurrencyCode | undefined;
     };
     user: {
       id: string | undefined;

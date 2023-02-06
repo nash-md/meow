@@ -84,6 +84,17 @@ export const application = (state = Default, action: ApplicationAction) => {
           }),
         ],
       };
+    case ActionType.ACCOUNT_UPDATE:
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          account: {
+            ...state.session.account,
+            currency: action.payload,
+          },
+        },
+      };
     case ActionType.BROWSER_STATE:
       return {
         ...state,

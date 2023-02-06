@@ -1,21 +1,59 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Item, Picker } from '@adobe/react-spectrum';
+import { selectAccountId, selectCurrency, store } from '../store/Store';
+import { ActionType } from '../actions/Actions';
+import { useSelector } from 'react-redux';
+import { CurrencyCode } from '../interfaces/Account';
+import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 
 export const Setup = () => {
+  const { client } = useContext(RequestHelperContext);
+
+  const configuredCurrency = useSelector(selectCurrency);
+  const accountId = useSelector(selectAccountId);
   const [animal, setAnimal] = useState('');
-  const [currency, setCurrency] = useState('');
+  const [currency, setCurrency] = useState<CurrencyCode>(
+    configuredCurrency ?? CurrencyCode.USD
+  );
+
+  function parseCurrencyKey(value: React.Key): CurrencyCode {
+    switch (value) {
+      case 'USD':
+        return CurrencyCode.USD;
+      case 'EUR':
+        return CurrencyCode.EUR;
+      case 'SEK':
+        return CurrencyCode.SEK;
+      default:
+        throw new Error(`Unsupported value: ${value}`);
+    }
+  }
+
+  const updateCurrencyCode = async (key: React.Key) => {
+    const currency = parseCurrencyKey(key);
+
+    setCurrency(currency);
+
+    store.dispatch({
+      type: ActionType.ACCOUNT_UPDATE,
+      payload: currency,
+    });
+
+    await client!.updateAccount(accountId!, currency);
+  };
 
   return (
     <div>
-      <h2>Currency</h2>
+      <h2 style={{ margin: 0 }}>Currency</h2>
 
       <Picker
         selectedKey={currency}
-        aria-label="ddd"
-        onSelectionChange={(key) => setCurrency(key.toString())}
+        aria-label="Currency"
+        onSelectionChange={(key) => updateCurrencyCode(key)}
       >
-        <Item key="horse">Dollar</Item>
-        <Item key="racoon">Euro</Item>
+        <Item key="USD">US Dollar</Item>
+        <Item key="EUR">Euro</Item>
+        <Item key="SEK">Swedish Krona</Item>
       </Picker>
 
       <h2 style={{ marginBottom: '5px' }}>
@@ -29,7 +67,7 @@ export const Setup = () => {
       <div>
         <Picker
           selectedKey={animal}
-          aria-label="ddd"
+          aria-label="Animal"
           onSelectionChange={(key) => setAnimal(key.toString())}
         >
           <Item key="horse">Horse</Item>

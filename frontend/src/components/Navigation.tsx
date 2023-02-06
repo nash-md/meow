@@ -1,8 +1,9 @@
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { selectName } from '../store/Store';
+import { selectCurrency, selectName } from '../store/Store';
 
 export const Navigation = () => {
+  const currency = useSelector(selectCurrency);
   const name = useSelector(selectName);
 
   return (
@@ -27,23 +28,18 @@ export const Navigation = () => {
         <Link to="/">
           <img
             alt="Forecast"
-            style={{ width: '26px', color: 'white' }}
-            src="euro-icon.svg"
+            src={`${currency?.toLocaleLowerCase()}-icon.svg`}
           />
         </Link>
       </div>
       <div className="item">
         <Link to="/setup">
-          <img alt="Setup" style={{ width: '26px' }} src="setup-icon.svg" />
+          <img alt="Setup" src="setup-icon.svg" />
         </Link>
       </div>
       <div className="item">
         <Link to="/hire">
-          <img
-            alt="Hire a Specialist"
-            style={{ width: '26px' }}
-            src="paw-icon.svg"
-          />
+          <img alt="Hire a Specialist" src="paw-icon.svg" />
         </Link>
       </div>
     </>

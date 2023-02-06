@@ -5,9 +5,14 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
 import { Board } from './Board';
-import { selectCards, selectInterfaceState, store } from '../store/Store';
+import {
+  selectCards,
+  selectCurrency,
+  selectInterfaceState,
+  store,
+} from '../store/Store';
 import { ActionType } from '../actions/Actions';
-import { Lane, LaneKey } from '../Constants';
+import { Lane } from '../Constants';
 import { lanes as defaults } from '../Constants';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { Card } from '../interfaces/Card';
@@ -16,6 +21,7 @@ import { CardDetailLayer } from './CardDetailLayer';
 export const Canvas = () => {
   const cards = useSelector(selectCards);
   const state = useSelector(selectInterfaceState);
+  const currency = useSelector(selectCurrency);
 
   const [lanes, setLanes] = useState<Lane[]>([]);
   const { client } = useContext(RequestHelperContext);
@@ -45,6 +51,7 @@ export const Canvas = () => {
   };
 
   const add = async (card: Card) => {
+    // TODO should handle Card and CardPreview types
     if (card.id) {
       card = await client!.updateCard(card);
     } else {
@@ -77,7 +84,11 @@ export const Canvas = () => {
     <div className="board">
       <div className="title">
         <span style={{ fontSize: '2em' }}>
-          {cards.length} Deals - ${amount}
+          {cards.length} Deals -
+          {amount.toLocaleString('en-US', {
+            style: 'currency',
+            currency: currency ?? 'USD',
+          })}
         </span>
         <div>
           <Button variant="primary" onPress={() => showCardDetail()}>

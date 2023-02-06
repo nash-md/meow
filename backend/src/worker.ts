@@ -38,6 +38,8 @@ import { addEntityToHeader } from './middlewares/addEntityToHeader';
 import { handleError } from './middlewares/handleError';
 import { ValidateTokenRequestSchema } from './middlewares/schema-validation/ValidateTokenRequestSchema ';
 import { ValidateTokenController } from './controllers/ValidateTokenController';
+import { AccountController } from './controllers/AccountController';
+import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -94,6 +96,24 @@ card
   .post(rejectIfContentTypeIsNot('application/json'), EventController.create);
 
 app.use('/api/cards', card);
+
+const account = express.Router();
+
+account.use(express.json({ limit: '5kb' }));
+
+account.use(verifyJwt);
+account.use(addEntityToHeader);
+account.use(setHeaders);
+
+account
+  .route('/:id')
+  .post(
+    rejectIfContentTypeIsNot('application/json'),
+    validateAgainst(AccountRequestSchema),
+    AccountController.update
+  );
+
+app.use('/api/accounts', account);
 
 const unprotected = express.Router();
 

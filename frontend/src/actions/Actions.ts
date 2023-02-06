@@ -1,3 +1,4 @@
+import { CurrencyCode } from '../interfaces/Account';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card, CardPreview } from '../interfaces/Card';
 import { ApplicationStore } from '../store/ApplicationStore';
@@ -9,6 +10,7 @@ export enum ActionType {
   CARD_ADD = 'CARD_ADD',
   CARD_UPDATE = 'CARD_UPDATE',
   CARD_DELETE = 'CARD_DELETE',
+  ACCOUNT_UPDATE = 'ACCOUNT_UPDATE',
   BROWSER_STATE = 'BROWSER_STATE',
   USER_INTERFACE_STATE = 'USER_INTERFACE_STATE',
 }
@@ -28,6 +30,7 @@ export interface ApplicationPageLoadAction
         };
         account: {
           id: string;
+          currency: CurrencyCode;
         };
       }
     | undefined;
@@ -42,6 +45,7 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
     };
     account: {
       id: string;
+      currency: CurrencyCode;
     };
   };
 }
@@ -64,9 +68,9 @@ export interface ApplicationCardDeleteAction
   payload: string;
 }
 
-export interface ApplicationCardDeleteAction
-  extends Action<ActionType.CARD_DELETE> {
-  payload: string;
+export interface ApplicationAccountUpdateAction
+  extends Action<ActionType.ACCOUNT_UPDATE> {
+  payload: CurrencyCode;
 }
 
 export interface ApplicationBrowserStateAction
@@ -89,5 +93,6 @@ export type ApplicationAction =
   | ApplicationCardAddAction
   | ApplicationCardUpdateAction
   | ApplicationCardDeleteAction
+  | ApplicationAccountUpdateAction
   | ApplicationBrowserStateAction
   | ApplicationUserInterfaceStateAction;

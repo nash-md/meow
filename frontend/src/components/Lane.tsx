@@ -4,6 +4,8 @@ import { ItemTypes } from './ItemTypes';
 import { useDrop } from 'react-dnd';
 import { Lane as LaneInterface } from '../Constants';
 import { Card as CardInterface } from '../interfaces/Card';
+import { selectCurrency } from '../store/Store';
+import { useSelector } from 'react-redux';
 
 export interface LaneProps {
   moveCard: any;
@@ -13,6 +15,7 @@ export interface LaneProps {
 }
 
 export const Lane = ({ moveCard, lane, cards, numberOfLanes }: LaneProps) => {
+  const currency = useSelector(selectCurrency);
   const [amount, setAmount] = useState(0);
 
   const [{ isOver }, drop] = useDrop(
@@ -29,7 +32,7 @@ export const Lane = ({ moveCard, lane, cards, numberOfLanes }: LaneProps) => {
   useEffect(() => {
     setAmount(
       cards.reduce((acc, card) => {
-        return acc + card.amount;
+        return acc + parseInt(card.amount.toString()); // TODO fix by checking upon fetch
       }, 0)
     );
   }, [cards]);
@@ -53,7 +56,13 @@ export const Lane = ({ moveCard, lane, cards, numberOfLanes }: LaneProps) => {
           color: lane.color ? 'white' : 'grey',
         }}
       >
-        {cards.length} Deal{cards.length > 1 ? 's' : ''} - <b>${amount}</b>
+        {cards.length} Deal{cards.length > 1 ? 's' : ''} -{' '}
+        <b>
+          {amount.toLocaleString('en-US', {
+            style: 'currency',
+            currency: currency ?? 'USD',
+          })}
+        </b>
       </div>
 
       <div

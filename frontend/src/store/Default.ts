@@ -7,6 +7,7 @@ export const Default: ApplicationStore = {
     alerts: 0,
     account: {
       id: undefined,
+      currency: undefined,
     },
     user: {
       id: undefined,

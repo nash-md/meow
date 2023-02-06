@@ -2,6 +2,7 @@ import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { ResponseParseError } from '../errors/ResponseParseError';
 import { TokenUndefinedError } from '../errors/TokenUndefinedError';
+import { Account, CurrencyCode } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
 import { EventType } from '../interfaces/Event';
 
@@ -197,6 +198,23 @@ export class RequestHelper {
     try {
       const response = await this.fetchWithTimeout(url, {
         ...this.getHeaderWithAuthentication('GET'),
+      });
+
+      const parsed = await response?.json();
+
+      return parsed;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateAccount(id: Account['id'], currency: CurrencyCode) {
+    let url = this.getUrl(`/api/accounts/${id}`);
+
+    try {
+      const response = await this.fetchWithTimeout(url, {
+        ...this.getHeaderWithAuthentication('POST'),
+        body: JSON.stringify({ currency }),
       });
 
       const parsed = await response?.json();

@@ -53,8 +53,12 @@ body {
   margin-bottom: 5px;
 }
 
+.page .navigation .item img {
+  width: 26px;
+}
+
 .page .main {
-  padding: 10px;
+  padding: 20px;
   flex-grow: 1;
 }
 

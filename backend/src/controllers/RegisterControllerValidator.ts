@@ -9,7 +9,7 @@ import { database } from '../worker';
 
 export const isValidPassword = async (password: string) => {
   if (password.length < MINIMUM_LENGTH_OF_USER_PASSWORD) {
-    throw new InvalidUserPropertyError('password is too short');
+    throw new InvalidUserPropertyError('password is too short'); // TODO, move to dedicated RequestError
   }
 
   if (password.length > MAXIMUM_LENGTH_OF_USER_PASSWORD) {
