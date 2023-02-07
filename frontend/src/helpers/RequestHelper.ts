@@ -192,6 +192,22 @@ export class RequestHelper {
     }
   }
 
+  async getLanes() {
+    const url = this.getUrl(`/api/lanes`);
+
+    try {
+      const response = await this.fetchWithTimeout(url, {
+        ...this.getHeaderWithAuthentication('GET'),
+      });
+
+      const parsed = await response?.json();
+
+      return parsed;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getEvents(id: string) {
     const url = this.getUrl(`/api/cards/${id}/events`);
 

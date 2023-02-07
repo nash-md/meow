@@ -1,21 +1,25 @@
-import { useDrop } from 'react-dnd';
-import { ItemTypes } from './ItemTypes';
+import { Droppable } from 'react-beautiful-dnd';
 
-export const Trash = (props: any) => {
-  const [{ isOver }, drop] = useDrop(
-    () => ({
-      accept: ItemTypes.CARD,
-      drop: () => ({ name: 'trash' }),
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    []
-  );
-
+export const Trash = () => {
   return (
-    <div ref={drop} className="trash">
-      <h4>Trash</h4>
-    </div>
+    <Droppable droppableId="trash">
+      {(provided, snaphot) => {
+        return (
+          <div
+            id="trash"
+            className="trash"
+            style={{
+              backgroundColor: snaphot.isDraggingOver ? 'red' : 'white',
+              visibility: 'hidden',
+              backgroundImage: snaphot.isDraggingOver
+                ? 'url("/trash-icon-white.svg")'
+                : 'url("/trash-icon.svg")',
+            }}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          ></div>
+        );
+      }}
+    </Droppable>
   );
 };

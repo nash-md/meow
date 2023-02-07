@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
 import { Card } from '../entities/Card';
 import { Event, EventType } from '../entities/Event';

@@ -1,11 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider';
+import { DefaultLanes } from '../Constants';
 import { Account, CurrencyCode } from '../entities/Account';
+import { Lane } from '../entities/Lane';
 import { User } from '../entities/User';
 import { TokenHelper } from '../helpers/TokenHelper';
 import { log } from '../logger';
 import { database } from '../worker';
 import { isValidName, isValidPassword } from './RegisterControllerValidator';
+
+const createKeyFromName = (value: string) => {
+  return value
+    .replace(/[A-Z]/g, (letter) => `${letter.toLowerCase()}`)
+    .replace(/ /, '-');
+};
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by name: ${req.body.name}`);
@@ -21,6 +29,19 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       new Account(`${name}'s Account`, CurrencyCode.USD)
     );
 
+    DefaultLanes.map(async (item, index) => {
+      await database.manager.save(
+        new Lane(
+          account.id!.toString(),
+          createKeyFromName(item.name),
+          item.name,
+          index,
+          item.inForecat,
+          item.color
+        )
+      );
+    });
+
     const user = new User(account.id!.toString(), name);
 
     user.password = await new PasswordAuthenticationProvider().create(password);
@@ -35,6 +56,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       },
       account: {
         id: updated.accountId,
+        currency: account.currency,
       },
     };
 

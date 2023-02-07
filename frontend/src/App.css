@@ -58,19 +58,26 @@ body {
 }
 
 .page .main {
-  padding: 20px;
   flex-grow: 1;
 }
 
-.trash {
+.trash-canvas {
   position: absolute;
+  top: 20px;
+  width: 200px;
+  right: 20px;
+}
+
+.trash {
   width: 100%;
-  border: 2px dashed red;
-  height: 80px;
-  line-height: 80px;
-  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px dashed #e30544;
+  opacity: 0.6;
+  height: 60px;
+  line-height: 60px;
+  background-position: center center;
+  background-repeat: no-repeat;
   text-align: center;
-  bottom: 0;
+  box-sizing: border-box;
 }
 
 .trash h4 {
@@ -97,6 +104,7 @@ body {
 }
 
 .lane .canvas {
+  min-height: 60px;
   height: 100%;
   position: relative;
   border-left: 1px solid #d1d1d1;
@@ -124,7 +132,8 @@ body {
 .board {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  position: relative;
+  padding: 20px;
 }
 
 .board .title {
@@ -138,31 +147,35 @@ body {
   position: relative;
 }
 
-.board .lanes .card {
+.board .lane .title {
+  background-color: #f9564f;
+}
+
+.board .lane .card {
   margin: 6px;
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow: rgba(17, 17, 26, 0.08) 0px 1px 0px,
-    rgba(17, 17, 26, 0.15) 0px 0px 8px;
+    rgba(17, 17, 26, 0.15) 0px 0px 6px;
   cursor: move;
   position: relative;
 }
 
-.board .lanes .card .overdue {
+.board .lane .card .overdue {
   position: absolute;
-  background-color: orange;
+  background-color: #e30544;
   width: 6px;
   height: 100%;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
 }
 
-.board .lanes .card .content {
+.board .lane .card .content {
   padding: 4px 4px 4px 12px;
   border-radius: 6px;
   background-color: white;
 }
 
-.board .lanes .card .content .edit {
+.board .lane .card .content .edit {
   float: right;
 }
 
@@ -172,17 +185,17 @@ body {
   border: 0;
 }
 
-.board .lanes .card .content .name {
+.board .lane .card .content .name {
   font-size: 1.2em;
   font-weight: 600;
 }
 
-.card-detail-canvas {
+.layer {
   border-left: 1px solid grey;
   box-sizing: border-box;
   right: 0;
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   background-color: white;
   height: 100%;
   width: 450px;
@@ -192,7 +205,7 @@ body {
   top: 0;
 }
 
-.card-detail-canvas .body {
+.layer .body {
   flex-grow: 1;
   overflow: auto;
 }

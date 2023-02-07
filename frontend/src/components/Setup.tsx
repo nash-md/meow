@@ -43,7 +43,7 @@ export const Setup = () => {
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <h2 style={{ margin: 0 }}>Currency</h2>
 
       <Picker

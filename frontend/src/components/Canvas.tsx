@@ -1,66 +1,57 @@
 import { useState } from 'react';
 import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
 import { Board } from './Board';
 import {
   selectCards,
   selectCurrency,
   selectInterfaceState,
+  selectLanes,
   store,
 } from '../store/Store';
 import { ActionType } from '../actions/Actions';
-import { Lane } from '../Constants';
-import { lanes as defaults } from '../Constants';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { Card } from '../interfaces/Card';
-import { CardDetailLayer } from './CardDetailLayer';
+import { Layer as CardLayer } from './card/Layer';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { Trash } from './Trash';
+import { Layer as LaneLayer } from './lane/Layer';
+import { Lane } from '../interfaces/Lane';
+import { Currency } from './Currency';
 
 export const Canvas = () => {
   const cards = useSelector(selectCards);
+  const lanes = useSelector(selectLanes);
   const state = useSelector(selectInterfaceState);
-  const currency = useSelector(selectCurrency);
 
-  const [lanes, setLanes] = useState<Lane[]>([]);
   const { client } = useContext(RequestHelperContext);
 
   useEffect(() => {
     const execute = async () => {
-      let list = await client!.getCards();
+      let lanes = await client!.getLanes();
+
+      store.dispatch({
+        type: ActionType.LANES,
+        payload: [...lanes],
+      });
+
+      let cards = await client!.getCards();
 
       store.dispatch({
         type: ActionType.CARDS,
-        payload: [...list],
+        payload: [...cards],
       });
     };
 
     if (client) {
       execute();
     }
-
-    setLanes([...defaults]);
   }, [client]);
 
   const showCardDetail = (id?: string) => {
     store.dispatch({
       type: ActionType.USER_INTERFACE_STATE,
       payload: { state: 'card-detail', id: id },
-    });
-  };
-
-  const add = async (card: Card) => {
-    // TODO should handle Card and CardPreview types
-    if (card.id) {
-      card = await client!.updateCard(card);
-    } else {
-      card = await client!.createCard(card);
-    }
-
-    store.dispatch({
-      type: ActionType.CARD_UPDATE,
-      payload: card,
     });
   };
 
@@ -78,31 +69,82 @@ export const Canvas = () => {
         }
       }, 0)
     );
-  }, [cards]);
+  }, [cards, lanes]);
+
+  const onDragEnd = async (result: DropResult) => {
+    // TODO exit early if no change in index or destination
+    console.log(result);
+
+    const trash = document.getElementById('trash');
+
+    if (trash) {
+      trash.style.visibility = 'hidden';
+    }
+
+    console.log(
+      `move card ${result.draggableId} from lane ${result.source.droppableId} to lane ${result.destination?.droppableId}`
+    );
+
+    if (!result.destination?.droppableId) {
+      return;
+    }
+
+    const card = cards.find((card) => card.id === result.draggableId);
+
+    if (card) {
+      if (result.destination.droppableId === 'trash') {
+        await client!.deleteCard(card!.id);
+
+        store.dispatch({
+          type: ActionType.CARD_DELETE,
+          payload: card!.id,
+        });
+      } else {
+        card!.lane = result.destination.droppableId;
+
+        await client!.updateCard(card);
+
+        store.dispatch({
+          type: ActionType.CARD_UPDATE,
+          payload: card,
+        });
+      }
+    }
+  };
+  const onDragStart = () => {
+    const trash = document.getElementById('trash');
+
+    if (trash) {
+      trash.style.visibility = 'visible';
+    }
+  };
 
   return (
-    <div className="board">
-      <div className="title">
-        <span style={{ fontSize: '2em' }}>
-          {cards.length} Deals -
-          {amount.toLocaleString('en-US', {
-            style: 'currency',
-            currency: currency ?? 'USD',
-          })}
-        </span>
-        <div>
-          <Button variant="primary" onPress={() => showCardDetail()}>
-            Add
-          </Button>
+    <>
+      {state === 'card-detail' && <CardLayer />}
+      {state === 'lane-detail' && <LaneLayer />}
+      <div className="board">
+        <div className="title">
+          <span style={{ fontSize: '2em' }}>
+            {cards.length} Deals -
+            <Currency value={amount} />
+          </span>
+          <div>
+            <Button variant="primary" onPress={() => showCardDetail()}>
+              Add
+            </Button>
+          </div>
         </div>
-        {state === 'card-detail' && <CardDetailLayer add={add} />}
-      </div>
+        <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          <div className="trash-canvas">
+            <Trash />
+          </div>
 
-      <div className="lanes">
-        <DndProvider backend={HTML5Backend}>
-          <Board lanes={lanes} />
-        </DndProvider>
+          <div className="lanes">
+            <Board lanes={lanes} />
+          </div>
+        </DragDropContext>
       </div>
-    </div>
+    </>
   );
 };

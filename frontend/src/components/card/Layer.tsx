@@ -1,11 +1,16 @@
 import { Button, Tabs, TabList, Item, TabPanels } from '@adobe/react-spectrum';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../actions/Actions';
-import { selectInterfaceStateId, store } from '../store/Store';
-import { Form } from './card/Form';
-import { Events } from './card/Events';
+import { ActionType } from '../../actions/Actions';
+import { selectInterfaceStateId, store } from '../../store/Store';
+import { Form } from './Form';
+import { Events } from './Events';
+import { Card } from '../../interfaces/Card';
+import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
+import { useContext } from 'react';
 
-export const CardDetailLayer = (props: any) => {
+export const Layer = () => {
+  const { client } = useContext(RequestHelperContext);
+
   const id = useSelector(selectInterfaceStateId);
 
   const hideCardDetail = () => {
@@ -15,8 +20,22 @@ export const CardDetailLayer = (props: any) => {
     });
   };
 
+  const add = async (card: Card) => {
+    // TODO should handle Card and CardPreview types
+    if (card.id) {
+      card = await client!.updateCard(card);
+    } else {
+      card = await client!.createCard(card);
+    }
+
+    store.dispatch({
+      type: ActionType.CARD_UPDATE,
+      payload: card,
+    });
+  };
+
   return (
-    <div className="card-detail-canvas">
+    <div className="layer">
       <div className="header">
         <div style={{ float: 'right' }}>
           <Button variant="primary" onPress={() => hideCardDetail()}>
@@ -40,7 +59,7 @@ export const CardDetailLayer = (props: any) => {
 
           <TabPanels>
             <Item key="deal">
-              <Form add={props.add} id={id} />
+              <Form add={add} id={id} />
             </Item>
             <Item key="events">
               <Events id={id} />

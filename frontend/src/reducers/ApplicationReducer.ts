@@ -1,5 +1,6 @@
 import { ActionType, ApplicationAction } from '../actions/Actions';
 import { Card } from '../interfaces/Card';
+import { Lane } from '../interfaces/Lane';
 import { Default } from '../store/Default';
 
 export const application = (state = Default, action: ApplicationAction) => {
@@ -94,6 +95,26 @@ export const application = (state = Default, action: ApplicationAction) => {
             currency: action.payload,
           },
         },
+      };
+
+    case ActionType.LANES:
+      return {
+        ...state,
+        lanes: [...action.payload],
+      };
+
+    case ActionType.LANE_UPDATE:
+      return {
+        ...state,
+        lanes: [
+          ...state.lanes.map((item: Lane) => {
+            if (item.key === action.payload.key) {
+              return { ...action.payload };
+            } else {
+              return { ...item };
+            }
+          }),
+        ],
       };
     case ActionType.BROWSER_STATE:
       return {

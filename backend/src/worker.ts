@@ -40,12 +40,14 @@ import { ValidateTokenRequestSchema } from './middlewares/schema-validation/Vali
 import { ValidateTokenController } from './controllers/ValidateTokenController';
 import { AccountController } from './controllers/AccountController';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema';
+import { Lane } from './entities/Lane';
+import { LaneController } from './controllers/LaneController';
 
 export const database = new DataSource({
   type: 'mongodb',
   url: process.env.MONGODB_URI,
   useUnifiedTopology: true,
-  entities: [Account, User, Card, Event],
+  entities: [Account, User, Card, Lane, Event],
 });
 
 (async () => {
@@ -114,6 +116,22 @@ account
   );
 
 app.use('/api/accounts', account);
+
+const lane = express.Router();
+
+lane.use(express.json({ limit: '5kb' }));
+
+lane.use(verifyJwt);
+lane.use(addEntityToHeader);
+lane.use(setHeaders);
+
+lane.route('/').get(
+  rejectIfContentTypeIsNot('application/json'),
+
+  LaneController.list
+);
+
+app.use('/api/lanes', lane);
 
 const unprotected = express.Router();
 

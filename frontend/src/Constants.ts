@@ -1,10 +1,3 @@
-export interface Lane {
-  key: string;
-  name: string;
-  color?: string;
-  isEnd?: boolean;
-}
-
 export const lanes = [
   { key: 'not-qualified', name: 'Not Qualified' },
   { key: 'qualified', name: 'Qualified' },
