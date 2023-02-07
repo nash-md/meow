@@ -15,7 +15,7 @@ export abstract class ApplicationError extends Error {
 
     this.name = name
       .replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
-      .replace(/\_exception/, '')
+      .replace(/\_error/, '')
       .substr(1);
     this.code = code;
     this.description = description;
