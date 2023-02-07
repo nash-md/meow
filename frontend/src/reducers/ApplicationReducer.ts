@@ -98,9 +98,11 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.LANES:
+      const lanes = action.payload.sort((a, b) => a.index - b.index);
+
       return {
         ...state,
-        lanes: [...action.payload],
+        lanes: [...lanes],
       };
 
     case ActionType.LANE_UPDATE:

@@ -62,7 +62,7 @@ export const Canvas = () => {
       cards.reduce((acc, card) => {
         const lane = lanes.find((lane: Lane) => lane.key === card.lane);
 
-        if (lane?.isEnd === true) {
+        if (lane && lane.inForecast === true) {
           return acc;
         } else {
           return acc + parseInt(card.amount.toString()); // TODO fix date format upon request parsing

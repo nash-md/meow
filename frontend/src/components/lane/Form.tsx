@@ -14,12 +14,14 @@ export const Form = ({ id }: FormProps) => {
   const lane = useSelector((store: ApplicationStore) => selectLane(store, id!));
 
   const [name, setName] = useState<string>(lane!.name);
-  const [isEnd, setIsEnd] = useState<boolean>(lane!.isEnd ?? false);
+  const [inForecast, setInForecast] = useState<boolean>(
+    lane!.inForecast ?? false
+  );
 
   let isValidForm = useMemo(() => {
     store.dispatch({
       type: ActionType.LANE_UPDATE,
-      payload: { ...lane!, name: name, isEnd: isEnd },
+      payload: { ...lane!, name: name, inForecast: inForecast },
     });
 
     if (name) {
@@ -27,7 +29,7 @@ export const Form = ({ id }: FormProps) => {
     }
 
     return false;
-  }, [name, isEnd]);
+  }, [name, inForecast]);
 
   const save = () => {};
 
@@ -44,7 +46,7 @@ export const Form = ({ id }: FormProps) => {
         />
 
         <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-          <Checkbox isSelected={isEnd} onChange={setIsEnd}>
+          <Checkbox isSelected={inForecast} onChange={setInForecast}>
             Excluce from Forecast
           </Checkbox>
         </div>

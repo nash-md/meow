@@ -1,9 +1,14 @@
 export const lanes = [
-  { key: 'not-qualified', name: 'Not Qualified' },
-  { key: 'qualified', name: 'Qualified' },
-  { key: 'comitted', name: 'Comitted' },
-  { key: 'closed-won', name: 'Closed Won', color: '#00b359', isEnd: true },
-  { key: 'closed-lost', name: 'Closed Lost', color: '#e30544', isEnd: true },
+  { key: 'not-qualified', name: 'Not Qualified', inForecast: false },
+  { key: 'qualified', name: 'Qualified', inForecast: false },
+  { key: 'comitted', name: 'Comitted', inForecast: false },
+  { key: 'closed-won', name: 'Closed Won', color: '#00b359', inForecast: true },
+  {
+    key: 'closed-lost',
+    name: 'Closed Lost',
+    color: '#e30544',
+    inForecast: true,
+  },
   { key: 'trash', name: 'Trash', isHidden: true },
 ] as const;
 
