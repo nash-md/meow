@@ -55,7 +55,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
           >
             {closedAt &&
               DateTime.fromJSDate(closedAt) < DateTime.now() &&
-              lane?.inForecast !== true && <div className="overdue"></div>}
+              lane.inForecast !== true && <div className="overdue"></div>}
             <div
               className="content"
               onClick={() => {

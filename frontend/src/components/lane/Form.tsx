@@ -46,7 +46,7 @@ export const Form = ({ id }: FormProps) => {
         />
 
         <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-          <Checkbox isSelected={inForecast} onChange={setInForecast}>
+          <Checkbox isSelected={!inForecast} onChange={setInForecast}>
             Excluce from Forecast
           </Checkbox>
         </div>
