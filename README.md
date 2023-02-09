@@ -2,7 +2,7 @@
 
 Welcome to the world of free sales funnel management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the funnel. Meow was built to simplify your sales process, giving you a bird's eye view of your entire funnel.
 
-<img src="dashboard.png" alt="Twilio Contact Center" width="800">
+<img src="dashboard.png" alt="Meow Dashboard" width="800">
 
 ## Try It
 
@@ -75,6 +75,7 @@ The project currently has a few direct dependencies on [MongoDB](https://www.mon
 
 ### Documentation
 
+[Setup the Sales Funnel](docs/sales-funnel.md)
 [Change Log](CHANGELOG.md)
 
 ### License
