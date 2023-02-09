@@ -29,7 +29,7 @@ export const SessionOrNot = () => {
       try {
         if (context.token) {
           payload = await new RequestHelper(
-            process.env.REACT_APP_URL!
+            process.env.REACT_APP_URL
           ).isValidToken(context.token);
         }
       } catch (error) {
@@ -39,7 +39,7 @@ export const SessionOrNot = () => {
       if (payload && payload.isValid === true) {
         if (setClient) {
           setClient(
-            new RequestHelper(process.env.REACT_APP_URL!, payload.body.token)
+            new RequestHelper(process.env.REACT_APP_URL, payload.body.token)
           );
         }
       }
