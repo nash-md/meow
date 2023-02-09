@@ -1,14 +1,11 @@
 import { useState } from 'react';
-
 import Edit from '@spectrum-icons/workflow/Edit';
 import { useEffect } from 'react';
 import { DateTime } from 'luxon';
-import { ItemTypes } from './ItemTypes';
 import { Card as CardEntity } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
-import { selectCurrency, store } from '../store/Store';
+import { store } from '../store/Store';
 import { ActionType } from '../actions/Actions';
-import { Provider, useSelector } from 'react-redux';
 import { Draggable } from 'react-beautiful-dnd';
 import { Currency } from './Currency';
 
@@ -55,7 +52,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
           >
             {closedAt &&
               DateTime.fromJSDate(closedAt) < DateTime.now() &&
-              lane.inForecast !== true && <div className="overdue"></div>}
+              lane.inForecast === true && <div className="overdue"></div>}
             <div
               className="content"
               onClick={() => {
