@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from './Card';
 import { Lane as LaneInterface } from '../interfaces/Lane';
 import { Card as CardInterface } from '../interfaces/Card';
-import { selectCurrency, store } from '../store/Store';
-import { useSelector } from 'react-redux';
+import { store } from '../store/Store';
 import { Droppable } from 'react-beautiful-dnd';
 import { ActionType } from '../actions/Actions';
 import { Currency } from './Currency';
@@ -40,9 +39,26 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
         style={{
           backgroundColor: lane.color ?? '#e6e6e6',
           color: lane.color ? 'white' : 'grey',
+
+          display: 'flex',
         }}
       >
-        {lane.name}
+        <div style={{ flexGrow: 1 }}>{lane.name}</div>
+        {lane.inForecast === false && (
+          <div
+            style={{
+              marginRight: '4px',
+              backgroundImage: lane.color
+                ? 'url(/icon-hidden-white.svg)'
+                : 'url(/icon-hidden.svg)',
+              backgroundPosition: 'center center',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '80%',
+              width: '24px',
+              opacity: '0.4',
+            }}
+          ></div>
+        )}
       </div>
 
       <div
