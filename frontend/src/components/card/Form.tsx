@@ -1,13 +1,13 @@
 import { Button, TextField, DatePicker } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { lanes as defaults } from '../../Constants';
 import { parseDate } from '@internationalized/date';
-import { selectCard, store as s } from '../../store/Store';
+import { selectCard, selectLanes, store as s } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Card } from '../../interfaces/Card';
 
 export const Form = ({ add, id }: any) => {
+  const lanes = useSelector(selectLanes);
   const [name, setName] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
 
@@ -52,7 +52,7 @@ export const Form = ({ add, id }: any) => {
     };
 
     if (!updated.lane) {
-      updated.lane = defaults[0].key;
+      updated.lane = lanes[0].key;
     }
 
     add(updated);

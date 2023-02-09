@@ -86,7 +86,7 @@ body {
   opacity: 0.3;
 }
 
-.lane {
+.board .lane {
   border-right: 0px solid #d1d1d1;
   position: relative;
   display: flex;
@@ -97,13 +97,13 @@ body {
   background-color: white;
 }
 
-.lane .title {
+.board .lane .title {
   font-size: 1.2em;
   font-weight: bold;
   padding: 5px;
 }
 
-.lane .canvas {
+.board .lane .canvas {
   min-height: 60px;
   height: 100%;
   position: relative;
@@ -134,10 +134,6 @@ body {
   flex-direction: column;
   position: relative;
   padding: 20px;
-}
-
-.board .title {
-  padding-bottom: 0px;
 }
 
 .board .lanes {
@@ -208,4 +204,55 @@ body {
 .layer .body {
   flex-grow: 1;
   overflow: auto;
+}
+
+.setup-funnel {
+  padding: 5px;
+  background-color: white;
+}
+
+.setup-funnel {
+  padding: 5px;
+  background-color: white;
+}
+
+.setup-funnel .add-stage {
+  margin-top: 10px;
+}
+
+.setup-funnel .lane {
+  display: flex;
+  padding: 5px 0 5px 0;
+}
+
+.setup-funnel .lane .button {
+  width: 30px;
+  background-color: #d8d8d8;
+  position: relative;
+  border-radius: 2px;
+  border: 1px solid #979797;
+}
+
+.setup-funnel .lane .button .drag {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 80%;
+  background-image: url(../public/drag-icon.svg);
+  opacity: 0.3;
+  width: 100%;
+  height: 100%;
+}
+
+.setup-funnel .lane .button .remove {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 60%;
+  background-image: url(../public/trash-icon.svg);
+  opacity: 0.3;
+  width: 100%;
+  height: 100%;
+}
+
+.setup-funnel .lane .attribute {
+  margin-left: 10px;
 }

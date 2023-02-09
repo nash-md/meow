@@ -42,6 +42,8 @@ import { AccountController } from './controllers/AccountController';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema';
 import { Lane } from './entities/Lane';
 import { LaneController } from './controllers/LaneController';
+import { LaneRequestSchema } from './middlewares/schema-validation/LaneRequestSchema';
+import { LanesRequestSchema } from './middlewares/schema-validation/LanesRequestSchema';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -125,11 +127,23 @@ lane.use(verifyJwt);
 lane.use(addEntityToHeader);
 lane.use(setHeaders);
 
-lane.route('/').get(
-  rejectIfContentTypeIsNot('application/json'),
-
-  LaneController.list
-);
+lane
+  .route('/')
+  .get(rejectIfContentTypeIsNot('application/json'), LaneController.list);
+lane
+  .route('/')
+  .post(
+    rejectIfContentTypeIsNot('application/json'),
+    validateAgainst(LanesRequestSchema),
+    LaneController.updateAll
+  );
+lane
+  .route('/:id')
+  .post(
+    rejectIfContentTypeIsNot('application/json'),
+    validateAgainst(LaneRequestSchema),
+    LaneController.update
+  );
 
 app.use('/api/lanes', lane);
 

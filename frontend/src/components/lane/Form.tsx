@@ -1,7 +1,8 @@
 import { Button, Checkbox, TextField } from '@adobe/react-spectrum';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType } from '../../actions/Actions';
+import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { Lane } from '../../interfaces/Lane';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { selectLane, store } from '../../store/Store';
@@ -12,16 +13,12 @@ export interface FormProps {
 
 export const Form = ({ id }: FormProps) => {
   const lane = useSelector((store: ApplicationStore) => selectLane(store, id!));
+  const { client } = useContext(RequestHelperContext);
 
   const [name, setName] = useState<string>(lane!.name);
   const [inForecast, setInForecast] = useState<boolean>(lane!.inForecast);
 
   let isValidForm = useMemo(() => {
-    store.dispatch({
-      type: ActionType.LANE_UPDATE,
-      payload: { ...lane!, name: name, inForecast: inForecast },
-    });
-
     if (name) {
       return true;
     }
@@ -29,7 +26,14 @@ export const Form = ({ id }: FormProps) => {
     return false;
   }, [name, inForecast]);
 
-  const save = () => {};
+  const save = async () => {
+    await client!.updateLane(lane!.id, name, inForecast);
+
+    store.dispatch({
+      type: ActionType.LANE_UPDATE,
+      payload: { ...lane!, name: name, inForecast: inForecast },
+    });
+  };
 
   return (
     <div>

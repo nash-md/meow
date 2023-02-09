@@ -5,6 +5,7 @@ import { TokenUndefinedError } from '../errors/TokenUndefinedError';
 import { Account, CurrencyCode } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
 import { EventType } from '../interfaces/Event';
+import { Lane, LaneRequest } from '../interfaces/Lane';
 
 export const stripLeadingSlash = (value: string) => {
   return value.startsWith('/') ? value.substring(1, value.length) : value;
@@ -214,6 +215,40 @@ export class RequestHelper {
     try {
       const response = await this.fetchWithTimeout(url, {
         ...this.getHeaderWithAuthentication('GET'),
+      });
+
+      const parsed = await response?.json();
+
+      return parsed;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateLane(id: Lane['id'], name: string, inForecast: boolean) {
+    let url = this.getUrl(`/api/lanes/${id}`);
+
+    try {
+      const response = await this.fetchWithTimeout(url, {
+        ...this.getHeaderWithAuthentication('POST'),
+        body: JSON.stringify({ name, inForecast }),
+      });
+
+      const parsed = await response?.json();
+
+      return parsed;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateLanes(lanes: LaneRequest[]) {
+    let url = this.getUrl(`/api/lanes`);
+
+    try {
+      const response = await this.fetchWithTimeout(url, {
+        ...this.getHeaderWithAuthentication('POST'),
+        body: JSON.stringify(lanes),
       });
 
       const parsed = await response?.json();

@@ -5,6 +5,7 @@ import { ActionType } from '../actions/Actions';
 import { useSelector } from 'react-redux';
 import { CurrencyCode } from '../interfaces/Account';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
+import { Funnel } from './Funnel';
 
 export const Setup = () => {
   const { client } = useContext(RequestHelperContext);
@@ -42,10 +43,24 @@ export const Setup = () => {
     await client!.updateAccount(accountId!, currency);
   };
 
+  useEffect(() => {
+    const execute = async () => {
+      let lanes = await client!.getLanes();
+
+      store.dispatch({
+        type: ActionType.LANES,
+        payload: [...lanes],
+      });
+    };
+
+    if (client) {
+      execute();
+    }
+  }, [client]);
+
   return (
     <div style={{ padding: '20px' }}>
       <h2 style={{ margin: 0 }}>Currency</h2>
-
       <Picker
         selectedKey={currency}
         aria-label="Currency"
@@ -55,7 +70,8 @@ export const Setup = () => {
         <Item key="EUR">Euro</Item>
         <Item key="SEK">Swedish Krona</Item>
       </Picker>
-
+      <br /> <br />
+      <Funnel />
       <h2 style={{ marginBottom: '5px' }}>
         If You Were An Animal What Would You Be?
       </h2>

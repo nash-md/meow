@@ -9,12 +9,6 @@ import { log } from '../logger';
 import { database } from '../worker';
 import { isValidName, isValidPassword } from './RegisterControllerValidator';
 
-const createKeyFromName = (value: string) => {
-  return value
-    .replace(/[A-Z]/g, (letter) => `${letter.toLowerCase()}`)
-    .replace(/ /, '-');
-};
-
 const register = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by name: ${req.body.name}`);
 
@@ -33,10 +27,10 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       await database.manager.save(
         new Lane(
           account.id!.toString(),
-          createKeyFromName(item.name),
+          Lane.createKeyFromName(item.name),
           item.name,
           index,
-          item.inForecat,
+          item.inForecast,
           item.color
         )
       );

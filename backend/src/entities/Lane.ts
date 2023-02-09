@@ -62,4 +62,18 @@ export class Lane {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+
+  static createKeyFromName(value: string) {
+    return value
+      .replace(/[A-Z]/g, (letter) => `${letter.toLowerCase()}`)
+      .replace(/ /, '-');
+  }
+}
+
+export interface LaneRequest {
+  id: string | undefined;
+  name: string;
+  index: number;
+  inForecast: boolean;
+  color?: string;
 }
