@@ -44,6 +44,10 @@ import { Lane } from './entities/Lane';
 import { LaneController } from './controllers/LaneController';
 import { LaneRequestSchema } from './middlewares/schema-validation/LaneRequestSchema';
 import { LanesRequestSchema } from './middlewares/schema-validation/LanesRequestSchema';
+import { isDatabaseConnectionEstablished } from './middlewares/isDatabaseConnectionEstablished';
+import { UserController } from './controllers/UserController';
+import { UserRequestSchema } from './middlewares/schema-validation/UserRequestSchema';
+import { CardRequestSchema } from './middlewares/schema-validation/CardRequestSchema';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -65,6 +69,7 @@ app.set('etag', false);
 app.enable('trust proxy');
 app.disable('x-powered-by');
 
+// TODO configure
 let corsOptions: cors.CorsOptions = {
   origin: '*',
   methods: ['GET', 'POST', 'DELETE'],
@@ -79,25 +84,18 @@ card.use(express.json({ limit: '5kb' }));
 card.use(verifyJwt);
 card.use(addEntityToHeader);
 card.use(setHeaders);
+card.use(isDatabaseConnectionEstablished);
+card.use(rejectIfContentTypeIsNot('application/json'));
 
-card
-  .route('/')
-  .get(rejectIfContentTypeIsNot('application/json'), CardController.list);
-
+card.route('/').get(CardController.list);
+card.route('/').post(validateAgainst(CardRequestSchema), CardController.create);
 card
   .route('/:id?')
-  .post(rejectIfContentTypeIsNot('application/json'), CardController.update);
+  .post(validateAgainst(CardRequestSchema), CardController.update);
+card.route('/:id').delete(CardController.remove);
 
-card
-  .route('/:id')
-  .delete(rejectIfContentTypeIsNot('application/json'), CardController.remove);
-
-card
-  .route('/:id/events')
-  .get(rejectIfContentTypeIsNot('application/json'), EventController.list);
-card
-  .route('/:id/events')
-  .post(rejectIfContentTypeIsNot('application/json'), EventController.create);
+card.route('/:id/events').get(EventController.list);
+card.route('/:id/events').post(EventController.create);
 
 app.use('/api/cards', card);
 
@@ -108,14 +106,13 @@ account.use(express.json({ limit: '5kb' }));
 account.use(verifyJwt);
 account.use(addEntityToHeader);
 account.use(setHeaders);
+account.use(rejectIfContentTypeIsNot('application/json'));
+
+account.use(isDatabaseConnectionEstablished);
 
 account
   .route('/:id')
-  .post(
-    rejectIfContentTypeIsNot('application/json'),
-    validateAgainst(AccountRequestSchema),
-    AccountController.update
-  );
+  .post(validateAgainst(AccountRequestSchema), AccountController.update);
 
 app.use('/api/accounts', account);
 
@@ -126,32 +123,43 @@ lane.use(express.json({ limit: '5kb' }));
 lane.use(verifyJwt);
 lane.use(addEntityToHeader);
 lane.use(setHeaders);
+lane.use(isDatabaseConnectionEstablished);
+lane.use(rejectIfContentTypeIsNot('application/json'));
 
+lane.route('/').get(LaneController.list);
 lane
   .route('/')
-  .get(rejectIfContentTypeIsNot('application/json'), LaneController.list);
-lane
-  .route('/')
-  .post(
-    rejectIfContentTypeIsNot('application/json'),
-    validateAgainst(LanesRequestSchema),
-    LaneController.updateAll
-  );
+  .post(validateAgainst(LanesRequestSchema), LaneController.updateAll);
 lane
   .route('/:id')
-  .post(
-    rejectIfContentTypeIsNot('application/json'),
-    validateAgainst(LaneRequestSchema),
-    LaneController.update
-  );
+  .post(validateAgainst(LaneRequestSchema), LaneController.update);
 
 app.use('/api/lanes', lane);
+
+const user = express.Router();
+
+user.use(express.json({ limit: '5kb' }));
+
+user.use(verifyJwt);
+user.use(addEntityToHeader);
+user.use(setHeaders);
+user.use(isDatabaseConnectionEstablished);
+user.use(rejectIfContentTypeIsNot('application/json'));
+
+user.route('/').get(UserController.list);
+user.route('/').post(validateAgainst(UserRequestSchema), UserController.create);
+user
+  .route('/:id')
+  .post(validateAgainst(UserRequestSchema), UserController.update);
+
+app.use('/api/users', user);
 
 const unprotected = express.Router();
 
 unprotected.use(express.json({ limit: '1kb' }));
 unprotected.use(rejectIfContentTypeIsNot('application/json'));
 unprotected.use(setHeaders);
+unprotected.use(isDatabaseConnectionEstablished);
 
 unprotected
   .route('/login')

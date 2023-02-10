@@ -51,114 +51,122 @@ const remove = async (
   }
 };
 
+const create = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const card = new Card(
+    req.jwt.account.id!.toString(),
+    req.jwt.user.id!.toString(),
+    req.body.lane,
+    req.body.name,
+    req.body.amount
+  );
+
+  if (req.body.closedAt) {
+    card.closedAt = DateTime.fromISO(req.body.closedAt, {
+      zone: 'utc',
+    }).toJSDate();
+  }
+
+  const updated = await database.manager.save(card);
+
+  const event = new Event(
+    card.accountId,
+    card.id!.toString(),
+    req.jwt.user.id!?.toString(),
+    EventType.CreatedAt
+  );
+
+  await database.manager.save(event);
+
+  return res.json(updated);
+};
+
 const update = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    if (req.params.id) {
-      const card = await database
-        .getMongoRepository(Card)
-        .findOneById(req.params.id);
+    if (!req.params.id) {
+      throw new InvalidUrlError();
+    }
 
-      if (!card || card.accountId !== req.jwt.account.id?.toString()) {
-        throw new EntityNotFoundError();
-      }
+    const card = await database
+      .getMongoRepository(Card)
+      .findOneById(req.params.id);
 
-      if (card.lane !== req.body.lane) {
-        const event = new Event(
-          card.accountId,
-          req.params.id,
-          req.jwt.user.id!?.toString(),
-          EventType.Lane,
-          {
-            from: card.lane,
-            to: req.body.lane,
-          }
-        );
+    if (!card || card.accountId !== req.jwt.account.id?.toString()) {
+      throw new EntityNotFoundError();
+    }
 
-        await database.manager.save(event);
-      }
-
-      if (card.amount !== req.body.amount) {
-        const event = new Event(
-          card.accountId,
-          req.params.id,
-          req.jwt.user.id!?.toString(),
-          EventType.Amount,
-          {
-            from: card.amount,
-            to: req.body.amount,
-          }
-        );
-
-        await database.manager.save(event);
-      }
-
-      if (req.body.closedAt) {
-        const date = DateTime.fromISO(req.body.closedAt, {
-          zone: 'utc',
-        });
-        if (
-          date.toMillis() !==
-          DateTime.fromJSDate(card.closedAt!, { zone: 'utc' }).toMillis()
-        ) {
-          const event = new Event(
-            card.accountId,
-            req.params.id,
-            req.jwt.user.id!?.toString(),
-            EventType.ClosedAt,
-            {
-              from: card.closedAt,
-              to: date.toJSDate(),
-            }
-          );
-
-          await database.manager.save(event);
-        }
-
-        card.closedAt = DateTime.fromISO(req.body.closedAt, {
-          zone: 'utc',
-        }).toJSDate();
-      }
-
-      card.name = req.body.name;
-      card.lane = req.body.lane;
-      card.amount = req.body.amount;
-      card.user = req.body.user;
-
-      const updated = await database.manager.save(card); // todo typeorm should automatically update in case the pk exists
-
-      return res.json(updated);
-    } else {
-      const card = new Card(
-        req.jwt.account.id!.toString(),
-        req.jwt.user.id!.toString(),
-        req.body.lane,
-        req.body.name,
-        req.body.amount
-      );
-
-      if (req.body.closedAt) {
-        card.closedAt = DateTime.fromISO(req.body.closedAt, {
-          zone: 'utc',
-        }).toJSDate();
-      }
-
-      const updated = await database.manager.save(card);
-
+    if (card.lane !== req.body.lane) {
       const event = new Event(
         card.accountId,
-        card.id!.toString(),
+        req.params.id,
         req.jwt.user.id!?.toString(),
-        EventType.CreatedAt
+        EventType.Lane,
+        {
+          from: card.lane,
+          to: req.body.lane,
+        }
       );
 
       await database.manager.save(event);
-
-      return res.json(updated);
     }
+
+    if (card.amount !== req.body.amount) {
+      const event = new Event(
+        card.accountId,
+        req.params.id,
+        req.jwt.user.id!?.toString(),
+        EventType.Amount,
+        {
+          from: card.amount,
+          to: req.body.amount,
+        }
+      );
+
+      await database.manager.save(event);
+    }
+
+    if (req.body.closedAt) {
+      const date = DateTime.fromISO(req.body.closedAt, {
+        zone: 'utc',
+      });
+      if (
+        date.toMillis() !==
+        DateTime.fromJSDate(card.closedAt!, { zone: 'utc' }).toMillis()
+      ) {
+        const event = new Event(
+          card.accountId,
+          req.params.id,
+          req.jwt.user.id!?.toString(),
+          EventType.ClosedAt,
+          {
+            from: card.closedAt,
+            to: date.toJSDate(),
+          }
+        );
+
+        await database.manager.save(event);
+      }
+
+      card.closedAt = DateTime.fromISO(req.body.closedAt, {
+        zone: 'utc',
+      }).toJSDate();
+    }
+
+    card.name = req.body.name;
+    card.lane = req.body.lane;
+    card.amount = req.body.amount;
+    card.user = req.body.user;
+
+    const updated = await database.manager.save(card);
+
+    return res.json(updated);
   } catch (error) {
     return next(error);
   }
@@ -166,6 +174,7 @@ const update = async (
 
 export const CardController = {
   list,
+  create,
   update,
   remove,
 };

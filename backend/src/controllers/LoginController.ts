@@ -37,7 +37,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       const payload = {
-        token: TokenHelper.createJwt(user, 14400),
+        token: TokenHelper.createJwt(user, 60 * 60 * 24 * 7),
         user: {
           id: user.id,
           name: user.name,
