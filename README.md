@@ -75,7 +75,8 @@ The project currently has a few direct dependencies on [MongoDB](https://www.mon
 
 ### Documentation
 
-[Setup the Sales Funnel](docs/sales-funnel.md)
+[Setup the Sales Funnel](docs/sales-funnel.md) <br>
+[Create Leads via API](docs/create-leads.md) <br>
 [Change Log](CHANGELOG.md)
 
 ### License
