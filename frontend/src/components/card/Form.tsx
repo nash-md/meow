@@ -34,7 +34,7 @@ export const Form = ({ add, id }: any) => {
     }
 
     setName(card.name);
-    setAmount(card.amount.toString());
+    setAmount(card.amount?.toString());
 
     if (card.closedAt) {
       const date = parseDate(card.closedAt.toString().substring(0, 10));

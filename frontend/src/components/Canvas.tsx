@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { Board } from './Board';
 import {
   selectCards,
-  selectCurrency,
   selectInterfaceState,
   selectLanes,
   store,
@@ -63,7 +62,7 @@ export const Canvas = () => {
         const lane = lanes.find((lane: Lane) => lane.key === card.lane);
 
         if (lane && lane.inForecast === true) {
-          return acc + parseInt(card.amount.toString()); // TODO fix date format upon request parsing
+          return card.amount ? acc + card.amount : acc;
         } else {
           return acc;
         }

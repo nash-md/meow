@@ -19,7 +19,7 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
   useEffect(() => {
     setAmount(
       cards.reduce((acc, card) => {
-        return acc + parseInt(card.amount.toString()); // TODO fix by checking upon fetch
+        return card.amount ? acc + card.amount : acc;
       }, 0)
     );
   }, [cards]);

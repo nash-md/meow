@@ -10,7 +10,7 @@ export const Currency = ({ value }: CurrencyProps) => {
 
   return (
     <>
-      {value.toLocaleString('en-US', {
+      {value?.toLocaleString('en-US', {
         style: 'currency',
         currency: currency ?? 'USD',
       })}
