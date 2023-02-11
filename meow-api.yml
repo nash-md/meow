@@ -1,0 +1,254 @@
+openapi: 3.0.2
+info:
+  title: Meow
+  version: '0.1'
+  license:
+    name: GNU General Public License v3.0 or later
+    url: https://github.com/public-park/summer-camp/LICENSE
+  contact:
+    name: Meow
+    url: https://github.com/nash-md/meow
+servers:
+  - url: https://sales-funnel.app
+paths:
+  /public/login:
+    post:
+      security: []
+      operationId: loginUser
+      summary: login
+      description: login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/LoginResponse'
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
+  /public/validate-token:
+    post:
+      security: []
+      operationId: validateToken
+      summary: validate a token
+      description: validate a token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/ValidateTokenResponse'
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
+  /api/cards:
+    post:
+      operationId: createCard
+      summary: create a new card
+      security:
+        - AuthenticationToken: []
+      description: create a new card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                lane:
+                  type: string
+                amount:
+                  type: number
+                closedAt:
+                  type: string
+                  format: date
+              required:
+                - name
+                - lane
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/CardResponse'
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
+components:
+  securitySchemes:
+    AuthenticationToken:
+      type: apiKey
+      in: header
+      name: Token
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+    Error:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+  parameters:
+    userId:
+      in: path
+      description: 'The unique identifier of the user.'
+      name: userId
+      required: true
+      schema:
+        type: string
+        format: UUID
+  responses:
+    NotAuthorized:
+      description: The request is unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: A server error occured
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request was invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidateTokenResponse:
+      description: response to a token validation request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              isValid:
+                type: boolean
+              body:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties: 
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  account:
+                    type: object
+                    properties: 
+                      id:
+                        type: string
+                      currency:
+                        type: string
+    LoginResponse:
+      description: response to a valid login request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+              user:
+                type: object
+                properties: 
+                  id:
+                    type: string
+                  name:
+                    type: string
+              account:
+                type: object
+                properties: 
+                  id:
+                    type: string
+                  currency:
+                    type: string
+    CardResponse:
+      description: response to a create card request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              user:
+                type: string
+              lane:
+                type: string
+              amount:
+                type: number
+              closedAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+              createdAt:
+                type: string
+                format: date-time
