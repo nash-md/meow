@@ -2,6 +2,8 @@ import { TextField, Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { ActionType } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
+import { RequestError } from '../errors/RequestError';
+import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { RequestHelper } from '../helpers/RequestHelper';
 import { store } from '../store/Store';
 
@@ -25,7 +27,7 @@ export const Login = () => {
       const payload = await client.login(name, password);
 
       if (setClient) {
-        setClient(new RequestHelper(process.env.REACT_APP_URL!, payload.token));
+        setClient(new RequestHelper(process.env.REACT_APP_URL, payload.token));
       }
 
       setIsLoading(false);
@@ -36,7 +38,21 @@ export const Login = () => {
       });
     } catch (error) {
       setIsLoading(false);
-      setError('Invalid');
+      console.error(error);
+
+      if (error instanceof RequestError) {
+        const parsed = await error.response.json();
+
+        const text = parsed.description ? parsed.description : parsed.name;
+
+        setError('Failed: ' + text);
+      } else if (error instanceof RequestTimeoutError) {
+        setError('Request Timeout Error, is your backend available?');
+      } else if (error instanceof TypeError) {
+        setError('Network Request Failed, is your backend available?');
+      } else {
+        setError('Failed: unknown, check JS Console');
+      }
     }
   };
 

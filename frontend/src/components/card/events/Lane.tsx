@@ -1,13 +1,16 @@
-import { lanes as defaults } from '../../../Constants';
+import { useSelector } from 'react-redux';
 import { Event } from '../../../interfaces/Event';
+import { selectLanes, store } from '../../../store/Store';
 
 interface LaneProps {
   event: Event;
 }
 
 export const Lane = ({ event }: LaneProps) => {
-  const laneFrom = defaults.find((lane) => lane.key === event.body.from);
-  const laneTo = defaults.find((lane) => lane.key === event.body.to);
+  const lanes = useSelector(selectLanes);
+
+  const laneFrom = lanes.find((lane) => lane.key === event.body.from);
+  const laneTo = lanes.find((lane) => lane.key === event.body.to);
 
   return (
     <div>

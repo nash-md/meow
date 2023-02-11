@@ -46,7 +46,9 @@ export const Register = () => {
 
         setError('Failed: ' + text);
       } else if (error instanceof RequestTimeoutError) {
-        setError('Timeout');
+        setError('Request Timeout Error, is your backend available?');
+      } else if (error instanceof TypeError) {
+        setError('Network Request Failed, is your backend available?');
       } else {
         setError('Failed: unknown, check JS Console');
       }
