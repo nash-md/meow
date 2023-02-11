@@ -6,6 +6,9 @@ import { Account, CurrencyCode } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
 import { EventType } from '../interfaces/Event';
 import { Lane, LaneRequest } from '../interfaces/Lane';
+import { User } from '../interfaces/User';
+
+type HttpMethod = 'POST' | 'GET' | 'DELETE';
 
 export const stripLeadingSlash = (value: string) => {
   return value.startsWith('/') ? value.substring(1, value.length) : value;
@@ -49,7 +52,7 @@ export class RequestHelper {
     };
   }
 
-  getHeaderWithAuthentication(method: 'POST' | 'GET' | 'DELETE') {
+  getHeaderWithAuthentication(method: HttpMethod) {
     if (!this.token) {
       throw new TokenUndefinedError();
     }
@@ -110,31 +113,35 @@ export class RequestHelper {
   async getCards(): Promise<Card[]> {
     const url = this.getUrl(`/api/cards`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('GET'),
-      });
-
-      const parsed = await response.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'GET');
   }
 
-  async updateCard(card: Card) {
-    let url = this.getUrl(`/api/cards/${card.id}`);
+  async updateCard({ id, lane, name, amount, closedAt }: Card) {
+    let url = this.getUrl(`/api/cards/${id}`);
 
+    return this.doFetch(url, 'POST', { lane, name, amount, closedAt });
+  }
+
+  async doFetch(url: string, method: HttpMethod, body?: any) {
     try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('POST'),
-        body: JSON.stringify({ ...card }),
-      });
+      const request = body
+        ? {
+            ...this.getHeaderWithAuthentication(method),
+            body: JSON.stringify(body),
+          }
+        : {
+            ...this.getHeaderWithAuthentication(method),
+          };
 
-      const parsed = await response?.json();
+      const response = await this.fetchWithTimeout(url, request);
 
-      return parsed;
+      try {
+        const body = await response.json();
+
+        return body as any;
+      } catch (error) {
+        throw new ResponseParseError(response, 'Invalid JSON document');
+      }
     } catch (error) {
       throw error;
     }
@@ -143,137 +150,68 @@ export class RequestHelper {
   async createCard(card: CardPreview) {
     let url = this.getUrl(`/api/cards`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('POST'),
-        body: JSON.stringify({ ...card }),
-      });
-
-      const parsed = await response?.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'POST', card);
   }
 
   async createComment(id: string, text: string) {
     const url = this.getUrl(`/api/cards/${id}/events`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('POST'),
-        body: JSON.stringify({
-          type: EventType.Comment,
-          text: text,
-        }),
-      });
-
-      const parsed = await response.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'POST', {
+      type: EventType.Comment,
+      text: text,
+    });
   }
 
   async deleteCard(id: string) {
     const url = this.getUrl(`/api/cards/${id}`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('DELETE'),
-      });
-
-      const parsed = await response.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'DELETE');
   }
 
   async getLanes() {
     const url = this.getUrl(`/api/lanes`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('GET'),
-      });
-
-      const parsed = await response?.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'GET');
   }
 
   async getEvents(id: string) {
     const url = this.getUrl(`/api/cards/${id}/events`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('GET'),
-      });
-
-      const parsed = await response?.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'GET');
   }
 
-  async updateLane(id: Lane['id'], name: string, inForecast: boolean) {
-    let url = this.getUrl(`/api/lanes/${id}`);
+  async updateLane(lane: Lane) {
+    let url = this.getUrl(`/api/lanes/${lane.id}`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('POST'),
-        body: JSON.stringify({ name, inForecast }),
-      });
-
-      const parsed = await response?.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'POST', {
+      name: lane.name,
+      inForecast: lane.inForecast,
+      index: lane.index,
+      color: lane.color,
+    });
   }
 
   async updateLanes(lanes: LaneRequest[]) {
     let url = this.getUrl(`/api/lanes`);
-
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('POST'),
-        body: JSON.stringify(lanes),
-      });
-
-      const parsed = await response?.json();
-
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'POST', lanes);
   }
 
   async updateAccount(id: Account['id'], currency: CurrencyCode) {
     let url = this.getUrl(`/api/accounts/${id}`);
 
-    try {
-      const response = await this.fetchWithTimeout(url, {
-        ...this.getHeaderWithAuthentication('POST'),
-        body: JSON.stringify({ currency }),
-      });
+    return this.doFetch(url, 'POST', currency);
+  }
 
-      const parsed = await response?.json();
+  async getUsers(): Promise<User[]> {
+    const url = this.getUrl(`/api/users`);
 
-      return parsed;
-    } catch (error) {
-      throw error;
-    }
+    return this.doFetch(url, 'GET');
+  }
+
+  async createUser(name: string, password: string) {
+    let url = this.getUrl(`/api/users/`);
+
+    return this.doFetch(url, 'POST', { name, password });
   }
 
   async login(name: string, password: string) {

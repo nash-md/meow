@@ -256,3 +256,15 @@ body {
 .setup-funnel .lane .attribute {
   margin-left: 10px;
 }
+
+.you-are-offline {
+  padding: 10px;
+  background-color: #d51b1b;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.you-are-offline img {
+  vertical-align: middle;
+}

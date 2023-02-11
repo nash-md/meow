@@ -17,6 +17,7 @@ export const selectIsPageLoaded = (store: RootState) =>
 export const selectBrowserState = (store: RootState) => store.browser.state;
 export const selectToken = (store: RootState) => store.session.token;
 export const selectCards = (store: RootState) => store.cards;
+export const selectUsers = (store: RootState) => store.users;
 export const selectLanes = (store: RootState) => store.lanes;
 export const selectLane = (store: ApplicationStore, key: string) =>
   store.lanes.find((lane) => lane.key === key);

@@ -2,11 +2,14 @@ import { CurrencyCode } from '../interfaces/Account';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card, CardPreview } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
+import { User } from '../interfaces/User';
 import { ApplicationStore } from '../store/ApplicationStore';
 
 export enum ActionType {
   PAGE_LOAD = 'PAGE_LOAD',
   LOGIN = 'LOGIN',
+  USERS = 'USERS',
+  USER_ADD = 'USER_ADD',
   CARDS = 'CARDS',
   CARD_ADD = 'CARD_ADD',
   CARD_UPDATE = 'CARD_UPDATE',
@@ -51,6 +54,14 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
       currency: CurrencyCode;
     };
   };
+}
+
+export interface ApplicationUsersAction extends Action<ActionType.USERS> {
+  payload: User[];
+}
+
+export interface ApplicationUserAddAction extends Action<ActionType.USER_ADD> {
+  payload: User;
 }
 
 export interface ApplicationCardsAction extends Action<ActionType.CARDS> {
@@ -100,6 +111,8 @@ export interface ApplicationUserInterfaceStateAction
 export type ApplicationAction =
   | ApplicationPageLoadAction
   | ApplicationLoginAction
+  | ApplicationUsersAction
+  | ApplicationUserAddAction
   | ApplicationCardsAction
   | ApplicationCardAddAction
   | ApplicationCardUpdateAction

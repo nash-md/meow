@@ -1,7 +1,7 @@
-import { lanes } from '../Constants';
 import { ApplicationStore } from './ApplicationStore';
 
 export const Default: ApplicationStore = {
+  users: [],
   cards: [],
   lanes: [],
   session: {

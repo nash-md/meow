@@ -39,6 +39,17 @@ export const application = (state = Default, action: ApplicationAction) => {
           },
         },
       };
+    case ActionType.USERS:
+      return {
+        ...state,
+        users: [...action.payload],
+      };
+    case ActionType.USER_ADD:
+      return {
+        ...state,
+        users: [...state.users, action.payload],
+      };
+
     case ActionType.CARDS:
       return {
         ...state,

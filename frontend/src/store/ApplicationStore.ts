@@ -2,8 +2,10 @@ import { CurrencyCode } from '../interfaces/Account';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
+import { User } from '../interfaces/User';
 
 export interface ApplicationStore {
+  users: User[];
   cards: Card[];
   lanes: Lane[];
   session: {

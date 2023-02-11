@@ -27,7 +27,7 @@ export const Form = ({ id }: FormProps) => {
   }, [name, inForecast]);
 
   const save = async () => {
-    await client!.updateLane(lane!.id, name, inForecast);
+    await client!.updateLane({ ...lane!, name, inForecast });
 
     store.dispatch({
       type: ActionType.LANE_UPDATE,

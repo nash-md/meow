@@ -1,7 +1,31 @@
 import { Button } from '@adobe/react-spectrum';
-import { Setup } from '../components/Setup';
+import { DateTime } from 'luxon';
+import { useContext, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { ActionType } from '../actions/Actions';
+import { Form } from '../components/hire/Form';
+import { RequestHelperContext } from '../context/RequestHelperContextProvider';
+import { selectUsers, store } from '../store/Store';
 
 export const HirePage = () => {
+  const { client } = useContext(RequestHelperContext);
+  const users = useSelector(selectUsers);
+
+  useEffect(() => {
+    const execute = async () => {
+      let users = await client!.getUsers();
+
+      store.dispatch({
+        type: ActionType.USERS,
+        payload: [...users],
+      });
+    };
+
+    if (client) {
+      execute();
+    }
+  }, [client]);
+
   return (
     <div
       style={{
@@ -11,13 +35,46 @@ export const HirePage = () => {
         backgroundColor: 'white',
       }}
     >
+      <Form />
+
+      <div style={{ height: '10px' }}></div>
+
+      <h2 style={{ margin: 0 }}>Users</h2>
+      <table>
+        <tbody>
+          {users.map((user) => {
+            const ago = user.createdAt
+              ? DateTime.fromISO(user.createdAt).toRelative()
+              : '';
+
+            return (
+              <tr key={user.id}>
+                <td style={{ width: '200px' }}>
+                  <b>{user.name}</b>
+                </td>
+                <td>{ago}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <br />
+      <h2 style={{ margin: 0 }}>Hire</h2>
       <table>
         <tbody>
           <tr>
             <td>
               <img src="a.png" style={{ width: '100px' }} />
             </td>
-            <td style={{ padding: '20px', fontSize: '1.2em' }}>
+            <td
+              style={{
+                paddingLeft: '20px',
+                paddingBottom: '20px',
+                paddingRight: '20px',
+                fontSize: '1.2em',
+              }}
+            >
               <h4 style={{ fontSize: '1.2em', margin: '0' }}>Finn</h4>
               Finn is a highly intelligent with a tendency to be bossy at times.
               Despite his bossy demeanor, Finn is a true friend to those he

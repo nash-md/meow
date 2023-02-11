@@ -4,7 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Application from './Application';
 import LoginPage from './pages/LoginPage';
-import { selectIsPageLoaded, selectToken, store } from './store/Store';
+import {
+  selectBrowserState,
+  selectIsPageLoaded,
+  selectToken,
+  store,
+} from './store/Store';
 import { useContext, useEffect } from 'react';
 import { RequestHelper } from './helpers/RequestHelper';
 import {
@@ -13,11 +18,14 @@ import {
 } from './helpers/LocalStorageHelper';
 import { ActionType } from './actions/Actions';
 import { RequestHelperContext } from './context/RequestHelperContextProvider';
+import { YouAreOffline } from './components/YouAreOffline';
 
 export const SessionOrNot = () => {
   const { setClient } = useContext(RequestHelperContext);
 
   const token = useSelector(selectToken);
+  const state = useSelector(selectBrowserState);
+
   const isPageLoaded = useSelector(selectIsPageLoaded);
 
   useEffect(() => {
@@ -66,9 +74,13 @@ export const SessionOrNot = () => {
 
   useBrowserState();
 
-  if (!token) {
-    return <LoginPage />;
-  }
-
-  return <Application />;
+  const getPage = (token: string | undefined) => {
+    return !token ? <LoginPage /> : <Application />;
+  };
+  return (
+    <>
+      {state === 'offline' && <YouAreOffline />}
+      {getPage(token)}
+    </>
+  );
 };
