@@ -1,6 +1,6 @@
 export const CardRequestSchema = {
   type: 'object',
-  required: ['lane', 'name', 'amount'],
+  required: ['lane', 'name'],
   properties: {
     lane: { type: 'string' },
     name: { type: 'string' },

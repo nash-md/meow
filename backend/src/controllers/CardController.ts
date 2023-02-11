@@ -1,7 +1,9 @@
 import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
+import { IS_ISO_8601_REGEXP } from '../Constants';
 import { Card } from '../entities/Card';
 import { Event, EventType } from '../entities/Event';
+import { Lane } from '../entities/Lane';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 import { InvalidUrlError } from '../errors/InvalidUrlError';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
@@ -56,15 +58,26 @@ const create = async (
   res: Response,
   next: NextFunction
 ) => {
+  // try to lookup the lane by friendly name first
+  const query = {
+    accountId: req.jwt.account.id!.toString(),
+    name: req.body.lane,
+  };
+
+  const lane = await database.manager.findOneBy(Lane, query);
+
+  // TODO, lookup lane with id and throw if not found
+  const laneId = lane ? lane.id : req.body.lane;
+
   const card = new Card(
     req.jwt.account.id!.toString(),
     req.jwt.user.id!.toString(),
-    req.body.lane,
+    laneId,
     req.body.name,
     req.body.amount
   );
 
-  if (req.body.closedAt) {
+  if (req.body.closedAt && IS_ISO_8601_REGEXP.test(req.body.closedAt)) {
     card.closedAt = DateTime.fromISO(req.body.closedAt, {
       zone: 'utc',
     }).toJSDate();
