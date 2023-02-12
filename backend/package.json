@@ -3,6 +3,7 @@
   "version": "0.1",
   "description": "Welcome to the world of free sales funnel management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the funnel. Meow software was built to simplify your sales process, giving you a bird's eye view of your entire funnel.",
   "main": "worker.js",
+  "type": "module",
   "scripts": {
     "start": "npm run build && node build/worker.js",
     "build": "rm -rf build && tsc --build tsconfig.json",
@@ -28,8 +29,8 @@
     "jsonwebtoken": "^9.0.0",
     "luxon": "^3.1.1",
     "mongodb": "^3.7.3",
-    "pino": "^8.8.0",
-    "typeorm": "^0.3.11",
+    "pino": "^8.10.0",
+    "typeorm": "^0.3.12",
     "typescript": "^4.8.5"
   }
 }

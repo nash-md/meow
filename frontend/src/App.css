@@ -195,10 +195,25 @@ body {
   background-color: white;
   height: 100%;
   width: 450px;
-  padding: 10px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   top: 0;
+}
+
+.layer .header {
+  padding-bottom: 10px;
+}
+
+.layer .header .avatar {
+  border: 1px solid grey;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  text-align: center;
+  line-height: 36px;
+  font-size: 1.2rem;
+  background-color: rgb(230, 230, 230);
 }
 
 .layer .body {
@@ -267,4 +282,51 @@ body {
 
 .you-are-offline img {
   vertical-align: middle;
+}
+
+.forecast .filter {
+  padding: 20px;
+  background-color: #e6e6e6;
+  text-align: right;
+  display: flex;
+}
+
+.forecast .filter > div:nth-child(2) {
+  flex-grow: 1;
+}
+
+.forecast .canvas {
+  padding: 20px;
+}
+
+.forecast .canvas .tile {
+  background-color: white;
+  padding: 10px;
+}
+
+.forecast .canvas .tile .name {
+  margin: 0;
+  padding: 0;
+  color: grey;
+  font-weight: normal;
+}
+
+.forecast .canvas .tile > div {
+  display: flex;
+}
+
+.forecast .canvas .tile .metric {
+  padding-right: 40px;
+}
+
+.forecast .canvas .tile .metric h4 {
+  font-size: 2.6rem;
+  margin: 0;
+  padding: 0;
+  line-height: 2.6rem;
+  font-weight: normal;
+}
+
+.forecast .canvas .tile .metric span {
+  font-size: 1.2rem;
 }

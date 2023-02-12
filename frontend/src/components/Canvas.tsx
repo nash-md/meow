@@ -40,6 +40,13 @@ export const Canvas = () => {
         type: ActionType.CARDS,
         payload: [...cards],
       });
+
+      let users = await client!.getUsers();
+
+      store.dispatch({
+        type: ActionType.USERS,
+        payload: [...users],
+      });
     };
 
     if (client) {

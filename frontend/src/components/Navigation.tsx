@@ -26,20 +26,23 @@ export const Navigation = () => {
 
       <div className="item">
         <Link to="/">
-          <img
-            alt="Forecast"
-            src={`${currency?.toLocaleLowerCase()}-icon.svg`}
-          />
+          <img alt="Deals" src={`${currency?.toLocaleLowerCase()}-icon.svg`} />
         </Link>
       </div>
+
       <div className="item">
-        <Link to="/setup">
-          <img alt="Setup" src="setup-icon.svg" />
+        <Link to="/forecast">
+          <img alt="Forecast" src="forecast-icon.svg" />
         </Link>
       </div>
       <div className="item">
         <Link to="/hire">
           <img alt="Hire a Specialist" src="paw-icon.svg" />
+        </Link>
+      </div>
+      <div className="item">
+        <Link to="/setup">
+          <img alt="Setup" src="setup-icon.svg" />
         </Link>
       </div>
     </>

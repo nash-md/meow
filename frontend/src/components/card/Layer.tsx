@@ -1,17 +1,27 @@
 import { Button, Tabs, TabList, Item, TabPanels } from '@adobe/react-spectrum';
 import { useSelector } from 'react-redux';
 import { ActionType } from '../../actions/Actions';
-import { selectInterfaceStateId, store } from '../../store/Store';
+import {
+  selectCard,
+  selectInterfaceStateId,
+  selectUser,
+  store,
+} from '../../store/Store';
 import { Form } from './Form';
 import { Events } from './Events';
 import { Card } from '../../interfaces/Card';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { useContext } from 'react';
+import { ApplicationStore } from '../../store/ApplicationStore';
 
 export const Layer = () => {
   const { client } = useContext(RequestHelperContext);
-
   const id = useSelector(selectInterfaceStateId);
+
+  const card = useSelector((store: ApplicationStore) => selectCard(store, id));
+  const user = useSelector((store: ApplicationStore) =>
+    selectUser(store, card?.user)
+  );
 
   const hideCardDetail = () => {
     store.dispatch({
@@ -37,7 +47,13 @@ export const Layer = () => {
   return (
     <div className="layer">
       <div className="header">
-        <div style={{ float: 'right' }}>
+        <div style={{ float: 'left' }}>
+          <div className="avatar">
+            {user?.name.substring(0, 1).toUpperCase()}
+          </div>
+        </div>
+
+        <div style={{ float: 'right', marginTop: '4px' }}>
           <Button variant="primary" onPress={() => hideCardDetail()}>
             Close
           </Button>

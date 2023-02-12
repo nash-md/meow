@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { ResponseParseError } from '../errors/ResponseParseError';
@@ -39,7 +40,7 @@ export class RequestHelper {
       segments.push(strip(segment));
     }
 
-    return `${segments.join('/')}/`;
+    return `${segments.join('/')}`;
   }
 
   getHeaders(method: 'POST' | 'GET' | 'DELETE') {
@@ -212,6 +213,18 @@ export class RequestHelper {
     let url = this.getUrl(`/api/users/`);
 
     return this.doFetch(url, 'POST', { name, password });
+  }
+
+  async fetchForecast(start: DateTime, end: DateTime, user: string) {
+    let url = this.getUrl(
+      `/api/forecast?${new URLSearchParams({
+        start: start.toISODate(),
+        end: end.toISODate(),
+        user: user,
+      })}`
+    );
+
+    return this.doFetch(url, 'GET');
   }
 
   async login(name: string, password: string) {

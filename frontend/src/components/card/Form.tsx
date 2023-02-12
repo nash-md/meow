@@ -6,7 +6,12 @@ import { selectCard, selectLanes, store as s } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Card } from '../../interfaces/Card';
 
-export const Form = ({ add, id }: any) => {
+export interface FormProps {
+  id: string | undefined;
+  add: any;
+}
+
+export const Form = ({ add, id }: FormProps) => {
   const lanes = useSelector(selectLanes);
   const [name, setName] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
@@ -60,7 +65,7 @@ export const Form = ({ add, id }: any) => {
 
   return (
     <div>
-      <div style={{ padding: '10px' }}>
+      <div style={{ marginTop: '10px' }}>
         <TextField
           onChange={setName}
           value={name}
@@ -70,7 +75,7 @@ export const Form = ({ add, id }: any) => {
           label="Name"
         />
       </div>
-      <div style={{ padding: '10px', display: 'flex' }}>
+      <div style={{ display: 'flex', marginTop: '10px' }}>
         <div>
           <TextField
             onChange={setAmount}
