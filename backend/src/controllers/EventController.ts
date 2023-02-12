@@ -1,10 +1,10 @@
 import { Response, NextFunction } from 'express';
-import { Card } from '../entities/Card';
-import { Event, EventType } from '../entities/Event';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError';
-import { InvalidUrlError } from '../errors/InvalidUrlError';
-import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
-import { database } from '../worker';
+import { Card } from '../entities/Card.js';
+import { Event, EventType } from '../entities/Event.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { database } from '../worker.js';
 
 const list = async (
   req: AuthenticatedRequest,

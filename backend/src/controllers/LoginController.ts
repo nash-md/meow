@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider';
-import { Account, CurrencyCode } from '../entities/Account';
-import { User } from '../entities/User';
-import { AccountNotFoundError } from '../errors/AccountNotFoundError';
-import { TokenHelper } from '../helpers/TokenHelper';
-import { log } from '../logger';
-import { database } from '../worker';
+import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
+import { Account } from '../entities/Account.js';
+import { User } from '../entities/User.js';
+import { AccountNotFoundError } from '../errors/AccountNotFoundError.js';
+import { TokenHelper } from '../helpers/TokenHelper.js';
+import { log } from '../logger.js';
+import { database } from '../worker.js';
 
 const handle = async (req: Request, res: Response, next: NextFunction) => {
   log.info(`get user by name: ${req.body.name}`);

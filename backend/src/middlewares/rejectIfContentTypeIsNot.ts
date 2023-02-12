@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { InvalidContentTypeError } from '../errors/InvalidContentTypeError';
+import { InvalidContentTypeError } from '../errors/InvalidContentTypeError.js';
 
 type ContentType = 'application/json' | 'text/plain';
 

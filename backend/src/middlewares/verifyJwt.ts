@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { InvalidTokenError } from '../errors/InvalidTokenError';
-import { TokenHelper } from '../helpers/TokenHelper';
+import { InvalidTokenError } from '../errors/InvalidTokenError.js';
+import { TokenHelper } from '../helpers/TokenHelper.js';
 
 export const verifyJwt = (
   request: Request,

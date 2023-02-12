@@ -1,8 +1,10 @@
-import * as jwt from 'jsonwebtoken';
-import { User } from '../entities/User';
-import { UserInvalidError } from '../errors/UserInvalidError';
+import jsonwebtoken from 'jsonwebtoken';
+const { sign, verify } = jsonwebtoken;
 
-import { log } from '../logger';
+import { User } from '../entities/User.js';
+import { UserInvalidError } from '../errors/UserInvalidError.js';
+
+import { log } from '../logger.js';
 
 export interface TokenPayload {
   userId: string;
@@ -23,11 +25,11 @@ const createJwt = (user: User, ttl: number): string => {
     accountId: user.accountId,
   };
 
-  return jwt.sign(payload, process.env.SESSION_SECRET!);
+  return sign(payload, process.env.SESSION_SECRET!);
 };
 
 const verifyJwt = (token: string): TokenPayload => {
-  const payload = <TokenPayload>jwt.verify(token, process.env.SESSION_SECRET!);
+  const payload = <TokenPayload>verify(token, process.env.SESSION_SECRET!);
 
   log.debug(`createJwt result ${JSON.stringify(payload)}`);
   // TODO add error handling

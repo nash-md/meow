@@ -1,9 +1,9 @@
 import { Response, NextFunction } from 'express';
-import { Account, CurrencyCode } from '../entities/Account';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError';
-import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError';
-import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
-import { database } from '../worker';
+import { Account, CurrencyCode } from '../entities/Account.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
+import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { database } from '../worker.js';
 
 const parseCurrencyCode = (value: string): CurrencyCode => {
   if (value in CurrencyCode) {

@@ -1,12 +1,12 @@
 import { Response, NextFunction } from 'express';
-import { Account } from '../entities/Account';
-import { User } from '../entities/User';
-import { AccountNotFoundError } from '../errors/AccountNotFoundError';
-import { InvalidHeaderError } from '../errors/InvalidHeaderError';
-import { UserNotFoundError } from '../errors/UserNotFoundError';
+import { Account } from '../entities/Account.js';
+import { User } from '../entities/User.js';
+import { AccountNotFoundError } from '../errors/AccountNotFoundError.js';
+import { InvalidHeaderError } from '../errors/InvalidHeaderError.js';
+import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 
-import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
-import { database } from '../worker';
+import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { database } from '../worker.js';
 
 export const addEntityToHeader = async (
   request: AuthenticatedRequest,

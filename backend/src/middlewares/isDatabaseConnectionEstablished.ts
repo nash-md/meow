@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { DatabaseConnectionError } from '../errors/DatabaseConnectionError';
-import { database } from '../worker';
+import { DatabaseConnectionError } from '../errors/DatabaseConnectionError.js';
+import { database } from '../worker.js';
 
 export const isDatabaseConnectionEstablished = (
   request: Request,

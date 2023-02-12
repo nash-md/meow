@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { ApplicationError } from './ApplicationError';
+import { ApplicationError } from './ApplicationError.js';
 
 export class UserInvalidError extends ApplicationError {
   constructor(description?: string) {

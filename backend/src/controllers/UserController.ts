@@ -1,12 +1,11 @@
 import { Response, NextFunction } from 'express';
-import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider';
-import { Lane, LaneRequest } from '../entities/Lane';
-import { User } from '../entities/User';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError';
-import { InvalidUrlError } from '../errors/InvalidUrlError';
-import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
-import { database } from '../worker';
-import { isValidName, isValidPassword } from './RegisterControllerValidator';
+import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
+import { User } from '../entities/User.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { database } from '../worker.js';
+import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
 
 const list = async (
   req: AuthenticatedRequest,

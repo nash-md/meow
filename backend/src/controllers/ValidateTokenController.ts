@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { TokenHelper } from '../helpers/TokenHelper';
-import { log } from '../logger';
-import { database } from '../worker';
-import { Account } from '../entities/Account';
-import { AccountNotFoundError } from '../errors/AccountNotFoundError';
-import { UserNotFoundError } from '../errors/UserNotFoundError';
-import { User } from '../entities/User';
+import { TokenHelper } from '../helpers/TokenHelper.js';
+import { log } from '../logger.js';
+import { database } from '../worker.js';
+import { Account } from '../entities/Account.js';
+import { AccountNotFoundError } from '../errors/AccountNotFoundError.js';
+import { UserNotFoundError } from '../errors/UserNotFoundError.js';
+import { User } from '../entities/User.js';
 
 const validate = async (req: Request, res: Response) => {
   log.debug(`validate token ${req.body.token}`);

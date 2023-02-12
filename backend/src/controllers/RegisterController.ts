@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider';
-import { DefaultLanes } from '../Constants';
-import { Account, CurrencyCode } from '../entities/Account';
-import { Lane } from '../entities/Lane';
-import { User } from '../entities/User';
-import { TokenHelper } from '../helpers/TokenHelper';
-import { log } from '../logger';
-import { database } from '../worker';
-import { isValidName, isValidPassword } from './RegisterControllerValidator';
+import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
+import { DefaultLanes } from '../Constants.js';
+import { Account, CurrencyCode } from '../entities/Account.js';
+import { Lane } from '../entities/Lane.js';
+import { User } from '../entities/User.js';
+import { TokenHelper } from '../helpers/TokenHelper.js';
+import { log } from '../logger.js';
+import { database } from '../worker.js';
+import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by name: ${req.body.name}`);

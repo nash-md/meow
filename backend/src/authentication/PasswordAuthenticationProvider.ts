@@ -1,6 +1,6 @@
 import { compare, hash } from 'bcrypt';
-import { User } from '../entities/User';
-import { UserInvalidError } from '../errors/UserInvalidError';
+import { User } from '../entities/User.js';
+import { UserInvalidError } from '../errors/UserInvalidError.js';
 
 export interface PasswordUserAuthentication {
   secret: string;

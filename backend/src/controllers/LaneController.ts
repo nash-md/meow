@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { Lane, LaneRequest } from '../entities/Lane';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError';
-import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
-import { database } from '../worker';
+import { Lane, LaneRequest } from '../entities/Lane.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { database } from '../worker.js';
 
 const list = async (
   req: AuthenticatedRequest,

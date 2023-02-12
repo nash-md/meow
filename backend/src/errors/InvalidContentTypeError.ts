@@ -1,5 +1,5 @@
-import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
-import { ApplicationError } from './ApplicationError';
+import { StatusCodes } from 'http-status-codes';
+import { ApplicationError } from './ApplicationError.js';
 
 export class InvalidContentTypeError extends ApplicationError {
   constructor(description?: string) {

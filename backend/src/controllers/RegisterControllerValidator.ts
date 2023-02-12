@@ -1,11 +1,11 @@
 import {
   MAXIMUM_LENGTH_OF_USER_PASSWORD,
   MINIMUM_LENGTH_OF_USER_PASSWORD,
-} from '../Constants';
-import { User } from '../entities/User';
-import { InvalidUserPropertyError } from '../errors/InvalidUserPropertyError';
-import { UserAlreadyExistsError } from '../errors/UserAlreadyExistsError';
-import { database } from '../worker';
+} from '../Constants.js';
+import { User } from '../entities/User.js';
+import { InvalidUserPropertyError } from '../errors/InvalidUserPropertyError.js';
+import { UserAlreadyExistsError } from '../errors/UserAlreadyExistsError.js';
+import { database } from '../worker.js';
 
 export const isValidPassword = async (password: string) => {
   if (password.length < MINIMUM_LENGTH_OF_USER_PASSWORD) {

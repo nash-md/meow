@@ -1,10 +1,11 @@
 import Ajv from 'ajv';
 import { Response } from 'express';
-import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError';
-import { log } from '../logger';
-import { AuthenticatedRequest } from '../requests/AuthenticatedRequest';
+import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
+import { log } from '../logger.js';
+import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 
 export const validateAgainst = (schema: {}) => {
+  // @ts-ignore
   const ajv = new Ajv();
 
   const validate = ajv.compile(schema);
