@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-12
+
+- added forecast to frontend
+- support for top level async
+
 ## 2023-02-10
 
 - added OpenAPI 3.0 definitions

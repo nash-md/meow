@@ -45,7 +45,7 @@ const fetch = async (
     if (req.query.user && req.query.user !== FILTER_BY_NONE.key) {
       match.$match.user = req.query.user;
     }
-    console.log(match);
+
     const group = {
       $group: {
         _id: null,
