@@ -59,10 +59,12 @@ export class Event {
   }
 }
 
+// TODO inconsistent naming
 export enum EventType {
   Comment = 'comment',
   Lane = 'lane',
   Amount = 'amount',
   ClosedAt = 'closed-at',
   CreatedAt = 'created-at',
+  Assign = 'assign',
 }

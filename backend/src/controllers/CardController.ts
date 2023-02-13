@@ -4,6 +4,7 @@ import { IS_ISO_8601_REGEXP } from '../Constants.js';
 import { Card } from '../entities/Card.js';
 import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
+import { User } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
@@ -115,6 +116,16 @@ const update = async (
       throw new EntityNotFoundError();
     }
 
+    let user: User | null = null;
+
+    if (req.body.user) {
+      user = await database.manager.findOneById(User, req.body.user);
+
+      if (!user || user?.accountId !== req.jwt.account.id.toString()) {
+        throw new EntityNotFoundError();
+      }
+    }
+
     if (card.lane !== req.body.lane) {
       const event = new Event(
         card.accountId,
@@ -172,10 +183,26 @@ const update = async (
       }).toJSDate();
     }
 
+    if (user && user.id!.toString() !== card.user.toString()) {
+      const event = new Event(
+        card.accountId,
+        req.params.id,
+        req.jwt.user.id!?.toString(),
+        EventType.Assign,
+        {
+          from: card.user,
+          to: user.id,
+        }
+      );
+
+      await database.manager.save(event);
+
+      card.user = user.id!.toString();
+    }
+
     card.name = req.body.name;
     card.lane = req.body.lane;
     card.amount = req.body.amount;
-    card.user = req.body.user;
 
     const updated = await database.manager.save(card);
 
