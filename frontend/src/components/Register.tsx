@@ -14,9 +14,18 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [strenght, setStrenght] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
     setError('');
+
+    let l = Array(9).fill(0);
+
+    if (password.length > 3) {
+      l = l.map((_, i) => (i < password.length - 3 ? 1 : 0));
+    }
+
+    setStrenght([...l]);
   }, [name, password]);
 
   const authenticate = async () => {
@@ -57,14 +66,13 @@ export const Register = () => {
 
   return (
     <>
-      <h1>Register</h1>
-      <div className="register">
+      <div className="register" style={{ marginTop: '20px' }}>
         <div>
           <TextField
             label="Name"
             isDisabled={isLoading}
             onChange={setName}
-            width={120}
+            width={180}
           />
         </div>
 
@@ -73,10 +81,23 @@ export const Register = () => {
             type="password"
             label="Password"
             onChange={setPassword}
-            width={120}
+            width={200}
             isDisabled={isLoading}
           />
+
+          <div style={{ paddingTop: '5px' }}>
+            {strenght.map((value: number, index: number) => {
+              return (
+                <img
+                  key={index}
+                  src={value ? '/heart-icon-red.svg' : '/heart-icon.svg'}
+                  style={{ width: '20px', height: '24px', paddingRight: '2px' }}
+                />
+              );
+            })}
+          </div>
         </div>
+
         <div style={{ marginTop: '25px' }}>
           <Button onPress={authenticate} isDisabled={isLoading} variant="cta">
             Register

@@ -58,10 +58,9 @@ export const Login = () => {
 
   return (
     <>
-      <h1>Login</h1>
-      <div className="login">
+      <div className="login" style={{ marginTop: '20px' }}>
         <div>
-          <TextField label="Name" onChange={setName} width={120} />
+          <TextField label="Name" onChange={setName} width={180} />
         </div>
 
         <div>
@@ -69,7 +68,7 @@ export const Login = () => {
             type="password"
             label="Password"
             onChange={setPassword}
-            width={120}
+            width={200}
           />
         </div>
         <div style={{ marginTop: '25px' }}>

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-13
+
+- added list with won opportunities
+- opportunities can be re-assigned on the frontend
+
 ## 2023-02-12
 
 - added forecast to frontend
