@@ -1,4 +1,5 @@
 import { Event } from '../../../interfaces/Event';
+import { Avatar } from '../../Avatar';
 
 interface CommentProps {
   event: Event;
@@ -6,8 +7,9 @@ interface CommentProps {
 
 export const Comment = ({ event }: CommentProps) => {
   return (
-    <div style={{ backgroundColor: 'rgb(230, 230, 230)', padding: '10px' }}>
-      {event.body?.text}
+    <div className="comment">
+      <Avatar id={event.userId} width={0} />
+      <div className="text">{event.body?.text}</div>
     </div>
   );
 };
