@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { TimelineSpacer } from './TimeLineSpacer';
 import { DateTime } from 'luxon';
 import { Lane } from './events/Lane';
@@ -9,6 +9,7 @@ import { Event, EventType } from '../../interfaces/Event';
 import { CreatedAt } from './events/CreatedAt';
 import { Amount } from './events/Amount';
 import { ClosedAt } from './events/ClosedAt';
+import { Assign } from './events/Assign';
 
 export interface EventsProps {
   id?: string;
@@ -19,6 +20,7 @@ export const Events = ({ id }: EventsProps) => {
 
   const [list, setList] = useState([]);
   const [comment, setComment] = useState('');
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     const execute = async () => {
@@ -31,6 +33,10 @@ export const Events = ({ id }: EventsProps) => {
       execute();
     }
   }, [client, id]);
+
+  useMemo(() => {
+    setIsValid(comment.length > 0);
+  }, [comment]);
 
   const save = async () => {
     if (!id) {
@@ -58,24 +64,19 @@ export const Events = ({ id }: EventsProps) => {
         return <Comment event={event} />;
       case EventType.CreatedAt:
         return <CreatedAt />;
-
+      case EventType.Assign:
+        return <Assign event={event} />;
       default:
         break;
     }
   };
 
   return (
-    <div
-      style={{
-        overflow: 'auto',
-        height: '100%',
-        position: 'relative',
-      }}
-    >
+    <div className="card-events">
       <div style={{ padding: '10px' }}>
         <TextArea onChange={setComment} width="100%" height="80px"></TextArea>
         <div style={{ marginTop: '10px' }}>
-          <Button variant="primary" onPress={save}>
+          <Button isDisabled={!isValid} variant="primary" onPress={save}>
             Save
           </Button>
         </div>
@@ -84,8 +85,9 @@ export const Events = ({ id }: EventsProps) => {
       {list.map((event: any, index: number) => {
         const ago = DateTime.fromISO(event.createdAt).toRelative();
         return (
-          <div key={event.id} style={{ padding: '10px' }}>
-            <div style={{ fontSize: '1.2em' }}>{getTitle(event)}</div> {ago}
+          <div key={event.id} className="item">
+            <div>{getTitle(event)}</div>
+            <span className="date">{ago}</span>
             {index !== list.length - 1 && <TimelineSpacer />}
           </div>
         );

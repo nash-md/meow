@@ -4,24 +4,24 @@ import { ActionType } from '../../actions/Actions';
 import {
   selectCard,
   selectInterfaceStateId,
-  selectUser,
+  selectUsers,
   store,
 } from '../../store/Store';
 import { Form } from './Form';
 import { Events } from './Events';
 import { Card } from '../../interfaces/Card';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
+import { Avatar } from '../Avatar';
+import { User } from '../../interfaces/User';
 
 export const Layer = () => {
   const { client } = useContext(RequestHelperContext);
   const id = useSelector(selectInterfaceStateId);
-
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
-  const user = useSelector((store: ApplicationStore) =>
-    selectUser(store, card?.user)
-  );
+  const [isUserLayerVisible, setIsUserLayerVisible] = useState(false);
+  const users = useSelector(selectUsers);
 
   const hideCardDetail = () => {
     store.dispatch({
@@ -30,28 +30,50 @@ export const Layer = () => {
     });
   };
 
+  const assign = async (id: User['id']) => {
+    console.log(`assign card to user ${id}`);
+
+    const updated = await client!.updateCard({ ...card!, user: id });
+
+    store.dispatch({
+      type: ActionType.CARD_UPDATE,
+      payload: { ...card, ...updated },
+    });
+
+    setIsUserLayerVisible(false);
+  };
+
   const add = async (card: Card) => {
     // TODO should handle Card and CardPreview types
+    console.log(card);
+
+    let updated = {};
+    console.log(card);
     if (card.id) {
-      card = await client!.updateCard(card);
+      updated = await client!.updateCard(card);
     } else {
-      card = await client!.createCard(card);
+      updated = await client!.createCard(card);
     }
 
     store.dispatch({
       type: ActionType.CARD_UPDATE,
-      payload: card,
+      payload: { ...card, ...updated },
     });
   };
 
   return (
     <div className="layer">
       <div className="header">
-        <div style={{ float: 'left' }}>
-          <div className="avatar">
-            {user?.name.substring(0, 1).toUpperCase()}
+        {card?.user && (
+          <div
+            style={{ float: 'left' }}
+            onClick={() => {
+              setIsUserLayerVisible(!isUserLayerVisible);
+            }}
+          >
+            <Avatar id={card?.user} width={0} />
           </div>
-        </div>
+        )}
 
         <div style={{ float: 'right', marginTop: '4px' }}>
           <Button variant="primary" onPress={() => hideCardDetail()}>
@@ -59,6 +81,34 @@ export const Layer = () => {
           </Button>
         </div>
       </div>
+
+      {isUserLayerVisible && (
+        <div style={{ backgroundColor: 'rgb(230, 230, 230)' }}>
+          <table>
+            <tbody>
+              {users.map((user: User) => {
+                return (
+                  <tr key={user.id}>
+                    <td>
+                      <Avatar id={user.id} width={0} />
+                    </td>
+                    <td>
+                      <b>
+                        {user.name} {user.id}
+                      </b>
+                    </td>
+                    <td>
+                      <Button variant="primary" onPress={() => assign(user.id)}>
+                        assign
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="body">
         <Tabs height="100%">

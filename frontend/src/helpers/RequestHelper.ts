@@ -117,10 +117,10 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async updateCard({ id, lane, name, amount, closedAt }: Card) {
+  async updateCard({ id, lane, name, amount, closedAt, user }: Card) {
     let url = this.getUrl(`/api/cards/${id}`);
 
-    return this.doFetch(url, 'POST', { lane, name, amount, closedAt });
+    return this.doFetch(url, 'POST', { lane, name, amount, closedAt, user });
   }
 
   async doFetch(url: string, method: HttpMethod, body?: any) {
@@ -218,6 +218,18 @@ export class RequestHelper {
   async fetchForecast(start: DateTime, end: DateTime, user: string) {
     let url = this.getUrl(
       `/api/forecast?${new URLSearchParams({
+        start: start.toISODate(),
+        end: end.toISODate(),
+        user: user,
+      })}`
+    );
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async fetchForecastList(start: DateTime, end: DateTime, user: string) {
+    let url = this.getUrl(
+      `/api/forecast/list?${new URLSearchParams({
         start: start.toISODate(),
         end: end.toISODate(),
         user: user,

@@ -50,7 +50,7 @@ export const Form = ({ add, id }: FormProps) => {
 
   const save = () => {
     const updated: Card = {
-      ...(card as Card),
+      ...card!,
       name,
       amount: parseInt(amount),
       closedAt: closedAt ? closedAt.toString() : undefined,
@@ -59,7 +59,6 @@ export const Form = ({ add, id }: FormProps) => {
     if (!updated.lane) {
       updated.lane = lanes[0].key;
     }
-
     add(updated);
   };
 
