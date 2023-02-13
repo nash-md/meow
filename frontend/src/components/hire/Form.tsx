@@ -56,9 +56,9 @@ export const Form = () => {
   };
 
   return (
-    <>
+    <div className="content-box">
       <h2 style={{ margin: 0 }}>Create New User</h2>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
         <div>
           <TextField
             onChange={setName}
@@ -89,6 +89,6 @@ export const Form = () => {
         </div>
       </div>
       <div style={{ color: 'red', paddingTop: '5px' }}> {error}</div>
-    </>
+    </div>
   );
 };

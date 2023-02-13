@@ -131,11 +131,11 @@ export const Canvas = () => {
       {state === 'lane-detail' && <LaneLayer />}
       <div className="board">
         <div className="title">
-          <span style={{ fontSize: '2em' }}>
+          <h2>
             {cards.length} Deals -
             <Currency value={amount} />
-          </span>
-          <div>
+          </h2>
+          <div style={{ paddingTop: '10px' }}>
             <Button variant="primary" onPress={() => showCardDetail()}>
               Add
             </Button>

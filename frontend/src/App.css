@@ -5,17 +5,33 @@ body {
   padding: 0;
 }
 
+h2 {
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  line-height: 1.8rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2rem;
+}
+
 #root {
   min-height: 100vh;
 }
 
 .welcome-page {
   margin: auto;
-  width: 500px;
+  width: 550px;
   padding-top: 50px;
   height: 100vh;
   background-color: white;
-  padding: 50px;
+  padding: 20px;
 }
 
 .welcome-page .login {
@@ -50,15 +66,45 @@ body {
 .page .navigation .item {
   padding: 6px;
   text-align: center;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .page .navigation .item img {
-  width: 26px;
+  width: 28px;
 }
 
 .page .main {
   flex-grow: 1;
+}
+
+.page .main {
+  flex-grow: 1;
+}
+
+.page .main .canvas {
+  padding: 20px;
+}
+
+.page .main .canvas .content-box {
+  background-color: white;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.page .main .canvas .content-box .list {
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+
+.page .main .canvas .content-box .list tr:first-child {
+  background-color: #e6e6e6;
+  font-weight: bold;
+  color: grey;
+}
+
+.page .main .canvas .content-box .list td {
+  padding: 6px 40px 6px 6px;
+  font-size: 1rem;
 }
 
 .trash-canvas {
@@ -94,7 +140,6 @@ body {
   border-bottom: 0px solid #d1d1d1;
   border-left: 0px solid #d1d1d1;
   padding: 0px;
-  background-color: white;
 }
 
 .board .lane .title {
@@ -109,6 +154,7 @@ body {
   position: relative;
   border-left: 1px solid #d1d1d1;
   border-bottom: 1px solid #d1d1d1;
+  padding: 0;
 }
 
 .lane:last-child .canvas {
@@ -117,16 +163,15 @@ body {
 
 .spacer {
   text-align: center;
-  line-height: 1.6em;
-  margin-bottom: 1em;
+  line-height: 1.2em;
 }
 
 .spacer .dot {
   background-color: var(--spectrum-global-color-gray-300);
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   display: inline-block;
-  border-radius: 5px;
+  border-radius: 50%;
 }
 
 .board {
@@ -205,11 +250,11 @@ body {
   padding-bottom: 10px;
 }
 
-.layer .header .avatar {
+.avatar {
   border: 1px solid grey;
   width: 36px;
   height: 36px;
-  border-radius: 18px;
+  border-radius: 50%;
   text-align: center;
   line-height: 36px;
   font-size: 1.2rem;
@@ -219,6 +264,35 @@ body {
 .layer .body {
   flex-grow: 1;
   overflow: auto;
+}
+
+.layer .card-events {
+  overflow: auto;
+  height: 100%;
+  position: relative;
+}
+
+.layer .card-events .item {
+  padding: 10px;
+  font-size: 1.2em;
+}
+
+.layer .card-events .item .date {
+  font-size: 0.9em;
+}
+
+.layer .card-events .item .comment {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.layer .card-events .item .comment .text {
+  background-color: rgb(230, 230, 230);
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 2px;
+  flex-grow: 1;
+  white-space: pre;
 }
 
 .setup-funnel {
@@ -295,15 +369,6 @@ body {
   flex-grow: 1;
 }
 
-.forecast .canvas {
-  padding: 20px;
-}
-
-.forecast .canvas .tile {
-  background-color: white;
-  padding: 10px;
-}
-
 .forecast .canvas .tile .name {
   margin: 0;
   padding: 0;
@@ -323,10 +388,44 @@ body {
   font-size: 2.6rem;
   margin: 0;
   padding: 0;
-  line-height: 2.6rem;
+  line-height: 2.8rem;
   font-weight: normal;
 }
 
 .forecast .canvas .tile .metric span {
   font-size: 1.2rem;
+  color: grey;
+}
+
+@keyframes cursor-blink-animation {
+  0% {
+    opacity: 1;
+  }
+  49.999% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hello-title {
+  display: flex;
+  min-height: 7rem;
+}
+
+.hello-title .text {
+  font-size: 8rem;
+  line-height: 7rem;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+
+.cursor-blink {
+  border: 2px solid #222222;
+  animation: cursor-blink-animation 1.5s infinite;
 }

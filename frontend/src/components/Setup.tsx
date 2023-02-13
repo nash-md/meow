@@ -59,46 +59,50 @@ export const Setup = () => {
   }, [client]);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2 style={{ margin: 0 }}>Currency</h2>
-      <Picker
-        selectedKey={currency}
-        aria-label="Currency"
-        onSelectionChange={(key) => updateCurrencyCode(key)}
-      >
-        <Item key="USD">US Dollar</Item>
-        <Item key="EUR">Euro</Item>
-        <Item key="SEK">Swedish Krona</Item>
-      </Picker>
-      <br /> <br />
-      <Funnel />
-      <h2 style={{ marginBottom: '5px' }}>
-        If You Were An Animal What Would You Be?
-      </h2>
-      <span
-        style={{ fontSize: '0.8em', display: 'block', marginBottom: '10px' }}
-      >
-        This information will definitely be shared with your coworkers
-      </span>
-      <div>
+    <div className="canvas">
+      <div className="content-box">
+        <h2>Currency</h2>
         <Picker
-          selectedKey={animal}
-          aria-label="Animal"
-          onSelectionChange={(key) => setAnimal(key.toString())}
+          selectedKey={currency}
+          aria-label="Currency"
+          onSelectionChange={(key) => updateCurrencyCode(key)}
+          marginTop="10px"
         >
-          <Item key="horse">Horse</Item>
-          <Item key="racoon">Raccoon</Item>
-          <Item key="cat">Cat</Item>
-          <Item key="dog">Dog</Item>
-          <Item key="bird">Bird</Item>
-          <Item key="no-answer">I don't want to answer</Item>
+          <Item key="USD">US Dollar</Item>
+          <Item key="EUR">Euro</Item>
+          <Item key="SEK">Swedish Krona</Item>
         </Picker>
       </div>
-      {animal === 'no-answer' && (
-        <div style={{ color: 'red' }}>
-          Warning: This answer will slow down your career progression.
+
+      <Funnel />
+
+      <div className="content-box">
+        <h2>If You Were An Animal What Would You Be?</h2>
+        <span
+          style={{ fontSize: '0.8em', display: 'block', marginBottom: '10px' }}
+        >
+          This information will definitely be shared with your coworkers
+        </span>
+        <div>
+          <Picker
+            selectedKey={animal}
+            aria-label="Animal"
+            onSelectionChange={(key) => setAnimal(key.toString())}
+          >
+            <Item key="horse">Horse</Item>
+            <Item key="racoon">Raccoon</Item>
+            <Item key="cat">Cat</Item>
+            <Item key="dog">Dog</Item>
+            <Item key="bird">Bird</Item>
+            <Item key="no-answer">I don't want to answer</Item>
+          </Picker>
         </div>
-      )}
+        {animal === 'no-answer' && (
+          <div style={{ color: 'red' }}>
+            Warning: This answer will slow down your career progression.
+          </div>
+        )}
+      </div>
     </div>
   );
 };

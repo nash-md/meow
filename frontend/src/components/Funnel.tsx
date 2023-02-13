@@ -122,22 +122,21 @@ export const Funnel = () => {
   };
 
   return (
-    <>
-      <h2 style={{ margin: 0 }}>Funnel</h2>
-      <div className="setup-funnel">
+    <div className="content-box">
+      <h2>Funnel</h2>
+      <div
+        className="setup-funnel"
+        style={{
+          backgroundColor: '#e6e6e6',
+          padding: '10px',
+          marginTop: '10px',
+        }}
+      >
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <Droppable droppableId="fixed">
             {(provided, snaphot) => {
               return (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  style={{
-                    backgroundColor: snaphot.isDraggingOver
-                      ? '#F6F6F6'
-                      : 'white',
-                  }}
-                >
+                <div ref={provided.innerRef} {...provided.droppableProps}>
                   {lanes.map((lane, index) => {
                     return (
                       <Lane
@@ -158,7 +157,7 @@ export const Funnel = () => {
           </Droppable>
         </DragDropContext>
         <div className="add-stage">
-          <Button onPress={add} variant="secondary" style="fill">
+          <Button onPress={add} variant="secondary">
             Add Stage
           </Button>
         </div>
@@ -169,6 +168,6 @@ export const Funnel = () => {
           Save
         </Button>
       </div>
-    </>
+    </div>
   );
 };

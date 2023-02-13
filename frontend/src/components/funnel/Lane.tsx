@@ -22,7 +22,7 @@ export const Lane = (props: any) => {
             <div
               className="lane"
               style={{
-                backgroundColor: snaphot.isDragging ? '#F6F6F6' : 'white',
+                backgroundColor: snaphot.isDragging ? '#F6F6F6' : 'inherit',
               }}
             >
               <div className="button">
