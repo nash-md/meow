@@ -174,6 +174,7 @@ try {
   forecast.use(rejectIfContentTypeIsNot('application/json'));
 
   forecast.route('/').get(ForecastController.fetch);
+  forecast.route('/list').get(ForecastController.list);
 
   app.use('/api/forecast', forecast);
 
