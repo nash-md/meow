@@ -14,6 +14,7 @@ import { DateTime, Interval } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
 import { Currency } from '../components/Currency';
 import { Card } from '../interfaces/Card';
+import { ForecastSpacer } from '../components/card/ForecastSpacer';
 
 const max = today(getLocalTimeZone());
 const min = today(getLocalTimeZone()).subtract({
@@ -30,6 +31,8 @@ export const ForecastPage = () => {
   const [end, setEnd] = useState<CalendarDate>(today(getLocalTimeZone()));
   const [name, setName] = useState(FILTER_BY_NONE.key);
   const [summary, setSummary] = useState({ amount: 0, count: 0 });
+  const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
+
   const [list, setList] = useState([]);
   const users = useSelector(selectUsers);
 
@@ -43,12 +46,19 @@ export const ForecastPage = () => {
     end.toString();
 
     const execute = async () => {
-      const summary = await client!.fetchForecast(
+      const summary = await client!.fetchForecastAchieved(
         DateTime.fromISO(start.toString()),
         DateTime.fromISO(end.toString()),
         name
       );
       setSummary(summary);
+
+      const predicted = await client!.fetchForecastPredicted(
+        DateTime.fromISO(start.toString()),
+        DateTime.fromISO(end.toString()),
+        name
+      );
+      setPredicted(predicted);
 
       const list = await client!.fetchForecastList(
         DateTime.fromISO(start.toString()),
@@ -119,25 +129,60 @@ export const ForecastPage = () => {
         <section className="content-box tile">
           <h3 className="name">Closed Won</h3>
           <div>
-            <div className="metric">
-              <h4>
-                <Currency value={summary.amount} />
-              </h4>
+            <div className="metric" style={{ width: '320px' }}>
+              <div>
+                <h4 style={{ display: 'inline-block', marginRight: '10px' }}>
+                  <Currency value={summary.amount} />{' '}
+                </h4>
+                <span>
+                  {(
+                    (summary.amount * 100) /
+                    (summary.amount + predicted.amount)
+                  ).toFixed(2)}
+                  %
+                </span>
+              </div>
+
               <span>Value</span>
             </div>
+
+            <ForecastSpacer />
+
+            <div className="metric" style={{ width: '320px' }}>
+              <h4>
+                <Currency value={predicted.amount} />
+              </h4>
+              <span>Pipeline - not closed yet</span>
+            </div>
+
+            <ForecastSpacer />
+
             <div className="metric">
+              <h4>
+                <Currency value={predicted.amount + summary.amount} />
+              </h4>
+              <span>Prediction - Value</span>
+            </div>
+          </div>
+
+          <div>
+            <div className="metric" style={{ width: '320px' }}>
               <h4>{summary.count}</h4>
               <span>Number of Deals</span>
             </div>
+
+            <ForecastSpacer />
+
+            <div className="metric" style={{ width: '320px' }}>
+              <h4>{predicted.count}</h4>
+              <span>Pipeline - not closed yet - Number of Deals</span>
+            </div>
+
+            <ForecastSpacer />
+
             <div className="metric">
-              <h4>
-                <Currency
-                  value={
-                    summary.amount > 0 ? summary.amount / summary.count : 0
-                  }
-                />
-              </h4>
-              <span>Average deal value</span>
+              <h4>{predicted.count + summary.count}</h4>
+              <span>Prediction - Count</span>
             </div>
           </div>
         </section>

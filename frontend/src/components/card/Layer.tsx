@@ -93,9 +93,7 @@ export const Layer = () => {
                       <Avatar id={user.id} width={0} />
                     </td>
                     <td>
-                      <b>
-                        {user.name} {user.id}
-                      </b>
+                      <b>{user.name}</b>
                     </td>
                     <td>
                       <Button variant="primary" onPress={() => assign(user.id)}>

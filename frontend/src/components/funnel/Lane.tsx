@@ -1,14 +1,15 @@
-import { Checkbox, TextField } from '@adobe/react-spectrum';
+import { Checkbox, Item, Picker, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
 export const Lane = (props: any) => {
   const [name, setName] = useState<string>(props.name);
   const [inForecast, setInForecast] = useState<boolean>(props.inForecast);
+  const [type, setType] = useState<string>(props.type);
 
   useEffect(() => {
-    props.update(props.index, { name, inForecast });
-  }, [name, inForecast]);
+    props.update(props.index, { name, inForecast, type });
+  }, [name, inForecast, type]);
 
   return (
     <Draggable draggableId={`drag_${props.id}`} index={props.index}>
@@ -38,6 +39,17 @@ export const Lane = (props: any) => {
                 />
               </div>
               <div className="attribute">
+                <Picker
+                  selectedKey={type}
+                  onSelectionChange={(value) => setType(value.toString())}
+                >
+                  <Item key="normal">Normal</Item>
+                  <Item key="closed-won">Closed Won</Item>
+                  <Item key="closed-lost">Closed Lost</Item>
+                </Picker>
+              </div>
+
+              <div className="attribute">
                 <Checkbox
                   isSelected={!inForecast}
                   onChange={(value) => setInForecast(!value)}
@@ -45,7 +57,6 @@ export const Lane = (props: any) => {
                   Exclude from Forecast
                 </Checkbox>
               </div>
-
               <div onClick={() => props.remove(props.index)} className="button">
                 <div className="remove"></div>
               </div>

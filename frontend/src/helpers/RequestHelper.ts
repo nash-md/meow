@@ -215,9 +215,21 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', { name, password });
   }
 
-  async fetchForecast(start: DateTime, end: DateTime, user: string) {
+  async fetchForecastAchieved(start: DateTime, end: DateTime, user: string) {
     let url = this.getUrl(
-      `/api/forecast?${new URLSearchParams({
+      `/api/forecast/achieved?${new URLSearchParams({
+        start: start.toISODate(),
+        end: end.toISODate(),
+        user: user,
+      })}`
+    );
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async fetchForecastPredicted(start: DateTime, end: DateTime, user: string) {
+    let url = this.getUrl(
+      `/api/forecast/predicted?${new URLSearchParams({
         start: start.toISODate(),
         end: end.toISODate(),
         user: user,

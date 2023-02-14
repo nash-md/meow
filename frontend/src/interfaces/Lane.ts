@@ -4,6 +4,7 @@ export interface Lane {
   name: string;
   index: number;
   inForecast: boolean;
+  tags?: Tags;
   color?: string;
 }
 
@@ -12,5 +13,10 @@ export interface LaneRequest {
   name: string;
   index: number;
   inForecast: boolean;
+  tags?: Tags;
   color?: string;
+}
+
+export interface Tags {
+  [key: string]: string | boolean;
 }

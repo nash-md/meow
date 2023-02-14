@@ -2,6 +2,7 @@ import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
+import { LANE_COLOR } from '../Constants';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { LaneRequest } from '../interfaces/Lane';
 import { selectLanes } from '../store/Store';
@@ -21,6 +22,7 @@ interface LaneListItem {
   id: number;
   name: string;
   inForecast: boolean;
+  type?: string;
   color?: string;
   externalId?: string;
 }
@@ -44,18 +46,22 @@ function removeLane<T>(lanes: T[], index: number): T[] {
 
 export const Funnel = () => {
   const [lanes, setLanes] = useState<LaneListItem[]>([]);
+  const [isValid, setIsValid] = useState(false);
+  const [error, setError] = useState('');
   const existingLanes = useSelector(selectLanes);
 
   const { client } = useContext(RequestHelperContext);
 
   useEffect(() => {
     const list = existingLanes.map((lane, index) => {
+      console.log(lane.tags?.type);
       return {
         id: index,
         name: lane.name,
         inForecast: lane.inForecast,
         color: lane.color,
         externalId: lane.id,
+        type: lane.tags?.type?.toString() ?? undefined,
       };
     });
 
@@ -95,10 +101,45 @@ export const Funnel = () => {
 
   const update = (
     index: number,
-    item: Pick<LaneListItem, 'inForecast' | 'name'>
+    item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>
   ) => {
     lanes[index].name = item.name;
     lanes[index].inForecast = item.inForecast;
+    lanes[index].type = item.type;
+
+    validate();
+  };
+
+  const validate = () => {
+    if (lanes.some((lane) => !lane.name)) {
+      setError('A stage name cannot be empty');
+      setIsValid(false);
+
+      return;
+    }
+
+    if (!lanes.some((lane) => lane.type === 'closed-won')) {
+      // lane type should be a TS type
+      setError(
+        'At least one stage must be labeled as closed won. This stage will be used to mark opportunities that are won'
+      );
+      setIsValid(false);
+
+      return;
+    }
+
+    if (!lanes.some((lane) => lane.type === 'closed-lost')) {
+      // lane type should be a TS type
+      setError(
+        'At least one stage must be labeled as closed lost. This stage will be used to mark opportunities you lost'
+      );
+      setIsValid(false);
+
+      return;
+    }
+
+    setError('');
+    setIsValid(true);
   };
 
   const remove = (index: number) => {
@@ -107,15 +148,34 @@ export const Funnel = () => {
     setLanes([...list]);
   };
 
+  const getLaneColorCode = (type: string | undefined) => {
+    if (type === 'closed-won') {
+      return LANE_COLOR.POSITIVE;
+    }
+
+    if (type === 'closed-lost') {
+      return LANE_COLOR.NEGATIVE;
+    }
+
+    return undefined;
+  };
+
   const save = () => {
     const updated: LaneRequest[] = lanes.map((lane, index) => {
-      return {
+      const payload: LaneRequest = {
         id: lane.externalId,
         name: lane.name,
         index: index,
-        color: lane.color,
         inForecast: lane.inForecast,
+        color: undefined,
       };
+
+      if (lane.type) {
+        payload.tags = { type: lane.type };
+        payload.color = getLaneColorCode(lane.type);
+      }
+      console.log(payload);
+      return payload;
     });
 
     client?.updateLanes(updated);
@@ -124,6 +184,7 @@ export const Funnel = () => {
   return (
     <div className="content-box">
       <h2>Funnel</h2>
+
       <div
         className="setup-funnel"
         style={{
@@ -144,6 +205,7 @@ export const Funnel = () => {
                         key={lane.id}
                         index={index}
                         name={lane.name}
+                        type={lane.type}
                         inForecast={lane.inForecast}
                         remove={remove}
                         update={update}
@@ -164,7 +226,8 @@ export const Funnel = () => {
       </div>
 
       <div style={{ marginTop: '10px' }}>
-        <Button onPress={save} variant="primary">
+        <div style={{ marginBottom: '5px' }}>{error}</div>
+        <Button onPress={save} variant="primary" isDisabled={!isValid}>
           Save
         </Button>
       </div>

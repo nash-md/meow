@@ -37,9 +37,8 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
         className="title"
         onClick={() => showLaneDetail(lane.key)}
         style={{
-          backgroundColor: lane.color ?? '#e6e6e6',
+          backgroundColor: lane.color ? lane.color : '#e6e6e6',
           color: lane.color ? 'white' : 'grey',
-
           display: 'flex',
         }}
       >
@@ -63,7 +62,7 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
 
       <div
         style={{
-          backgroundColor: lane.color ?? '#e6e6e6',
+          backgroundColor: lane.color ? lane.color : '#e6e6e6',
           padding: '5px',
           color: lane.color ? 'white' : 'grey',
         }}
