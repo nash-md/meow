@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-14
+
+- added logout to frontend
+- extended forecast, it will show the closed deals and predicted deals in the selected timeframe
+- the funnel configuration now includes a stage type to indicate the function of each stage, which enables users to rename the **Closed Won** and **Closed Lost** stages if needed.
+
 ## 2023-02-13
 
 - added list with won opportunities
