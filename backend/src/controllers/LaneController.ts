@@ -48,6 +48,7 @@ const update = async (
       lane.inForecast = req.body.inForcast;
       lane.key = Lane.createKeyFromName(req.body.name);
       lane.name = req.body.name;
+      lane.tags = req.body.tags;
 
       const updated = await database.manager.save(lane);
 
@@ -96,6 +97,7 @@ const updateAll = async (
               Lane.createKeyFromName(item.name),
               item.name,
               item.index,
+              item.tags ?? {},
               item.inForecast,
               item.color
             )
@@ -110,9 +112,10 @@ const updateAll = async (
           if (lane) {
             lane.name = item.name;
             lane.key = Lane.createKeyFromName(item.name);
-            lane.color = item.color;
+            lane.color = item.color === undefined ? '' : item.color;
             lane.index = item.index;
             lane.inForecast = item.inForecast;
+            lane.tags = item.tags ?? {};
           }
 
           const updated = await database.manager.save(lane);
