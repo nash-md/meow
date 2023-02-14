@@ -30,6 +30,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
           Lane.createKeyFromName(item.name),
           item.name,
           index,
+          item.tags,
           item.inForecast,
           item.color
         )

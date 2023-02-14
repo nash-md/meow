@@ -21,7 +21,6 @@ import { CardController } from './controllers/CardController.js';
 import { EventController } from './controllers/EventController.js';
 import { Card } from './entities/Card.js';
 import { Event } from './entities/Event.js';
-
 import { LoginController } from './controllers/LoginController.js';
 import { Account } from './entities/Account.js';
 import { User } from './entities/User.js';
@@ -173,7 +172,8 @@ try {
   forecast.use(isDatabaseConnectionEstablished);
   forecast.use(rejectIfContentTypeIsNot('application/json'));
 
-  forecast.route('/').get(ForecastController.fetch);
+  forecast.route('/achieved').get(ForecastController.achieved);
+  forecast.route('/predicted').get(ForecastController.predicted);
   forecast.route('/list').get(ForecastController.list);
 
   app.use('/api/forecast', forecast);

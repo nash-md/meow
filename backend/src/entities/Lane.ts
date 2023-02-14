@@ -28,6 +28,9 @@ export class Lane {
   inForecast: boolean;
 
   @Column()
+  tags: Tags;
+
+  @Column()
   color?: string;
 
   @Column({ type: 'timestamp' })
@@ -41,6 +44,7 @@ export class Lane {
     key: string,
     name: string,
     index: number,
+    tags: Tags,
     inForecast: boolean,
     color?: string
   ) {
@@ -48,6 +52,7 @@ export class Lane {
     this.name = name;
     this.key = key;
     this.index = index;
+    this.tags = tags;
     this.inForecast = inForecast;
     this.color = color;
   }
@@ -70,10 +75,15 @@ export class Lane {
   }
 }
 
+export interface Tags {
+  [key: string]: string | boolean;
+}
+
 export interface LaneRequest {
   id: string | undefined;
   name: string;
   index: number;
   inForecast: boolean;
+  tags?: Tags;
   color?: string;
 }

@@ -21,6 +21,9 @@ export const LanesRequestSchema = {
       color: {
         type: ['string', 'null'],
       },
+      tags: {
+        type: ['object'],
+      },
     },
   },
 };

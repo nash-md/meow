@@ -8,9 +8,19 @@ export const IS_ISO_8601_REGEXP =
 export const FILTER_BY_NONE = { name: 'Everyone', key: 'all' };
 
 export const DefaultLanes = [
-  { name: 'Not Qualified', inForecast: true },
-  { name: 'Qualified', inForecast: true },
-  { name: 'Comitted', inForecast: true },
-  { name: 'Closed Won', color: '#00b359', inForecast: false },
-  { name: 'Closed Lost', color: '#e30544', inForecast: false },
+  { name: 'Not Qualified', inForecast: true, tags: { type: 'normal' } },
+  { name: 'Qualified', inForecast: true, tags: { type: 'normal' } },
+  { name: 'Comitted', inForecast: true, tags: { type: 'normal' } },
+  {
+    name: 'Closed Won',
+    color: '#00b359',
+    inForecast: false,
+    tags: { type: 'closed-won' },
+  },
+  {
+    name: 'Closed Lost',
+    color: '#e30544',
+    inForecast: false,
+    tags: { type: 'closed-lost' },
+  },
 ];
