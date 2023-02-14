@@ -1,6 +1,7 @@
 import {
   today,
   startOfMonth,
+  endOfMonth,
   getLocalTimeZone,
   CalendarDate,
 } from '@internationalized/date';
@@ -16,7 +17,12 @@ import { Currency } from '../components/Currency';
 import { Card } from '../interfaces/Card';
 import { ForecastSpacer } from '../components/card/ForecastSpacer';
 
-const max = today(getLocalTimeZone());
+const max = today(getLocalTimeZone()).add({
+  years: 1,
+  months: 0,
+  days: 0,
+});
+
 const min = today(getLocalTimeZone()).subtract({
   years: 1,
   months: 0,
@@ -28,7 +34,9 @@ export const ForecastPage = () => {
   const [start, setStart] = useState<CalendarDate>(
     startOfMonth(today(getLocalTimeZone()))
   );
-  const [end, setEnd] = useState<CalendarDate>(today(getLocalTimeZone()));
+  const [end, setEnd] = useState<CalendarDate>(
+    endOfMonth(today(getLocalTimeZone()))
+  );
   const [name, setName] = useState(FILTER_BY_NONE.key);
   const [summary, setSummary] = useState({ amount: 0, count: 0 });
   const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
@@ -190,7 +198,7 @@ export const ForecastPage = () => {
         <section className="content-box tile">
           <h2>Deals by user</h2>
 
-          <table className="list">
+          <table className="list" style={{ width: '100%' }}>
             <tbody>
               <tr>
                 <td>Name</td>
@@ -212,7 +220,9 @@ export const ForecastPage = () => {
                       <b>{card.name}</b>
                     </td>
                     <td>
-                      <Currency value={card.amount} />
+                      <b>
+                        <Currency value={card.amount} />
+                      </b>
                     </td>
                     <td>{created.toRelative()}</td>
                     <td>{closed.toRelative()}</td>
