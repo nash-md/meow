@@ -8,6 +8,7 @@ import { ApplicationStore } from '../store/ApplicationStore';
 export enum ActionType {
   PAGE_LOAD = 'PAGE_LOAD',
   LOGIN = 'LOGIN',
+  LOGOUT = 'LOGOUT',
   USERS = 'USERS',
   USER_ADD = 'USER_ADD',
   CARDS = 'CARDS',
@@ -55,6 +56,8 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
     };
   };
 }
+
+export interface ApplicationLogoutAction extends Action<ActionType.LOGOUT> {}
 
 export interface ApplicationUsersAction extends Action<ActionType.USERS> {
   payload: User[];
@@ -111,6 +114,7 @@ export interface ApplicationUserInterfaceStateAction
 export type ApplicationAction =
   | ApplicationPageLoadAction
   | ApplicationLoginAction
+  | ApplicationLogoutAction
   | ApplicationUsersAction
   | ApplicationUserAddAction
   | ApplicationCardsAction

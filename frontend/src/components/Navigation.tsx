@@ -1,10 +1,17 @@
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { selectCurrency, selectName } from '../store/Store';
+import { ActionType } from '../actions/Actions';
+import { selectCurrency, selectName, store } from '../store/Store';
 
 export const Navigation = () => {
   const currency = useSelector(selectCurrency);
   const name = useSelector(selectName);
+
+  const logout = () => {
+    store.dispatch({
+      type: ActionType.LOGOUT,
+    });
+  };
 
   return (
     <>
@@ -44,6 +51,12 @@ export const Navigation = () => {
         <Link to="/setup">
           <img alt="Setup" src="setup-icon.svg" />
         </Link>
+      </div>
+
+      <div className="item" style={{ flexGrow: 1 }}></div>
+
+      <div className="item" onClick={logout}>
+        <img alt="Logout" src="exit-icon.svg" />
       </div>
     </>
   );

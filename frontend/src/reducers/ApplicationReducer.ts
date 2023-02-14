@@ -39,6 +39,25 @@ export const application = (state = Default, action: ApplicationAction) => {
           },
         },
       };
+    case ActionType.LOGOUT:
+      return {
+        ...state,
+        session: {
+          token: undefined,
+          alerts: 0,
+          user: {
+            id: undefined,
+            name: undefined,
+          },
+          account: {
+            id: undefined,
+            currency: undefined,
+          },
+        },
+        cards: [],
+        lanes: [],
+        users: [],
+      };
     case ActionType.USERS:
       return {
         ...state,

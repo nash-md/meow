@@ -26,10 +26,9 @@ export const Login = () => {
       const client = new RequestHelper(process.env.REACT_APP_URL);
       const payload = await client.login(name, password);
 
-      if (setClient) {
-        setClient(new RequestHelper(process.env.REACT_APP_URL, payload.token));
-      }
+      client.token = payload.token;
 
+      setClient!(client);
       setIsLoading(false);
 
       store.dispatch({
