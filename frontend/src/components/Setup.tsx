@@ -5,7 +5,8 @@ import { ActionType } from '../actions/Actions';
 import { useSelector } from 'react-redux';
 import { CurrencyCode } from '../interfaces/Account';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { Funnel } from './Funnel';
+import { LanesCanvas } from './setup/lane/LaneCanvas';
+import { SchemaCanvas } from './setup/card/SchemaCanvas';
 
 export const Setup = () => {
   const { client } = useContext(RequestHelperContext);
@@ -51,6 +52,13 @@ export const Setup = () => {
         type: ActionType.LANES,
         payload: [...lanes],
       });
+
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
+      });
     };
 
     if (client) {
@@ -74,7 +82,9 @@ export const Setup = () => {
         </Picker>
       </div>
 
-      <Funnel />
+      <LanesCanvas />
+
+      <SchemaCanvas />
 
       <div className="content-box">
         <h2>If You Were An Animal What Would You Be?</h2>

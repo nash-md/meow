@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-15
+
+- added schema controller and entity
+- support for schema configuration on opportunities. You can now add custom fields; textarea, text and dropdown.
+
 ## 2023-02-14
 
 - added logout to frontend

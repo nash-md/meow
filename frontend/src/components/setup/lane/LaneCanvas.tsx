@@ -2,21 +2,11 @@ import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
-import { LANE_COLOR } from '../Constants';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { LaneRequest } from '../interfaces/Lane';
-import { selectLanes } from '../store/Store';
-import { Lane } from './funnel/Lane';
-
-const animals: string[] = [
-  'Squirrel',
-  'Bear',
-  'Raccoon',
-  'Lion',
-  'Penguin',
-  'Walrus',
-  'Monkey',
-];
+import { ANIMALS, LANE_COLOR } from '../../../Constants';
+import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
+import { LaneRequest } from '../../../interfaces/Lane';
+import { selectLanes } from '../../../store/Store';
+import { Lane } from './Lane';
 
 interface LaneListItem {
   id: number;
@@ -44,7 +34,7 @@ function removeLane<T>(lanes: T[], index: number): T[] {
   return lanes;
 }
 
-export const Funnel = () => {
+export const LanesCanvas = () => {
   const [lanes, setLanes] = useState<LaneListItem[]>([]);
   const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState('');
@@ -54,7 +44,6 @@ export const Funnel = () => {
 
   useEffect(() => {
     const list = existingLanes.map((lane, index) => {
-      console.log(lane.tags?.type);
       return {
         id: index,
         name: lane.name,
@@ -85,8 +74,8 @@ export const Funnel = () => {
   const onDragStart = () => {};
 
   const add = () => {
-    const name = animals[10 - lanes.length]
-      ? animals[10 - lanes.length]
+    const name = ANIMALS[ANIMALS.length - lanes.length]
+      ? ANIMALS[lanes.length]
       : '...';
 
     setLanes([

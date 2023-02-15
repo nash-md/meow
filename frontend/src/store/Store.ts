@@ -23,6 +23,9 @@ export const selectUser = (store: ApplicationStore, id: string | undefined) =>
 export const selectLanes = (store: RootState) => store.lanes;
 export const selectLane = (store: ApplicationStore, key: string) =>
   store.lanes.find((lane) => lane.key === key);
+export const selectSchemas = (store: RootState) => store.schemas;
+export const selectSchemaByType = (store: ApplicationStore, type: string) =>
+  store.schemas.find((schema) => schema.type === type);
 export const selectName = (store: RootState) => store.session.user.name;
 export const selectCurrency = (store: RootState) =>
   store.session.account.currency;

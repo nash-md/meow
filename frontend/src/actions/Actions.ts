@@ -2,6 +2,7 @@ import { CurrencyCode } from '../interfaces/Account';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card, CardPreview } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
+import { Schema } from '../interfaces/Schema';
 import { User } from '../interfaces/User';
 import { ApplicationStore } from '../store/ApplicationStore';
 
@@ -16,6 +17,7 @@ export enum ActionType {
   CARD_UPDATE = 'CARD_UPDATE',
   CARD_DELETE = 'CARD_DELETE',
   ACCOUNT_UPDATE = 'ACCOUNT_UPDATE',
+  SCHEMAS = 'SCHEMAS',
   LANES = 'LANES',
   LANE_UPDATE = 'LANE_UPDATE',
   BROWSER_STATE = 'BROWSER_STATE',
@@ -90,6 +92,10 @@ export interface ApplicationAccountUpdateAction
   payload: CurrencyCode;
 }
 
+export interface ApplicationSchemasAction extends Action<ActionType.SCHEMAS> {
+  payload: Schema[];
+}
+
 export interface ApplicationLanesAction extends Action<ActionType.LANES> {
   payload: Lane[];
 }
@@ -123,6 +129,7 @@ export type ApplicationAction =
   | ApplicationCardDeleteAction
   | ApplicationAccountUpdateAction
   | ApplicationLanesAction
+  | ApplicationSchemasAction
   | ApplicationLaneUpdateAction
   | ApplicationBrowserStateAction
   | ApplicationUserInterfaceStateAction;

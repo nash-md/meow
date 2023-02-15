@@ -81,7 +81,6 @@ export const Layer = () => {
           </Button>
         </div>
       </div>
-
       {isUserLayerVisible && (
         <div style={{ backgroundColor: 'rgb(230, 230, 230)' }}>
           <table>
@@ -107,7 +106,6 @@ export const Layer = () => {
           </table>
         </div>
       )}
-
       <div className="body">
         <Tabs height="100%">
           {(id && (

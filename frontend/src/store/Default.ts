@@ -4,6 +4,7 @@ export const Default: ApplicationStore = {
   users: [],
   cards: [],
   lanes: [],
+  schemas: [],
   session: {
     token: undefined,
     alerts: 0,

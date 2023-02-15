@@ -127,6 +127,12 @@ export const application = (state = Default, action: ApplicationAction) => {
         },
       };
 
+    case ActionType.SCHEMAS:
+      return {
+        ...state,
+        schemas: [...action.payload],
+      };
+
     case ActionType.LANES:
       const lanes = action.payload.sort((a, b) => a.index - b.index);
 

@@ -5,3 +5,24 @@ export enum LANE_COLOR {
   POSITIVE = '#00b359',
   NEGATIVE = '#e30544',
 }
+
+export const ANIMALS: string[] = [
+  'Squirrel',
+  'Bear',
+  'Raccoon',
+  'Lion',
+  'Penguin',
+  'Walrus',
+  'Monkey',
+  'Tiger',
+  'Elephant',
+  'Giraffe',
+  'Kangaroo',
+  'Dolphin',
+  'Shark',
+  'Octopus',
+  'Gorilla',
+  'Leopard',
+  'Wolf',
+  'Zebra',
+];

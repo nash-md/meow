@@ -251,6 +251,18 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
+  async fetchSchemas() {
+    let url = this.getUrl(`/api/schemas/`);
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async updateSchema(type: string, schema: any) {
+    let url = this.getUrl(`/api/schemas/`);
+
+    return this.doFetch(url, 'POST', { type, schema });
+  }
+
   async login(name: string, password: string) {
     const url = this.getUrl(`/public/login`);
 
