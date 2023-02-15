@@ -47,12 +47,15 @@ import { UserRequestSchema } from './middlewares/schema-validation/UserRequestSc
 import { CardRequestSchema } from './middlewares/schema-validation/CardRequestSchema.js';
 import { ForecastController } from './controllers/ForecastController.js';
 import { DatabaseHelper } from './helpers/DatabaseHelper.js';
+import { Schema } from './entities/Schema.js';
+import { SchemaController } from './controllers/SchemaController.js';
+import { SchemaRequestSchema } from './middlewares/schema-validation/SchemaRequestSchema.js';
 
 export const database = new DataSource({
   type: 'mongodb',
   url: process.env.MONGODB_URI,
   useUnifiedTopology: true,
-  entities: [Account, User, Card, Lane, Event],
+  entities: [Account, User, Card, Lane, Event, Schema],
 });
 
 /* spinning up express */
@@ -177,6 +180,23 @@ try {
   forecast.route('/list').get(ForecastController.list);
 
   app.use('/api/forecast', forecast);
+
+  const schema = express.Router();
+
+  schema.use(express.json({ limit: '5kb' }));
+
+  schema.use(verifyJwt);
+  schema.use(addEntityToHeader);
+  schema.use(setHeaders);
+  schema.use(isDatabaseConnectionEstablished);
+  schema.use(rejectIfContentTypeIsNot('application/json'));
+
+  schema
+    .route('/')
+    .post(validateAgainst(SchemaRequestSchema), SchemaController.create);
+  schema.route('/').get(SchemaController.list);
+
+  app.use('/api/schemas', schema);
 
   const unprotected = express.Router();
 
