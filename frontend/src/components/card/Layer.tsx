@@ -44,11 +44,9 @@ export const Layer = () => {
   };
 
   const add = async (card: Card) => {
-    // TODO should handle Card and CardPreview types
-    console.log(card);
-
+    // TODO should handle Card and CardPreview (Partial) types
     let updated = {};
-    console.log(card);
+
     if (card.id) {
       updated = await client!.updateCard(card);
     } else {

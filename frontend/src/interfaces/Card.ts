@@ -7,9 +7,15 @@ export interface Card {
   user: string;
   amount: number;
   lane: string;
+  attributes: CardAttribute[];
   closedAt: string;
   readonly createdAt: string;
   updatedAt: string;
+}
+
+export interface CardAttribute {
+  keyId: string;
+  value: string;
 }
 
 export interface CardPreview

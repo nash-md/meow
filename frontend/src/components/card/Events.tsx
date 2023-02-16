@@ -10,6 +10,7 @@ import { CreatedAt } from './events/CreatedAt';
 import { Amount } from './events/Amount';
 import { ClosedAt } from './events/ClosedAt';
 import { Assign } from './events/Assign';
+import { Attribute } from './events/Attribute';
 
 export interface EventsProps {
   id?: string;
@@ -66,6 +67,8 @@ export const Events = ({ id }: EventsProps) => {
         return <CreatedAt />;
       case EventType.Assign:
         return <Assign event={event} />;
+      case EventType.Attribute:
+        return <Attribute event={event} />;
       default:
         break;
     }

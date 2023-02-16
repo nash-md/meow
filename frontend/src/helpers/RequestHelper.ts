@@ -117,10 +117,26 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async updateCard({ id, lane, name, amount, closedAt, user }: Card) {
+  // TODO use card entity
+  async updateCard({
+    id,
+    lane,
+    name,
+    amount,
+    closedAt,
+    user,
+    attributes,
+  }: Card) {
     let url = this.getUrl(`/api/cards/${id}`);
 
-    return this.doFetch(url, 'POST', { lane, name, amount, closedAt, user });
+    return this.doFetch(url, 'POST', {
+      lane,
+      name,
+      amount,
+      closedAt,
+      user,
+      attributes,
+    });
   }
 
   async doFetch(url: string, method: HttpMethod, body?: any) {

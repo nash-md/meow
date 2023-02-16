@@ -4,6 +4,7 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
 import { ANIMALS } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
+import { SchemaAttribute } from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType } from '../../../store/Store';
 import { SelectAttribute } from './SelectAttribute';
@@ -28,10 +29,22 @@ function removeAttribute<T>(items: T[], index: number): T[] {
 }
 
 export interface AttributeListItem {
-  id: number;
+  key: string;
+  index: number;
   name: string;
   type: 'text' | 'textarea' | 'select';
   options?: string[];
+}
+
+function generateUUID(): string {
+  let uuid = '';
+  for (let i = 0; i < 32; i++) {
+    if (i === 8 || i === 12 || i === 16 || i === 20) {
+      uuid += '-';
+    }
+    uuid += Math.floor(Math.random() * 16).toString(16);
+  }
+  return uuid;
 }
 
 export const SchemaCanvas = () => {
@@ -41,12 +54,17 @@ export const SchemaCanvas = () => {
 
   useEffect(() => {
     if (existingSchema) {
-      setItems([...existingSchema.schema]);
+      const list: SchemaAttribute[] = [];
+
+      existingSchema.schema.map((item) => {
+        list[item.index] = item;
+      });
+
+      setItems([...list]);
     }
   }, [existingSchema]);
 
   const [items, setItems] = useState<Array<AttributeListItem>>([]);
-
   const [type, setType] = useState<AttributeListItem['type']>('text');
 
   const { client } = useContext(RequestHelperContext);
@@ -55,7 +73,8 @@ export const SchemaCanvas = () => {
     setItems([
       ...items,
       {
-        id: items.length + 1,
+        key: generateUUID(),
+        index: items.length,
         type: type,
         name: ANIMALS[items.length],
         options: [],
@@ -64,18 +83,29 @@ export const SchemaCanvas = () => {
   };
 
   const remove = (index: number) => {
-    const list = removeAttribute(items, index);
+    const list = removeAttribute(items, index).map((item, index) => {
+      return {
+        ...item,
+        index: index,
+      };
+    });
 
     setItems([...list]);
   };
 
-  const update = (index: number, item: Partial<AttributeListItem>) => {
-    console.log('update');
-    if (item.name) {
-      items[index].name = item.name;
-    }
+  const update = (key: string, updated: Partial<AttributeListItem>) => {
+    console.log('update' + key);
+    console.log(updated);
 
-    items[index].options = item.options;
+    const list = items.map((item, index) => {
+      if (item.key === key) {
+        return { ...item, ...updated, index };
+      } else {
+        return { ...item, index };
+      }
+    });
+
+    setItems([...list]);
   };
 
   const onDragEnd = async (result: DropResult) => {
@@ -87,8 +117,11 @@ export const SchemaCanvas = () => {
       items,
       result.source.index,
       result.destination!.index
-    );
+    ).map((item, index) => {
+      return { ...item, index };
+    });
 
+    console.log(list);
     setItems([...list]);
   };
 
@@ -98,15 +131,16 @@ export const SchemaCanvas = () => {
     await client?.updateSchema('card', items);
   };
 
-  const getItem = (item: any, index: Number) => {
+  const getAttribute = (item: any, index: Number) => {
     switch (item.type) {
       case 'text':
         return (
           <TextAttribute
             update={update}
             remove={remove}
-            key={item.id}
+            key={index}
             index={index}
+            attributeKey={item.key}
             {...item}
           />
         );
@@ -115,8 +149,9 @@ export const SchemaCanvas = () => {
           <TextAreaAttribute
             update={update}
             remove={remove}
-            key={item.id}
+            key={index}
             index={index}
+            attributeKey={item.key}
             {...item}
           />
         );
@@ -125,8 +160,9 @@ export const SchemaCanvas = () => {
           <SelectAttribute
             update={update}
             remove={remove}
-            key={item.id}
+            key={index}
             index={index}
+            attributeKey={item.key}
             {...item}
           />
         );
@@ -144,7 +180,7 @@ export const SchemaCanvas = () => {
               return (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
                   {items.map((item, index) => {
-                    return getItem(item, index);
+                    return getAttribute(item, index);
                   })}
 
                   {provided.placeholder}

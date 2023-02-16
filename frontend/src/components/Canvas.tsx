@@ -25,6 +25,7 @@ export const Canvas = () => {
 
   const { client } = useContext(RequestHelperContext);
 
+  // TODO combine this to one call
   useEffect(() => {
     const execute = async () => {
       let lanes = await client!.getLanes();
@@ -46,6 +47,13 @@ export const Canvas = () => {
       store.dispatch({
         type: ActionType.USERS,
         payload: [...users],
+      });
+
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
       });
     };
 

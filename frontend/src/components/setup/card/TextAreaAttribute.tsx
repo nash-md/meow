@@ -4,15 +4,15 @@ import { Draggable } from 'react-beautiful-dnd';
 import { AttributeListItem } from './SchemaCanvas';
 
 export interface TextAreaAttributeProps {
-  id: number;
+  attributeKey: string;
   name: string;
   index: number;
   remove: (index: number) => void;
-  update: (index: number, item: Partial<AttributeListItem>) => void;
+  update: (key: string, item: Partial<AttributeListItem>) => void;
 }
 
 export const TextAreaAttribute = ({
-  id,
+  attributeKey,
   name: nameDefault,
   index,
   remove,
@@ -21,11 +21,11 @@ export const TextAreaAttribute = ({
   const [name, setName] = useState(nameDefault);
 
   useEffect(() => {
-    update(index, { name });
+    update(attributeKey, { name });
   }, [name]);
 
   return (
-    <Draggable draggableId={`drag_${id}`} index={index}>
+    <Draggable draggableId={`drag_${attributeKey}`} index={index}>
       {(provided, snaphot) => {
         return (
           <div

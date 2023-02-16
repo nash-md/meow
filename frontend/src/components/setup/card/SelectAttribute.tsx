@@ -11,16 +11,16 @@ function removeOption<T>(items: T[], index: number): T[] {
 }
 
 export interface SelectAttributeProps {
-  id: number;
+  attributeKey: string;
   name: string;
   index: number;
   options: string[];
   remove: (index: number) => void;
-  update: (index: number, item: Partial<AttributeListItem>) => void;
+  update: (key: string, item: Partial<AttributeListItem>) => void;
 }
 
 export const SelectAttribute = ({
-  id,
+  attributeKey,
   name: nameDefault,
   index,
   remove,
@@ -31,7 +31,7 @@ export const SelectAttribute = ({
   const [options, setOptions] = useState(optionsDefault);
 
   useEffect(() => {
-    update(index, { name, options });
+    update(attributeKey, { name, options });
   }, [name, options]);
 
   const setOption = (name: string, index: number) => {
@@ -51,7 +51,7 @@ export const SelectAttribute = ({
   };
 
   return (
-    <Draggable draggableId={`drag_${id}`} index={index}>
+    <Draggable draggableId={`drag_${attributeKey}`} index={index}>
       {(provided, snaphot) => {
         return (
           <div

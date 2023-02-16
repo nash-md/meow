@@ -2,19 +2,34 @@ import { Button, TextField, DatePicker } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { parseDate } from '@internationalized/date';
-import { selectCard, selectLanes, store as s } from '../../store/Store';
+import {
+  selectCard,
+  selectLanes,
+  selectSchemaByType,
+  store as s,
+} from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Card } from '../../interfaces/Card';
+import { SchemaAttribute } from '../../interfaces/Schema';
+import { SelectAttribute } from './schema/SelectAttribute';
+import { TextAreaAttribute } from './schema/TextAreaAttribute';
+import { TextAttribute } from './schema/TextAttribute';
 
 export interface FormProps {
   id: string | undefined;
   add: any;
 }
 
+// TODO rename component
 export const Form = ({ add, id }: FormProps) => {
   const lanes = useSelector(selectLanes);
   const [name, setName] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
+  const [attributes, setAttributes] = useState(new Map<string, string>());
+
+  const schema = useSelector((store: ApplicationStore) =>
+    selectSchemaByType(store, 'card')
+  );
 
   let isValidAmount = useMemo(
     () => /^[\d]{1,10}$/.test(amount as string),
@@ -41,6 +56,20 @@ export const Form = ({ add, id }: FormProps) => {
     setName(card.name);
     setAmount(card.amount?.toString());
 
+    const userAttributes = new Map<string, string>();
+
+    schema?.schema.map((attribute) => {
+      userAttributes.set(attribute.key, '');
+    });
+
+    if (card.attributes) {
+      card.attributes.map((attribute) => {
+        userAttributes.set(attribute.keyId, attribute.value);
+      });
+    }
+
+    setAttributes(userAttributes);
+
     if (card.closedAt) {
       const date = parseDate(card.closedAt.toString().substring(0, 10));
 
@@ -49,10 +78,17 @@ export const Form = ({ add, id }: FormProps) => {
   }, [card]);
 
   const save = () => {
+    const userAttributes = Array.from(attributes.entries()).map(
+      ([key, value]) => {
+        return { keyId: key, value };
+      }
+    );
+
     const updated: Card = {
       ...card!,
       name,
       amount: parseInt(amount),
+      attributes: userAttributes,
       closedAt: closedAt ? closedAt.toString() : undefined,
     };
 
@@ -60,6 +96,46 @@ export const Form = ({ add, id }: FormProps) => {
       updated.lane = lanes[0].key;
     }
     add(updated);
+  };
+
+  const update = (key: string, value: string) => {
+    const updated = new Map(attributes);
+
+    updated.set(key, value);
+
+    setAttributes(updated);
+  };
+
+  const getAttribute = (attribute: SchemaAttribute, value: string) => {
+    switch (attribute.type) {
+      case 'text':
+        return (
+          <TextAttribute
+            update={update}
+            attributeKey={attribute.key}
+            value={value}
+            {...attribute}
+          />
+        );
+      case 'textarea':
+        return (
+          <TextAreaAttribute
+            update={update}
+            attributeKey={attribute.key}
+            value={value}
+            {...attribute}
+          />
+        );
+      case 'select':
+        return (
+          <SelectAttribute
+            update={update}
+            attributeKey={attribute.key}
+            value={value}
+            {...attribute}
+          />
+        );
+    }
   };
 
   return (
@@ -74,6 +150,18 @@ export const Form = ({ add, id }: FormProps) => {
           label="Name"
         />
       </div>
+
+      {Array.from(attributes.entries()).map(([key, value]) => {
+        const attribute = schema?.schema.find((a) => a.key === key);
+
+        // can happen if the database contains attributes that are not on the schema anymore
+        if (!attribute) {
+          return;
+        }
+
+        return getAttribute(attribute!, value);
+      })}
+
       <div style={{ display: 'flex', marginTop: '10px' }}>
         <div>
           <TextField
