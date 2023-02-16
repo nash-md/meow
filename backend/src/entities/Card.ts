@@ -27,6 +27,9 @@ export class Card {
   @Column()
   amount: number;
 
+  @Column()
+  attributes?: CardAttribute[];
+
   @Column({ type: 'timestamp' })
   createdAt?: Date;
 
@@ -62,4 +65,9 @@ export class Card {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+export interface CardAttribute {
+  keyId: string;
+  value: string;
 }

@@ -14,6 +14,7 @@ mandatory.forEach((param) => {
 });
 
 import cors from 'cors';
+import compression from 'compression';
 import express from 'express';
 import http from 'http';
 import { DataSource } from 'typeorm';
@@ -64,14 +65,19 @@ export const app = express();
 app.set('port', process.env.PORT || 9000);
 app.set('etag', false);
 
+app.use(compression());
 app.enable('trust proxy');
 app.disable('x-powered-by');
 
-// TODO configure
 let corsOptions: cors.CorsOptions = {
   origin: '*',
   methods: ['GET', 'POST', 'DELETE'],
 };
+
+/* enable CORS in production mode */
+if (process.env.NODE_ENV === 'production') {
+  corsOptions.origin = false;
+}
 
 app.use(cors(corsOptions));
 

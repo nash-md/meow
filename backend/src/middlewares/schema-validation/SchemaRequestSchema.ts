@@ -8,7 +8,8 @@ export const SchemaRequestSchema = {
       items: {
         type: 'object',
         properties: {
-          id: { type: 'number' },
+          key: { type: 'string' },
+          index: { type: 'number' },
           name: { type: 'string' },
           type: {
             type: 'string',
@@ -19,7 +20,7 @@ export const SchemaRequestSchema = {
             items: { type: 'string' },
           },
         },
-        required: ['id', 'name', 'type'],
+        required: ['key', 'index', 'name', 'type'],
       },
     },
   },

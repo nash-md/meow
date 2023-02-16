@@ -1,3 +1,5 @@
+import { SchemaAttribute } from './entities/Schema.js';
+
 export const SERVICE_NAME = 'meow-backend-service';
 export const MAXIMUM_LENGTH_OF_USER_NAME = 20;
 export const MINIMUM_LENGTH_OF_USER_NAME = 5;
@@ -24,3 +26,24 @@ export const DefaultLanes = [
     tags: { type: 'closed-lost' },
   },
 ];
+
+export const DefaultSchema = {
+  type: 'card',
+  schema: [
+    {
+      key: '6cdd2d99-c0c9-1f20-60eb-5ba24d548348',
+      index: 1,
+      type: 'text',
+      name: 'Company Name',
+    },
+    {
+      key: 'c1cc9338-4d4c-f494-cbee-16f4faa9528c',
+      index: 2,
+      type: 'textarea',
+      name: 'Notes',
+    },
+  ],
+} as {
+  type: string;
+  schema: SchemaAttribute[];
+};

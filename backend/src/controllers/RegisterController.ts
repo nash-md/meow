@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
-import { DefaultLanes } from '../Constants.js';
+import { DefaultSchema, DefaultLanes } from '../Constants.js';
 import { Account, CurrencyCode } from '../entities/Account.js';
 import { Lane } from '../entities/Lane.js';
+import { Schema } from '../entities/Schema.js';
 import { User } from '../entities/User.js';
 import { TokenHelper } from '../helpers/TokenHelper.js';
 import { log } from '../logger.js';
@@ -36,6 +37,15 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         )
       );
     });
+
+    database.manager.save(
+      Schema,
+      new Schema(
+        account.id!.toString(),
+        DefaultSchema.type,
+        DefaultSchema.schema
+      )
+    );
 
     const user = new User(account.id!.toString(), name);
 

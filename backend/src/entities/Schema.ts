@@ -18,8 +18,8 @@ export class Schema {
   @Column()
   type: string;
 
-  @Column()
-  schema: any;
+  @Column({ type: 'json' })
+  schema: SchemaAttribute[];
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -27,7 +27,7 @@ export class Schema {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(accountId: string, type: string, schema: string) {
+  constructor(accountId: string, type: string, schema: SchemaAttribute[]) {
     this.accountId = accountId;
     this.type = type;
     this.schema = schema;
@@ -43,4 +43,12 @@ export class Schema {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+export interface SchemaAttribute {
+  key: string;
+  index: number;
+  name: string;
+  type: 'text' | 'textarea' | 'select';
+  options?: string[];
 }

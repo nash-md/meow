@@ -64,6 +64,7 @@ export enum EventType {
   Comment = 'comment',
   Lane = 'lane',
   Amount = 'amount',
+  Attribute = 'attribute',
   ClosedAt = 'closed-at',
   CreatedAt = 'created-at',
   Assign = 'assign',
