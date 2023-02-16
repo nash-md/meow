@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-16
+
+- the frontend now supports custom attributes. You can now configure and use custom fields
+
 ## 2023-02-15
 
 - added schema controller and entity

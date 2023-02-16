@@ -34,6 +34,9 @@ Before you run the build, you’ll need to define the following variables for la
 - `SESSION_SECRET` - a string used to hash the JWT sessons
 - `PORT` - server port, if not set the server will use port `9000`
 - `LOG_LEVEL` - self-explanatory
+- `NODE_ENV` - please set this value to `production` for a production build
+
+In `production` mode the server will not allow any cross-origin requests.
 
 Run the project with
 
@@ -79,6 +82,27 @@ The project currently has a few direct dependencies on [MongoDB](https://www.mon
 [Create Leads via API](docs/create-leads.md) <br>
 [Change Log](CHANGELOG.md)
 
+### Security
+
+The Typescript backend is compiled with the following [CORS](https://github.com/expressjs/cors) setup, you can change it in `backend/worker.ts`
+
+```
+corsOptions: cors.CorsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'DELETE'],
+};
+
+if (process.env.NODE_ENV === 'production') {
+  corsOptions.origin = false;
+}
+```
+
+Setting `origin` to `false` in production mode means that the server will not allow any cross-origin requests. This is a security measure that prevents unauthorized access to the server's resources from other domains. By default, when an origin is not allowed, the browser will return a 403 Forbidden response to the client.
+
 ### License
 
 All files on this GitHub repository are subject to the AGPLv3 license. Please read the License file at the root of the project.
+
+```
+
+```
