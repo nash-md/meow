@@ -47,3 +47,5 @@ export const DefaultSchema = {
   type: string;
   schema: SchemaAttribute[];
 };
+
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
