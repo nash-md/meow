@@ -308,6 +308,8 @@ h3 {
 
 .setup-funnel .add-stage {
   margin-top: 10px;
+  border-top: 1px solid grey;
+  padding-top: 10px;
 }
 
 .setup-funnel .lane {
@@ -549,8 +551,60 @@ h3 {
 
 .setup-card .add-attribute {
   margin-top: 10px;
+  border-top: 1px solid grey;
+  padding-top: 10px;
 }
 
 .setup-card .add-attribute div:first-child {
   margin-right: 10px;
+}
+
+#success-modal {
+  position: fixed;
+  bottom: -80px;
+  width: 100%;
+  height: 80px;
+  background-color: #28b473;
+  color: white;
+  transition: transform 0.3s ease-in;
+}
+
+#success-modal > div {
+  line-height: 80px;
+  background-image: url(../public/confirmation-icon.svg);
+  background-position: left center;
+  background-repeat: no-repeat;
+  width: 600px;
+  margin: auto;
+  font-size: 1.4em;
+  padding-left: 80px;
+}
+
+#success-modal.show {
+  transform: translateY(-80px); /* Move the div up 100px */
+}
+
+#error-modal {
+  position: fixed;
+  bottom: -80px;
+  width: 100%;
+  height: 80px;
+  background-color: #db2228;
+  color: white;
+  transition: transform 0.3s ease-in;
+}
+
+#error-modal > div {
+  line-height: 80px;
+  background-image: url(../public/error-icon.svg);
+  background-position: left center;
+  background-repeat: no-repeat;
+  width: 600px;
+  margin: auto;
+  font-size: 1.4em;
+  padding-left: 80px;
+}
+
+#error-modal.show {
+  transform: translateY(-80px); /* Move the div up 100px */
 }

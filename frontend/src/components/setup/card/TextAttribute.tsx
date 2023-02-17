@@ -1,7 +1,7 @@
 import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { AttributeListItem } from './SchemaCanvas';
+import { AttributeListItem } from './CardCanvas';
 
 export interface TextAttributeProps {
   attributeKey: string;

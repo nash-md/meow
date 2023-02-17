@@ -101,6 +101,8 @@ export const application = (state = Default, action: ApplicationAction) => {
           ui: {
             state: Default.ui.state,
             id: undefined,
+            modal: undefined,
+            text: undefined,
           },
         };
       }
@@ -162,7 +164,22 @@ export const application = (state = Default, action: ApplicationAction) => {
     case ActionType.USER_INTERFACE_STATE:
       return {
         ...state,
-        ui: { state: action.payload.state, id: action.payload.id },
+        ui: {
+          state: action.payload.state,
+          id: action.payload.id,
+          modal: state.ui.modal,
+          text: undefined,
+        },
+      };
+
+    case ActionType.USER_INTERFACE_MODAL:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          modal: action.payload.modal,
+          text: action.payload.text,
+        },
       };
     default:
       return state;

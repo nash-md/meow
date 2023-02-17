@@ -2,7 +2,9 @@ import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 
 import './App.css';
+import { ErrorModal } from './components/ErrorModal';
 import { Layout } from './components/Layout';
+import { SuccessModal } from './components/SuccessModal';
 import { ForecastPage } from './pages/ForecastPage';
 import { HirePage } from './pages/HirePage';
 import { HomePage } from './pages/HomePage';
@@ -19,6 +21,8 @@ function Application() {
           <Route path="/hire" element={<HirePage />}></Route>
         </Routes>
       </Layout>
+      <SuccessModal />
+      <ErrorModal />
     </BrowserRouter>
   );
 }

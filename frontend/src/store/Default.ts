@@ -24,5 +24,7 @@ export const Default: ApplicationStore = {
   ui: {
     state: 'default',
     id: undefined,
+    modal: undefined,
+    text: undefined,
   },
 };

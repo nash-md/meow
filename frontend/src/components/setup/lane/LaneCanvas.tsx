@@ -2,10 +2,11 @@ import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
+import { showModalError, showModalSuccess } from '../../../actions/Actions';
 import { ANIMALS, LANE_COLOR } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { LaneRequest } from '../../../interfaces/Lane';
-import { selectLanes } from '../../../store/Store';
+import { selectLanes, store } from '../../../store/Store';
 import { Lane } from './Lane';
 
 interface LaneListItem {
@@ -149,7 +150,7 @@ export const LanesCanvas = () => {
     return undefined;
   };
 
-  const save = () => {
+  const save = async () => {
     const updated: LaneRequest[] = lanes.map((lane, index) => {
       const payload: LaneRequest = {
         id: lane.externalId,
@@ -163,11 +164,19 @@ export const LanesCanvas = () => {
         payload.tags = { type: lane.type };
         payload.color = getLaneColorCode(lane.type);
       }
-      console.log(payload);
+
       return payload;
     });
 
-    client?.updateLanes(updated);
+    try {
+      await client?.updateLanes(updated);
+
+      store.dispatch(showModalSuccess());
+    } catch (error) {
+      console.error(error);
+
+      store.dispatch(showModalError(error?.toString()));
+    }
   };
 
   return (

@@ -29,5 +29,7 @@ export interface ApplicationStore {
   ui: {
     state: 'default' | 'card-detail' | 'lane-detail';
     id: undefined | Card['id'] | Lane['key'];
+    modal: 'success' | 'error' | undefined;
+    text: string | undefined;
   };
 }

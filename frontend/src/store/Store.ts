@@ -32,5 +32,7 @@ export const selectCurrency = (store: RootState) =>
 export const selectAccountId = (store: RootState) => store.session.account.id;
 export const selectInterfaceState = (store: RootState) => store.ui.state;
 export const selectInterfaceStateId = (store: RootState) => store.ui.id;
+export const selectModal = (store: RootState) => store.ui.modal;
+export const selectModalText = (store: RootState) => store.ui.text;
 export const selectCard = (store: ApplicationStore, id: string | undefined) =>
   store.cards.find((card) => card.id === id);

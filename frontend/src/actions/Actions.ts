@@ -22,6 +22,7 @@ export enum ActionType {
   LANE_UPDATE = 'LANE_UPDATE',
   BROWSER_STATE = 'BROWSER_STATE',
   USER_INTERFACE_STATE = 'USER_INTERFACE_STATE',
+  USER_INTERFACE_MODAL = 'USER_INTERFACE_MODAL',
 }
 
 export interface Action<T extends ActionType> {
@@ -117,6 +118,15 @@ export interface ApplicationUserInterfaceStateAction
     id: undefined | Card['id'];
   };
 }
+
+export interface ApplicationUserInterfaceModalAction
+  extends Action<ActionType.USER_INTERFACE_MODAL> {
+  payload: {
+    modal: ApplicationStore['ui']['modal'];
+    text: string | undefined;
+  };
+}
+
 export type ApplicationAction =
   | ApplicationPageLoadAction
   | ApplicationLoginAction
@@ -132,4 +142,26 @@ export type ApplicationAction =
   | ApplicationSchemasAction
   | ApplicationLaneUpdateAction
   | ApplicationBrowserStateAction
-  | ApplicationUserInterfaceStateAction;
+  | ApplicationUserInterfaceStateAction
+  | ApplicationUserInterfaceModalAction;
+
+export function showModalSuccess() {
+  return {
+    type: ActionType.USER_INTERFACE_MODAL,
+    payload: { modal: 'success', text: undefined },
+  } as ApplicationUserInterfaceModalAction;
+}
+
+export function showModalError(text?: string) {
+  return {
+    type: ActionType.USER_INTERFACE_MODAL,
+    payload: { modal: 'error', text: text },
+  } as ApplicationUserInterfaceModalAction;
+}
+
+export function hideModal() {
+  return {
+    type: ActionType.USER_INTERFACE_MODAL,
+    payload: { modal: undefined, text: undefined },
+  } as ApplicationUserInterfaceModalAction;
+}
