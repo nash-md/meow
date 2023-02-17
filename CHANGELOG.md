@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-17
+
+- the deal attributes have now a basic validation, empty dropdown values or missing names are not allowed
+- changes on the configuration are now confirmed with a modal
+
 ## 2023-02-16
 
 - the frontend now supports custom attributes. You can now configure and use custom fields
