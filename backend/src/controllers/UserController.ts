@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
 import { User } from '../entities/User.js';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
@@ -13,11 +13,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const query = {
-      accountId: { $eq: req.jwt.account.id!.toString() },
-    };
-
-    let users = await database.getMongoRepository(User).findBy(query);
+    const users = await EntityHelper.findByAccoount(User, req.jwt.account);
 
     return res.json(users);
   } catch (error) {
@@ -38,16 +34,11 @@ const update = async (
       throw new InvalidUrlError();
     }
 
-    const user = await database
-      .getMongoRepository(User)
-      .findOneById(req.params.id);
-
-    if (
-      !user ||
-      user.accountId?.toString() !== req.jwt.account.id?.toString() // TODO remove toString()
-    ) {
-      throw new EntityNotFoundError();
-    }
+    const user = await EntityHelper.findOneById(
+      req.jwt.user,
+      User,
+      req.params.id
+    );
 
     user.name = req.body.name;
     user.password = await new PasswordAuthenticationProvider().create(

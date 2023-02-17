@@ -21,8 +21,8 @@ export const selectUsers = (store: RootState) => store.users;
 export const selectUser = (store: ApplicationStore, id: string | undefined) =>
   store.users.find((user) => user.id === id);
 export const selectLanes = (store: RootState) => store.lanes;
-export const selectLane = (store: ApplicationStore, key: string) =>
-  store.lanes.find((lane) => lane.key === key);
+export const selectLane = (store: ApplicationStore, id: string) =>
+  store.lanes.find((lane) => lane.id === id);
 export const selectSchemas = (store: RootState) => store.schemas;
 export const selectSchemaByType = (store: ApplicationStore, type: string) =>
   store.schemas.find((schema) => schema.type === type);

@@ -1,6 +1,5 @@
 export interface Lane {
   id: string;
-  key: string;
   name: string;
   index: number;
   inForecast: boolean;

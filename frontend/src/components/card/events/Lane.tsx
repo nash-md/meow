@@ -9,8 +9,8 @@ interface LaneProps {
 export const Lane = ({ event }: LaneProps) => {
   const lanes = useSelector(selectLanes);
 
-  const laneFrom = lanes.find((lane) => lane.key === event.body.from);
-  const laneTo = lanes.find((lane) => lane.key === event.body.to);
+  const laneFrom = lanes.find((lane) => lane.id === event.body.from);
+  const laneTo = lanes.find((lane) => lane.id === event.body.to);
 
   return (
     <div>

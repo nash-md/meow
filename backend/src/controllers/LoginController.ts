@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
+import { SESSION_MAX_AGE } from '../Constants.js';
 import { Account } from '../entities/Account.js';
 import { User } from '../entities/User.js';
 import { AccountNotFoundError } from '../errors/AccountNotFoundError.js';
@@ -37,7 +38,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       const payload = {
-        token: TokenHelper.createJwt(user, 60 * 60 * 24 * 7),
+        token: TokenHelper.createJwt(user, SESSION_MAX_AGE),
         user: {
           id: user.id,
           name: user.name,

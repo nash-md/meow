@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
 import { Card } from '../entities/Card.js';
 import { Event, EventType } from '../entities/Event.js';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
@@ -44,13 +44,11 @@ const create = async (
       throw new InvalidUrlError();
     }
 
-    let card = await database
-      .getMongoRepository(Card)
-      .findOneById(req.params.id);
-
-    if (!card || card.accountId !== req.jwt.account.id?.toString()) {
-      throw new EntityNotFoundError();
-    }
+    const card = await EntityHelper.findOneById(
+      req.jwt.user,
+      Card,
+      req.params.id
+    );
 
     const event = new Event(
       card.accountId,

@@ -74,7 +74,7 @@ export const Canvas = () => {
   useEffect(() => {
     setAmount(
       cards.reduce((acc, card) => {
-        const lane = lanes.find((lane: Lane) => lane.key === card.lane);
+        const lane = lanes.find((lane: Lane) => lane.id === card.lane);
 
         if (lane && lane.inForecast === true) {
           return card.amount ? acc + card.amount : acc;

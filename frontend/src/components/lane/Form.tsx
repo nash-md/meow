@@ -8,7 +8,7 @@ import { ApplicationStore } from '../../store/ApplicationStore';
 import { selectLane, store } from '../../store/Store';
 
 export interface FormProps {
-  id: Lane['key'] | undefined;
+  id: Lane['id'] | undefined;
 }
 
 export const Form = ({ id }: FormProps) => {

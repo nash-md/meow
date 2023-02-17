@@ -148,7 +148,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ...state,
         lanes: [
           ...state.lanes.map((item: Lane) => {
-            if (item.key === action.payload.key) {
+            if (item.id === action.payload.id) {
               return { ...action.payload };
             } else {
               return { ...item };

@@ -13,18 +13,16 @@ export const Board = ({ lanes }: BoardProps) => {
   return (
     <>
       {lanes
-        .filter((lane) => lane.key !== 'trash')
+        .filter((lane) => lane.id !== 'trash')
         .map((lane) => {
-          const list = cards.filter((card) => card.lane === lane.key);
+          const list = cards.filter((card) => card.lane === lane.id);
 
           return (
             <Lane
-              key={lane.key}
+              key={lane.id}
               lane={lane}
               cards={list}
-              numberOfLanes={
-                lanes.filter((lane) => lane.key !== 'trash').length
-              }
+              numberOfLanes={lanes.filter((lane) => lane.id !== 'trash').length}
             />
           );
         })}

@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { Lane, LaneRequest } from '../entities/Lane.js';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
@@ -10,18 +10,9 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const query = {
-      accountId: { $eq: req.jwt.account.id!.toString() },
-    };
+    const lanes = await EntityHelper.findByAccoount(Lane, req.jwt.account);
 
-    let lanes = await database.getMongoRepository(Lane).findBy(query);
-
-    // TODO refactor at a later stage
-    return res.json(
-      lanes.map((lane) => {
-        return { ...lane, key: lane.id };
-      })
-    );
+    return res.json(lanes);
   } catch (error) {
     return next(error);
   }
@@ -34,19 +25,13 @@ const update = async (
 ) => {
   try {
     if (req.params.id) {
-      const lane = await database
-        .getMongoRepository(Lane)
-        .findOneById(req.params.id);
-
-      if (
-        !lane ||
-        lane.accountId?.toString() !== req.jwt.account.id?.toString() // TODO remove toString()
-      ) {
-        throw new EntityNotFoundError();
-      }
+      const lane = await EntityHelper.findOneById(
+        req.jwt.user,
+        Lane,
+        req.params.id
+      );
 
       lane.inForecast = req.body.inForcast;
-      lane.key = Lane.createKeyFromName(req.body.name);
       lane.name = req.body.name;
       lane.tags = req.body.tags;
 
@@ -66,13 +51,10 @@ const updateAll = async (
   next: NextFunction
 ) => {
   try {
-    const query = {
-      accountId: { $eq: req.jwt.account.id!.toString() },
-    };
-
-    const lanesInDatabase = await database
-      .getMongoRepository(Lane)
-      .findBy(query);
+    const lanesInDatabase = await EntityHelper.findByAccoount(
+      Lane,
+      req.jwt.account
+    );
 
     const lanesToDelete = lanesInDatabase.filter((laneInDatabase: Lane) => {
       return !req.body.find((laneInRequest: LaneRequest) => {
@@ -105,13 +87,14 @@ const updateAll = async (
 
           list.push(lane);
         } else {
-          const lane = await database
-            .getMongoRepository(Lane)
-            .findOneById(item.id);
+          const lane = await EntityHelper.findOneById(
+            req.jwt.user,
+            Lane,
+            item.id
+          );
 
           if (lane) {
             lane.name = item.name;
-            lane.key = Lane.createKeyFromName(item.name);
             lane.color = item.color === undefined ? '' : item.color;
             lane.index = item.index;
             lane.inForecast = item.inForecast;

@@ -5,8 +5,8 @@ import { Card, CardAttribute } from '../entities/Card.js';
 import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
@@ -46,11 +46,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const query = {
-      accountId: { $eq: req.jwt.account.id!.toString() },
-    };
-
-    let cards = await database.getMongoRepository(Card).findBy(query);
+    const cards = await EntityHelper.findByAccoount(Card, req.jwt.account);
 
     return res.json(cards);
   } catch (error) {
@@ -68,13 +64,7 @@ const remove = async (
       throw new InvalidUrlError();
     }
 
-    const card = await database
-      .getMongoRepository(Card)
-      .findOneById(req.params.id);
-
-    if (!card || card.accountId !== req.jwt.account.id?.toString()) {
-      throw new EntityNotFoundError();
-    }
+    await EntityHelper.findOneById(req.jwt.user, Card, req.params.id);
 
     const result = await database.manager.delete(Card, req.params.id);
 
@@ -142,22 +132,16 @@ const update = async (
       throw new InvalidUrlError();
     }
 
-    const card = await database
-      .getMongoRepository(Card)
-      .findOneById(req.params.id);
-
-    if (!card || card.accountId !== req.jwt.account.id?.toString()) {
-      throw new EntityNotFoundError();
-    }
+    const card = await EntityHelper.findOneById(
+      req.jwt.user,
+      Card,
+      req.params.id
+    );
 
     let user: User | null = null;
 
     if (req.body.user) {
-      user = await database.manager.findOneById(User, req.body.user);
-
-      if (!user || user?.accountId !== req.jwt.account.id.toString()) {
-        throw new EntityNotFoundError();
-      }
+      user = await EntityHelper.findOneById(req.jwt.user, User, req.body.user);
     }
 
     if (card.lane !== req.body.lane) {

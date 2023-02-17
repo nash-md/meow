@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { Account, CurrencyCode } from '../entities/Account.js';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
@@ -19,16 +19,11 @@ const update = async (
 ) => {
   try {
     if (req.params.id) {
-      const account = await database
-        .getMongoRepository(Account)
-        .findOneById(req.params.id);
-
-      if (
-        !account ||
-        account.id?.toString() !== req.jwt.account.id?.toString() // TODO remove toString()
-      ) {
-        throw new EntityNotFoundError();
-      }
+      const account = await EntityHelper.findOneById(
+        req.jwt.user,
+        Account,
+        req.params.id
+      );
 
       account.currency = parseCurrencyCode(req.body.currency);
 

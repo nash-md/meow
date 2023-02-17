@@ -1,5 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { Schema } from '../entities/Schema.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
@@ -9,11 +10,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const query = {
-      accountId: { $eq: req.jwt.account.id!.toString() },
-    };
-
-    let schemas = await database.getMongoRepository(Schema).findBy(query);
+    const schemas = await EntityHelper.findByAccoount(Schema, req.jwt.account);
 
     return res.json(schemas);
   } catch (error) {

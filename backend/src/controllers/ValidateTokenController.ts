@@ -23,6 +23,7 @@ const validate = async (req: Request, res: Response) => {
     }
 
     const user = await database.manager.findOneById(User, payload.userId);
+
     if (!user) {
       throw new UserNotFoundError();
     }

@@ -35,7 +35,7 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
     <div className="lane" style={{ width: `${100 / numberOfLanes}%` }}>
       <div
         className="title"
-        onClick={() => showLaneDetail(lane.key)}
+        onClick={() => showLaneDetail(lane.id)}
         style={{
           backgroundColor: lane.color ? lane.color : '#e6e6e6',
           color: lane.color ? 'white' : 'grey',
@@ -72,7 +72,7 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
           <Currency value={amount} />
         </b>
       </div>
-      <Droppable droppableId={lane.key}>
+      <Droppable droppableId={lane.id}>
         {(provided, snaphot) => {
           return (
             <div
@@ -84,7 +84,7 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
               }}
             >
               {cards
-                .filter((card) => card.lane === lane.key)
+                .filter((card) => card.lane === lane.id)
                 .map((card, index) => {
                   return (
                     <Card index={index} key={card.id} card={card} lane={lane} />

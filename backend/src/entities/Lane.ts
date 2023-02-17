@@ -16,9 +16,6 @@ export class Lane {
   accountId: string;
 
   @Column()
-  key: string;
-
-  @Column()
   name: string;
 
   @Column()
@@ -50,7 +47,6 @@ export class Lane {
   ) {
     this.accountId = accountId;
     this.name = name;
-    this.key = key;
     this.index = index;
     this.tags = tags;
     this.inForecast = inForecast;

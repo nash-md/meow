@@ -2,12 +2,7 @@ import { Button, TextField, DatePicker } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { parseDate } from '@internationalized/date';
-import {
-  selectCard,
-  selectLanes,
-  selectSchemaByType,
-  store as s,
-} from '../../store/Store';
+import { selectCard, selectLanes, selectSchemaByType } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Card } from '../../interfaces/Card';
 import { SchemaAttribute } from '../../interfaces/Schema';
@@ -50,6 +45,14 @@ export const Form = ({ add, id }: FormProps) => {
 
   useEffect(() => {
     if (!card) {
+      const userAttributes = new Map<string, string>();
+
+      schema?.schema.map((attribute) => {
+        userAttributes.set(attribute.key, '');
+      });
+
+      setAttributes(userAttributes);
+
       return;
     }
 
@@ -93,7 +96,7 @@ export const Form = ({ add, id }: FormProps) => {
     };
 
     if (!updated.lane) {
-      updated.lane = lanes[0].key;
+      updated.lane = lanes[0].id;
     }
     add(updated);
   };
