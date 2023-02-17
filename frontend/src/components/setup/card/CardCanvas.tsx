@@ -2,11 +2,12 @@ import { Button, Item, Picker } from '@adobe/react-spectrum';
 import { Key, useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
+import { showModalError, showModalSuccess } from '../../../actions/Actions';
 import { ANIMALS } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { SchemaAttribute } from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
-import { selectSchemaByType } from '../../../store/Store';
+import { selectSchemaByType, store } from '../../../store/Store';
 import { SelectAttribute } from './SelectAttribute';
 import { TextAreaAttribute } from './TextAreaAttribute';
 import { TextAttribute } from './TextAttribute';
@@ -47,10 +48,17 @@ function generateUUID(): string {
   return uuid;
 }
 
-export const SchemaCanvas = () => {
+export const CardCanvas = () => {
   const existingSchema = useSelector((store: ApplicationStore) =>
     selectSchemaByType(store, 'card')
   );
+
+  const [items, setItems] = useState<Array<AttributeListItem>>([]);
+  const [type, setType] = useState<AttributeListItem['type']>('text');
+  const [isValid, setIsValid] = useState(false);
+  const [error, setError] = useState('');
+
+  const { client } = useContext(RequestHelperContext);
 
   useEffect(() => {
     if (existingSchema) {
@@ -63,11 +71,6 @@ export const SchemaCanvas = () => {
       setItems([...list]);
     }
   }, [existingSchema]);
-
-  const [items, setItems] = useState<Array<AttributeListItem>>([]);
-  const [type, setType] = useState<AttributeListItem['type']>('text');
-
-  const { client } = useContext(RequestHelperContext);
 
   const add = () => {
     setItems([
@@ -94,9 +97,6 @@ export const SchemaCanvas = () => {
   };
 
   const update = (key: string, updated: Partial<AttributeListItem>) => {
-    console.log('update' + key);
-    console.log(updated);
-
     const list = items.map((item, index) => {
       if (item.key === key) {
         return { ...item, ...updated, index };
@@ -106,6 +106,37 @@ export const SchemaCanvas = () => {
     });
 
     setItems([...list]);
+
+    validate(list);
+  };
+
+  const validate = (list: AttributeListItem[]) => {
+    if (list.some((item) => !item.name)) {
+      setError('An attribute name cannot be empty');
+      setIsValid(false);
+
+      return;
+    }
+    console.log(list.filter((item) => item.type === 'select'));
+
+    const filtered = list.filter((item) => item.type === 'select');
+
+    if (
+      filtered.some(
+        (i) =>
+          !i.options ||
+          i.options.length === 0 ||
+          i.options.some((option) => !option)
+      )
+    ) {
+      setError('A dropdown list or a value cannot be empty');
+      setIsValid(false);
+
+      return;
+    }
+
+    setError('');
+    setIsValid(true);
   };
 
   const onDragEnd = async (result: DropResult) => {
@@ -121,14 +152,21 @@ export const SchemaCanvas = () => {
       return { ...item, index };
     });
 
-    console.log(list);
     setItems([...list]);
   };
 
   const onDragStart = () => {};
 
   const save = async () => {
-    await client?.updateSchema('card', items);
+    try {
+      await client!.updateSchema('card', items);
+
+      store.dispatch(showModalSuccess());
+    } catch (error) {
+      console.error(error);
+
+      store.dispatch(showModalError(error?.toString()));
+    }
   };
 
   const getAttribute = (item: any, index: Number) => {
@@ -209,7 +247,8 @@ export const SchemaCanvas = () => {
       </div>
 
       <div style={{ marginTop: '10px' }}>
-        <Button onPress={save} variant="primary">
+        <div style={{ marginBottom: '5px' }}>{error}</div>
+        <Button onPress={save} variant="primary" isDisabled={!isValid}>
           Save
         </Button>
       </div>

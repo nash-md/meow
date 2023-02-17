@@ -216,7 +216,7 @@ export class RequestHelper {
   async updateAccount(id: Account['id'], currency: CurrencyCode) {
     let url = this.getUrl(`/api/accounts/${id}`);
 
-    return this.doFetch(url, 'POST', currency);
+    return this.doFetch(url, 'POST', { currency: currency });
   }
 
   async getUsers(): Promise<User[]> {

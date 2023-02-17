@@ -6,43 +6,13 @@ import { useSelector } from 'react-redux';
 import { CurrencyCode } from '../interfaces/Account';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { LanesCanvas } from './setup/lane/LaneCanvas';
-import { SchemaCanvas } from './setup/card/SchemaCanvas';
+import { CardCanvas } from './setup/card/CardCanvas';
+import { CurrencyCanvas } from './setup/currency/CurrencyCanvas';
 
 export const Setup = () => {
   const { client } = useContext(RequestHelperContext);
 
-  const configuredCurrency = useSelector(selectCurrency);
-  const accountId = useSelector(selectAccountId);
   const [animal, setAnimal] = useState('');
-  const [currency, setCurrency] = useState<CurrencyCode>(
-    configuredCurrency ?? CurrencyCode.USD
-  );
-
-  function parseCurrencyKey(value: React.Key): CurrencyCode {
-    switch (value) {
-      case 'USD':
-        return CurrencyCode.USD;
-      case 'EUR':
-        return CurrencyCode.EUR;
-      case 'SEK':
-        return CurrencyCode.SEK;
-      default:
-        throw new Error(`Unsupported value: ${value}`);
-    }
-  }
-
-  const updateCurrencyCode = async (key: React.Key) => {
-    const currency = parseCurrencyKey(key);
-
-    setCurrency(currency);
-
-    store.dispatch({
-      type: ActionType.ACCOUNT_UPDATE,
-      payload: currency,
-    });
-
-    await client!.updateAccount(accountId!, currency);
-  };
 
   useEffect(() => {
     const execute = async () => {
@@ -68,23 +38,11 @@ export const Setup = () => {
 
   return (
     <div className="canvas">
-      <div className="content-box">
-        <h2>Currency</h2>
-        <Picker
-          selectedKey={currency}
-          aria-label="Currency"
-          onSelectionChange={(key) => updateCurrencyCode(key)}
-          marginTop="10px"
-        >
-          <Item key="USD">US Dollar</Item>
-          <Item key="EUR">Euro</Item>
-          <Item key="SEK">Swedish Krona</Item>
-        </Picker>
-      </div>
+      <CurrencyCanvas />
 
       <LanesCanvas />
 
-      <SchemaCanvas />
+      <CardCanvas />
 
       <div className="content-box">
         <h2>If You Were An Animal What Would You Be?</h2>

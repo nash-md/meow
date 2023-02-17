@@ -2,7 +2,7 @@ import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { ANIMALS } from '../../../Constants';
-import { AttributeListItem } from './SchemaCanvas';
+import { AttributeListItem } from './CardCanvas';
 
 function removeOption<T>(items: T[], index: number): T[] {
   items.splice(index, 1);
