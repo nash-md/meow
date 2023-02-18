@@ -33,11 +33,24 @@ export const Register = () => {
       setIsLoading(true);
 
       const client = new RequestHelper(process.env.REACT_APP_URL);
-      const payload = await client.register(name, password);
+
+      await client.register(name, password);
+
+      const payload = await client.login(name, password);
+
+      client.token = payload.token;
 
       if (setClient) {
         setClient(new RequestHelper(process.env.REACT_APP_URL, payload.token));
       }
+
+      setClient!(client);
+      setIsLoading(false);
+
+      store.dispatch({
+        type: ActionType.LOGIN,
+        payload: payload,
+      });
 
       store.dispatch({
         type: ActionType.LOGIN,

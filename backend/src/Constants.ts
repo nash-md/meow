@@ -32,13 +32,13 @@ export const DefaultSchema = {
   schema: [
     {
       key: '6cdd2d99-c0c9-1f20-60eb-5ba24d548348',
-      index: 1,
+      index: 0,
       type: 'text',
       name: 'Company Name',
     },
     {
       key: 'c1cc9338-4d4c-f494-cbee-16f4faa9528c',
-      index: 2,
+      index: 1,
       type: 'textarea',
       name: 'Notes',
     },
@@ -49,3 +49,24 @@ export const DefaultSchema = {
 };
 
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+
+export const ANIMALS: string[] = [
+  'Squirrel',
+  'Bear',
+  'Raccoon',
+  'Lion',
+  'Penguin',
+  'Walrus',
+  'Monkey',
+  'Tiger',
+  'Elephant',
+  'Giraffe',
+  'Kangaroo',
+  'Dolphin',
+  'Shark',
+  'Octopus',
+  'Gorilla',
+  'Leopard',
+  'Wolf',
+  'Zebra',
+];

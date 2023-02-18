@@ -1,8 +1,8 @@
 export const RegisterRequestSchema = {
   type: 'object',
   properties: {
-    name: { type: 'string', maxLength: 500 },
-    password: { type: 'string', maxLength: 500 },
+    name: { type: 'string', minLength: 3, maxLength: 50 },
+    password: { type: 'string', minLength: 3, maxLength: 50 },
   },
   required: ['name', 'password'],
 

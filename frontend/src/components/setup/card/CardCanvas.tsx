@@ -117,7 +117,6 @@ export const CardCanvas = () => {
 
       return;
     }
-    console.log(list.filter((item) => item.type === 'select'));
 
     const filtered = list.filter((item) => item.type === 'select');
 

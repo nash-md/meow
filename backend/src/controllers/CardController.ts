@@ -6,6 +6,7 @@ import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
@@ -122,6 +123,28 @@ const create = async (
   return res.json(updated);
 };
 
+const get = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.params.id) {
+      throw new InvalidUrlError();
+    }
+
+    const card = await EntityHelper.findOneById(
+      req.jwt.user,
+      Card,
+      req.params.id
+    );
+
+    return res.json(card);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const update = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -141,7 +164,15 @@ const update = async (
     let user: User | null = null;
 
     if (req.body.user) {
-      user = await EntityHelper.findOneById(req.jwt.user, User, req.body.user);
+      try {
+        user = await EntityHelper.findOneById(
+          req.jwt.user,
+          User,
+          req.body.user
+        );
+      } catch (error) {
+        throw new UserNotFoundError();
+      }
     }
 
     if (card.lane !== req.body.lane) {
@@ -246,6 +277,7 @@ const update = async (
 
 export const CardController = {
   list,
+  get,
   create,
   update,
   remove,

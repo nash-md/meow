@@ -5,7 +5,6 @@ import { Account, CurrencyCode } from '../entities/Account.js';
 import { Lane } from '../entities/Lane.js';
 import { Schema } from '../entities/Schema.js';
 import { User } from '../entities/User.js';
-import { TokenHelper } from '../helpers/TokenHelper.js';
 import { log } from '../logger.js';
 import { database } from '../worker.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
@@ -53,19 +52,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     const updated = await database.manager.save(user);
 
-    const payload = {
-      token: TokenHelper.createJwt(user, 14400),
-      user: {
-        id: updated.id,
-        name: updated.name,
-      },
-      account: {
-        id: updated.accountId,
-        currency: account.currency,
-      },
-    };
-
-    res.json(payload);
+    res.json({ welcome: true });
   } catch (error) {
     next(error);
   }

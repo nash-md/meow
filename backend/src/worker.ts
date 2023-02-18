@@ -104,6 +104,7 @@ try {
   card
     .route('/')
     .post(validateAgainst(CardRequestSchema), CardController.create);
+  card.route('/:id').get(CardController.get);
   card
     .route('/:id?')
     .post(validateAgainst(CardRequestSchema), CardController.update);
