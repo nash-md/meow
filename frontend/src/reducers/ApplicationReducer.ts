@@ -158,7 +158,11 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.CARD_ADD:
-      state.board[action.payload.lane].push(action.payload.id);
+      if (state.board[action.payload.lane]) {
+        state.board[action.payload.lane].push(action.payload.id);
+      } else {
+        state.board[action.payload.lane] = [action.payload.id];
+      }
 
       return {
         ...state,
