@@ -14,6 +14,7 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const [strenght, setStrenght] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
@@ -24,6 +25,8 @@ export const Register = () => {
     if (password.length > 3) {
       l = l.map((_, i) => (i < password.length - 3 ? 1 : 0));
     }
+
+    setIsValid(name.length >= 3 && password.length >= 3);
 
     setStrenght([...l]);
   }, [name, password]);
@@ -112,7 +115,11 @@ export const Register = () => {
         </div>
 
         <div style={{ marginTop: '25px' }}>
-          <Button onPress={authenticate} isDisabled={isLoading} variant="cta">
+          <Button
+            onPress={authenticate}
+            isDisabled={isLoading || !isValid}
+            variant="cta"
+          >
             Register
           </Button>
         </div>
