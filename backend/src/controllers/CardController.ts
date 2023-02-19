@@ -6,6 +6,7 @@ import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { LaneNotFoundError } from '../errors/LaneNotFoundError.js';
 import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
@@ -15,7 +16,6 @@ function hasAttributeDifference(
   existing: CardAttribute[] | undefined,
   updated: CardAttribute[] | undefined
 ): boolean {
-  console.log(existing, updated);
   if (!existing && !updated) {
     return false;
   }
@@ -86,15 +86,20 @@ const create = async (
     name: req.body.lane,
   };
 
-  const lane = await database.manager.findOneBy(Lane, query);
+  let lane = await database.manager.findOneBy(Lane, query);
 
-  // TODO, lookup lane with id and throw if not found
-  const laneId = lane ? lane.id : req.body.lane;
+  if (!lane) {
+    lane = await EntityHelper.findOneById(req.jwt.user, Lane, req.body.lane);
+  }
+
+  if (!lane) {
+    throw new LaneNotFoundError();
+  }
 
   const card = new Card(
     req.jwt.account.id!.toString(),
     req.jwt.user.id!.toString(),
-    laneId,
+    lane.id!.toString(),
     req.body.name,
     req.body.amount
   );
@@ -233,7 +238,6 @@ const update = async (
     }
 
     if (hasAttributeDifference(card.attributes, req.body.attributes)) {
-      console.log('hass difference');
       const event = new Event(
         card.accountId,
         req.params.id,

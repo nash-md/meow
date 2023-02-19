@@ -20,6 +20,15 @@ export const LoginResponseSchema = {
       required: ['id', 'currency'],
       additionalProperties: false,
     },
+    board: {
+      type: 'object',
+      additionalProperties: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
   },
   required: ['token', 'user', 'account'],
   additionalProperties: false,

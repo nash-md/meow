@@ -27,9 +27,6 @@ const update = async (
   next: NextFunction
 ) => {
   try {
-    await isValidName(req.body.name);
-    await isValidPassword(req.body.password);
-
     if (!req.params.id) {
       throw new InvalidUrlError();
     }
@@ -40,14 +37,39 @@ const update = async (
       req.params.id
     );
 
-    user.name = req.body.name;
-    user.password = await new PasswordAuthenticationProvider().create(
-      req.body.password
-    );
+    if (req.body.animal) {
+      user.animal = req.body.animal;
+    }
 
     const updated = await database.manager.save(user);
 
     return res.json(updated);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const board = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.params.id) {
+      throw new InvalidUrlError();
+    }
+
+    const user = await EntityHelper.findOneById(
+      req.jwt.user,
+      User,
+      req.params.id
+    );
+
+    user.board = req.body;
+
+    await database.manager.save(user);
+
+    return res.json({ done: true });
   } catch (error) {
     return next(error);
   }
@@ -80,4 +102,5 @@ export const UserController = {
   list,
   create,
   update,
+  board,
 };

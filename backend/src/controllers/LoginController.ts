@@ -42,11 +42,13 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
         user: {
           id: user.id,
           name: user.name,
+          animal: user.animal,
         },
         account: {
           id: user.accountId,
           currency: account.currency,
         },
+        board: user.board,
       };
 
       res.json(payload);

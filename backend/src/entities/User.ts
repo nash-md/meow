@@ -6,6 +6,7 @@ import {
   BeforeInsert,
   Column,
 } from 'typeorm';
+import { Card } from './Card.js';
 
 @Entity({ name: 'Users' })
 export class User {
@@ -18,8 +19,14 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ select: false })
   password?: string;
+
+  @Column()
+  animal?: string;
+
+  @Column()
+  board?: { [key: string]: Card['id'][] };
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -30,6 +37,11 @@ export class User {
   constructor(accountId: string, name: string) {
     this.accountId = accountId;
     this.name = name;
+  }
+
+  toJSON() {
+    delete this.password;
+    return this;
   }
 
   @BeforeInsert()

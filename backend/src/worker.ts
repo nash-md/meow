@@ -51,6 +51,8 @@ import { DatabaseHelper } from './helpers/DatabaseHelper.js';
 import { Schema } from './entities/Schema.js';
 import { SchemaController } from './controllers/SchemaController.js';
 import { SchemaRequestSchema } from './middlewares/schema-validation/SchemaRequestSchema.js';
+import { BoardRequestSchema } from './middlewares/schema-validation/BoardRequestSchema.js';
+import { UserUpdateRequestSchema } from './middlewares/schema-validation/UserUpdateRequestSchema.js';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -168,7 +170,10 @@ try {
     .post(validateAgainst(UserRequestSchema), UserController.create);
   user
     .route('/:id')
-    .post(validateAgainst(UserRequestSchema), UserController.update);
+    .post(validateAgainst(UserUpdateRequestSchema), UserController.update);
+  user
+    .route('/:id/board')
+    .post(validateAgainst(BoardRequestSchema), UserController.board);
 
   app.use('/api/users', user);
 

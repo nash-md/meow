@@ -28,6 +28,9 @@ export class Card {
   amount: number;
 
   @Column()
+  isDeleted?: boolean;
+
+  @Column()
   attributes?: CardAttribute[];
 
   @Column({ type: 'timestamp' })
