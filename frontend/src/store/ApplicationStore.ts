@@ -1,4 +1,5 @@
 import { CurrencyCode } from '../interfaces/Account';
+import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
@@ -9,6 +10,7 @@ export interface ApplicationStore {
   users: User[];
   cards: Card[];
   lanes: Lane[];
+  board: Board;
   schemas: Schema[];
   session: {
     token: string | undefined;
@@ -20,6 +22,7 @@ export interface ApplicationStore {
     user: {
       id: string | undefined;
       name: string | undefined;
+      animal: string | undefined;
     };
   };
   browser: {

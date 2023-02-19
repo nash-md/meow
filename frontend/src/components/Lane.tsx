@@ -1,26 +1,38 @@
 import { useEffect, useState } from 'react';
 import { Card } from './Card';
 import { Lane as LaneInterface } from '../interfaces/Lane';
-import { Card as CardInterface } from '../interfaces/Card';
-import { store } from '../store/Store';
+import { selectBoardByLaneId, selectCards, store } from '../store/Store';
 import { Droppable } from 'react-beautiful-dnd';
 import { ActionType } from '../actions/Actions';
 import { Currency } from './Currency';
+import { useSelector } from 'react-redux';
+import { ApplicationStore } from '../store/ApplicationStore';
 
 export interface LaneProps {
   lane: LaneInterface;
-  cards: CardInterface[];
   numberOfLanes: number;
 }
 
-export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
+export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
+  const cards = useSelector(selectCards);
+
+  const list = useSelector((store: ApplicationStore) =>
+    selectBoardByLaneId(store, lane.id)
+  );
+
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
+    if (!cards) {
+      return;
+    }
+
     setAmount(
-      cards.reduce((acc, card) => {
-        return card.amount ? acc + card.amount : acc;
-      }, 0)
+      cards
+        .filter((card) => card.lane === lane.id)
+        .reduce((acc, card) => {
+          return card.amount ? acc + card.amount : acc;
+        }, 0)
     );
   }, [cards]);
 
@@ -45,16 +57,11 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
         <div style={{ flexGrow: 1 }}>{lane.name}</div>
         {lane.inForecast === false && (
           <div
+            className="forecast-icon"
             style={{
-              marginRight: '4px',
               backgroundImage: lane.color
                 ? 'url(/icon-hidden-white.svg)'
                 : 'url(/icon-hidden.svg)',
-              backgroundPosition: 'center center',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: '80%',
-              width: '24px',
-              opacity: '0.4',
             }}
           ></div>
         )}
@@ -83,13 +90,17 @@ export const Lane = ({ lane, cards, numberOfLanes }: LaneProps) => {
                 backgroundColor: snaphot.isDraggingOver ? '#F6F6F6' : 'white',
               }}
             >
-              {cards
-                .filter((card) => card.lane === lane.id)
-                .map((card, index) => {
-                  return (
-                    <Card index={index} key={card.id} card={card} lane={lane} />
-                  );
-                })}
+              {list?.map((id, index) => {
+                const card = cards.find((listItem) => listItem.id === id)!;
+
+                if (!card) {
+                  return;
+                }
+
+                return (
+                  <Card index={index} key={card.id} card={card} lane={lane} />
+                );
+              })}
               {provided.placeholder}
             </div>
           );

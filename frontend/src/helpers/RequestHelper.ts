@@ -231,6 +231,18 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', { name, password });
   }
 
+  async updateUser(id: string, animal: string) {
+    let url = this.getUrl(`/api/users/${id}`);
+
+    return this.doFetch(url, 'POST', { animal });
+  }
+
+  async updateBoard(id: string, board: any) {
+    let url = this.getUrl(`/api/users/${id}/board`);
+
+    return this.doFetch(url, 'POST', board);
+  }
+
   async fetchForecastAchieved(start: DateTime, end: DateTime, user: string) {
     let url = this.getUrl(
       `/api/forecast/achieved?${new URLSearchParams({

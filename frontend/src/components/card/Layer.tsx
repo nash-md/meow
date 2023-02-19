@@ -33,11 +33,9 @@ export const Layer = () => {
   const assign = async (id: User['id']) => {
     console.log(`assign card to user ${id}`);
 
-    const updated = await client!.updateCard({ ...card!, user: id });
-
     store.dispatch({
       type: ActionType.CARD_UPDATE,
-      payload: { ...card, ...updated },
+      payload: { ...card!, user: id },
     });
 
     setIsUserLayerVisible(false);
@@ -48,15 +46,18 @@ export const Layer = () => {
     let updated = {};
 
     if (card.id) {
-      updated = await client!.updateCard(card);
+      store.dispatch({
+        type: ActionType.CARD_UPDATE,
+        payload: { ...card, ...updated },
+      });
     } else {
-      updated = await client!.createCard(card);
-    }
+      updated = await client!.createCard(card); // TODO refactor
 
-    store.dispatch({
-      type: ActionType.CARD_UPDATE,
-      payload: { ...card, ...updated },
-    });
+      store.dispatch({
+        type: ActionType.CARD_ADD,
+        payload: { ...card, ...updated },
+      });
+    }
   };
 
   return (

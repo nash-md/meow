@@ -83,7 +83,7 @@ export const Canvas = () => {
         }
       }, 0)
     );
-  }, [cards, lanes]);
+  }, [cards]);
 
   const onDragEnd = async (result: DropResult) => {
     // TODO exit early if no change in index or destination
@@ -103,28 +103,38 @@ export const Canvas = () => {
       return;
     }
 
+    if (
+      result.source?.droppableId === result.destination?.droppableId &&
+      result.source.index === result.destination.index
+    ) {
+      console.log('guard: lane and index did not change, exit');
+      return;
+    }
+
     const card = cards.find((card) => card.id === result.draggableId);
 
     if (card) {
       if (result.destination.droppableId === 'trash') {
-        await client!.deleteCard(card!.id);
-
         store.dispatch({
           type: ActionType.CARD_DELETE,
-          payload: card!.id,
+          payload: card,
         });
       } else {
         card!.lane = result.destination.droppableId;
 
-        await client!.updateCard(card);
-
         store.dispatch({
-          type: ActionType.CARD_UPDATE,
-          payload: card,
+          type: ActionType.CARD_LANE,
+          payload: {
+            card: card,
+            to: result.destination.droppableId,
+            from: result.source.droppableId,
+            index: result.destination!.index,
+          },
         });
       }
     }
   };
+
   const onDragStart = () => {
     const trash = document.getElementById('trash');
 

@@ -1,6 +1,7 @@
 import { CurrencyCode } from '../interfaces/Account';
+import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
-import { Card, CardPreview } from '../interfaces/Card';
+import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { Schema } from '../interfaces/Schema';
 import { User } from '../interfaces/User';
@@ -15,6 +16,8 @@ export enum ActionType {
   CARDS = 'CARDS',
   CARD_ADD = 'CARD_ADD',
   CARD_UPDATE = 'CARD_UPDATE',
+  CARD_REFRESH = 'CARD_REFRESH',
+  CARD_LANE = 'CARD_LANE',
   CARD_DELETE = 'CARD_DELETE',
   ACCOUNT_UPDATE = 'ACCOUNT_UPDATE',
   SCHEMAS = 'SCHEMAS',
@@ -37,11 +40,13 @@ export interface ApplicationPageLoadAction
         user: {
           id: string;
           name: string;
+          animal: string | undefined;
         };
         account: {
           id: string;
           currency: CurrencyCode;
         };
+        board: Board;
       }
     | undefined;
 }
@@ -52,11 +57,13 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
     user: {
       id: string;
       name: string;
+      animal: string | undefined;
     };
     account: {
       id: string;
       currency: CurrencyCode;
     };
+    board: Board;
   };
 }
 
@@ -75,7 +82,7 @@ export interface ApplicationCardsAction extends Action<ActionType.CARDS> {
 }
 
 export interface ApplicationCardAddAction extends Action<ActionType.CARD_ADD> {
-  payload: CardPreview;
+  payload: Card;
 }
 
 export interface ApplicationCardUpdateAction
@@ -83,9 +90,19 @@ export interface ApplicationCardUpdateAction
   payload: Card;
 }
 
+export interface ApplicationCardRefreshAction
+  extends Action<ActionType.CARD_REFRESH> {
+  payload: Card;
+}
+
+export interface ApplicationCardLaneAction
+  extends Action<ActionType.CARD_LANE> {
+  payload: { card: Card; from: Lane['id']; to: Lane['id']; index: number };
+}
+
 export interface ApplicationCardDeleteAction
   extends Action<ActionType.CARD_DELETE> {
-  payload: string;
+  payload: Card;
 }
 
 export interface ApplicationAccountUpdateAction
@@ -136,6 +153,8 @@ export type ApplicationAction =
   | ApplicationCardsAction
   | ApplicationCardAddAction
   | ApplicationCardUpdateAction
+  | ApplicationCardRefreshAction
+  | ApplicationCardLaneAction
   | ApplicationCardDeleteAction
   | ApplicationAccountUpdateAction
   | ApplicationLanesAction

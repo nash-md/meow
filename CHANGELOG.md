@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-19
+
+- opportunity card positions are now persisted, drag and drop now supports index position on lane
+- added user update route
+- improved lane validation upon card create
+
+## 2023-02-18
+
+- fixed attributes defaults
+- added API tests with [Ava](https://github.com/avajs/ava)
+
 ## 2023-02-17
 
 - the deal attributes have now a basic validation, empty dropdown values or missing names are not allowed

@@ -5,6 +5,7 @@ export const Default: ApplicationStore = {
   cards: [],
   lanes: [],
   schemas: [],
+  board: {},
   session: {
     token: undefined,
     alerts: 0,
@@ -15,7 +16,8 @@ export const Default: ApplicationStore = {
     user: {
       id: undefined,
       name: undefined,
-    },
+      animal: undefined,
+    }, // TODO migrate to User interface
   },
   browser: {
     state: 'unknown',
