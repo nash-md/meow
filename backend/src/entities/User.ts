@@ -26,6 +26,9 @@ export class User {
   animal?: string;
 
   @Column()
+  status?: UserStatus;
+
+  @Column()
   board?: { [key: string]: Card['id'][] };
 
   @Column({ type: 'timestamp' })
@@ -54,4 +57,11 @@ export class User {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+export enum UserStatus {
+  Enabled = 'enabled',
+  Disabled = 'disabled',
+  Deleted = 'deleted',
+  SingleSignOn = 'single-sign-on',
 }

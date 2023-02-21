@@ -231,10 +231,19 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', { name, password });
   }
 
-  async updateUser(id: string, animal: string) {
-    let url = this.getUrl(`/api/users/${id}`);
+  async updateUser(user: User) {
+    let url = this.getUrl(`/api/users/${user.id}`);
 
-    return this.doFetch(url, 'POST', { animal });
+    return this.doFetch(url, 'POST', {
+      animal: user.animal,
+      status: user.status,
+    });
+  }
+
+  async updatePassword(id: string, existing: string, updated: string) {
+    let url = this.getUrl(`/api/users/${id}/password`);
+
+    return this.doFetch(url, 'POST', { existing, updated });
   }
 
   async updateBoard(id: string, board: any) {

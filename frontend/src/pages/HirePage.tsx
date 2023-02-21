@@ -1,60 +1,13 @@
 import { Button } from '@adobe/react-spectrum';
-import { DateTime } from 'luxon';
-import { useContext, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { ActionType } from '../actions/Actions';
 import { Form } from '../components/hire/Form';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { selectUsers, store } from '../store/Store';
+import { UserList } from '../components/hire/UserList';
 
 export const HirePage = () => {
-  const { client } = useContext(RequestHelperContext);
-  const users = useSelector(selectUsers);
-
-  useEffect(() => {
-    const execute = async () => {
-      let users = await client!.getUsers();
-
-      store.dispatch({
-        type: ActionType.USERS,
-        payload: [...users],
-      });
-    };
-
-    if (client) {
-      execute();
-    }
-  }, [client]);
-
   return (
     <div className="canvas">
       <Form />
 
-      <div className="content-box">
-        <h2>Users</h2>
-        <table className="list">
-          <tbody>
-            <tr>
-              <td>Name</td>
-              <td>Created</td>
-            </tr>
-            {users.map((user) => {
-              const ago = user.createdAt
-                ? DateTime.fromISO(user.createdAt).toRelative()
-                : '';
-
-              return (
-                <tr key={user.id}>
-                  <td style={{ width: '200px' }}>
-                    <b>{user.name}</b>
-                  </td>
-                  <td>{ago}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <UserList />
 
       <div className="content-box">
         <h2>Hire</h2>

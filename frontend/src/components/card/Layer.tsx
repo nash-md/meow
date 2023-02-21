@@ -14,7 +14,7 @@ import { RequestHelperContext } from '../../context/RequestHelperContextProvider
 import { useContext, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
-import { User } from '../../interfaces/User';
+import { User, UserStatus } from '../../interfaces/User';
 
 export const Layer = () => {
   const { client } = useContext(RequestHelperContext);
@@ -84,23 +84,28 @@ export const Layer = () => {
         <div style={{ backgroundColor: 'rgb(230, 230, 230)' }}>
           <table>
             <tbody>
-              {users.map((user: User) => {
-                return (
-                  <tr key={user.id}>
-                    <td>
-                      <Avatar id={user.id} width={0} />
-                    </td>
-                    <td>
-                      <b>{user.name}</b>
-                    </td>
-                    <td>
-                      <Button variant="primary" onPress={() => assign(user.id)}>
-                        assign
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {users
+                .filter((user) => user.status !== UserStatus.Deleted)
+                .map((user: User) => {
+                  return (
+                    <tr key={user.id}>
+                      <td>
+                        <Avatar id={user.id} width={0} />
+                      </td>
+                      <td>
+                        <b>{user.name}</b>
+                      </td>
+                      <td>
+                        <Button
+                          variant="primary"
+                          onPress={() => assign(user.id)}
+                        >
+                          assign
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

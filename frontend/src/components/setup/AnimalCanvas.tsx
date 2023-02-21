@@ -3,11 +3,17 @@ import { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { showModalError, showModalSuccess } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { selectAnimal, selectUserId, store } from '../../store/Store';
+import {
+  selectAnimal,
+  selectUserId,
+  selectUsers,
+  store,
+} from '../../store/Store';
 
 export const AnimalCanvas = () => {
   const { client } = useContext(RequestHelperContext);
   const userId = useSelector(selectUserId);
+  const users = useSelector(selectUsers);
   const animalDefault = useSelector(selectAnimal);
 
   const [animal, setAnimal] = useState(animalDefault);
@@ -15,8 +21,12 @@ export const AnimalCanvas = () => {
   const updateUser = async (key: React.Key) => {
     setAnimal(key.toString());
 
+    const user = users.find((user) => user.id === userId)!;
+
+    user.animal = key.toString();
+
     try {
-      await client!.updateUser(userId!, key.toString());
+      await client!.updateUser(user);
 
       store.dispatch(showModalSuccess());
     } catch (error) {

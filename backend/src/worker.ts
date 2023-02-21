@@ -53,6 +53,7 @@ import { SchemaController } from './controllers/SchemaController.js';
 import { SchemaRequestSchema } from './middlewares/schema-validation/SchemaRequestSchema.js';
 import { BoardRequestSchema } from './middlewares/schema-validation/BoardRequestSchema.js';
 import { UserUpdateRequestSchema } from './middlewares/schema-validation/UserUpdateRequestSchema.js';
+import { PasswordRequestSchema } from './middlewares/schema-validation/PasswordRequestSchema.js';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -174,6 +175,9 @@ try {
   user
     .route('/:id/board')
     .post(validateAgainst(BoardRequestSchema), UserController.board);
+  user
+    .route('/:id/password')
+    .post(validateAgainst(PasswordRequestSchema), UserController.password);
 
   app.use('/api/users', user);
 

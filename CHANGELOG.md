@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-21
+
+- add components and route to delete additional users
+- added password change
+
 ## 2023-02-19
 
 - opportunity card positions are now persisted, drag and drop now supports index position on lane
