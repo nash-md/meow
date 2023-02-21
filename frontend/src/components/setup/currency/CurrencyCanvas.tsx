@@ -44,7 +44,7 @@ export const CurrencyCanvas = () => {
 
       store.dispatch({
         type: ActionType.ACCOUNT_UPDATE,
-        payload: currency,
+        payload: c,
       });
     } catch (error) {
       console.error(error);
