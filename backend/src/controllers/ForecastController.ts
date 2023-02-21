@@ -134,27 +134,54 @@ const list = async (
     const direct = DatabaseHelper.get();
     const collection = direct.collection('Cards');
 
-    const query = {
-      accountId: req.jwt.account.id!.toString(),
-      tags: {
-        type: 'closed-won',
-      },
-    };
+    let match: any = {};
 
-    const lanes = await database.manager.findBy(Lane, query);
-
-    const { start, end } = parseRange(req.query);
-
-    const match: any = {
-      $match: {
-        accountId: { $eq: req.jwt.account.id?.toString() },
-        lane: { $in: lanes.map((lane) => lane.id?.toString()) },
-        updatedAt: {
-          $gt: start,
-          $lt: end,
+    if (req.query.mode === 'predicted') {
+      const query = {
+        accountId: req.jwt.account.id!.toString(),
+        tags: {
+          type: 'normal',
         },
-      },
-    };
+        inForecast: true,
+      };
+
+      const lanes = await database.manager.findBy(Lane, query);
+
+      const { start, end } = parseRange(req.query);
+
+      match = {
+        $match: {
+          accountId: { $eq: req.jwt.account.id?.toString() },
+          lane: { $in: lanes.map((lane) => lane.id?.toString()) },
+          closedAt: {
+            $gt: start,
+            $lt: end,
+          },
+        },
+      };
+    } else {
+      const query = {
+        accountId: req.jwt.account.id!.toString(),
+        tags: {
+          type: 'closed-won',
+        },
+      };
+
+      const lanes = await database.manager.findBy(Lane, query);
+
+      const { start, end } = parseRange(req.query);
+
+      match = {
+        $match: {
+          accountId: { $eq: req.jwt.account.id?.toString() },
+          lane: { $in: lanes.map((lane) => lane.id?.toString()) },
+          updatedAt: {
+            $gt: start,
+            $lt: end,
+          },
+        },
+      };
+    }
 
     if (req.query.user && req.query.user !== FILTER_BY_NONE.key) {
       match.$match.user = req.query.user;

@@ -276,12 +276,18 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async fetchForecastList(start: DateTime, end: DateTime, user: string) {
+  async fetchForecastList(
+    start: DateTime,
+    end: DateTime,
+    user: string,
+    mode: 'achieved' | 'predicted'
+  ) {
     let url = this.getUrl(
       `/api/forecast/list?${new URLSearchParams({
         start: start.toISODate(),
         end: end.toISODate(),
         user: user,
+        mode: mode,
       })}`
     );
 

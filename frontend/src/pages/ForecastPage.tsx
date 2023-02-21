@@ -9,7 +9,7 @@ import { DateRangePicker, Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { selectUsers, store } from '../store/Store';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../actions/Actions';
+import { ActionType, showModalError } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { DateTime, Interval } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
@@ -38,9 +38,9 @@ export const ForecastPage = () => {
     endOfMonth(today(getLocalTimeZone()))
   );
   const [name, setName] = useState(FILTER_BY_NONE.key);
-  const [summary, setSummary] = useState({ amount: 0, count: 0 });
+  const [achieved, setAchieved] = useState({ amount: 0, count: 0 });
   const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
-
+  const [mode, setMode] = useState<'achieved' | 'predicted'>('achieved');
   const [list, setList] = useState([]);
   const users = useSelector(selectUsers);
 
@@ -54,32 +54,37 @@ export const ForecastPage = () => {
     end.toString();
 
     const execute = async () => {
-      const summary = await client!.fetchForecastAchieved(
-        DateTime.fromISO(start.toString()),
-        DateTime.fromISO(end.toString()),
-        name
-      );
-      setSummary(summary);
-
-      const predicted = await client!.fetchForecastPredicted(
-        DateTime.fromISO(start.toString()),
-        DateTime.fromISO(end.toString()),
-        name
-      );
-      setPredicted(predicted);
-
-      const list = await client!.fetchForecastList(
-        DateTime.fromISO(start.toString()),
-        DateTime.fromISO(end.toString()),
-        name
-      );
-      setList(list);
+      try {
+        const [achieved, predicted, list] = await Promise.all([
+          client!.fetchForecastAchieved(
+            DateTime.fromISO(start.toString()),
+            DateTime.fromISO(end.toString()),
+            name
+          ),
+          client!.fetchForecastPredicted(
+            DateTime.fromISO(start.toString()),
+            DateTime.fromISO(end.toString()),
+            name
+          ),
+          client!.fetchForecastList(
+            DateTime.fromISO(start.toString()),
+            DateTime.fromISO(end.toString()),
+            name,
+            mode
+          ),
+        ]);
+        setAchieved(achieved);
+        setPredicted(predicted);
+        setList(list);
+      } catch (error) {
+        store.dispatch(showModalError(error?.toString()));
+      }
     };
 
-    if (start && end && client && name) {
+    if (start && end && client && name && mode) {
       execute();
     }
-  }, [client, start, end, name]);
+  }, [client, start, end, name, mode]);
 
   useEffect(() => {
     const execute = async () => {
@@ -97,7 +102,9 @@ export const ForecastPage = () => {
   }, [client]);
 
   const getAge = (start: DateTime, end: DateTime) => {
-    return Interval.fromDateTimes(start, end).length('days');
+    return start < end
+      ? `${Interval.fromDateTimes(start, end).length('days').toFixed(2)} days`
+      : '-';
   };
 
   return (
@@ -119,6 +126,7 @@ export const ForecastPage = () => {
           </Picker>
         </div>
         <div>
+          <b>Close Date</b>&nbsp;
           <DateRangePicker
             aria-label="date"
             value={{
@@ -140,12 +148,12 @@ export const ForecastPage = () => {
             <div className="metric" style={{ width: '320px' }}>
               <div>
                 <h4 style={{ display: 'inline-block', marginRight: '10px' }}>
-                  <Currency value={summary.amount} />{' '}
+                  <Currency value={achieved.amount} />{' '}
                 </h4>
                 <span>
                   {(
-                    (summary.amount * 100) /
-                    (summary.amount + predicted.amount)
+                    (achieved.amount * 100) /
+                    (achieved.amount + predicted.amount)
                   ).toFixed(2)}
                   %
                 </span>
@@ -167,7 +175,7 @@ export const ForecastPage = () => {
 
             <div className="metric">
               <h4>
-                <Currency value={predicted.amount + summary.amount} />
+                <Currency value={predicted.amount + achieved.amount} />
               </h4>
               <span>Prediction - Value</span>
             </div>
@@ -175,7 +183,7 @@ export const ForecastPage = () => {
 
           <div>
             <div className="metric" style={{ width: '320px' }}>
-              <h4>{summary.count}</h4>
+              <h4>{achieved.count}</h4>
               <span>Number of Deals</span>
             </div>
 
@@ -189,14 +197,22 @@ export const ForecastPage = () => {
             <ForecastSpacer />
 
             <div className="metric">
-              <h4>{predicted.count + summary.count}</h4>
+              <h4>{predicted.count + achieved.count}</h4>
               <span>Prediction - Count</span>
             </div>
           </div>
         </section>
 
         <section className="content-box tile">
-          <h2>Deals by user</h2>
+          <Picker
+            defaultSelectedKey={mode}
+            onSelectionChange={(key) => {
+              setMode(key.toString() as 'achieved' | 'predicted');
+            }}
+          >
+            <Item key="achieved">Achieved</Item>
+            <Item key="predicted">Predicted</Item>
+          </Picker>
 
           <table className="list" style={{ width: '100%' }}>
             <tbody>
@@ -208,25 +224,25 @@ export const ForecastPage = () => {
                 <td>Deal Duration</td>
                 <td>User</td>
               </tr>
-              {list.map((card: Card) => {
+              {list.map((card: Card, index) => {
                 const created = DateTime.fromISO(card.createdAt);
-                const closed = DateTime.fromISO(card.updatedAt);
+                const closed = DateTime.fromISO(card.closedAt);
 
                 const user = users.find((user) => user.id === card.user);
 
                 return (
-                  <tr key={card.id}>
+                  <tr key={index}>
                     <td>
                       <b>{card.name}</b>
                     </td>
                     <td>
                       <b>
-                        <Currency value={card.amount} />
+                        <Currency key={card.id} value={card.amount} />
                       </b>
                     </td>
                     <td>{created.toRelative()}</td>
                     <td>{closed.toRelative()}</td>
-                    <td>{getAge(created, closed).toFixed(2)} days</td>
+                    <td>{getAge(created, closed)}</td>
                     <td>{user?.name}</td>
                   </tr>
                 );

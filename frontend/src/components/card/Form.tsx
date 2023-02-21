@@ -12,7 +12,7 @@ import { TextAttribute } from './schema/TextAttribute';
 
 export interface FormProps {
   id: string | undefined;
-  add: any;
+  add: any; // TODO remove any
 }
 
 // TODO rename component
@@ -52,6 +52,9 @@ export const Form = ({ add, id }: FormProps) => {
       });
 
       setAttributes(userAttributes);
+      setName('');
+      setAmount('');
+      setClosedAt(null);
 
       return;
     }
@@ -153,7 +156,6 @@ export const Form = ({ add, id }: FormProps) => {
           label="Name"
         />
       </div>
-
       {Array.from(attributes.entries()).map(([key, value]) => {
         const attribute = schema?.schema.find((a) => a.key === key);
 
@@ -164,7 +166,6 @@ export const Form = ({ add, id }: FormProps) => {
 
         return getAttribute(attribute!, value);
       })}
-
       <div style={{ display: 'flex', marginTop: '10px' }}>
         <div>
           <TextField

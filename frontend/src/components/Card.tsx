@@ -8,6 +8,7 @@ import { store } from '../store/Store';
 import { ActionType } from '../actions/Actions';
 import { Draggable } from 'react-beautiful-dnd';
 import { Currency } from './Currency';
+import { Avatar } from './Avatar';
 
 export interface CardProps {
   card: CardEntity;
@@ -59,20 +60,10 @@ export const Card = ({ card, lane, index }: CardProps) => {
                 showCardDetail(card.id);
               }}
             >
-              <div className="edit" style={{ display: 'none' }}>
-                <button
-                  onClick={() => {
-                    showCardDetail(card.id);
-                  }}
-                >
-                  <Edit
-                    size="S"
-                    UNSAFE_style={{ color: 'grey' }}
-                    aria-label="Default Alert"
-                  />
-                </button>
+              <div style={{ marginBottom: '4px' }}>
+                <Avatar width={30} id={card.user} />
               </div>
-              <div className="name">{card.name}</div>{' '}
+              <div className="name">{card.name}</div>
               <Currency value={card.amount} /> -{' '}
               {closedAt?.toLocaleDateString()}
               <div>

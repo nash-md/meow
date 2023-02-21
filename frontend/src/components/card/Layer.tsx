@@ -70,7 +70,7 @@ export const Layer = () => {
               setIsUserLayerVisible(!isUserLayerVisible);
             }}
           >
-            <Avatar id={card?.user} width={0} />
+            <Avatar id={card?.user} width={36} />
           </div>
         )}
 
@@ -90,7 +90,7 @@ export const Layer = () => {
                   return (
                     <tr key={user.id}>
                       <td>
-                        <Avatar id={user.id} width={0} />
+                        <Avatar width={36} id={user.id} />
                       </td>
                       <td>
                         <b>{user.name}</b>
