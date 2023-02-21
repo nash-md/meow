@@ -74,7 +74,10 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
           color: lane.color ? 'white' : 'grey',
         }}
       >
-        {cards.length} Deal{cards.length > 1 ? 's' : ''} -{' '}
+        {cards.filter((card) => card.lane === lane.id).length} Deal
+        {cards.filter((card) => card.lane === lane.id).length > 1
+          ? 's'
+          : ''} -{' '}
         <b>
           <Currency value={amount} />
         </b>
