@@ -16,7 +16,7 @@ export const PasswordCanvas = () => {
   let isValid = useMemo(() => {
     setError('');
 
-    if (existing && updated) {
+    if (existing.length >= 3 && updated.length >= 3) {
       return true;
     }
 
