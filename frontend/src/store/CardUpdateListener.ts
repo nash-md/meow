@@ -25,7 +25,12 @@ cardUpdateListener.startListening({
     const casted = action as ApplicationCardUpdateAction;
 
     try {
-      await client.updateCard(casted.payload);
+      const card = await client.updateCard(casted.payload);
+
+      store.dispatch({
+        type: ActionType.CARD_REFRESH,
+        payload: { ...card },
+      });
     } catch (error) {
       let message = '';
 
