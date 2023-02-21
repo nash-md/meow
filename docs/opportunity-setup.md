@@ -34,11 +34,11 @@ Before creating fetch an opportunity, we need to authenticate with our system us
 
 `POST {your-domain}/public/login`
 
-Send the following JSON payload
+Send the following JSON payload. If you do not have a user yet, check the [Create Leads via API](docs/create-leads.md) guide for a quick introduction how to create a user.
 
 ```
 {
-  "name": "Website",
+  "name": "{my-user}",
   "password": "{your-password}"
 }
 ```
