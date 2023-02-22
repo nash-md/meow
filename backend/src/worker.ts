@@ -101,20 +101,29 @@ try {
   card.use(addEntityToHeader);
   card.use(setHeaders);
   card.use(isDatabaseConnectionEstablished);
-  card.use(rejectIfContentTypeIsNot('application/json'));
 
   card.route('/').get(CardController.list);
   card
     .route('/')
-    .post(validateAgainst(CardRequestSchema), CardController.create);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(CardRequestSchema),
+      CardController.create
+    );
   card.route('/:id').get(CardController.get);
   card
     .route('/:id?')
-    .post(validateAgainst(CardRequestSchema), CardController.update);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(CardRequestSchema),
+      CardController.update
+    );
   card.route('/:id').delete(CardController.remove);
 
   card.route('/:id/events').get(EventController.list);
-  card.route('/:id/events').post(EventController.create);
+  card
+    .route('/:id/events')
+    .post(rejectIfContentTypeIsNot('application/json'), EventController.create);
 
   app.use('/api/cards', card);
 
@@ -125,13 +134,16 @@ try {
   account.use(verifyJwt);
   account.use(addEntityToHeader);
   account.use(setHeaders);
-  account.use(rejectIfContentTypeIsNot('application/json'));
 
   account.use(isDatabaseConnectionEstablished);
 
   account
     .route('/:id')
-    .post(validateAgainst(AccountRequestSchema), AccountController.update);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(AccountRequestSchema),
+      AccountController.update
+    );
 
   app.use('/api/accounts', account);
 
@@ -143,15 +155,22 @@ try {
   lane.use(addEntityToHeader);
   lane.use(setHeaders);
   lane.use(isDatabaseConnectionEstablished);
-  lane.use(rejectIfContentTypeIsNot('application/json'));
 
   lane.route('/').get(LaneController.list);
   lane
     .route('/')
-    .post(validateAgainst(LanesRequestSchema), LaneController.updateAll);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(LanesRequestSchema),
+      LaneController.updateAll
+    );
   lane
     .route('/:id')
-    .post(validateAgainst(LaneRequestSchema), LaneController.update);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(LaneRequestSchema),
+      LaneController.update
+    );
 
   app.use('/api/lanes', lane);
 
@@ -163,21 +182,36 @@ try {
   user.use(addEntityToHeader);
   user.use(setHeaders);
   user.use(isDatabaseConnectionEstablished);
-  user.use(rejectIfContentTypeIsNot('application/json'));
 
   user.route('/').get(UserController.list);
   user
     .route('/')
-    .post(validateAgainst(UserRequestSchema), UserController.create);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(UserRequestSchema),
+      UserController.create
+    );
   user
     .route('/:id')
-    .post(validateAgainst(UserUpdateRequestSchema), UserController.update);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(UserUpdateRequestSchema),
+      UserController.update
+    );
   user
     .route('/:id/board')
-    .post(validateAgainst(BoardRequestSchema), UserController.board);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(BoardRequestSchema),
+      UserController.board
+    );
   user
     .route('/:id/password')
-    .post(validateAgainst(PasswordRequestSchema), UserController.password);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(PasswordRequestSchema),
+      UserController.password
+    );
 
   app.use('/api/users', user);
 
@@ -189,7 +223,6 @@ try {
   forecast.use(addEntityToHeader);
   forecast.use(setHeaders);
   forecast.use(isDatabaseConnectionEstablished);
-  forecast.use(rejectIfContentTypeIsNot('application/json'));
 
   forecast.route('/achieved').get(ForecastController.achieved);
   forecast.route('/predicted').get(ForecastController.predicted);
@@ -205,11 +238,14 @@ try {
   schema.use(addEntityToHeader);
   schema.use(setHeaders);
   schema.use(isDatabaseConnectionEstablished);
-  schema.use(rejectIfContentTypeIsNot('application/json'));
 
   schema
     .route('/')
-    .post(validateAgainst(SchemaRequestSchema), SchemaController.create);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(SchemaRequestSchema),
+      SchemaController.create
+    );
   schema.route('/').get(SchemaController.list);
 
   app.use('/api/schemas', schema);
