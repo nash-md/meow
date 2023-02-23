@@ -226,7 +226,9 @@ export const ForecastPage = () => {
               </tr>
               {list.map((card: Card, index) => {
                 const created = DateTime.fromISO(card.createdAt);
-                const closed = DateTime.fromISO(card.closedAt);
+                const closed = card.closedAt
+                  ? DateTime.fromISO(card.closedAt)
+                  : undefined;
 
                 const user = users.find((user) => user.id === card.user);
 
@@ -241,8 +243,8 @@ export const ForecastPage = () => {
                       </b>
                     </td>
                     <td>{created.toRelative()}</td>
-                    <td>{closed.toRelative()}</td>
-                    <td>{getAge(created, closed)}</td>
+                    <td>{closed ? closed.toRelative() : ''}</td>
+                    <td>{closed ? getAge(created, closed) : ''}</td>
                     <td>{user?.name}</td>
                   </tr>
                 );
