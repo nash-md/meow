@@ -33,6 +33,7 @@ Before you run the build, you’ll need to define the following variables for la
 - `MONGODB_URI` - pointing to your MongoDB instance.
 - `SESSION_SECRET` - a string used to hash the JWT sessons
 - `PORT` - server port, if not set the server will use port `9000`
+- `IP_ADDRESS` - the backend server address, default is `127.0.0.1`
 - `LOG_LEVEL` - self-explanatory
 - `NODE_ENV` - please set this value to `production` for a production build
 
@@ -71,6 +72,14 @@ This project was built with [Create React App](https://create-react-app.dev/docs
 `npm run build`
 
 You will find the build artifacts in the `build` directory. Host the static files it on the server of your choice.
+
+### Using Docker
+
+Docker is a platform that allows you to easily create, deploy, and run applications in containers. Containers are lightweight and portable, providing an isolated environment that runs consistently across different systems. To install Docker follow this [guide](https://docs.docker.com/get-docker/).
+
+The root directory of this project contains a `Dockerfile` and a `docker-compose.yml`, you can build and run it with.
+
+`docker-compose up`
 
 ### Database Support
 

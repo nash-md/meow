@@ -4,6 +4,9 @@ dotenv.config();
 
 import { log } from './logger.js';
 
+const IP_ADDRESS = process.env.IP_ADDRESS || '127.0.0.1';
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 9000;
+
 const mandatory = ['MONGODB_URI', 'SESSION_SECRET'];
 
 mandatory.forEach((param) => {
@@ -284,6 +287,6 @@ app.use(handleError);
 
 const server = http.createServer(app);
 
-server.listen(app.get('port'), '127.0.0.1', () => {
-  log.info(`Listening on ${app.get('port')}`);
+server.listen(PORT, IP_ADDRESS, () => {
+  log.info(`Listening on ${IP_ADDRESS}:${PORT}`);
 });
