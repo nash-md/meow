@@ -4,12 +4,13 @@ import { ActionType } from '../../actions/Actions';
 import {
   selectCard,
   selectInterfaceStateId,
+  selectLanes,
   selectUsers,
   store,
 } from '../../store/Store';
 import { Form } from './Form';
 import { Events } from './Events';
-import { Card } from '../../interfaces/Card';
+import { Card, CardPreview } from '../../interfaces/Card';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { useContext, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
@@ -22,6 +23,7 @@ export const Layer = () => {
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
   const [isUserLayerVisible, setIsUserLayerVisible] = useState(false);
   const users = useSelector(selectUsers);
+  const lanes = useSelector(selectLanes);
 
   const hideCardDetail = () => {
     store.dispatch({
@@ -41,21 +43,22 @@ export const Layer = () => {
     setIsUserLayerVisible(false);
   };
 
-  const add = async (card: Card) => {
-    // TODO should handle Card and CardPreview (Partial) types
-    let updated = {};
-
-    if (card.id) {
+  const update = async (id: Card['id'] | undefined, preview: CardPreview) => {
+    if (id) {
       store.dispatch({
         type: ActionType.CARD_UPDATE,
-        payload: { ...card, ...updated },
+        payload: { ...card!, ...preview },
       });
     } else {
-      updated = await client!.createCard(card); // TODO refactor
+      if (!preview.lane) {
+        preview.lane = lanes[0].id;
+      }
+
+      const updated = await client!.createCard(preview); // TODO refactor
 
       store.dispatch({
         type: ActionType.CARD_ADD,
-        payload: { ...card, ...updated },
+        payload: { ...updated },
       });
     }
   };
@@ -125,7 +128,7 @@ export const Layer = () => {
 
           <TabPanels>
             <Item key="deal">
-              <Form add={add} id={id} />
+              <Form update={update} id={id} />
             </Item>
             <Item key="events">
               <Events id={id} />

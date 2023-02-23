@@ -13,8 +13,8 @@ import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
 function hasAttributeDifference(
-  existing: CardAttribute[] | undefined,
-  updated: CardAttribute[] | undefined
+  existing: CardAttribute | undefined,
+  updated: CardAttribute | undefined
 ): boolean {
   if (!existing && !updated) {
     return false;
@@ -24,16 +24,15 @@ function hasAttributeDifference(
     return true;
   }
 
-  if (existing.length !== updated.length) {
+  const existingKeys = Object.keys(existing);
+  const updatedKeys = Object.keys(updated);
+
+  if (existingKeys.length !== updatedKeys.length) {
     return true;
   }
 
-  // Check if all key-value pairs are the same
-  for (let i = 0; i < existing.length; i++) {
-    const attr1 = existing[i]!;
-    const attr2 = updated.find((attr) => attr.keyId === attr1.keyId);
-
-    if (!attr2 || attr2.value !== attr1.value) {
+  for (const key in existing) {
+    if (updated[key] !== existing[key]) {
       return true;
     }
   }

@@ -2,9 +2,18 @@ import { Button, TextField, DatePicker } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { parseDate } from '@internationalized/date';
-import { selectCard, selectLanes, selectSchemaByType } from '../../store/Store';
+import {
+  selectCard,
+  selectSchemaByType,
+  selectUserId,
+} from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import { Card } from '../../interfaces/Card';
+import {
+  Card,
+  CardAttribute,
+  CardFormPreview,
+  CardPreview,
+} from '../../interfaces/Card';
 import { SchemaAttribute } from '../../interfaces/Schema';
 import { SelectAttribute } from './schema/SelectAttribute';
 import { TextAreaAttribute } from './schema/TextAreaAttribute';
@@ -12,132 +21,122 @@ import { TextAttribute } from './schema/TextAttribute';
 
 export interface FormProps {
   id: string | undefined;
-  add: any; // TODO remove any
+  update: (id: Card['id'] | undefined, card: CardPreview) => void;
 }
 
 // TODO rename component
-export const Form = ({ add, id }: FormProps) => {
-  const lanes = useSelector(selectLanes);
-  const [name, setName] = useState<string>('');
-  const [amount, setAmount] = useState<string>('0');
-  const [attributes, setAttributes] = useState(new Map<string, string>());
+export const Form = ({ update, id }: FormProps) => {
+  const userId = useSelector(selectUserId);
+  const [attributes, setAttributes] = useState<CardAttribute>({});
+  const [preview, setPreview] = useState<CardFormPreview>({
+    name: '',
+    amount: '',
+    lane: '',
+    attributes: undefined,
+    user: userId!,
+  });
+
+  useEffect(() => {
+    setAttributes(preview.attributes || {});
+  }, [preview.attributes]);
+
+  const handlePreviewUpdate = (key: string, value: string | number) => {
+    setPreview({
+      ...preview,
+      [key]: value,
+    });
+  };
 
   const schema = useSelector((store: ApplicationStore) =>
     selectSchemaByType(store, 'card')
   );
 
   let isValidAmount = useMemo(
-    () => /^[\d]{1,10}$/.test(amount as string),
-    [amount]
+    () => /^[\d]{1,10}$/.test(preview.amount),
+    [preview]
   );
 
   let isValidForm = useMemo(() => {
-    if (name && isValidAmount) {
+    if (preview.name && isValidAmount) {
       return true;
     }
 
     return false;
-  }, [amount, name]);
-
-  const [closedAt, setClosedAt] = useState<any>(null);
+  }, [preview]);
 
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
 
   useEffect(() => {
-    if (!card) {
-      const userAttributes = new Map<string, string>();
+    const list: CardAttribute = {};
 
+    if (card) {
       schema?.schema.map((attribute) => {
-        userAttributes.set(attribute.key, '');
+        list[attribute.key] = card.attributes?.[attribute.key] ?? '';
       });
 
-      setAttributes(userAttributes);
-      setName('');
-      setAmount('');
-      setClosedAt(null);
+      setPreview({
+        ...card,
+        attributes: { ...list },
+        amount: card.amount.toString(),
+      });
+    } else {
+      schema?.schema.map((attribute) => {
+        list[attribute.key] = '';
+      });
 
-      return;
-    }
-
-    setName(card.name);
-    setAmount(card.amount?.toString());
-
-    const userAttributes = new Map<string, string>();
-
-    schema?.schema.map((attribute) => {
-      userAttributes.set(attribute.key, '');
-    });
-
-    if (card.attributes) {
-      card.attributes.map((attribute) => {
-        userAttributes.set(attribute.keyId, attribute.value);
+      setPreview({
+        name: '',
+        amount: '0',
+        lane: '',
+        attributes: { ...list },
+        user: userId!,
       });
     }
-
-    setAttributes(userAttributes);
-
-    if (card.closedAt) {
-      const date = parseDate(card.closedAt.toString().substring(0, 10));
-
-      setClosedAt(date);
-    }
-  }, [card]);
+  }, [card, schema]);
 
   const save = () => {
-    const userAttributes = Array.from(attributes.entries()).map(
-      ([key, value]) => {
-        return { keyId: key, value };
-      }
-    );
-
-    const updated: Card = {
-      ...card!,
-      name,
-      amount: parseInt(amount),
-      attributes: userAttributes,
-      closedAt: closedAt ? closedAt.toString() : undefined,
-    };
-
-    if (!updated.lane) {
-      updated.lane = lanes[0].id;
-    }
-    add(updated);
+    update(id, { ...preview, amount: parseInt(preview.amount) });
   };
 
-  const update = (key: string, value: string) => {
-    const updated = new Map(attributes);
-
-    updated.set(key, value);
-
-    setAttributes(updated);
+  const updateAttribute = (key: string, value: string) => {
+    setPreview({
+      ...preview,
+      attributes: {
+        ...preview.attributes,
+        [key]: value,
+      },
+    });
   };
 
-  const getAttribute = (attribute: SchemaAttribute, value: string) => {
+  const getAttribute = (
+    attribute: SchemaAttribute,
+    value: string | undefined | null
+  ) => {
     switch (attribute.type) {
       case 'text':
         return (
           <TextAttribute
-            update={update}
+            update={updateAttribute}
             attributeKey={attribute.key}
-            value={value}
+            value={value ?? ''}
             {...attribute}
           />
         );
       case 'textarea':
         return (
           <TextAreaAttribute
-            update={update}
+            update={updateAttribute}
             attributeKey={attribute.key}
-            value={value}
+            value={value ?? ''}
             {...attribute}
           />
         );
       case 'select':
         return (
           <SelectAttribute
-            update={update}
+            update={updateAttribute}
             attributeKey={attribute.key}
-            value={value}
+            value={value ?? ''}
             {...attribute}
           />
         );
@@ -148,32 +147,29 @@ export const Form = ({ add, id }: FormProps) => {
     <div>
       <div style={{ marginTop: '10px' }}>
         <TextField
-          onChange={setName}
-          value={name}
+          onChange={(value) => handlePreviewUpdate('name', value)}
+          value={preview.name}
           aria-label="Name"
           width="100%"
           key="name"
           label="Name"
         />
       </div>
-      {Array.from(attributes.entries()).map(([key, value]) => {
-        const attribute = schema?.schema.find((a) => a.key === key);
-
-        // can happen if the database contains attributes that are not on the schema anymore
-        if (!attribute) {
-          return;
-        }
-
-        return getAttribute(attribute!, value);
+      {schema?.schema.map((attribute) => {
+        return getAttribute(
+          attribute!,
+          attributes?.[attribute.key]?.toString()
+        );
       })}
+
       <div style={{ display: 'flex', marginTop: '10px' }}>
         <div>
           <TextField
-            onChange={setAmount}
-            value={amount}
+            onChange={(value) => handlePreviewUpdate('amount', value)}
+            value={preview.amount}
             aria-label="Amount"
             width="100%"
-            key="name"
+            key="amount"
             inputMode="decimal"
             label="Amount"
             validationState={isValidAmount ? 'valid' : 'invalid'}
@@ -182,8 +178,14 @@ export const Form = ({ add, id }: FormProps) => {
         </div>
         <div style={{ marginLeft: '10px' }}>
           <DatePicker
-            value={closedAt}
-            onChange={setClosedAt}
+            value={
+              preview.closedAt
+                ? parseDate(preview.closedAt.substring(0, 10))
+                : undefined
+            }
+            onChange={(value) =>
+              handlePreviewUpdate('closedAt', value.toString())
+            }
             label="Expected Close Date"
           />
         </div>

@@ -6,18 +6,12 @@ export const CardRequestSchema = {
     name: { type: 'string' },
     amount: { type: 'number' },
     attributes: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          keyId: { type: 'string' },
-          value: { type: 'string' },
-        },
-        required: ['keyId', 'value'],
+      type: 'object',
+      additionalProperties: {
+        type: ['string', 'number', 'null'],
       },
     },
     user: { type: 'string' },
     closedAt: { type: ['string', 'null'] },
   },
-  additionalProperties: false,
 };

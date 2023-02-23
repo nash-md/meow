@@ -31,7 +31,7 @@ export class Card {
   isDeleted?: boolean;
 
   @Column()
-  attributes?: CardAttribute[];
+  attributes?: CardAttribute;
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -71,6 +71,5 @@ export class Card {
 }
 
 export interface CardAttribute {
-  keyId: string;
-  value: string;
+  [key: string]: string | number | null;
 }

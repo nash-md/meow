@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-23
+
+- extended the OpenAPI definitions .yml file to include additional routes and parameters
+- added Docker configuration, you can now run the project with `docker-compose up`
+- opportunity attributes are now an object instead of an array
+
 ## 2023-02-21
 
 - add components and route to delete additional users

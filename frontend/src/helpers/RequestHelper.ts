@@ -164,7 +164,7 @@ export class RequestHelper {
     }
   }
 
-  async createCard(card: CardPreview) {
+  async createCard(card: CardPreview): Promise<Card> {
     let url = this.getUrl(`/api/cards`);
 
     return this.doFetch(url, 'POST', card);

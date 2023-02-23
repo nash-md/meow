@@ -7,16 +7,30 @@ export interface Card {
   user: string;
   amount: number;
   lane: string;
-  attributes: CardAttribute[];
-  closedAt: string;
+  attributes: CardAttribute | undefined;
+  closedAt?: string;
   readonly createdAt: string;
   updatedAt: string;
 }
 
 export interface CardAttribute {
-  keyId: string;
-  value: string;
+  [key: string]: string | number | null;
 }
 
-export interface CardPreview
-  extends Omit<Card, 'id' | 'updatedAt' | 'createdAt'> {}
+export interface CardPreview {
+  name: string;
+  user: string;
+  amount: number;
+  lane: string;
+  attributes: CardAttribute | undefined;
+  closedAt?: string;
+}
+
+export interface CardFormPreview {
+  name: string;
+  user: string;
+  amount: string;
+  lane: string;
+  attributes: CardAttribute | undefined;
+  closedAt?: string;
+}
