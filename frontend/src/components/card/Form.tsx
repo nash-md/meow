@@ -77,7 +77,7 @@ export const Form = ({ update, id }: FormProps) => {
       setPreview({
         ...card,
         attributes: { ...list },
-        amount: card.amount.toString(),
+        amount: card.amount ? card.amount.toString() : '',
       });
     } else {
       schema?.schema.map((attribute) => {
