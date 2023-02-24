@@ -74,7 +74,7 @@ export const Canvas = () => {
   useEffect(() => {
     setAmount(
       cards.reduce((acc, card) => {
-        const lane = lanes.find((lane: Lane) => lane.id === card.lane);
+        const lane = lanes.find((lane: Lane) => lane.id === card.laneId);
 
         if (lane && lane.inForecast === true) {
           return card.amount ? acc + card.amount : acc;
@@ -120,7 +120,7 @@ export const Canvas = () => {
           payload: card,
         });
       } else {
-        card!.lane = result.destination.droppableId;
+        card!.laneId = result.destination.droppableId;
 
         store.dispatch({
           type: ActionType.CARD_LANE,

@@ -37,7 +37,7 @@ export const Layer = () => {
 
     store.dispatch({
       type: ActionType.CARD_UPDATE,
-      payload: { ...card!, user: id },
+      payload: { ...card!, userId: id },
     });
 
     setIsUserLayerVisible(false);
@@ -50,8 +50,8 @@ export const Layer = () => {
         payload: { ...card!, ...preview },
       });
     } else {
-      if (!preview.lane) {
-        preview.lane = lanes[0].id;
+      if (!preview.laneId) {
+        preview.laneId = lanes[0].id;
       }
 
       const updated = await client!.createCard(preview); // TODO refactor
@@ -66,14 +66,14 @@ export const Layer = () => {
   return (
     <div className="layer">
       <div className="header">
-        {card?.user && (
+        {card?.userId && (
           <div
             style={{ float: 'left' }}
             onClick={() => {
               setIsUserLayerVisible(!isUserLayerVisible);
             }}
           >
-            <Avatar id={card?.user} width={36} />
+            <Avatar id={card?.userId} width={36} />
           </div>
         )}
 

@@ -61,7 +61,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
               }}
             >
               <div style={{ marginBottom: '4px' }}>
-                <Avatar width={30} id={card.user} />
+                <Avatar width={30} id={card.userId} />
               </div>
               <div className="name">{card.name}</div>
               <Currency value={card.amount} /> -{' '}

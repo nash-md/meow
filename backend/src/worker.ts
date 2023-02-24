@@ -121,7 +121,6 @@ try {
       validateAgainst(CardRequestSchema),
       CardController.update
     );
-  card.route('/:id').delete(CardController.remove);
 
   card.route('/:id/events').get(EventController.list);
   card

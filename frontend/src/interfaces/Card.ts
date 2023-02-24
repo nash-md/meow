@@ -4,9 +4,10 @@ export interface Card {
   readonly id: id;
   name: string;
   accountId: string;
-  user: string;
+  userId: string;
   amount: number;
-  lane: string;
+  laneId: string;
+  status?: CardStatus;
   attributes: CardAttribute | undefined;
   closedAt?: string;
   readonly createdAt: string;
@@ -17,20 +18,25 @@ export interface CardAttribute {
   [key: string]: string | number | null;
 }
 
+export enum CardStatus {
+  Active = 'active',
+  Deleted = 'deleted',
+}
+
 export interface CardPreview {
   name: string;
-  user: string;
+  userId: string;
   amount: number;
-  lane: string;
+  laneId: string;
   attributes: CardAttribute | undefined;
   closedAt?: string;
 }
 
 export interface CardFormPreview {
   name: string;
-  user: string;
+  userId: string;
   amount: string;
-  lane: string;
+  laneId: string;
   attributes: CardAttribute | undefined;
   closedAt?: string;
 }

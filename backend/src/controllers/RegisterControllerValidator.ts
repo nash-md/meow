@@ -28,9 +28,15 @@ export const isValidName = async (name: unknown) => {
     throw new InvalidUserPropertyError('name it not type string');
   }
 
-  const count = await database.manager.countBy(User, { name: name });
+  const query = {
+    where: {
+      name: { $regex: RegExp(name, 'i') },
+    },
+  };
 
-  if (count > 0) {
+  const users = await database.getMongoRepository(User).findAndCount(query);
+
+  if (users[1] > 0) {
     throw new UserAlreadyExistsError();
   }
 };

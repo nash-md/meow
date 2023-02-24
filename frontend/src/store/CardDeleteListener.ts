@@ -7,6 +7,7 @@ import {
 import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { RequestHelper } from '../helpers/RequestHelper';
+import { CardStatus } from '../interfaces/Card';
 import { ApplicationStore } from './ApplicationStore';
 import { store } from './Store';
 
@@ -25,7 +26,10 @@ cardDeleteListener.startListening({
     const casted = action as ApplicationCardDeleteAction;
 
     try {
-      await client.deleteCard(casted.payload.id); // TODO update with one API call
+      await client.updateCard({
+        ...casted.payload,
+        status: CardStatus.Deleted,
+      }); // TODO update with one API call
 
       await client.updateBoard(state.session.user.id!, state.board);
     } catch (error) {

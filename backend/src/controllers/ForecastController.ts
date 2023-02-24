@@ -37,7 +37,7 @@ const achieved = async (
     const match: any = {
       $match: {
         accountId: { $eq: req.jwt.account.id?.toString() },
-        lane: { $in: lanes.map((lane) => lane.id?.toString()) },
+        laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
         updatedAt: {
           $gt: start,
           $lt: end,
@@ -93,7 +93,7 @@ const predicted = async (
     const match: any = {
       $match: {
         accountId: { $eq: req.jwt.account.id?.toString() },
-        lane: { $in: lanes.map((lane) => lane.id?.toString()) },
+        laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
         closedAt: {
           $gt: start,
           $lt: end,
@@ -152,7 +152,7 @@ const list = async (
       match = {
         $match: {
           accountId: { $eq: req.jwt.account.id?.toString() },
-          lane: { $in: lanes.map((lane) => lane.id?.toString()) },
+          laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
           closedAt: {
             $gt: start,
             $lt: end,
@@ -174,7 +174,7 @@ const list = async (
       match = {
         $match: {
           accountId: { $eq: req.jwt.account.id?.toString() },
-          lane: { $in: lanes.map((lane) => lane.id?.toString()) },
+          laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
           updatedAt: {
             $gt: start,
             $lt: end,

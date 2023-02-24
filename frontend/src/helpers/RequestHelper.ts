@@ -117,25 +117,26 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  // TODO use card entity
   async updateCard({
     id,
-    lane,
+    laneId,
     name,
     amount,
     closedAt,
-    user,
+    userId,
     attributes,
+    status,
   }: Card) {
     let url = this.getUrl(`/api/cards/${id}`);
 
     return this.doFetch(url, 'POST', {
-      lane,
+      laneId,
       name,
       amount,
       closedAt,
-      user,
+      userId,
       attributes,
+      status,
     });
   }
 
@@ -177,12 +178,6 @@ export class RequestHelper {
       type: EventType.Comment,
       text: text,
     });
-  }
-
-  async deleteCard(id: string) {
-    const url = this.getUrl(`/api/cards/${id}`);
-
-    return this.doFetch(url, 'DELETE');
   }
 
   async getLanes() {

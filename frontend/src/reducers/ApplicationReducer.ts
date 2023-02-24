@@ -140,11 +140,11 @@ export const application = (state = Default, action: ApplicationAction) => {
     case ActionType.CARDS:
       // check if cards were found that are not on the board
       action.payload.map((card) => {
-        if (!isOnBoard(card.id, state.board) && isValidId(card.lane)) {
-          if (state.board[card.lane]) {
-            state.board[card.lane].push(card.id);
+        if (!isOnBoard(card.id, state.board) && isValidId(card.laneId)) {
+          if (state.board[card.laneId]) {
+            state.board[card.laneId].push(card.id);
           } else {
-            state.board[card.lane] = [card.id];
+            state.board[card.laneId] = [card.id];
           }
         }
       });
@@ -158,10 +158,10 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.CARD_ADD:
-      if (state.board[action.payload.lane]) {
-        state.board[action.payload.lane].push(action.payload.id);
+      if (state.board[action.payload.laneId]) {
+        state.board[action.payload.laneId].push(action.payload.id);
       } else {
-        state.board[action.payload.lane] = [action.payload.id];
+        state.board[action.payload.laneId] = [action.payload.id];
       }
 
       return {
@@ -231,9 +231,9 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.CARD_DELETE:
-      state.board[action.payload.lane] = removeCardFromBoard(
+      state.board[action.payload.laneId] = removeCardFromBoard(
         action.payload.id,
-        state.board[action.payload.lane]
+        state.board[action.payload.laneId]
       );
 
       return {

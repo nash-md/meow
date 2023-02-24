@@ -27,6 +27,14 @@ export const DefaultLanes = [
   },
 ];
 
+export const DefaultCards = [
+  { name: 'Paw Prints Photography', amount: 16000 },
+  { name: 'Squirrelly Sweets', amount: 80000 },
+  { name: 'Monkey Business Consulting', amount: 28000 },
+  { name: 'Snail Mail Emporium', amount: 20000 },
+  { name: 'Horsepower Landscaping', amount: 64000 },
+];
+
 export const DefaultSchema = {
   type: 'card',
   schema: [

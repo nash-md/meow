@@ -28,7 +28,7 @@ export const selectCards = (store: RootState) => store.cards;
 export const selectCardByLaneId = (
   store: ApplicationStore,
   id: string | undefined
-) => store.cards.filter((card) => card.lane === id);
+) => store.cards.filter((card) => card.laneId === id);
 export const selectBoard = (store: RootState) => store.board;
 export const selectBoardByLaneId = (store: ApplicationStore, id: string) =>
   store.board[id];

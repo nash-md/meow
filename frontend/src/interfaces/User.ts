@@ -4,6 +4,7 @@ export interface User {
   readonly id: id;
   readonly name: string;
   readonly createdAt?: string;
+  readonly accountId: string;
   status: UserStatus;
   animal: string;
 }

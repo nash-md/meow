@@ -31,9 +31,9 @@ export const Form = ({ update, id }: FormProps) => {
   const [preview, setPreview] = useState<CardFormPreview>({
     name: '',
     amount: '',
-    lane: '',
+    laneId: '',
     attributes: undefined,
-    user: userId!,
+    userId: userId!,
   });
 
   useEffect(() => {
@@ -87,9 +87,9 @@ export const Form = ({ update, id }: FormProps) => {
       setPreview({
         name: '',
         amount: '0',
-        lane: '',
+        laneId: '',
         attributes: { ...list },
-        user: userId!,
+        userId: userId!,
       });
     }
   }, [card, schema]);

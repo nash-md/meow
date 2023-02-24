@@ -29,7 +29,7 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
 
     setAmount(
       cards
-        .filter((card) => card.lane === lane.id)
+        .filter((card) => card.laneId === lane.id)
         .reduce((acc, card) => {
           return card.amount ? acc + card.amount : acc;
         }, 0)
@@ -74,10 +74,11 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
           color: lane.color ? 'white' : 'grey',
         }}
       >
-        {cards.filter((card) => card.lane === lane.id).length} Deal
-        {cards.filter((card) => card.lane === lane.id).length > 1
+        {cards.filter((card) => card.laneId === lane.id).length} Deal
+        {cards.filter((card) => card.laneId === lane.id).length > 1
           ? 's'
-          : ''} -{' '}
+          : ''}{' '}
+        -{' '}
         <b>
           <Currency value={amount} />
         </b>

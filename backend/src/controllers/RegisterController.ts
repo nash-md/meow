@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
-import { DefaultSchema, DefaultLanes } from '../Constants.js';
+import { DefaultSchema, DefaultLanes, DefaultCards } from '../Constants.js';
 import { Account, CurrencyCode } from '../entities/Account.js';
+import { Card } from '../entities/Card.js';
 import { Lane } from '../entities/Lane.js';
 import { Schema } from '../entities/Schema.js';
 import { User } from '../entities/User.js';
@@ -23,11 +24,12 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       new Account(`${name}'s Account`, CurrencyCode.USD)
     );
 
-    DefaultLanes.map(async (item, index) => {
-      await database.manager.save(
+    const lanes: Lane[] = [];
+
+    for (const [index, item] of DefaultLanes.entries()) {
+      const lane = await database.manager.save(
         new Lane(
           account.id!.toString(),
-          Lane.createKeyFromName(item.name),
           item.name,
           index,
           item.tags,
@@ -35,7 +37,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
           item.color
         )
       );
-    });
+
+      lanes.push(lane);
+    }
 
     database.manager.save(
       Schema,
@@ -51,6 +55,22 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     user.password = await new PasswordAuthenticationProvider().create(password);
 
     const updated = await database.manager.save(user);
+
+    await Promise.all(
+      DefaultCards.map(async (item, index) => {
+        const laneIndex = index < 4 ? index : 0;
+
+        await database.manager.save(
+          new Card(
+            account.id!.toString(),
+            updated.id!.toString(),
+            lanes[laneIndex]!.id!.toString(),
+            item.name,
+            item.amount
+          )
+        );
+      })
+    );
 
     res.json({ welcome: true });
   } catch (error) {

@@ -38,7 +38,6 @@ export class Lane {
 
   constructor(
     accountId: string,
-    key: string,
     name: string,
     index: number,
     tags: Tags,
@@ -62,12 +61,6 @@ export class Lane {
   @BeforeUpdate()
   insertUpdated() {
     this.updatedAt = new Date();
-  }
-
-  static createKeyFromName(value: string) {
-    return value
-      .replace(/[A-Z]/g, (letter) => `${letter.toLowerCase()}`)
-      .replace(/ /, '-');
   }
 }
 

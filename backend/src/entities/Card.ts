@@ -16,10 +16,10 @@ export class Card {
   accountId: string;
 
   @Column()
-  user: string;
+  userId: string;
 
   @Column()
-  lane: string;
+  laneId: string;
 
   @Column()
   name: string;
@@ -28,7 +28,7 @@ export class Card {
   amount: number;
 
   @Column()
-  isDeleted?: boolean;
+  status?: CardStatus;
 
   @Column()
   attributes?: CardAttribute;
@@ -44,15 +44,15 @@ export class Card {
 
   constructor(
     accountId: string,
-    user: string,
-    lane: string,
+    userId: string,
+    laneId: string,
     name: string,
     amount: number,
     closedAt?: Date
   ) {
     this.accountId = accountId;
-    this.user = user;
-    this.lane = lane;
+    this.userId = userId;
+    this.laneId = laneId;
     this.name = name;
     this.amount = amount;
     this.closedAt = closedAt;
@@ -72,4 +72,9 @@ export class Card {
 
 export interface CardAttribute {
   [key: string]: string | number | null;
+}
+
+export enum CardStatus {
+  Active = 'active',
+  Deleted = 'deleted',
 }

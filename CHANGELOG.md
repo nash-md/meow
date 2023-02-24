@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-24
+
+- Extended the OpenAPI definitions .yml file, added route and schema for `POST card/{cardId}`, updated inline requests to `$ref`
+- `POST /cards` now supports `laneName` and `laneId`, either `laneName` or `laneId` must be included in the request
+- Upon registration, the account now contains example opportunities to help users understand how to use the application.
+- Opportunities are not longer deleted, instead `status: deleted` indicates the deletion
+- To ensure consistency in the data model, document references to an `_id` field are now named `{entity}Id`
+
 ## 2023-02-23
 
 - extended the OpenAPI definitions .yml file to include additional routes and parameters

@@ -3,7 +3,7 @@ export const CardResponseSchema = {
   properties: {
     accountId: { type: 'string' },
     user: { type: 'string' },
-    lane: { type: 'string' },
+    laneId: { type: 'string' },
     name: { type: 'string' },
     amount: { type: 'number' },
     closedAt: { type: 'string' },
@@ -15,7 +15,7 @@ export const CardResponseSchema = {
   required: [
     'accountId',
     'user',
-    'lane',
+    'laneId',
     'name',
     'updatedAt',
     'createdAt',

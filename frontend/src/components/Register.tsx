@@ -54,11 +54,6 @@ export const Register = () => {
         type: ActionType.LOGIN,
         payload: payload,
       });
-
-      store.dispatch({
-        type: ActionType.LOGIN,
-        payload: payload,
-      });
     } catch (error) {
       setIsLoading(false);
 

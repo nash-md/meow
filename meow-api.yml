@@ -93,20 +93,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                lane:
-                  type: string
-                amount:
-                  type: number
-                closedAt:
-                  type: string
-                  format: date
-              required:
-                - name
-                - lane
+              $ref: '#/components/schemas/CardCreateRequest'
       responses:
         '200':
           description: OK
@@ -120,12 +107,39 @@ paths:
   /api/cards/{cardId}:
     get:
       operationId: fetchCard
-      summary: fetch cards
+      summary: fetch card
       security:
         - AuthenticationToken: []
-      description: fetch all cards
+      description: fetch a card
       parameters:
         - $ref: '#/components/parameters/cardId'
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/CardResponse'
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: the server did not find the card
+          $ref: '#/components/responses/NotFound'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
+    post:
+      operationId: updateCard
+      summary: update card
+      security:
+        - AuthenticationToken: []
+      description: fetch a card
+      parameters:
+        - $ref: '#/components/parameters/cardId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardUpdateRequest'
       responses:
         '200':
           description: OK
@@ -146,6 +160,38 @@ components:
       in: header
       name: Token
   schemas:
+    CardCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        laneId:
+          type: string
+        laneName:
+          type: string
+        amount:
+          type: number
+        closedAt:
+          type: string
+          format: date-time
+    CardUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        userId:
+            type: string
+        laneId:
+          type: string
+        laneName:
+          type: string
+        status:
+          type: string
+        amount:
+          type: number
+        closedAt:
+          type: string
+          format: date-time
     Card:
       type: object
       properties:
@@ -153,9 +199,11 @@ components:
           type: string
         name:
           type: string
-        user:
+        userId:
           type: string
-        lane:
+        laneId:
+          type: string
+        status:
           type: string
         amount:
           type: number

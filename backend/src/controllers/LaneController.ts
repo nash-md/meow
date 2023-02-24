@@ -31,7 +31,7 @@ const update = async (
         req.params.id
       );
 
-      lane.inForecast = req.body.inForcast;
+      lane.inForecast = req.body.inForecast;
       lane.name = req.body.name;
       lane.tags = req.body.tags;
 
@@ -76,7 +76,6 @@ const updateAll = async (
           const lane = await database.manager.save(
             new Lane(
               req.jwt.account.id!.toString(), // TODO, typecast to string on Express middleware
-              Lane.createKeyFromName(item.name),
               item.name,
               item.index,
               item.tags ?? {},
@@ -96,7 +95,6 @@ const updateAll = async (
           if (lane) {
             lane.name = item.name;
             lane.color = item.color === undefined ? '' : item.color;
-            lane.index = item.index;
             lane.inForecast = item.inForecast;
             lane.tags = item.tags ?? {};
           }

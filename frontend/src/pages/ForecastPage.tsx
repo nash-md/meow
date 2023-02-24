@@ -230,7 +230,7 @@ export const ForecastPage = () => {
                   ? DateTime.fromISO(card.closedAt)
                   : undefined;
 
-                const user = users.find((user) => user.id === card.user);
+                const user = users.find((user) => user.id === card.userId);
 
                 return (
                   <tr key={index}>

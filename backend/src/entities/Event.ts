@@ -68,4 +68,5 @@ export enum EventType {
   ClosedAt = 'closed-at',
   CreatedAt = 'created-at',
   Assign = 'assign',
+  Delete = 'delete',
 }

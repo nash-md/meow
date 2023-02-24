@@ -1,8 +1,23 @@
 export const CardRequestSchema = {
   type: 'object',
-  required: ['lane', 'name'],
+  required: ['name'],
+  oneOf: [
+    {
+      properties: {
+        laneId: { type: 'string' },
+      },
+      required: ['laneId'],
+    },
+    {
+      properties: {
+        laneName: { type: 'string' },
+      },
+      required: ['laneName'],
+    },
+  ],
   properties: {
-    lane: { type: 'string' },
+    laneId: { type: 'string' },
+    laneName: { type: 'string' },
     name: { type: 'string' },
     amount: { type: 'number' },
     attributes: {
@@ -11,7 +26,7 @@ export const CardRequestSchema = {
         type: ['string', 'number', 'null'],
       },
     },
-    user: { type: 'string' },
+    userId: { type: 'string' },
     closedAt: { type: ['string', 'null'] },
   },
 };

@@ -56,13 +56,13 @@ With a valid token, we can now create our lead.
 `POST {your-domain}/api/cards`
 
 Add the JWT token as `Token` parameter to the HTTP header, if you use OpenAPI specification, the generated code will automatically do it for you.
-To create the lead we will set the content and the lane we created before. The API accepts the `id` or the `name` of the lane parameter. In our case we use the name, nevertheless we need to be careful with this approach if we later want to rename the stage.
+To create the lead we will set the content and the lane we created before. The API accepts the `laneId` or the `laneName` as a parameter, one or the other has to be in the JSON body. In our case we use the name, nevertheless we need to be careful with this approach if we later want to rename the stage.
 
 ```
 {
   "name": "Merida Industria",
   "amount": 40000,
-  "lane": "Website Leads"
+  "laneName": "Website Leads"
 }
 ```
 

@@ -3,6 +3,7 @@ import { User } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { database } from '../worker.js';
 import { Account } from '../entities/Account.js';
+import { CardStatus } from '../entities/Card.js';
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
@@ -39,6 +40,20 @@ async function findOneById<Entity extends ObjectLiteral>(
   throw new EntityNotFoundError();
 }
 
+async function findOneByIdOrNull<Entity extends ObjectLiteral>(
+  user: User,
+  target: EntityTarget<Entity>,
+  id: string
+) {
+  try {
+    const entity = await findOneById(user, target, id);
+    console.log(entity);
+    return entity;
+  } catch (error) {
+    return null;
+  }
+}
+
 async function findByAccoount<Entity extends ObjectLiteral>(
   target: EntityTarget<Entity>,
   account: Account
@@ -52,7 +67,28 @@ async function findByAccoount<Entity extends ObjectLiteral>(
   return list;
 }
 
+async function findCardsByAccoount<Entity extends ObjectLiteral>(
+  target: EntityTarget<Entity>,
+  account: Account
+) {
+  const query = {
+    where: {
+      accountId: { $eq: account.id!.toString() },
+      $or: [
+        { status: { $exists: false } },
+        { status: { $ne: CardStatus.Deleted } },
+      ],
+    },
+  };
+
+  const list = await database.getMongoRepository(target).find(query);
+
+  return list;
+}
+
 export const EntityHelper = {
   findOneById,
   findByAccoount,
+  findCardsByAccoount,
+  findOneByIdOrNull,
 };

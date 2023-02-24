@@ -1,16 +1,29 @@
 import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
 import { IS_ISO_8601_REGEXP } from '../Constants.js';
-import { Card, CardAttribute } from '../entities/Card.js';
+import { Card, CardAttribute, CardStatus } from '../entities/Card.js';
 import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
+import { InvalidCardPropertyError } from '../errors/InvalidCardPropertyError.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
 import { LaneNotFoundError } from '../errors/LaneNotFoundError.js';
 import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { CardEventService } from '../services/CardEventService.js';
 import { database } from '../worker.js';
+
+function parseCardStatus(value: unknown): CardStatus {
+  switch (value) {
+    case 'active':
+      return CardStatus.Active;
+    case 'deleted':
+      return CardStatus.Deleted;
+    default:
+      throw new InvalidCardPropertyError(`Unsupported status value: ${value}`);
+  }
+}
 
 function hasAttributeDifference(
   existing: CardAttribute | undefined,
@@ -46,29 +59,9 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const cards = await EntityHelper.findByAccoount(Card, req.jwt.account);
+    const cards = await EntityHelper.findCardsByAccoount(Card, req.jwt.account);
 
     return res.json(cards);
-  } catch (error) {
-    return next(error);
-  }
-};
-
-const remove = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (!req.params.id) {
-      throw new InvalidUrlError();
-    }
-
-    await EntityHelper.findOneById(req.jwt.user, Card, req.params.id);
-
-    const result = await database.manager.delete(Card, req.params.id);
-
-    return res.status(200).json({ done: true, affected: result.affected });
   } catch (error) {
     return next(error);
   }
@@ -79,52 +72,57 @@ const create = async (
   res: Response,
   next: NextFunction
 ) => {
-  // try to lookup the lane by friendly name first
-  const query = {
-    accountId: req.jwt.account.id!.toString(),
-    name: req.body.lane,
-  };
+  try {
+    let lane: Lane | null = null;
 
-  let lane = await database.manager.findOneBy(Lane, query);
+    if (req.body.laneName) {
+      const query = {
+        accountId: req.jwt.account.id!.toString(),
+        name: req.body.laneName,
+      };
 
-  if (!lane) {
-    lane = await EntityHelper.findOneById(req.jwt.user, Lane, req.body.lane);
+      lane = await database.manager.findOneBy(Lane, query);
+    }
+
+    if (req.body.laneId) {
+      lane = await EntityHelper.findOneByIdOrNull(
+        req.jwt.user,
+        Lane,
+        req.body.laneId
+      );
+    }
+    if (!lane) {
+      throw new LaneNotFoundError();
+    }
+
+    const card = new Card(
+      req.jwt.account.id!.toString(),
+      req.jwt.user.id!.toString(),
+      lane.id!.toString(),
+      req.body.name,
+      req.body.amount
+    );
+
+    if (req.body.attributes) {
+      card.attributes = req.body.attributes;
+    }
+
+    if (req.body.closedAt && IS_ISO_8601_REGEXP.test(req.body.closedAt)) {
+      card.closedAt = DateTime.fromISO(req.body.closedAt, {
+        zone: 'utc',
+      }).toJSDate();
+    }
+
+    const updated = await database.manager.save(card);
+
+    const cardEventService = new CardEventService(database);
+
+    cardEventService.add(updated, req.jwt.user);
+
+    return res.json(updated);
+  } catch (error) {
+    return next(error);
   }
-
-  if (!lane) {
-    throw new LaneNotFoundError();
-  }
-
-  const card = new Card(
-    req.jwt.account.id!.toString(),
-    req.jwt.user.id!.toString(),
-    lane.id!.toString(),
-    req.body.name,
-    req.body.amount
-  );
-
-  if (req.body.attributes) {
-    card.attributes = req.body.attributes;
-  }
-
-  if (req.body.closedAt && IS_ISO_8601_REGEXP.test(req.body.closedAt)) {
-    card.closedAt = DateTime.fromISO(req.body.closedAt, {
-      zone: 'utc',
-    }).toJSDate();
-  }
-
-  const updated = await database.manager.save(card);
-
-  const event = new Event(
-    card.accountId,
-    card.id!.toString(),
-    req.jwt.user.id!?.toString(),
-    EventType.CreatedAt
-  );
-
-  await database.manager.save(event);
-
-  return res.json(updated);
 };
 
 const get = async (
@@ -167,26 +165,27 @@ const update = async (
 
     let user: User | null = null;
 
-    if (req.body.user) {
+    if (req.body.userId) {
       try {
         user = await EntityHelper.findOneById(
           req.jwt.user,
           User,
-          req.body.user
+          req.body.userId
         );
       } catch (error) {
         throw new UserNotFoundError();
       }
     }
 
-    if (card.lane !== req.body.lane) {
+    // TODO use CardEventService
+    if (card.laneId !== req.body.laneId) {
       const event = new Event(
         card.accountId,
         req.params.id,
         req.jwt.user.id!?.toString(),
         EventType.Lane,
         {
-          from: card.lane,
+          from: card.laneId,
           to: req.body.lane,
         }
       );
@@ -248,27 +247,31 @@ const update = async (
       await database.manager.save(event);
     }
 
-    if (user && user.id!.toString() !== card.user.toString()) {
+    if (user && user.id!.toString() !== card.userId.toString()) {
       const event = new Event(
         card.accountId,
         req.params.id,
         req.jwt.user.id!?.toString(),
         EventType.Assign,
         {
-          from: card.user,
+          from: card.userId,
           to: user.id,
         }
       );
 
       await database.manager.save(event);
 
-      card.user = user.id!.toString();
+      card.userId = user.id!.toString();
     }
 
     card.name = req.body.name;
-    card.lane = req.body.lane;
+    card.laneId = req.body.laneId;
     card.amount = req.body.amount;
     card.attributes = req.body.attributes;
+
+    if (req.body.status) {
+      card.status = parseCardStatus(req.body.status);
+    }
 
     const updated = await database.manager.save(card);
 
@@ -283,5 +286,4 @@ export const CardController = {
   get,
   create,
   update,
-  remove,
 };
