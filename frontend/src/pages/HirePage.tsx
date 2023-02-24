@@ -60,7 +60,7 @@ export const HirePage = () => {
 
             <tr>
               <td>
-                <img src="f.png" style={{ width: '100px' }} />
+                <img src="e.png" style={{ width: '100px' }} />
               </td>
               <td style={{ padding: '20px', fontSize: '1.2em' }}>
                 <h4 style={{ fontSize: '1.2em', margin: '0' }}>Carly</h4>
