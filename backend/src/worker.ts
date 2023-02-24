@@ -1,7 +1,3 @@
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-
 import { log } from './logger.js';
 
 const IP_ADDRESS = process.env.IP_ADDRESS || '127.0.0.1';

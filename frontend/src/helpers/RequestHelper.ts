@@ -247,24 +247,24 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', board);
   }
 
-  async fetchForecastAchieved(start: DateTime, end: DateTime, user: string) {
+  async fetchForecastAchieved(start: DateTime, end: DateTime, userId: string) {
     let url = this.getUrl(
       `/api/forecast/achieved?${new URLSearchParams({
         start: start.toISODate(),
         end: end.toISODate(),
-        user: user,
+        userId: userId,
       })}`
     );
 
     return this.doFetch(url, 'GET');
   }
 
-  async fetchForecastPredicted(start: DateTime, end: DateTime, user: string) {
+  async fetchForecastPredicted(start: DateTime, end: DateTime, userId: string) {
     let url = this.getUrl(
       `/api/forecast/predicted?${new URLSearchParams({
         start: start.toISODate(),
         end: end.toISODate(),
-        user: user,
+        userId: userId,
       })}`
     );
 
@@ -274,14 +274,14 @@ export class RequestHelper {
   async fetchForecastList(
     start: DateTime,
     end: DateTime,
-    user: string,
+    userId: string,
     mode: 'achieved' | 'predicted'
   ) {
     let url = this.getUrl(
       `/api/forecast/list?${new URLSearchParams({
         start: start.toISODate(),
         end: end.toISODate(),
-        user: user,
+        userId: userId,
         mode: mode,
       })}`
     );

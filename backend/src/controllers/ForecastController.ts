@@ -45,8 +45,8 @@ const achieved = async (
       },
     };
 
-    if (req.query.user && req.query.user !== FILTER_BY_NONE.key) {
-      match.$match.user = req.query.user;
+    if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
+      match.$match.userId = req.query.userId;
     }
 
     const group = {
@@ -101,8 +101,8 @@ const predicted = async (
       },
     };
 
-    if (req.query.user && req.query.user !== FILTER_BY_NONE.key) {
-      match.$match.user = req.query.user;
+    if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
+      match.$match.userId = req.query.userId;
     }
 
     const group = {
@@ -183,8 +183,8 @@ const list = async (
       };
     }
 
-    if (req.query.user && req.query.user !== FILTER_BY_NONE.key) {
-      match.$match.user = req.query.user;
+    if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
+      match.$match.userId = req.query.userId;
     }
 
     const cursor = await collection.aggregate([match]);

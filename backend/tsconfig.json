@@ -11,7 +11,6 @@
     "noUncheckedIndexedAccess": true,
     "useUnknownInCatchVariables": true,
     "skipLibCheck": true,
-    "preserveSymlinks":true,
     "rootDir": "src",
     "outDir": "build"
   }

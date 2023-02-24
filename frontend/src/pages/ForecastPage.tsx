@@ -37,7 +37,7 @@ export const ForecastPage = () => {
   const [end, setEnd] = useState<CalendarDate>(
     endOfMonth(today(getLocalTimeZone()))
   );
-  const [name, setName] = useState(FILTER_BY_NONE.key);
+  const [userId, setUserId] = useState(FILTER_BY_NONE.key);
   const [achieved, setAchieved] = useState({ amount: 0, count: 0 });
   const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
   const [mode, setMode] = useState<'achieved' | 'predicted'>('achieved');
@@ -59,17 +59,17 @@ export const ForecastPage = () => {
           client!.fetchForecastAchieved(
             DateTime.fromISO(start.toString()),
             DateTime.fromISO(end.toString()),
-            name
+            userId
           ),
           client!.fetchForecastPredicted(
             DateTime.fromISO(start.toString()),
             DateTime.fromISO(end.toString()),
-            name
+            userId
           ),
           client!.fetchForecastList(
             DateTime.fromISO(start.toString()),
             DateTime.fromISO(end.toString()),
-            name,
+            userId,
             mode
           ),
         ]);
@@ -81,10 +81,10 @@ export const ForecastPage = () => {
       }
     };
 
-    if (start && end && client && name && mode) {
+    if (start && end && client && userId && mode) {
       execute();
     }
-  }, [client, start, end, name, mode]);
+  }, [client, start, end, userId, mode]);
 
   useEffect(() => {
     const execute = async () => {
@@ -112,9 +112,9 @@ export const ForecastPage = () => {
       <div className="filter">
         <div>
           <Picker
-            defaultSelectedKey={name}
+            defaultSelectedKey={userId}
             onSelectionChange={(key) => {
-              setName(key.toString());
+              setUserId(key.toString());
             }}
           >
             {[
