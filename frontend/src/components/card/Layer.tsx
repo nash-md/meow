@@ -84,7 +84,7 @@ export const Layer = () => {
         </div>
       </div>
       {isUserLayerVisible && (
-        <div style={{ backgroundColor: 'rgb(230, 230, 230)' }}>
+        <div className="user-list">
           <table>
             <tbody>
               {users

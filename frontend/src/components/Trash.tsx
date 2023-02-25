@@ -7,13 +7,12 @@ export const Trash = () => {
         return (
           <div
             id="trash"
-            className="trash"
+            className={`trash ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             style={{
-              backgroundColor: snaphot.isDraggingOver ? 'red' : 'white',
               visibility: 'hidden',
               backgroundImage: snaphot.isDraggingOver
                 ? 'url("/trash-icon-white.svg")'
-                : 'url("/trash-icon.svg")',
+                : 'url("/trash-icon-white.svg")',
             }}
             ref={provided.innerRef}
             {...provided.droppableProps}

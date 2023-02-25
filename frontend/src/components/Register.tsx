@@ -102,7 +102,7 @@ export const Register = () => {
                 <img
                   key={index}
                   src={value ? '/heart-icon-red.svg' : '/heart-icon.svg'}
-                  style={{ width: '20px', height: '24px', paddingRight: '2px' }}
+                  style={{ width: '18px', height: '22px', paddingRight: '2px' }}
                 />
               );
             })}

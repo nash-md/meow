@@ -7,6 +7,19 @@ import { ActionType } from '../actions/Actions';
 import { Currency } from './Currency';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../store/ApplicationStore';
+import { LANE_COLOR } from '../Constants';
+
+const getLaneColorClassName = (color: string | undefined) => {
+  if (color === LANE_COLOR.NEGATIVE) {
+    return 'negative';
+  }
+
+  if (color === LANE_COLOR.POSITIVE) {
+    return 'positive';
+  }
+
+  return '';
+};
 
 export interface LaneProps {
   lane: LaneInterface;
@@ -46,13 +59,8 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
   return (
     <div className="lane" style={{ width: `${100 / numberOfLanes}%` }}>
       <div
-        className="title"
+        className={`title ${getLaneColorClassName(lane.color)}`}
         onClick={() => showLaneDetail(lane.id)}
-        style={{
-          backgroundColor: lane.color ? lane.color : '#e6e6e6',
-          color: lane.color ? 'white' : 'grey',
-          display: 'flex',
-        }}
       >
         <div style={{ flexGrow: 1 }}>{lane.name}</div>
         {lane.inForecast === false && (
@@ -67,13 +75,7 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
         )}
       </div>
 
-      <div
-        style={{
-          backgroundColor: lane.color ? lane.color : '#e6e6e6',
-          padding: '5px',
-          color: lane.color ? 'white' : 'grey',
-        }}
-      >
+      <div className={`sum ${getLaneColorClassName(lane.color)}`}>
         {cards.filter((card) => card.laneId === lane.id).length} Deal
         {cards.filter((card) => card.laneId === lane.id).length > 1
           ? 's'
@@ -89,10 +91,7 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="canvas"
-              style={{
-                backgroundColor: snaphot.isDraggingOver ? '#F6F6F6' : 'white',
-              }}
+              className={`canvas ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             >
               {list?.map((id, index) => {
                 const card = cards.find((listItem) => listItem.id === id)!;

@@ -30,7 +30,8 @@ h3 {
   width: 550px;
   padding-top: 50px;
   height: 100vh;
-  background-color: white;
+  background-color: var(--spectrum-global-color-gray-200);
+
   padding: 20px;
 }
 
@@ -77,10 +78,7 @@ h3 {
 
 .page .main {
   flex-grow: 1;
-}
-
-.page .main {
-  flex-grow: 1;
+  background-color: var(--spectrum-global-color-gray-100);
 }
 
 .page .main .canvas {
@@ -88,7 +86,7 @@ h3 {
 }
 
 .page .main .canvas .content-box {
-  background-color: white;
+  background-color: var(--spectrum-global-color-gray-200);
   padding: 10px;
   margin-bottom: 20px;
 }
@@ -99,14 +97,15 @@ h3 {
 }
 
 .page .main .canvas .content-box .list tr:first-child {
-  background-color: #e6e6e6;
+  background-color: var(--spectrum-global-color-gray-300);
   font-weight: bold;
-  color: grey;
+  color: var(--spectrum-global-color-gray-500);
 }
 
 .page .main .canvas .content-box .list td {
   padding: 6px 40px 6px 6px;
   font-size: 1rem;
+  color: var(--spectrum-global-color-gray-600);
 }
 
 .trash-canvas {
@@ -118,8 +117,9 @@ h3 {
 
 .trash {
   width: 100%;
-  border: 1px dashed #e30544;
-  opacity: 0.6;
+  border: 1px dashed var(--spectrum-global-color-gray-600);
+  background-color: var(--spectrum-global-color-gray-200);
+  opacity: 1;
   height: 60px;
   line-height: 60px;
   background-position: center center;
@@ -134,13 +134,15 @@ h3 {
   opacity: 0.3;
 }
 
+.trash.drag-over {
+  border: 1px dashed var(--spectrum-global-color-static-red-500);
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
 .board .lane {
-  border-right: 0px solid #d1d1d1;
   position: relative;
   display: flex;
   flex-direction: column;
-  border-bottom: 0px solid #d1d1d1;
-  border-left: 0px solid #d1d1d1;
   padding: 0px;
 }
 
@@ -163,13 +165,18 @@ h3 {
   min-height: 60px;
   height: 100%;
   position: relative;
-  border-left: 1px solid #d1d1d1;
-  border-bottom: 1px solid #d1d1d1;
+  border-left: 1px solid var(--spectrum-global-color-gray-300);
+  border-bottom: 1px solid var(--spectrum-global-color-gray-300);
   padding: 0;
+  background-color: var(--spectrum-global-color-gray-75);
+}
+
+.board .lane .canvas.drag-over {
+  background-color: var(--spectrum-global-color-gray-100);
 }
 
 .lane:last-child .canvas {
-  border-right: 1px solid #d1d1d1;
+  border-right: 1px solid var(--spectrum-global-color-gray-300);
 }
 
 .spacer {
@@ -200,7 +207,37 @@ h3 {
 }
 
 .board .lane .title {
-  background-color: #f9564f;
+  background-color: var(--spectrum-global-color-gray-300);
+  color: var(--spectrum-global-color-gray-600);
+}
+
+.board .lane .title.positive {
+  background-color: var(--spectrum-global-color-static-green-400);
+  color: var(--spectrum-global-color-static-green-700);
+}
+
+.board .lane .title.negative {
+  background-color: var(--spectrum-global-color-static-red-500);
+  color: var(--spectrum-global-color-static-red-700);
+}
+
+.board .lane .sum {
+  padding: 5px;
+}
+
+.board .lane .sum {
+  background-color: var(--spectrum-global-color-gray-300);
+  color: var(--spectrum-global-color-gray-600);
+}
+
+.board .lane .sum.positive {
+  background-color: var(--spectrum-global-color-static-green-400);
+  color: var(--spectrum-global-color-static-green-700);
+}
+
+.board .lane .sum.negative {
+  background-color: var(--spectrum-global-color-static-red-500);
+  color: var(--spectrum-global-color-static-red-700);
 }
 
 .board .lane .card {
@@ -214,7 +251,7 @@ h3 {
 
 .board .lane .card .overdue {
   position: absolute;
-  background-color: #e30544;
+  background-color: var(--spectrum-global-color-static-red-400);
   width: 6px;
   height: 100%;
   border-top-left-radius: 4px;
@@ -224,7 +261,11 @@ h3 {
 .board .lane .card .content {
   padding: 6px 6px 6px 12px;
   border-radius: 6px;
-  background-color: white;
+  background-color: var(--spectrum-global-color-gray-100);
+}
+
+.board .lane .card .content.is-dragging {
+  background-color: var(--spectrum-global-color-gray-200);
 }
 
 .board .lane .card .content .edit {
@@ -244,12 +285,12 @@ h3 {
 }
 
 .layer {
-  border-left: 1px solid grey;
+  border-left: 1px solid var(--spectrum-global-color-gray-400);
   box-sizing: border-box;
   right: 0;
   position: absolute;
   z-index: 100;
-  background-color: white;
+  background-color: var(--spectrum-global-color-gray-100);
   height: 100%;
   width: 450px;
   padding: 15px;
@@ -262,15 +303,19 @@ h3 {
   padding-bottom: 10px;
 }
 
+.layer .user-list {
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
 .avatar {
-  border: 1px solid #d7d7d7;
+  border: 1px solid var(--spectrum-global-color-gray-400);
   width: 36px;
   height: 36px;
   border-radius: 50%;
   text-align: center;
   line-height: 36px;
   font-size: 1.2rem;
-  background-color: #f2f2f2;
+  background-color: var(--spectrum-global-color-gray-200);
 }
 
 .layer .body {
@@ -303,7 +348,7 @@ h3 {
 }
 
 .layer .card-events .item .comment .text {
-  background-color: rgb(230, 230, 230);
+  background-color: var(--spectrum-global-color-gray-300);
   margin-left: 10px;
   padding: 5px 10px;
   border-radius: 2px;
@@ -312,8 +357,9 @@ h3 {
 }
 
 .setup-funnel {
-  padding: 5px;
-  background-color: white;
+  background-color: var(--spectrum-global-color-gray-100);
+  padding: 10px;
+  margin-top: 10px;
 }
 
 .setup-funnel .add-stage {
@@ -327,12 +373,16 @@ h3 {
   padding: 5px 0 5px 0;
 }
 
+.setup-funnel .lane.is-dragging {
+  background-color: var(--spectrum-global-color-gray-300);
+}
+
 .setup-funnel .lane .button {
   width: 30px;
-  background-color: #d8d8d8;
+  background-color: var(--spectrum-global-color-gray-300);
   position: relative;
   border-radius: 2px;
-  border: 1px solid #979797;
+  border: 1px solid var(--spectrum-global-color-gray-400);
 }
 
 .setup-funnel .lane .button .drag {
@@ -373,7 +423,7 @@ h3 {
 
 .forecast .filter {
   padding: 20px;
-  background-color: #e6e6e6;
+  background-color: var(--spectrum-global-color-gray-200);
   text-align: right;
   display: flex;
 }
@@ -436,10 +486,11 @@ h3 {
   margin: 0;
   padding: 0;
   display: block;
+  color: var(--spectrum-global-color-gray-700);
 }
 
 .cursor-blink {
-  border: 2px solid #222222;
+  border: 2px solid var(--spectrum-global-color-gray-700);
   animation: cursor-blink-animation 1.5s infinite;
 }
 
@@ -459,7 +510,7 @@ h3 {
 }
 
 .setup-card {
-  background-color: #e6e6e6;
+  background-color: var(--spectrum-global-color-gray-100);
   padding: 10px;
   margin-top: 10px;
 }
@@ -470,6 +521,10 @@ h3 {
   flex-direction: row;
 }
 
+.setup-card .item.is-dragging {
+  background-color: var(--spectrum-global-color-gray-300);
+}
+
 .setup-card .item .name {
   margin-left: 10px;
 }
@@ -477,10 +532,10 @@ h3 {
 .setup-card .item .button {
   width: 30px;
   height: 30px;
-  background-color: #d8d8d8;
+  background-color: var(--spectrum-global-color-gray-300);
   position: relative;
   border-radius: 2px;
-  border: 1px solid #979797;
+  border: 1px solid var(--spectrum-global-color-gray-400);
 }
 
 .setup-card .item .button .drag {

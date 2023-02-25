@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -11,8 +10,16 @@ import { RequestHelperContextProvider } from './context/RequestHelperContextProv
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const getLocale = () => {
+  const language = navigator.language;
+  const parsed = language.split('-')[0];
+  const country = language.split('-')[1].toUpperCase();
+  return `${parsed}-${country}`;
+};
+
 root.render(
-  <Provider height="100%" locale="en-DE" theme={defaultTheme}>
+  <Provider height="100%" locale={getLocale()} theme={defaultTheme}>
     <ReduxProvider store={store}>
       <RequestHelperContextProvider>
         <SessionOrNot />

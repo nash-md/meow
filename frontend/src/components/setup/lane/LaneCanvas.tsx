@@ -183,17 +183,10 @@ export const LanesCanvas = () => {
     <div className="content-box">
       <h2>Funnel</h2>
 
-      <div
-        className="setup-funnel"
-        style={{
-          backgroundColor: '#e6e6e6',
-          padding: '10px',
-          marginTop: '10px',
-        }}
-      >
+      <div className="setup-funnel">
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <Droppable droppableId="fixed">
-            {(provided, snaphot) => {
+            {(provided) => {
               return (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
                   {lanes.map((lane, index) => {

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-25
+
+- Support for light and dark mode, it will use the OS default via media query `prefers-color-scheme`
+
 ## 2023-02-24
 
 - Extended the OpenAPI definitions .yml file, added route and schema for `POST card/{cardId}`, updated inline requests to `$ref`

@@ -59,7 +59,7 @@ export const SelectAttribute = ({
             {...provided.dragHandleProps}
             ref={provided.innerRef}
           >
-            <div className="item">
+            <div className={`item ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
                 <div className="drag"></div>
               </div>

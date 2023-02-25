@@ -20,12 +20,7 @@ export const Lane = (props: any) => {
             {...provided.dragHandleProps}
             ref={provided.innerRef}
           >
-            <div
-              className="lane"
-              style={{
-                backgroundColor: snaphot.isDragging ? '#F6F6F6' : 'inherit',
-              }}
-            >
+            <div className={`lane ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
                 <div className="drag"></div>
               </div>

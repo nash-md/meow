@@ -43,7 +43,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
 
   return (
     <Draggable draggableId={card.id} index={index}>
-      {(provided) => {
+      {(provided, snaphot) => {
         return (
           <div
             {...provided.draggableProps}
@@ -55,7 +55,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
               DateTime.fromJSDate(closedAt) < DateTime.now() &&
               lane.inForecast === true && <div className="overdue"></div>}
             <div
-              className="content"
+              className={`content ${snaphot.isDragging ? 'is-dragging' : ''}`}
               onClick={() => {
                 showCardDetail(card.id);
               }}
