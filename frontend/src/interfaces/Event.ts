@@ -4,7 +4,7 @@ type EventBodyType = string | number | null;
 
 export interface Event {
   readonly id: id;
-  accountId: string;
+  teamId: string;
   userId: string;
   type: EventType;
   body: Record<string, EventBodyType>;

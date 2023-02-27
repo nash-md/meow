@@ -59,7 +59,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const cards = await EntityHelper.findCardsByAccoount(Card, req.jwt.account);
+    const cards = await EntityHelper.findCardsByTeam(Card, req.jwt.team);
 
     return res.json(cards);
   } catch (error) {
@@ -77,7 +77,7 @@ const create = async (
 
     if (req.body.laneName) {
       const query = {
-        accountId: req.jwt.account.id!.toString(),
+        teamId: req.jwt.team.id!.toString(),
         name: req.body.laneName,
       };
 
@@ -96,7 +96,7 @@ const create = async (
     }
 
     const card = new Card(
-      req.jwt.account.id!.toString(),
+      req.jwt.team.id!.toString(),
       req.jwt.user.id!.toString(),
       lane.id!.toString(),
       req.body.name,
@@ -180,7 +180,7 @@ const update = async (
     // TODO use CardEventService
     if (card.laneId !== req.body.laneId) {
       const event = new Event(
-        card.accountId,
+        card.teamId,
         req.params.id,
         req.jwt.user.id!?.toString(),
         EventType.Lane,
@@ -195,7 +195,7 @@ const update = async (
 
     if (card.amount !== req.body.amount) {
       const event = new Event(
-        card.accountId,
+        card.teamId,
         req.params.id,
         req.jwt.user.id!?.toString(),
         EventType.Amount,
@@ -217,7 +217,7 @@ const update = async (
         DateTime.fromJSDate(card.closedAt!, { zone: 'utc' }).toMillis()
       ) {
         const event = new Event(
-          card.accountId,
+          card.teamId,
           req.params.id,
           req.jwt.user.id!?.toString(),
           EventType.ClosedAt,
@@ -237,7 +237,7 @@ const update = async (
 
     if (hasAttributeDifference(card.attributes, req.body.attributes)) {
       const event = new Event(
-        card.accountId,
+        card.teamId,
         req.params.id,
         req.jwt.user.id!?.toString(),
         EventType.Attribute,
@@ -249,7 +249,7 @@ const update = async (
 
     if (user && user.id!.toString() !== card.userId.toString()) {
       const event = new Event(
-        card.accountId,
+        card.teamId,
         req.params.id,
         req.jwt.user.id!?.toString(),
         EventType.Assign,

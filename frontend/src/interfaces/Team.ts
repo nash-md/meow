@@ -1,16 +1,18 @@
 import { id } from './Card';
 
-export interface Account {
+export interface Team {
   readonly id: id;
-  name: string;
-  address: string;
-  phone: string;
-  readonly createdAt: string;
-  readonly updatedAt: string;
+  currency: CurrencyCode;
 }
 
 export interface AccountPreview {
   name: string;
   address: string;
   phone: string;
+}
+
+export enum CurrencyCode {
+  USD = 'USD',
+  EUR = 'EUR',
+  SEK = 'SEK',
 }

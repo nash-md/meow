@@ -31,6 +31,12 @@ export const Navigation = () => {
           <img alt="Forecast" src="forecast-icon.svg" />
         </Link>
       </div>
+
+      <div className="item">
+        <Link to="/accounts">
+          <img alt="Accounts" src="accounts-icon.svg" />
+        </Link>
+      </div>
       <div className="item">
         <Link to="/hire">
           <img alt="Hire a Specialist" src="paw-icon.svg" />

@@ -17,7 +17,7 @@ const createRandomUser = () => {
     name: `${ANIMALS[1]}_${generateRandomString(6)}`,
     password: generateRandomString(12),
     id: '',
-    accountId: '',
+    teamId: '',
   };
 };
 
@@ -46,7 +46,7 @@ const createRandomUserWithToken = async (url: string) => {
 
   context.token = res.body.token;
   context.user.id = res.body.user.id;
-  context.user.accountId = res.body.account.id;
+  context.user.teamId = res.body.team.id;
 
   const lanesRequest = await request(url)
     .get('/api/lanes')

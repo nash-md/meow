@@ -1,4 +1,5 @@
 import { ActionType, ApplicationAction } from '../actions/Actions';
+import { Account } from '../interfaces/Account';
 import { Board } from '../interfaces/Board';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
@@ -68,7 +69,7 @@ export const application = (state = Default, action: ApplicationAction) => {
       if (action.payload) {
         session.token = action.payload.token;
         session.user = action.payload.user;
-        session.account = action.payload.account;
+        session.team = action.payload.team;
       }
 
       let board = {};
@@ -98,8 +99,8 @@ export const application = (state = Default, action: ApplicationAction) => {
           user: {
             ...action.payload.user,
           },
-          account: {
-            ...action.payload.account,
+          team: {
+            ...action.payload.team,
           },
         },
         board: { ...action.payload.board },
@@ -115,7 +116,7 @@ export const application = (state = Default, action: ApplicationAction) => {
             name: undefined,
             animal: undefined,
           },
-          account: {
+          team: {
             id: undefined,
             currency: undefined,
           },
@@ -196,7 +197,7 @@ export const application = (state = Default, action: ApplicationAction) => {
 
       return {
         ...state,
-        cards: [...state.cards, action.payload],
+        cards: [...state.cards, action.payload.card],
         board: updated,
       };
 
@@ -204,8 +205,7 @@ export const application = (state = Default, action: ApplicationAction) => {
       return {
         ...state,
         cards: [
-          ...state.cards.map((item: any) => {
-            // TODO remove any
+          ...state.cards.map((item: Card) => {
             if (item.id === action.payload.id) {
               return { ...action.payload };
             } else {
@@ -219,8 +219,7 @@ export const application = (state = Default, action: ApplicationAction) => {
       return {
         ...state,
         cards: [
-          ...state.cards.map((item: any) => {
-            // TODO remove any
+          ...state.cards.map((item: Card) => {
             if (item.id === action.payload.id) {
               return { ...action.payload };
             } else {
@@ -249,13 +248,47 @@ export const application = (state = Default, action: ApplicationAction) => {
           ...state.board,
         },
       };
+
+    case ActionType.ACCOUNTS:
+      return {
+        ...state,
+        accounts: [...action.payload],
+      };
+
     case ActionType.ACCOUNT_UPDATE:
+      return {
+        ...state,
+        accounts: [
+          ...state.accounts.map((item: Account) => {
+            if (item.id === action.payload.id) {
+              return { ...action.payload };
+            } else {
+              return { ...item };
+            }
+          }),
+        ],
+      };
+
+    case ActionType.ACCOUNT_ADD:
+      return {
+        ...state,
+        accounts: [...state.accounts, action.payload],
+
+        ui: {
+          state: Default.ui.state,
+          id: undefined,
+          modal: undefined,
+          text: undefined,
+        },
+      };
+
+    case ActionType.TEAM_UPDATE:
       return {
         ...state,
         session: {
           ...state.session,
-          account: {
-            ...state.session.account,
+          team: {
+            ...state.session.team,
             currency: action.payload,
           },
         },

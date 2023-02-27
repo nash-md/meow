@@ -10,7 +10,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const schemas = await EntityHelper.findByAccoount(Schema, req.jwt.account);
+    const schemas = await EntityHelper.findByTeam(Schema, req.jwt.team);
 
     return res.json(schemas);
   } catch (error) {
@@ -27,7 +27,7 @@ const create = async (
     const query = {
       where: {
         type: { $eq: req.body.type },
-        accountId: { $eq: req.jwt.account.id!.toString() },
+        teamId: { $eq: req.jwt.team.id!.toString() },
       },
     };
 
@@ -38,11 +38,7 @@ const create = async (
     }
 
     const updated = await database.manager.save(
-      new Schema(
-        req.jwt.account.id?.toString()!,
-        req.body.type,
-        req.body.schema
-      )
+      new Schema(req.jwt.team.id?.toString()!, req.body.type, req.body.schema)
     );
 
     return res.json(updated);

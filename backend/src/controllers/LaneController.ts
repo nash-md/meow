@@ -10,7 +10,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const lanes = await EntityHelper.findByAccoount(Lane, req.jwt.account);
+    const lanes = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
     return res.json(lanes);
   } catch (error) {
@@ -51,10 +51,7 @@ const updateAll = async (
   next: NextFunction
 ) => {
   try {
-    const lanesInDatabase = await EntityHelper.findByAccoount(
-      Lane,
-      req.jwt.account
-    );
+    const lanesInDatabase = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
     const lanesToDelete = lanesInDatabase.filter((laneInDatabase: Lane) => {
       return !req.body.find((laneInRequest: LaneRequest) => {
@@ -75,7 +72,7 @@ const updateAll = async (
         if (!item.id) {
           const lane = await database.manager.save(
             new Lane(
-              req.jwt.account.id!.toString(), // TODO, typecast to string on Express middleware
+              req.jwt.team.id!.toString(), // TODO, typecast to string on Express middleware
               item.name,
               item.index,
               item.tags ?? {},

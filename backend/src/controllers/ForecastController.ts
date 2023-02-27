@@ -24,7 +24,7 @@ const achieved = async (
     const collection = direct.collection('Cards');
 
     const query = {
-      accountId: req.jwt.account.id!.toString(),
+      teamId: req.jwt.team.id!.toString(),
       tags: {
         type: 'closed-won', // TODO add type
       },
@@ -36,7 +36,7 @@ const achieved = async (
 
     const match: any = {
       $match: {
-        accountId: { $eq: req.jwt.account.id?.toString() },
+        teamId: { $eq: req.jwt.team.id?.toString() },
         laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
         updatedAt: {
           $gt: start,
@@ -79,7 +79,7 @@ const predicted = async (
     const collection = direct.collection('Cards');
 
     const query = {
-      accountId: req.jwt.account.id!.toString(),
+      teamId: req.jwt.team.id!.toString(),
       tags: {
         type: 'normal',
       },
@@ -92,7 +92,7 @@ const predicted = async (
 
     const match: any = {
       $match: {
-        accountId: { $eq: req.jwt.account.id?.toString() },
+        teamId: { $eq: req.jwt.team.id?.toString() },
         laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
         closedAt: {
           $gt: start,
@@ -138,7 +138,7 @@ const list = async (
 
     if (req.query.mode === 'predicted') {
       const query = {
-        accountId: req.jwt.account.id!.toString(),
+        teamId: req.jwt.team.id!.toString(),
         tags: {
           type: 'normal',
         },
@@ -151,7 +151,7 @@ const list = async (
 
       match = {
         $match: {
-          accountId: { $eq: req.jwt.account.id?.toString() },
+          teamId: { $eq: req.jwt.team.id?.toString() },
           laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
           closedAt: {
             $gt: start,
@@ -161,7 +161,7 @@ const list = async (
       };
     } else {
       const query = {
-        accountId: req.jwt.account.id!.toString(),
+        teamId: req.jwt.team.id!.toString(),
         tags: {
           type: 'closed-won',
         },
@@ -173,7 +173,7 @@ const list = async (
 
       match = {
         $match: {
-          accountId: { $eq: req.jwt.account.id?.toString() },
+          teamId: { $eq: req.jwt.team.id?.toString() },
           laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
           updatedAt: {
             $gt: start,

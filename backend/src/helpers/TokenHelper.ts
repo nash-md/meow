@@ -8,7 +8,7 @@ import { log } from '../logger.js';
 
 export interface TokenPayload {
   userId: string;
-  accountId: string;
+  teamId: string;
   iat: number;
   exp: number;
 }
@@ -22,7 +22,7 @@ const createJwt = (user: User, ttl: number): string => {
     iat: Date.now(),
     exp: Math.floor(Date.now() / 1000) + ttl,
     userId: user.id.toString(),
-    accountId: user.accountId,
+    teamId: user.teamId,
   };
 
   return sign(payload, process.env.SESSION_SECRET!);

@@ -1,6 +1,7 @@
 import { ApplicationStore } from './ApplicationStore';
 
 export const Default: ApplicationStore = {
+  accounts: [],
   users: [],
   cards: [],
   lanes: [],
@@ -9,7 +10,7 @@ export const Default: ApplicationStore = {
   session: {
     token: undefined,
     alerts: 0,
-    account: {
+    team: {
       id: undefined,
       currency: undefined,
     },

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-27
+
+- Added the `Account` entity, you can now create a basic company profile for your opportunities
+- The former `Account` entity is now `Team`
+
 ## 2023-02-25
 
 - Support for light and dark mode, it will use the OS default via media query `prefers-color-scheme`

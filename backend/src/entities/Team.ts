@@ -7,22 +7,16 @@ import {
   Column,
 } from 'typeorm';
 
-@Entity({ name: 'Accounts' })
-export class Account {
+@Entity({ name: 'Teams' })
+export class Team {
   @ObjectIdColumn()
   id: ObjectID | undefined;
-
-  @Column()
-  teamId: string;
 
   @Column()
   name: string;
 
   @Column()
-  address: string;
-
-  @Column()
-  phone: string;
+  currency: CurrencyCode;
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -30,11 +24,9 @@ export class Account {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(teamId: string, name: string, address: string, phone: string) {
-    this.teamId = teamId;
+  constructor(name: string, currency: CurrencyCode) {
     this.name = name;
-    this.address = address;
-    this.phone = phone;
+    this.currency = currency;
   }
 
   @BeforeInsert()
@@ -47,4 +39,11 @@ export class Account {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+// ISO 4217 currency code
+export enum CurrencyCode {
+  USD = 'USD',
+  EUR = 'EUR',
+  SEK = 'SEK',
 }

@@ -5,6 +5,7 @@ import './App.css';
 import { ErrorModal } from './components/ErrorModal';
 import { Layout } from './components/Layout';
 import { SuccessModal } from './components/SuccessModal';
+import { AccountsPage } from './pages/AccountsPage';
 import { ForecastPage } from './pages/ForecastPage';
 import { HirePage } from './pages/HirePage';
 import { HomePage } from './pages/HomePage';
@@ -19,6 +20,7 @@ function Application() {
           <Route path="/forecast" element={<ForecastPage />}></Route>
           <Route path="/setup" element={<SetupPage />}></Route>
           <Route path="/hire" element={<HirePage />}></Route>
+          <Route path="/accounts" element={<AccountsPage />}></Route>
         </Routes>
       </Layout>
       <SuccessModal />

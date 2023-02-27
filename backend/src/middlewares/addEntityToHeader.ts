@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { Account } from '../entities/Account.js';
+import { Team } from '../entities/Team.js';
 import { User } from '../entities/User.js';
-import { AccountNotFoundError } from '../errors/AccountNotFoundError.js';
 import { InvalidHeaderError } from '../errors/InvalidHeaderError.js';
+import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
 import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
@@ -14,16 +14,16 @@ export const addEntityToHeader = async (
   next: NextFunction
 ) => {
   try {
-    const { accountId, userId } = request.headers;
+    const { teamId, userId } = request.headers;
 
-    if (typeof accountId !== 'string') {
+    if (typeof teamId !== 'string') {
       return next(new InvalidHeaderError());
     }
 
-    const account = await database.manager.findOneById(Account, accountId);
+    const team = await database.manager.findOneById(Team, teamId);
 
-    if (!account) {
-      return next(new AccountNotFoundError());
+    if (!team) {
+      return next(new TeamNotFoundError());
     }
 
     if (typeof userId !== 'string') {
@@ -38,7 +38,7 @@ export const addEntityToHeader = async (
 
     request.jwt = {
       user,
-      account,
+      team,
     };
 
     return next();

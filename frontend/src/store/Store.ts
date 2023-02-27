@@ -32,6 +32,11 @@ export const selectCardByLaneId = (
 export const selectBoard = (store: RootState) => store.board;
 export const selectBoardByLaneId = (store: ApplicationStore, id: string) =>
   store.board[id];
+export const selectAccounts = (store: RootState) => store.accounts;
+export const selectAccount = (
+  store: ApplicationStore,
+  id: string | undefined
+) => store.accounts.find((account) => account.id === id);
 export const selectUsers = (store: RootState) => store.users;
 export const selectUser = (store: ApplicationStore, id: string | undefined) =>
   store.users.find((user) => user.id === id);
@@ -44,9 +49,8 @@ export const selectSchemaByType = (store: ApplicationStore, type: string) =>
 export const selectName = (store: RootState) => store.session.user.name;
 export const selectUserId = (store: RootState) => store.session.user.id;
 export const selectAnimal = (store: RootState) => store.session.user.animal;
-export const selectCurrency = (store: RootState) =>
-  store.session.account.currency;
-export const selectAccountId = (store: RootState) => store.session.account.id;
+export const selectCurrency = (store: RootState) => store.session.team.currency;
+export const selectTeamId = (store: RootState) => store.session.team.id;
 export const selectInterfaceState = (store: RootState) => store.ui.state;
 export const selectInterfaceStateId = (store: RootState) => store.ui.id;
 export const selectModal = (store: RootState) => store.ui.modal;

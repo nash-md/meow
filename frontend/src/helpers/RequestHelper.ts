@@ -3,10 +3,11 @@ import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { ResponseParseError } from '../errors/ResponseParseError';
 import { TokenUndefinedError } from '../errors/TokenUndefinedError';
-import { Account, CurrencyCode } from '../interfaces/Account';
+import { Account, AccountPreview } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
 import { EventType } from '../interfaces/Event';
 import { Lane, LaneRequest } from '../interfaces/Lane';
+import { CurrencyCode, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
@@ -208,8 +209,8 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', lanes);
   }
 
-  async updateAccount(id: Account['id'], currency: CurrencyCode) {
-    let url = this.getUrl(`/api/accounts/${id}`);
+  async updateTeam(id: Team['id'], currency: CurrencyCode) {
+    let url = this.getUrl(`/api/teams/${id}`);
 
     return this.doFetch(url, 'POST', { currency: currency });
   }
@@ -245,6 +246,28 @@ export class RequestHelper {
     let url = this.getUrl(`/api/users/${id}/board`);
 
     return this.doFetch(url, 'POST', board);
+  }
+
+  async createAccount(account: AccountPreview): Promise<Account> {
+    let url = this.getUrl(`/api/accounts`);
+
+    return this.doFetch(url, 'POST', account);
+  }
+
+  async updateAccount({ id, name, address, phone }: Account): Promise<Account> {
+    let url = this.getUrl(`/api/accounts/${id}`);
+
+    return this.doFetch(url, 'POST', {
+      name,
+      address,
+      phone,
+    });
+  }
+
+  async getAccounts(): Promise<Account[]> {
+    const url = this.getUrl(`/api/accounts`);
+
+    return this.doFetch(url, 'GET');
   }
 
   async fetchForecastAchieved(start: DateTime, end: DateTime, userId: string) {

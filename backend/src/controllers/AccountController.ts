@@ -1,15 +1,28 @@
 import { Response, NextFunction } from 'express';
-import { Account, CurrencyCode } from '../entities/Account.js';
-import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
+import { Account } from '../entities/Account.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
 
-const parseCurrencyCode = (value: string): CurrencyCode => {
-  if (value in CurrencyCode) {
-    return value as CurrencyCode;
+const create = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const account = new Account(
+      req.jwt.team.id!.toString(),
+      req.body.name,
+      req.body.address,
+      req.body.phone
+    );
+
+    const updated = await database.manager.save(account);
+
+    return res.json(updated);
+  } catch (error) {
+    return next(error);
   }
-  throw new InvalidRequestBodyError('invalid currency code');
 };
 
 const update = async (
@@ -25,7 +38,9 @@ const update = async (
         req.params.id
       );
 
-      account.currency = parseCurrencyCode(req.body.currency);
+      account.name = req.body.name;
+      account.address = req.body.address;
+      account.phone = req.body.phone;
 
       const updated = await database.manager.save(account);
 
@@ -36,6 +51,22 @@ const update = async (
   }
 };
 
+const list = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const cards = await EntityHelper.findByTeam(Account, req.jwt.team);
+
+    return res.json(cards);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const AccountController = {
   update,
+  create,
+  list,
 };

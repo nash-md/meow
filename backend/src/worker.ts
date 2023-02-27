@@ -36,7 +36,7 @@ import { handleError } from './middlewares/handleError.js';
 import { ValidateTokenRequestSchema } from './middlewares/schema-validation/ValidateTokenRequestSchema.js';
 import { ValidateTokenController } from './controllers/ValidateTokenController.js';
 import { AccountController } from './controllers/AccountController.js';
-import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
+import { TeamRequestSchema } from './middlewares/schema-validation/TeamRequestSchema.js';
 import { Lane } from './entities/Lane.js';
 import { LaneController } from './controllers/LaneController.js';
 import { LaneRequestSchema } from './middlewares/schema-validation/LaneRequestSchema.js';
@@ -53,12 +53,15 @@ import { SchemaRequestSchema } from './middlewares/schema-validation/SchemaReque
 import { BoardRequestSchema } from './middlewares/schema-validation/BoardRequestSchema.js';
 import { UserUpdateRequestSchema } from './middlewares/schema-validation/UserUpdateRequestSchema.js';
 import { PasswordRequestSchema } from './middlewares/schema-validation/PasswordRequestSchema.js';
+import { TeamController } from './controllers/TeamController.js';
+import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
+import { Team } from './entities/Team.js';
 
 export const database = new DataSource({
   type: 'mongodb',
   url: process.env.MONGODB_URI,
   useUnifiedTopology: true,
-  entities: [Account, User, Card, Lane, Event, Schema],
+  entities: [Team, Account, User, Card, Lane, Event, Schema],
 });
 
 /* spinning up express */
@@ -125,6 +128,26 @@ try {
 
   app.use('/api/cards', card);
 
+  const team = express.Router();
+
+  team.use(express.json({ limit: '5kb' }));
+
+  team.use(verifyJwt);
+  team.use(addEntityToHeader);
+  team.use(setHeaders);
+
+  team.use(isDatabaseConnectionEstablished);
+
+  team
+    .route('/:id')
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(TeamRequestSchema),
+      TeamController.update
+    );
+
+  app.use('/api/teams', team);
+
   const account = express.Router();
 
   account.use(express.json({ limit: '5kb' }));
@@ -135,6 +158,14 @@ try {
 
   account.use(isDatabaseConnectionEstablished);
 
+  account.route('/').get(AccountController.list);
+  account
+    .route('/')
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(AccountRequestSchema),
+      AccountController.create
+    );
   account
     .route('/:id')
     .post(

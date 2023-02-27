@@ -13,7 +13,7 @@ export class Lane {
   id: ObjectID | undefined;
 
   @Column()
-  accountId: string;
+  teamId: string;
 
   @Column()
   name: string;
@@ -37,14 +37,14 @@ export class Lane {
   updatedAt?: Date;
 
   constructor(
-    accountId: string,
+    teamId: string,
     name: string,
     index: number,
     tags: Tags,
     inForecast: boolean,
     color?: string
   ) {
-    this.accountId = accountId;
+    this.teamId = teamId;
     this.name = name;
     this.index = index;
     this.tags = tags;

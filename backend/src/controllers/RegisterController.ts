@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
 import { DefaultSchema, DefaultLanes, DefaultCards } from '../Constants.js';
-import { Account, CurrencyCode } from '../entities/Account.js';
 import { Card } from '../entities/Card.js';
 import { Lane } from '../entities/Lane.js';
 import { Schema } from '../entities/Schema.js';
+import { CurrencyCode, Team } from '../entities/Team.js';
 import { User } from '../entities/User.js';
 import { log } from '../logger.js';
 import { database } from '../worker.js';
@@ -20,8 +20,8 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     await isValidName(name);
     await isValidPassword(password);
 
-    const account = await database.manager.save(
-      new Account(`${name}'s Account`, CurrencyCode.USD)
+    const team = await database.manager.save(
+      new Team(`${name}'s Team`, CurrencyCode.USD)
     );
 
     const lanes: Lane[] = [];
@@ -29,7 +29,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     for (const [index, item] of DefaultLanes.entries()) {
       const lane = await database.manager.save(
         new Lane(
-          account.id!.toString(),
+          team.id!.toString(),
           item.name,
           index,
           item.tags,
@@ -43,14 +43,10 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     database.manager.save(
       Schema,
-      new Schema(
-        account.id!.toString(),
-        DefaultSchema.type,
-        DefaultSchema.schema
-      )
+      new Schema(team.id!.toString(), DefaultSchema.type, DefaultSchema.schema)
     );
 
-    const user = new User(account.id!.toString(), name);
+    const user = new User(team.id!.toString(), name);
 
     user.password = await new PasswordAuthenticationProvider().create(password);
 
@@ -62,7 +58,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
         await database.manager.save(
           new Card(
-            account.id!.toString(),
+            team.id!.toString(),
             updated.id!.toString(),
             lanes[laneIndex]!.id!.toString(),
             item.name,

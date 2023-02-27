@@ -13,7 +13,7 @@ export class Event {
   id: ObjectID | undefined;
 
   @Column()
-  accountId: string;
+  teamId: string;
 
   @Column()
   cardId: string;
@@ -34,13 +34,13 @@ export class Event {
   updatedAt?: Date;
 
   constructor(
-    accountId: string,
+    teamId: string,
     cardId: string,
     userId: string,
     type: EventType,
     body?: any
   ) {
-    this.accountId = accountId;
+    this.teamId = teamId;
     this.cardId = cardId;
     this.userId = userId;
     this.type = type;

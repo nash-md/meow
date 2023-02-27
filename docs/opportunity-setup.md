@@ -52,7 +52,7 @@ The server will send us a token back.
     "id": "...",
     "name": "Website"
   },
-  "account": {
+  "team": {
     "id": "...",
     "currency": "..."
   }
@@ -71,7 +71,7 @@ Add the JWT token as a `Token` parameter to the HTTP header, if you use OpenAPI 
 
 ```
 {
-  "accountId": "...",
+  "teamId": "...",
   "user": "...",
   "lane": "...",
   "name": "Star Chronicle",

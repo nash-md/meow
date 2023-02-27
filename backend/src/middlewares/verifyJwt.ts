@@ -17,7 +17,7 @@ export const verifyJwt = (
     const payload = TokenHelper.verifyJwt(token);
 
     request.headers.userId = payload.userId;
-    request.headers.accountId = payload.accountId;
+    request.headers.teamId = payload.teamId;
 
     next();
   } catch (error: unknown) {

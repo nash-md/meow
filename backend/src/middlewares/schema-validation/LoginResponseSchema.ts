@@ -11,7 +11,7 @@ export const LoginResponseSchema = {
       required: ['id', 'name'],
       additionalProperties: false,
     },
-    account: {
+    team: {
       type: 'object',
       properties: {
         id: { type: 'string' },

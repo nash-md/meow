@@ -3,7 +3,7 @@ export const LanesResponseSchema = {
   items: {
     type: 'object',
     properties: {
-      accountId: { type: 'string' },
+      teamId: { type: 'string' },
       name: { type: 'string' },
       index: { type: 'integer' },
       tags: {
@@ -20,7 +20,7 @@ export const LanesResponseSchema = {
       updatedAt: { type: 'string' },
     },
     required: [
-      'accountId',
+      'teamId',
       'name',
       'index',
       'tags',

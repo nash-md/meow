@@ -19,7 +19,7 @@ const list = async (
     const query = {
       where: {
         cardId: { $eq: req.params.id },
-        accountId: { $eq: req.jwt.account.id!.toString() },
+        teamId: { $eq: req.jwt.team.id!.toString() },
       },
       order: {
         updatedAt: -1,
@@ -51,7 +51,7 @@ const create = async (
     );
 
     const event = new Event(
-      card.accountId,
+      card.teamId,
       card.id!.toString(),
       req.jwt.user.id!.toString(),
       EventType.Comment,

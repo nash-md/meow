@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
 import { SESSION_MAX_AGE } from '../Constants.js';
-import { Account } from '../entities/Account.js';
+import { Team } from '../entities/Team.js';
 import { User } from '../entities/User.js';
-import { AccountNotFoundError } from '../errors/AccountNotFoundError.js';
 import { AuthenticationFailedError } from '../errors/AuthenticationFailedError.js';
+import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
 import { TokenHelper } from '../helpers/TokenHelper.js';
 import { log } from '../logger.js';
 import { database } from '../worker.js';
@@ -31,10 +31,10 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       throw new AuthenticationFailedError();
     }
 
-    const account = await database.manager.findOneById(Account, user.accountId);
+    const team = await database.manager.findOneById(Team, user.teamId);
 
-    if (!account) {
-      throw new AccountNotFoundError('Account not found');
+    if (!team) {
+      throw new TeamNotFoundError('Team not found');
     }
 
     const payload = {
@@ -44,9 +44,9 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
         name: user.name,
         animal: user.animal,
       },
-      account: {
-        id: user.accountId,
-        currency: account.currency,
+      team: {
+        id: user.teamId,
+        currency: team.currency,
       },
       board: user.board,
     };

@@ -13,7 +13,7 @@ export class Schema {
   id: ObjectID | undefined;
 
   @Column()
-  accountId: string;
+  teamId: string;
 
   @Column()
   type: string;
@@ -27,8 +27,8 @@ export class Schema {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(accountId: string, type: string, schema: SchemaAttribute[]) {
-    this.accountId = accountId;
+  constructor(teamId: string, type: string, schema: SchemaAttribute[]) {
+    this.teamId = teamId;
     this.type = type;
     this.schema = schema;
   }

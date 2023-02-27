@@ -31,7 +31,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const users = await EntityHelper.findByAccoount(User, req.jwt.account);
+    const users = await EntityHelper.findByTeam(User, req.jwt.team);
 
     return res.json(users);
   } catch (error) {
@@ -114,7 +114,7 @@ const create = async (
     await isValidName(req.body.name);
     await isValidPassword(req.body.password);
 
-    const user = new User(req.jwt.account.id!.toString(), req.body.name);
+    const user = new User(req.jwt.team.id!.toString(), req.body.name);
 
     user.password = await new PasswordAuthenticationProvider().create(
       req.body.password

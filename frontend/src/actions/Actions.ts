@@ -1,9 +1,10 @@
-import { CurrencyCode } from '../interfaces/Account';
+import { Account } from '../interfaces/Account';
 import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { Schema } from '../interfaces/Schema';
+import { CurrencyCode } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { ApplicationStore } from '../store/ApplicationStore';
 
@@ -13,13 +14,16 @@ export enum ActionType {
   LOGOUT = 'LOGOUT',
   USERS = 'USERS',
   USER_ADD = 'USER_ADD',
+  ACCOUNTS = 'ACCOUNTS',
+  ACCOUNT_ADD = 'ACCOUNT_ADD',
+  ACCOUNT_UPDATE = 'ACCOUNT_UPDATE',
+  TEAM_UPDATE = 'TEAM_UPDATE',
   CARDS = 'CARDS',
   CARD_ADD = 'CARD_ADD',
   CARD_UPDATE = 'CARD_UPDATE',
   CARD_REFRESH = 'CARD_REFRESH',
   CARD_LANE = 'CARD_LANE',
   CARD_DELETE = 'CARD_DELETE',
-  ACCOUNT_UPDATE = 'ACCOUNT_UPDATE',
   SCHEMAS = 'SCHEMAS',
   LANES = 'LANES',
   LANE_UPDATE = 'LANE_UPDATE',
@@ -42,7 +46,7 @@ export interface ApplicationPageLoadAction
           name: string;
           animal: string | undefined;
         };
-        account: {
+        team: {
           id: string;
           currency: CurrencyCode;
         };
@@ -59,7 +63,7 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
       name: string;
       animal: string | undefined;
     };
-    account: {
+    team: {
       id: string;
       currency: CurrencyCode;
     };
@@ -105,8 +109,22 @@ export interface ApplicationCardDeleteAction
   payload: Card;
 }
 
+export interface ApplicationAccountAddAction
+  extends Action<ActionType.ACCOUNT_ADD> {
+  payload: Account;
+}
+
 export interface ApplicationAccountUpdateAction
   extends Action<ActionType.ACCOUNT_UPDATE> {
+  payload: Account;
+}
+
+export interface ApplicationAccountsAction extends Action<ActionType.ACCOUNTS> {
+  payload: Account[];
+}
+
+export interface ApplicationTeamUpdateAction
+  extends Action<ActionType.TEAM_UPDATE> {
   payload: CurrencyCode;
 }
 
@@ -156,7 +174,10 @@ export type ApplicationAction =
   | ApplicationCardRefreshAction
   | ApplicationCardLaneAction
   | ApplicationCardDeleteAction
+  | ApplicationAccountsAction
+  | ApplicationAccountAddAction
   | ApplicationAccountUpdateAction
+  | ApplicationTeamUpdateAction
   | ApplicationLanesAction
   | ApplicationSchemasAction
   | ApplicationLaneUpdateAction

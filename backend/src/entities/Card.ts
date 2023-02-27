@@ -13,7 +13,7 @@ export class Card {
   id: ObjectID | undefined;
 
   @Column()
-  accountId: string;
+  teamId: string;
 
   @Column()
   userId: string;
@@ -43,14 +43,14 @@ export class Card {
   closedAt?: Date;
 
   constructor(
-    accountId: string,
+    teamId: string,
     userId: string,
     laneId: string,
     name: string,
     amount: number,
     closedAt?: Date
   ) {
-    this.accountId = accountId;
+    this.teamId = teamId;
     this.userId = userId;
     this.laneId = laneId;
     this.name = name;

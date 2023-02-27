@@ -2,8 +2,8 @@ import { EntityTarget, ObjectLiteral } from 'typeorm';
 import { User } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { database } from '../worker.js';
-import { Account } from '../entities/Account.js';
 import { CardStatus } from '../entities/Card.js';
+import { Team } from '../entities/Team.js';
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
@@ -28,13 +28,13 @@ async function findOneById<Entity extends ObjectLiteral>(
   }
 
   if (
-    entity instanceof Account &&
-    entity.id?.toString() === user.accountId?.toString()
+    entity instanceof Team &&
+    entity.id?.toString() === user.teamId?.toString()
   ) {
     return entity;
   }
 
-  if (entity.accountId?.toString() === user.accountId?.toString()) {
+  if (entity.teamId?.toString() === user.teamId?.toString()) {
     return entity;
   }
   throw new EntityNotFoundError();
@@ -54,12 +54,12 @@ async function findOneByIdOrNull<Entity extends ObjectLiteral>(
   }
 }
 
-async function findByAccoount<Entity extends ObjectLiteral>(
+async function findByTeam<Entity extends ObjectLiteral>(
   target: EntityTarget<Entity>,
-  account: Account
+  team: Team
 ) {
   const query = {
-    accountId: { $eq: account.id!.toString() },
+    teamId: { $eq: team.id!.toString() },
   };
 
   const list = await database.getMongoRepository(target).findBy(query);
@@ -67,13 +67,13 @@ async function findByAccoount<Entity extends ObjectLiteral>(
   return list;
 }
 
-async function findCardsByAccoount<Entity extends ObjectLiteral>(
+async function findCardsByTeam<Entity extends ObjectLiteral>(
   target: EntityTarget<Entity>,
-  account: Account
+  team: Team
 ) {
   const query = {
     where: {
-      accountId: { $eq: account.id!.toString() },
+      teamId: { $eq: team.id!.toString() },
       $or: [
         { status: { $exists: false } },
         { status: { $ne: CardStatus.Deleted } },
@@ -88,7 +88,7 @@ async function findCardsByAccoount<Entity extends ObjectLiteral>(
 
 export const EntityHelper = {
   findOneById,
-  findByAccoount,
-  findCardsByAccoount,
+  findByTeam,
+  findCardsByTeam,
   findOneByIdOrNull,
 };

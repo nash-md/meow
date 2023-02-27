@@ -13,7 +13,7 @@ export class CardEventService {
 
   async add(card: Card, user: User) {
     const event = new Event(
-      card.accountId,
+      card.teamId,
       card.id!.toString(),
       user.id!.toString(),
       EventType.CreatedAt

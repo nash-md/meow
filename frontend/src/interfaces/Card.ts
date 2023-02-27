@@ -3,7 +3,7 @@ export type id = string;
 export interface Card {
   readonly id: id;
   name: string;
-  accountId: string;
+  teamId: string;
   userId: string;
   amount: number;
   laneId: string;
@@ -11,7 +11,7 @@ export interface Card {
   attributes: CardAttribute | undefined;
   closedAt?: string;
   readonly createdAt: string;
-  updatedAt: string;
+  readonly updatedAt: string;
 }
 
 export interface CardAttribute {

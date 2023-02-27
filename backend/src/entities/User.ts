@@ -14,7 +14,7 @@ export class User {
   id: ObjectID | undefined;
 
   @Column()
-  accountId: string;
+  teamId: string;
 
   @Column()
   name: string;
@@ -37,8 +37,8 @@ export class User {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(accountId: string, name: string) {
-    this.accountId = accountId;
+  constructor(teamId: string, name: string) {
+    this.teamId = teamId;
     this.name = name;
   }
 

@@ -7,8 +7,8 @@ import {
   showModalSuccess,
 } from '../../../actions/Actions';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { CurrencyCode } from '../../../interfaces/Account';
-import { selectCurrency, selectAccountId, store } from '../../../store/Store';
+import { CurrencyCode } from '../../../interfaces/Team';
+import { selectCurrency, selectTeamId, store } from '../../../store/Store';
 
 function parseCurrencyKey(value: React.Key): CurrencyCode {
   switch (value) {
@@ -27,7 +27,7 @@ export const CurrencyCanvas = () => {
   const { client } = useContext(RequestHelperContext);
 
   const configuredCurrency = useSelector(selectCurrency);
-  const accountId = useSelector(selectAccountId);
+  const teamId = useSelector(selectTeamId);
   const [currency, setCurrency] = useState<CurrencyCode>(
     configuredCurrency ?? CurrencyCode.USD
   );
@@ -38,12 +38,12 @@ export const CurrencyCanvas = () => {
     setCurrency(c);
 
     try {
-      await client!.updateAccount(accountId!, c);
+      await client!.updateTeam(teamId!, c);
 
       store.dispatch(showModalSuccess());
 
       store.dispatch({
-        type: ActionType.ACCOUNT_UPDATE,
+        type: ActionType.TEAM_UPDATE,
         payload: c,
       });
     } catch (error) {

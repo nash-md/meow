@@ -25,7 +25,6 @@ export const SessionOrNot = () => {
 
   const token = useSelector(selectToken);
   const state = useSelector(selectBrowserState);
-
   const isPageLoaded = useSelector(selectIsPageLoaded);
 
   useEffect(() => {

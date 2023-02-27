@@ -1,8 +1,10 @@
 export const AccountRequestSchema = {
   type: 'object',
   properties: {
-    currency: { type: 'string', minLength: 3, maxLength: 3 },
+    name: { type: 'string', maxLength: 500 },
+    address: { type: 'string', maxLength: 500 },
+    phone: { type: 'string', maxLength: 500 },
   },
-  required: ['currency'],
+  required: ['name'],
   additionalProperties: false,
 };
