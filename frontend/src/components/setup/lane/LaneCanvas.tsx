@@ -9,9 +9,10 @@ import { LaneRequest } from '../../../interfaces/Lane';
 import { selectLanes, store } from '../../../store/Store';
 import { Lane } from './Lane';
 
-interface LaneListItem {
+export interface LaneListItem {
   id: number;
   name: string;
+  index: number;
   inForecast: boolean;
   type?: string;
   color?: string;
@@ -48,6 +49,7 @@ export const LanesCanvas = () => {
       return {
         id: index,
         name: lane.name,
+        index: index,
         inForecast: lane.inForecast,
         color: lane.color,
         externalId: lane.id,
@@ -67,7 +69,9 @@ export const LanesCanvas = () => {
       lanes,
       result.source.index,
       result.destination!.index
-    );
+    ).map((item, index) => {
+      return { ...item, index };
+    });
 
     setLanes([...list]);
   };
@@ -82,8 +86,9 @@ export const LanesCanvas = () => {
     setLanes([
       ...lanes,
       {
-        id: lanes.length + 1,
+        id: lanes.length,
         name: name,
+        index: lanes.length,
         inForecast: true,
       },
     ]);
@@ -133,7 +138,9 @@ export const LanesCanvas = () => {
   };
 
   const remove = (index: number) => {
-    const list = removeLane(lanes, index);
+    const list = removeLane(lanes, index).map((item, index) => {
+      return { ...item, index };
+    });
 
     setLanes([...list]);
   };
@@ -151,11 +158,11 @@ export const LanesCanvas = () => {
   };
 
   const save = async () => {
-    const updated: LaneRequest[] = lanes.map((lane, index) => {
+    const updated: LaneRequest[] = lanes.map((lane) => {
       const payload: LaneRequest = {
         id: lane.externalId,
         name: lane.name,
-        index: index,
+        index: lane.index,
         inForecast: lane.inForecast,
         color: undefined,
       };
@@ -189,13 +196,13 @@ export const LanesCanvas = () => {
             {(provided) => {
               return (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {lanes.map((lane, index) => {
+                  {lanes.map((lane) => {
                     return (
                       <Lane
                         id={lane.id}
                         key={lane.id}
-                        index={index}
                         name={lane.name}
+                        index={lane.index}
                         type={lane.type}
                         inForecast={lane.inForecast}
                         remove={remove}

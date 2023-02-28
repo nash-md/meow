@@ -93,6 +93,7 @@ const updateAll = async (
             lane.name = item.name;
             lane.color = item.color === undefined ? '' : item.color;
             lane.inForecast = item.inForecast;
+            lane.index = item.index;
             lane.tags = item.tags ?? {};
           }
 

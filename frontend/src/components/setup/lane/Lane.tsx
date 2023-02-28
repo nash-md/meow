@@ -1,18 +1,41 @@
 import { Checkbox, Item, Picker, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
+import { LaneListItem } from './LaneCanvas';
 
-export const Lane = (props: any) => {
+export interface LaneProps {
+  id: number;
+  key: number;
+  name: string;
+  index: number;
+  type: string | undefined;
+  inForecast: boolean;
+  remove: (index: number) => void;
+  update: (
+    index: number,
+    item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>
+  ) => void;
+}
+
+export const Lane = (props: LaneProps) => {
+  const [id, setId] = useState<number>(props.id);
   const [name, setName] = useState<string>(props.name);
   const [inForecast, setInForecast] = useState<boolean>(props.inForecast);
-  const [type, setType] = useState<string>(props.type);
+  const [type, setType] = useState<string | undefined>(props.type);
 
   useEffect(() => {
-    props.update(props.index, { name, inForecast, type });
+    props.update(props.id, { name, inForecast, type });
   }, [name, inForecast, type]);
 
+  useEffect(() => {
+    setId(props.id);
+    setName(props.name);
+    setInForecast(props.inForecast);
+    setType(props.type);
+  }, [props]);
+
   return (
-    <Draggable draggableId={`drag_${props.id}`} index={props.index}>
+    <Draggable draggableId={`drag_${id}`} index={props.index}>
       {(provided, snaphot) => {
         return (
           <div
