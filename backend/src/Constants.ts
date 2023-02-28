@@ -1,4 +1,4 @@
-import { SchemaAttribute } from './entities/Schema.js';
+import { SchemaAttribute, SchemaType } from './entities/Schema.js';
 
 export const SERVICE_NAME = 'meow-backend-service';
 export const MAXIMUM_LENGTH_OF_USER_NAME = 20;
@@ -36,7 +36,7 @@ export const DefaultCards = [
 ];
 
 export const DefaultSchema = {
-  type: 'card',
+  type: SchemaType.Card,
   schema: [
     {
       key: '6cdd2d99-c0c9-1f20-60eb-5ba24d548348',
@@ -52,7 +52,7 @@ export const DefaultSchema = {
     },
   ],
 } as {
-  type: string;
+  type: SchemaType;
   schema: SchemaAttribute[];
 };
 

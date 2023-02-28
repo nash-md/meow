@@ -4,6 +4,7 @@ import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { database } from '../worker.js';
 import { CardStatus } from '../entities/Card.js';
 import { Team } from '../entities/Team.js';
+import { Schema, SchemaType } from '../entities/Schema.js';
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
@@ -67,6 +68,17 @@ async function findByTeam<Entity extends ObjectLiteral>(
   return list;
 }
 
+async function findSchemaByType(id: string, type: SchemaType) {
+  const query = {
+    teamId: { $eq: id!.toString() },
+    type: { $eq: type },
+  };
+
+  const list = await database.getMongoRepository(Schema).findOneBy(query);
+
+  return list;
+}
+
 async function findCardsByTeam<Entity extends ObjectLiteral>(
   target: EntityTarget<Entity>,
   team: Team
@@ -91,4 +103,5 @@ export const EntityHelper = {
   findByTeam,
   findCardsByTeam,
   findOneByIdOrNull,
+  findSchemaByType,
 };

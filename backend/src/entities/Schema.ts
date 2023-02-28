@@ -16,7 +16,7 @@ export class Schema {
   teamId: string;
 
   @Column()
-  type: string;
+  type: SchemaType;
 
   @Column({ type: 'json' })
   schema: SchemaAttribute[];
@@ -27,7 +27,7 @@ export class Schema {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(teamId: string, type: string, schema: SchemaAttribute[]) {
+  constructor(teamId: string, type: SchemaType, schema: SchemaAttribute[]) {
     this.teamId = teamId;
     this.type = type;
     this.schema = schema;
@@ -43,6 +43,11 @@ export class Schema {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+export enum SchemaType {
+  Card = 'card',
+  Account = 'account',
 }
 
 export interface SchemaAttribute {

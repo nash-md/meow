@@ -1,6 +1,6 @@
 import { id } from './Card';
 
-type EventBodyType = string | number | null;
+type EventBodyType = any; // TODO, refactor
 
 export interface Event {
   readonly id: id;

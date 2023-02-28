@@ -157,13 +157,13 @@ const update = async (
       throw new InvalidUrlError();
     }
 
-    const card = await EntityHelper.findOneById(
+    let card = await EntityHelper.findOneById(
       req.jwt.user,
       Card,
       req.params.id
     );
 
-    let user: User | null = null;
+    let user: User | undefined = undefined;
 
     if (req.body.userId) {
       try {
@@ -177,97 +177,13 @@ const update = async (
       }
     }
 
-    // TODO use CardEventService
-    if (card.laneId !== req.body.laneId) {
-      const event = new Event(
-        card.teamId,
-        req.params.id,
-        req.jwt.user.id!?.toString(),
-        EventType.Lane,
-        {
-          from: card.laneId,
-          to: req.body.lane,
-        }
-      );
+    const cardEventService = new CardEventService(database);
 
-      await database.manager.save(event);
-    }
-
-    if (card.amount !== req.body.amount) {
-      const event = new Event(
-        card.teamId,
-        req.params.id,
-        req.jwt.user.id!?.toString(),
-        EventType.Amount,
-        {
-          from: card.amount,
-          to: req.body.amount,
-        }
-      );
-
-      await database.manager.save(event);
-    }
-
-    if (req.body.closedAt) {
-      const date = DateTime.fromISO(req.body.closedAt, {
-        zone: 'utc',
-      });
-      if (
-        date.toMillis() !==
-        DateTime.fromJSDate(card.closedAt!, { zone: 'utc' }).toMillis()
-      ) {
-        const event = new Event(
-          card.teamId,
-          req.params.id,
-          req.jwt.user.id!?.toString(),
-          EventType.ClosedAt,
-          {
-            from: card.closedAt,
-            to: date.toJSDate(),
-          }
-        );
-
-        await database.manager.save(event);
-      }
-
-      card.closedAt = DateTime.fromISO(req.body.closedAt, {
-        zone: 'utc',
-      }).toJSDate();
-    }
-
-    if (hasAttributeDifference(card.attributes, req.body.attributes)) {
-      const event = new Event(
-        card.teamId,
-        req.params.id,
-        req.jwt.user.id!?.toString(),
-        EventType.Attribute,
-        {}
-      ); // TODO, store attribute change
-
-      await database.manager.save(event);
-    }
-
-    if (user && user.id!.toString() !== card.userId.toString()) {
-      const event = new Event(
-        card.teamId,
-        req.params.id,
-        req.jwt.user.id!?.toString(),
-        EventType.Assign,
-        {
-          from: card.userId,
-          to: user.id,
-        }
-      );
-
-      await database.manager.save(event);
-
-      card.userId = user.id!.toString();
-    }
+    // TODO refactor, remove dependency from controller
+    card = await cardEventService.update(req.body, card, req.jwt.user, user);
 
     card.name = req.body.name;
     card.laneId = req.body.laneId;
-    card.amount = req.body.amount;
-    card.attributes = req.body.attributes;
 
     if (req.body.status) {
       card.status = parseCardStatus(req.body.status);
