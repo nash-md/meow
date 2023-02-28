@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-02-28
+
+- Attribute changes on opportunities are now stored with details, the history will show `updated`, `added` and `removed`, including the changed value.
+
 ## 2023-02-27
 
 - Added the `Account` entity, you can now create a basic company profile for your opportunities
