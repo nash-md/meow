@@ -30,6 +30,6 @@ export const LoginResponseSchema = {
       },
     },
   },
-  required: ['token', 'user', 'account'],
+  required: ['token', 'user', 'team'],
   additionalProperties: false,
 };

@@ -48,7 +48,7 @@ async function findOneByIdOrNull<Entity extends ObjectLiteral>(
 ) {
   try {
     const entity = await findOneById(user, target, id);
-    console.log(entity);
+
     return entity;
   } catch (error) {
     return null;
