@@ -1,8 +1,11 @@
 import { Button } from '@adobe/react-spectrum';
+import { useState } from 'react';
 import { Form } from '../components/hire/Form';
 import { UserList } from '../components/hire/UserList';
 
 export const HirePage = () => {
+  const [hire, setHire] = useState('');
+
   return (
     <div className="canvas">
       <Form />
@@ -33,9 +36,17 @@ export const HirePage = () => {
                 virtual world. Whether he's leading a team to victory or
                 supporting his friends through tough challenges, Finn is always
                 there to lend a helping hand.
+                {hire === 'finn' && (
+                  <div style={{ marginTop: '20px' }}>
+                    I'm as happy as a virtual clam! With my brains and
+                    bossiness, this new job doesn't stand a chance!
+                  </div>
+                )}
               </td>
               <td style={{ padding: '10px' }}>
-                <Button variant="primary">Hire</Button>
+                <Button onPress={() => setHire('finn')} variant="primary">
+                  Hire
+                </Button>
               </td>
             </tr>
 
@@ -52,9 +63,19 @@ export const HirePage = () => {
                 her projects are completed to the best of her ability. Despite
                 her long hours, she remains calm and focused, never allowing the
                 pressures of the job to get the best of her.
+                {hire === 'whisker' && (
+                  <div style={{ marginTop: '20px' }}>
+                    I'm thrilled to sink my claws into this new project. With my
+                    vast knowledge and unshakable work ethic, success is just a
+                    paw-sweep away!
+                  </div>
+                )}
               </td>
+
               <td style={{ padding: '10px' }}>
-                <Button variant="primary">Hire</Button>
+                <Button onPress={() => setHire('whisker')} variant="primary">
+                  Hire
+                </Button>
               </td>
             </tr>
 
@@ -72,9 +93,20 @@ export const HirePage = () => {
                 can sometimes get the best of him, but he never gives up. His
                 strong opinions and willingness to speak his mind, combined with
                 his eagerness to learn make him unique.
+                {hire === 'charly' && (
+                  <div style={{ marginTop: '20px' }}>
+                    I'm barking with excitement! Even though I'm a little green,
+                    I'm ready to take on this new challenge with all four paws.
+                    I may be nervous, but my strong will and eagerness to learn
+                    will have me rolling over this job in no time!
+                  </div>
+                )}
               </td>
+
               <td style={{ padding: '10px' }}>
-                <Button variant="primary">Hire</Button>
+                <Button onPress={() => setHire('charly')} variant="primary">
+                  Hire
+                </Button>
               </td>
             </tr>
 
@@ -93,9 +125,20 @@ export const HirePage = () => {
                 his work, leaving nothing to chance. Despite his tendency to
                 micro-manage and his love for all things shiny, Snickers is a
                 true friend at heart
+                {hire === 'snickers' && (
+                  <div style={{ marginTop: '20px' }}>
+                    Oh boy, oh boy, oh boy! Another big deal coming my way, and
+                    I'm ready to go nuts over it! As a micro-managing raccoon, I
+                    can handle every little detail of this project, leaving
+                    nothing to chance. With my sharp eye for profits and love
+                    for all things shiny, this job is sure to be a real treat!
+                  </div>
+                )}
               </td>
               <td style={{ padding: '10px' }}>
-                <Button variant="primary">Hire</Button>
+                <Button onPress={() => setHire('snickers')} variant="primary">
+                  Hire
+                </Button>
               </td>
             </tr>
           </tbody>

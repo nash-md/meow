@@ -197,7 +197,6 @@ export const application = (state = Default, action: ApplicationAction) => {
 
       return {
         ...state,
-        cards: [...state.cards, action.payload.card],
         board: updated,
       };
 
