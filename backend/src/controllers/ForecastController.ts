@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
 import QueryString from 'qs';
 import { FILTER_BY_NONE } from '../Constants.js';
+import { CardStatus } from '../entities/Card.js';
 import { Lane } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
@@ -37,6 +38,7 @@ const achieved = async (
     const match: any = {
       $match: {
         teamId: { $eq: req.jwt.team.id?.toString() },
+        status: { $ne: CardStatus.Deleted },
         laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
         updatedAt: {
           $gt: start,
@@ -93,6 +95,7 @@ const predicted = async (
     const match: any = {
       $match: {
         teamId: { $eq: req.jwt.team.id?.toString() },
+        status: { $ne: CardStatus.Deleted },
         laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
         closedAt: {
           $gt: start,
@@ -152,6 +155,7 @@ const list = async (
       match = {
         $match: {
           teamId: { $eq: req.jwt.team.id?.toString() },
+          status: { $ne: CardStatus.Deleted },
           laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
           closedAt: {
             $gt: start,
@@ -174,6 +178,7 @@ const list = async (
       match = {
         $match: {
           teamId: { $eq: req.jwt.team.id?.toString() },
+          status: { $ne: CardStatus.Deleted },
           laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
           updatedAt: {
             $gt: start,
