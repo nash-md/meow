@@ -75,7 +75,7 @@ paths:
       responses:
         '200':
           description: OK
-          $ref: '#/components/responses/CardResponse'
+          $ref: '#/components/responses/CardListResponse'
         '400':
           description: the server did not understand the request
           $ref: '#/components/responses/BadRequest'
@@ -97,7 +97,7 @@ paths:
       responses:
         '200':
           description: OK
-          $ref: '#/components/responses/CardListResponse'
+          $ref: '#/components/responses/CardResponse'
         '400':
           description: the server did not understand the request
           $ref: '#/components/responses/BadRequest'
@@ -153,6 +153,94 @@ paths:
         5XX:
           description: Unexpected error.
           $ref: '#/components/responses/ServerError'
+  /api/accounts:
+      get:
+        operationId: fetchAccounts
+        summary: fetch accounts
+        security:
+          - AuthenticationToken: []
+        description: fetch all accounts
+        responses:
+          '200':
+            description: OK
+            $ref: '#/components/responses/AccountListResponse'
+          '400':
+            description: the server did not understand the request
+            $ref: '#/components/responses/BadRequest'
+          5XX:
+            description: Unexpected error.
+            $ref: '#/components/responses/ServerError'
+      post:
+        operationId: createAccount
+        summary: create a new account
+        security:
+          - AuthenticationToken: []
+        description: create a new account
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCreateRequest'
+        responses:
+          '200':
+            description: OK
+            $ref: '#/components/responses/AccountResponse'
+          '400':
+            description: the server did not understand the request
+            $ref: '#/components/responses/BadRequest'
+          5XX:
+            description: Unexpected error.
+            $ref: '#/components/responses/ServerError'
+  /api/accounts/{accountId}:
+      get:
+        operationId: fetchAccount
+        summary: fetch account
+        security:
+          - AuthenticationToken: []
+        description: fetch a card
+        parameters:
+          - $ref: '#/components/parameters/accountId'
+        responses:
+          '200':
+            description: OK
+            $ref: '#/components/responses/AccountResponse'
+          '400':
+            description: the server did not understand the request
+            $ref: '#/components/responses/BadRequest'
+          '404':
+            description: the server did not find the card
+            $ref: '#/components/responses/NotFound'
+          5XX:
+            description: Unexpected error.
+            $ref: '#/components/responses/ServerError'
+      post:
+        operationId: updateAccount
+        summary: update account
+        security:
+          - AuthenticationToken: []
+        description: fetch a card
+        parameters:
+          - $ref: '#/components/parameters/accountId'
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountUpdateRequest'
+        responses:
+          '200':
+            description: OK
+            $ref: '#/components/responses/AccountResponse'
+          '400':
+            description: the server did not understand the request
+            $ref: '#/components/responses/BadRequest'
+          '404':
+            description: the server did not find the card
+            $ref: '#/components/responses/NotFound'
+          5XX:
+            description: Unexpected error.
+            $ref: '#/components/responses/ServerError'
 components:
   securitySchemes:
     AuthenticationToken:
@@ -216,6 +304,41 @@ components:
         createdAt:
           type: string
           format: date-time
+    AccountCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+    AccountUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
     User:
       type: object
       properties:
@@ -235,7 +358,7 @@ components:
           type: string
           format: date-time
           readOnly: true
-    Account:
+    Team:
       type: object
       properties:
         id:
@@ -271,6 +394,13 @@ components:
       in: path
       description: 'The unique identifier of the card.'
       name: cardId
+      required: true
+      schema:
+        type: string
+    accountId:
+      in: path
+      description: 'The unique identifier of the account.'
+      name: accountId
       required: true
       schema:
         type: string
@@ -320,7 +450,7 @@ components:
                         type: string
                       name:
                         type: string
-                  account:
+                  team:
                     type: object
                     properties: 
                       id:
@@ -343,7 +473,7 @@ components:
                     type: string
                   name:
                     type: string
-              account:
+              team:
                 type: object
                 properties: 
                   id:
@@ -366,3 +496,19 @@ components:
             items:
               type: object
               $ref: '#/components/schemas/Card'
+    AccountResponse:
+      description: response to a account request
+      content:
+        application/json:
+          schema:
+            type: object
+            $ref: '#/components/schemas/Account'
+    AccountListResponse:
+      description: response to a create accoount request
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              $ref: '#/components/schemas/Account'
