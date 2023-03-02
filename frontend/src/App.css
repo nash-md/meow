@@ -674,3 +674,13 @@ h3 {
 #error-modal.show {
   transform: translateY(-80px); /* Move the div up 100px */
 }
+
+.search .header {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 20px;
+}
+
+.search .header div:first-child {
+  flex-grow: 1;
+}

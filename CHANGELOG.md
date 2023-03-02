@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-02
+
+- Added basic search to the accounts page, you can search for a name
+
 ## 2023-02-28
 
 - Attribute changes on opportunities are now stored with details, the history will show `updated`, `added` and `removed`, including the changed value.
