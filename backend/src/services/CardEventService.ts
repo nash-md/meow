@@ -107,10 +107,6 @@ export class CardEventService {
     );
 
     if (body.attributes) {
-      console.log('update attributes');
-      console.log(card.attributes);
-      console.log(body.attributes);
-
       const changes = getAttributeListDifference(
         card.attributes,
         body.attributes
