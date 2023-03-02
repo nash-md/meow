@@ -15,17 +15,9 @@ interface CardAttributeChange {
 }
 
 function getAttributeListDifference(
-  existing: CardAttribute | undefined,
-  updated: CardAttribute | undefined
+  existing: CardAttribute = {},
+  updated: CardAttribute = {}
 ): CardAttributeChange[] {
-  if (!existing && !updated) {
-    return [];
-  }
-
-  if (!existing || !updated) {
-    return [];
-  }
-
   const list: CardAttributeChange[] = [];
 
   for (const key in existing) {
@@ -115,13 +107,17 @@ export class CardEventService {
     );
 
     if (body.attributes) {
+      console.log('update attributes');
+      console.log(card.attributes);
+      console.log(body.attributes);
+
       const changes = getAttributeListDifference(
         card.attributes,
         body.attributes
       );
 
       const list = filterAttributeList(schema, changes);
-
+      console.log(list);
       if (list.length !== 0) {
         const event = new Event(
           card.teamId,
