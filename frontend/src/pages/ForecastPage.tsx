@@ -210,8 +210,8 @@ export const ForecastPage = () => {
               setMode(key.toString() as 'achieved' | 'predicted');
             }}
           >
-            <Item key="achieved">Achieved</Item>
-            <Item key="predicted">Predicted</Item>
+            <Item key="achieved">Closed Won</Item>
+            <Item key="predicted">All Open</Item>
           </Picker>
 
           <table className="list" style={{ width: '100%' }}>
