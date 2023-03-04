@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-04
+
+- If the token cannot be validated upon page reload, the UI will display an error message asking the user to check their internet connection. The token will not be deleted
+- The UI uses now a translations file for some error messages
+- The backend is now validating the token without a JSON response, a HTTP status code `200 OK` is returned instead. If the token is valid,the `login` route will accept the token to login the user.
+
 ## 2023-03-02
 
 - Added basic search to the accounts page, you can search for a name

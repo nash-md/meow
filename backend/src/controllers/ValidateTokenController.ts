@@ -25,23 +25,9 @@ const validate = async (req: Request, res: Response) => {
       throw new UserNotFoundError();
     }
 
-    const body = {
-      token: req.body.token,
-      user: {
-        id: user.id,
-        name: user.name,
-        animal: user.animal,
-      },
-      team: {
-        id: user.teamId,
-        currency: team.currency,
-      },
-      board: user.board,
-    };
-
-    res.json({ isValid: true, body: body });
+    res.status(200).end();
   } catch (error) {
-    res.json({ isValid: false });
+    return res.status(401).end();
   }
 };
 

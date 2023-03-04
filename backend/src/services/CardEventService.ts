@@ -113,7 +113,7 @@ export class CardEventService {
       );
 
       const list = filterAttributeList(schema, changes);
-      console.log(list);
+
       if (list.length !== 0) {
         const event = new Event(
           card.teamId,

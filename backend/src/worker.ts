@@ -56,6 +56,7 @@ import { PasswordRequestSchema } from './middlewares/schema-validation/PasswordR
 import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { Team } from './entities/Team.js';
+import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -124,7 +125,11 @@ try {
   card.route('/:id/events').get(EventController.list);
   card
     .route('/:id/events')
-    .post(rejectIfContentTypeIsNot('application/json'), EventController.create);
+    .post(
+      rejectIfContentTypeIsNot('application/json'),
+      validateAgainst(EventRequestSchema),
+      EventController.create
+    );
 
   app.use('/api/cards', card);
 

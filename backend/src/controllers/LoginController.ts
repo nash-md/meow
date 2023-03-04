@@ -13,21 +13,35 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
   log.info(`get user by name: ${req.body.name}`);
 
   try {
-    const user = await database.manager.findOneBy(User, {
-      name: req.body.name,
-    });
+    let user: User | null = null;
 
-    if (!user) {
-      throw new AuthenticationFailedError();
+    if (req.body.token) {
+      const payload = TokenHelper.verifyJwt(req.body.token);
+
+      user = await database.manager.findOneById(User, payload.userId);
     }
 
-    const isValidPassword =
-      await new PasswordAuthenticationProvider().authenticate(
-        user,
-        req.body.password
-      );
+    if (req.body.name) {
+      user = await database.manager.findOneBy(User, {
+        name: req.body.name,
+      });
 
-    if (!isValidPassword) {
+      if (!user) {
+        throw new AuthenticationFailedError();
+      }
+
+      const isValidPassword =
+        await new PasswordAuthenticationProvider().authenticate(
+          user,
+          req.body.password
+        );
+
+      if (!isValidPassword) {
+        throw new AuthenticationFailedError();
+      }
+    }
+
+    if (!user) {
       throw new AuthenticationFailedError();
     }
 
