@@ -60,34 +60,24 @@ function isOnBoard(id: Card['id'], board: Board | undefined) {
   }
   return false;
 }
-
 export const application = (state = Default, action: ApplicationAction) => {
   switch (action.type) {
     case ActionType.PAGE_LOAD:
-      const session = state.session;
-
-      if (action.payload) {
-        session.token = action.payload.token;
-        session.user = action.payload.user;
-        session.team = action.payload.team;
-      }
-
-      let board = {};
-
-      if (action.payload && action.payload.board) {
-        board = { ...action.payload.board };
-      }
-
       return {
         ...state,
         session: {
-          ...session,
+          ...state.session,
+          token: action.payload.token,
         },
         browser: {
           ...state.browser,
           isPageLoaded: true,
         },
-        board: { ...board },
+        ui: {
+          ...state.ui,
+          modal: action.payload.modal,
+          text: action.payload.text,
+        },
       };
 
     case ActionType.LOGIN:
@@ -104,6 +94,11 @@ export const application = (state = Default, action: ApplicationAction) => {
           },
         },
         board: { ...action.payload.board },
+        ui: {
+          ...state.ui,
+          modal: undefined,
+          text: undefined,
+        },
       };
     case ActionType.LOGOUT:
       return {

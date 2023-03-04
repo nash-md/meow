@@ -4,7 +4,7 @@ import { ActionType } from '../../actions/Actions';
 import { selectInterfaceStateId, store } from '../../store/Store';
 import { Form } from './Form';
 
-export const Layer = (props: any) => {
+export const Layer = () => {
   const id = useSelector(selectInterfaceStateId);
 
   const hideCardDetail = () => {

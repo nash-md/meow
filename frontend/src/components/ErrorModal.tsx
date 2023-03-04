@@ -29,7 +29,7 @@ export const ErrorModal = () => {
       onClick={() => hide()}
       className={`${isVisible ? 'show' : ''}`}
     >
-      <div>An error occured, {text}</div>
+      <div>{text}</div>
     </div>
   );
 };

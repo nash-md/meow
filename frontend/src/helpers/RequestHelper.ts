@@ -337,6 +337,19 @@ export class RequestHelper {
     return parsed;
   }
 
+  async loginWithToken(token: string) {
+    const url = this.getUrl(`/public/login`);
+
+    const response = await this.fetchWithTimeout(url, {
+      ...this.getHeaders('POST'),
+      body: JSON.stringify({ token }),
+    });
+
+    const parsed = await this.parseJson(response);
+
+    return parsed;
+  }
+
   async register(name: string, password: string) {
     const url = this.getUrl(`/public/register`);
 
@@ -350,16 +363,22 @@ export class RequestHelper {
     return parsed;
   }
 
-  isValidToken = async (token: string): Promise<any> => {
+  isValidToken = async (token: string): Promise<'ok' | 'expired'> => {
     const url = this.getUrl('/public/validate-token');
 
-    const response = await this.fetchWithTimeout(url, {
-      ...this.getHeaders('POST'),
-      body: JSON.stringify({ token }),
-    });
+    try {
+      const response = await this.fetchWithTimeout(url, {
+        ...this.getHeaders('POST'),
+        body: JSON.stringify({ token }),
+      });
 
-    const parsed = await this.parseJson(response);
+      return 'ok';
+    } catch (error) {
+      if (error instanceof RequestError && error.response.status === 401) {
+        return 'expired';
+      }
 
-    return parsed;
+      throw error;
+    }
   };
 }

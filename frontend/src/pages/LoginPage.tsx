@@ -1,5 +1,6 @@
 import { TabList, Item, TabPanels, Tabs } from '@adobe/react-spectrum';
 import { CursorHeadline } from '../components/CursorHeadline';
+import { ErrorModal } from '../components/ErrorModal';
 import { Login } from '../components/Login';
 import { Register } from '../components/Register';
 
@@ -29,6 +30,7 @@ export default function LoginPage() {
           </Tabs>
         </form>
       </div>
+      <ErrorModal />
     </>
   );
 }

@@ -17,13 +17,34 @@ import { Layer as LaneLayer } from '../components/lane/Layer';
 import { Lane } from '../interfaces/Lane';
 import { Currency } from '../components/Currency';
 import { Board } from '../components/Board';
+import { Card } from '../interfaces/Card';
+import { Translations } from '../Translations';
+
+export const enum FilterMode {
+  OwnedByMe = 'owned-by-me',
+  RequireUpdate = 'require-update',
+}
 
 export const HomePage = () => {
   const cards = useSelector(selectCards);
   const lanes = useSelector(selectLanes);
   const state = useSelector(selectInterfaceState);
+  const [filters, setFilters] = useState<Set<FilterMode>>(new Set());
 
   const { client } = useContext(RequestHelperContext);
+
+  const handleFilterToggle = (key: FilterMode) => {
+    console.log(key);
+
+    const updated = new Set(filters);
+    if (updated.has(key)) {
+      updated.delete(key);
+    } else {
+      updated.add(key);
+    }
+
+    setFilters(updated);
+  };
 
   // TODO combine this to one call
   useEffect(() => {
@@ -70,6 +91,14 @@ export const HomePage = () => {
   };
 
   const [amount, setAmount] = useState(0);
+
+  const getTitle = (cards: Card[]) => {
+    const count = cards.length;
+
+    return count === 1
+      ? `${count} ${Translations.BoardTitle.en}`
+      : `${count} ${Translations.BoardTitlePlural.en}`;
+  };
 
   useEffect(() => {
     setAmount(
@@ -146,14 +175,41 @@ export const HomePage = () => {
       {state === 'lane-detail' && <LaneLayer />}
       <div className="board">
         <div className="title">
-          <h2>
-            {cards.length} Deals -
-            <Currency value={amount} />
-          </h2>
-          <div style={{ paddingTop: '10px' }}>
-            <Button variant="primary" onPress={() => showCardDetail()}>
-              Add
-            </Button>
+          <div>
+            <div>
+              <h2>
+                {getTitle(cards)} -
+                <Currency value={amount} />
+              </h2>
+            </div>
+            <div style={{ paddingLeft: '10px' }}>
+              <Button variant="primary" onPress={() => showCardDetail()}>
+                Add
+              </Button>
+            </div>
+          </div>
+          <div className="filters-canvas">
+            <button
+              className={`filter ${
+                filters.has(FilterMode.OwnedByMe)
+                  ? ' owned-by-me-active'
+                  : 'owned-by-me'
+              }`}
+              onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
+            >
+              Only My Opportunities
+            </button>
+
+            <button
+              className={`filter ${
+                filters.has(FilterMode.RequireUpdate)
+                  ? ' require-update-active'
+                  : 'require-update'
+              }`}
+              onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}
+            >
+              Require Updates
+            </button>
           </div>
         </div>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
@@ -162,7 +218,7 @@ export const HomePage = () => {
           </div>
 
           <div className="lanes">
-            <Board lanes={lanes} />
+            <Board filters={filters} lanes={lanes} />
           </div>
         </DragDropContext>
       </div>

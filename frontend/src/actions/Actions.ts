@@ -38,21 +38,7 @@ export interface Action<T extends ActionType> {
 
 export interface ApplicationPageLoadAction
   extends Action<ActionType.PAGE_LOAD> {
-  payload:
-    | {
-        token: string;
-        user: {
-          id: string;
-          name: string;
-          animal: string | undefined;
-        };
-        team: {
-          id: string;
-          currency: CurrencyCode;
-        };
-        board: Board;
-      }
-    | undefined;
+  payload: { modal?: 'error'; text?: string; token?: string };
 }
 
 export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
@@ -204,4 +190,18 @@ export function hideModal() {
     type: ActionType.USER_INTERFACE_MODAL,
     payload: { modal: undefined, text: undefined },
   } as ApplicationUserInterfaceModalAction;
+}
+
+export function pageLoad(token?: string) {
+  return {
+    type: ActionType.PAGE_LOAD,
+    payload: { token },
+  } as ApplicationPageLoadAction;
+}
+
+export function pageLoadWithError(text: string, token?: string) {
+  return {
+    type: ActionType.PAGE_LOAD,
+    payload: { modal: 'error', text: text, token },
+  } as ApplicationPageLoadAction;
 }

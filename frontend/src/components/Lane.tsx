@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Card } from './Card';
+import { Card as CardComponent } from './Card';
 import { Lane as LaneInterface } from '../interfaces/Lane';
-import { selectBoardByLaneId, selectCards, store } from '../store/Store';
+import {
+  selectBoardByLaneId,
+  selectCards,
+  selectUserId,
+  store,
+} from '../store/Store';
 import { Droppable } from 'react-beautiful-dnd';
 import { ActionType } from '../actions/Actions';
 import { Currency } from './Currency';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../store/ApplicationStore';
 import { LANE_COLOR } from '../Constants';
+import { FilterMode } from '../pages/HomePage';
+import { Card } from '../interfaces/Card';
+import { DateTime } from 'luxon';
+import { Translations } from '../Translations';
 
 const getLaneColorClassName = (color: string | undefined) => {
   if (color === LANE_COLOR.NEGATIVE) {
@@ -21,13 +30,51 @@ const getLaneColorClassName = (color: string | undefined) => {
   return '';
 };
 
+const getTitle = (cards: Card[], lane: LaneInterface) => {
+  const count = cards.filter((card) => card.laneId === lane.id).length;
+
+  return count === 1
+    ? `${count} ${Translations.BoardTitle.en}`
+    : `${count} ${Translations.BoardTitlePlural.en}`;
+};
+
+const getCard = (
+  cards: Card[],
+  id: string,
+  filters: Set<FilterMode>,
+  userId?: string
+) => {
+  const card = cards.find((listItem) => listItem.id === id)!;
+
+  if (!card) {
+    return;
+  }
+
+  const closeDate = card.closedAt ? DateTime.fromISO(card.closedAt) : undefined;
+
+  if (
+    filters.has(FilterMode.RequireUpdate) &&
+    (!closeDate || closeDate > DateTime.now())
+  ) {
+    return;
+  }
+
+  if (filters.has(FilterMode.OwnedByMe) && card.userId !== userId) {
+    return;
+  }
+
+  return card;
+};
+
 export interface LaneProps {
   lane: LaneInterface;
   numberOfLanes: number;
+  filters: Set<FilterMode>;
 }
 
-export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
+export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
   const cards = useSelector(selectCards);
+  const userId = useSelector(selectUserId); // TODO a full session user should be part of the store
 
   const list = useSelector((store: ApplicationStore) =>
     selectBoardByLaneId(store, lane.id)
@@ -76,11 +123,7 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
       </div>
 
       <div className={`sum ${getLaneColorClassName(lane.color)}`}>
-        {cards.filter((card) => card.laneId === lane.id).length} Deal
-        {cards.filter((card) => card.laneId === lane.id).length > 1
-          ? 's'
-          : ''}{' '}
-        -{' '}
+        {getTitle(cards, lane)}-{' '}
         <b>
           <Currency value={amount} />
         </b>
@@ -94,15 +137,16 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
               className={`canvas ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             >
               {list?.map((id, index) => {
-                const card = cards.find((listItem) => listItem.id === id)!;
+                const card = getCard(cards, id, filters, userId);
 
-                if (!card) {
-                  return;
-                }
-
-                return (
-                  <Card index={index} key={card.id} card={card} lane={lane} />
-                );
+                return card ? (
+                  <CardComponent
+                    index={index}
+                    key={card.id}
+                    card={card}
+                    lane={lane}
+                  />
+                ) : undefined;
               })}
               {provided.placeholder}
             </div>

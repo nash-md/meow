@@ -1,11 +1,13 @@
 import { Lane } from './Lane';
 import { Lane as LaneInterface } from '../interfaces/Lane';
+import { FilterMode } from '../pages/HomePage';
 
 export interface BoardProps {
   lanes: LaneInterface[];
+  filters: Set<FilterMode>;
 }
 
-export const Board = ({ lanes }: BoardProps) => {
+export const Board = ({ lanes, filters }: BoardProps) => {
   return (
     <>
       {lanes
@@ -13,6 +15,7 @@ export const Board = ({ lanes }: BoardProps) => {
         .map((lane) => {
           return (
             <Lane
+              filters={filters}
               key={lane.id}
               lane={lane}
               numberOfLanes={lanes.filter((lane) => lane.id !== 'trash').length}

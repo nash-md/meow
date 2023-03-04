@@ -200,6 +200,48 @@ h3 {
   padding: 20px;
 }
 
+.board .title div:first-child {
+  display: flex;
+  flex-direction: row;
+}
+
+.board .title .filters-canvas {
+  padding-top: 25px;
+}
+
+.board button.filter {
+  font-family: adobe-clean-ux, adobe-clean, Source Sans Pro, -apple-system,
+    BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+  border-radius: 6px;
+  padding: 5px 10px 5px 10px;
+  margin-right: 5px;
+  font-weight: 600;
+}
+
+.board button.owned-by-me {
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  color: var(--spectrum-global-color-static-gray-600);
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
+.board button.owned-by-me-active {
+  border: 1px solid var(--spectrum-global-color-gray-600);
+  color: white;
+  background-color: var(--spectrum-global-color-gray-600);
+}
+
+.board button.require-update {
+  border: 1px solid var(--spectrum-global-color-static-red-400);
+  color: var(--spectrum-global-color-static-red-400);
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
+.board button.require-update-active {
+  border: 1px solid var(--spectrum-global-color-static-red-400);
+  color: white;
+  background-color: var(--spectrum-global-color-static-red-400);
+}
+
 .board .lanes {
   margin-top: 10px;
   display: flex;
@@ -665,9 +707,9 @@ h3 {
   background-image: url(../public/error-icon.svg);
   background-position: left center;
   background-repeat: no-repeat;
-  width: 600px;
+  width: 750px;
   margin: auto;
-  font-size: 1.4em;
+  font-size: 1.3em;
   padding-left: 80px;
 }
 
