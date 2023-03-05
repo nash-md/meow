@@ -16,7 +16,7 @@ export class Event {
   teamId: string;
 
   @Column()
-  cardId: string;
+  entityId: string;
 
   @Column()
   userId: string;
@@ -35,13 +35,13 @@ export class Event {
 
   constructor(
     teamId: string,
-    cardId: string,
+    entityId: string,
     userId: string,
     type: EventType,
     body?: any
   ) {
     this.teamId = teamId;
-    this.cardId = cardId;
+    this.entityId = entityId;
     this.userId = userId;
     this.type = type;
     this.body = body;
@@ -59,14 +59,14 @@ export class Event {
   }
 }
 
-// TODO inconsistent naming
 export enum EventType {
-  Comment = 'comment',
-  Lane = 'lane',
-  Amount = 'amount',
-  Attribute = 'attribute',
-  ClosedAt = 'closed-at',
-  CreatedAt = 'created-at',
-  Assign = 'assign',
-  Delete = 'delete',
+  CommentCreated = 'comment-created',
+  LaneMoved = 'lane-moved',
+  AmountUpdated = 'amount-updated',
+  AttributeUpdated = 'attribute-updated',
+  ClosedAtUpdated = 'closed-at-updated',
+  NextFollowUp = 'next-follow-up',
+  Created = 'Created',
+  Assigned = 'assigned',
+  Deleted = 'delted',
 }

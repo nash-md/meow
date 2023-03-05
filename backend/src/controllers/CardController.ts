@@ -2,7 +2,6 @@ import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
 import { IS_ISO_8601_REGEXP } from '../Constants.js';
 import { Card, CardAttribute, CardStatus } from '../entities/Card.js';
-import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
 import { InvalidCardPropertyError } from '../errors/InvalidCardPropertyError.js';
@@ -59,7 +58,7 @@ const list = async (
   next: NextFunction
 ) => {
   try {
-    const cards = await EntityHelper.findCardsByTeam(Card, req.jwt.team);
+    const cards = await EntityHelper.findCardsByTeam(req.jwt.team);
 
     return res.json(cards);
   } catch (error) {

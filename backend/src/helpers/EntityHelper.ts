@@ -2,7 +2,7 @@ import { EntityTarget, ObjectLiteral } from 'typeorm';
 import { User } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { database } from '../worker.js';
-import { CardStatus } from '../entities/Card.js';
+import { Card, CardStatus } from '../entities/Card.js';
 import { Team } from '../entities/Team.js';
 import { Schema, SchemaType } from '../entities/Schema.js';
 
@@ -79,10 +79,7 @@ async function findSchemaByType(id: string, type: SchemaType) {
   return list;
 }
 
-async function findCardsByTeam<Entity extends ObjectLiteral>(
-  target: EntityTarget<Entity>,
-  team: Team
-) {
+async function findCardsByTeam(team: Team) {
   const query = {
     where: {
       teamId: { $eq: team.id!.toString() },
@@ -93,7 +90,7 @@ async function findCardsByTeam<Entity extends ObjectLiteral>(
     },
   };
 
-  const list = await database.getMongoRepository(target).find(query);
+  const list = await database.getMongoRepository(Card).find(query);
 
   return list;
 }
