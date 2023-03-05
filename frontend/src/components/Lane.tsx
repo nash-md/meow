@@ -39,6 +39,7 @@ const getTitle = (cards: Card[], lane: LaneInterface) => {
 };
 
 const getCard = (
+  lane: LaneInterface,
   cards: Card[],
   id: string,
   filters: Set<FilterMode>,
@@ -51,6 +52,10 @@ const getCard = (
   }
 
   const closeDate = card.closedAt ? DateTime.fromISO(card.closedAt) : undefined;
+
+  if (filters.has(FilterMode.RequireUpdate) && lane.tags?.type !== 'normal') {
+    return;
+  }
 
   if (
     filters.has(FilterMode.RequireUpdate) &&
@@ -137,7 +142,7 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
               className={`canvas ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             >
               {list?.map((id, index) => {
-                const card = getCard(cards, id, filters, userId);
+                const card = getCard(lane, cards, id, filters, userId);
 
                 return card ? (
                   <CardComponent
