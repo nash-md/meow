@@ -11,25 +11,25 @@ export const Attribute = ({ event }: AttributeProps) => {
   return (
     <div>
       {Array.isArray(list) &&
-        list.map((item: any) => {
+        list.map((item: any, index: number) => {
           switch (item?.type) {
             case 'added':
               return (
-                <span>
+                <span key={index}>
                   <b> {item.name}</b> was added, value is <b>{item.value}</b>.
                 </span>
               );
 
             case 'updated':
               return (
-                <span>
+                <span key={index}>
                   <b>{item.name}</b> was changed to <b>{item.value}</b>.
                 </span>
               );
 
             case 'removed':
               return (
-                <span>
+                <span key={index}>
                   <b>{item.name}</b> was removed.
                 </span>
               );

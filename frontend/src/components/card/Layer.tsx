@@ -131,7 +131,7 @@ export const Layer = () => {
               <Form update={update} id={id} />
             </Item>
             <Item key="events">
-              <Events id={id} />
+              <Events entity="card" id={id} />
             </Item>
           </TabPanels>
         </Tabs>

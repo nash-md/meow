@@ -14,9 +14,10 @@ import { Attribute } from './events/Attribute';
 
 export interface EventsProps {
   id?: string;
+  entity: 'card' | 'account';
 }
 
-export const Events = ({ id }: EventsProps) => {
+export const Events = ({ id, entity }: EventsProps) => {
   const { client } = useContext(RequestHelperContext);
 
   const [list, setList] = useState([]);
@@ -44,7 +45,7 @@ export const Events = ({ id }: EventsProps) => {
       return;
     }
 
-    await client!.createComment(id, comment);
+    await client!.createEvent(id, entity, comment);
 
     setComment('');
 
@@ -55,19 +56,19 @@ export const Events = ({ id }: EventsProps) => {
 
   const getTitle = (event: Event) => {
     switch (event.type) {
-      case EventType.ClosedAt:
+      case EventType.ClosedAtUpdated:
         return <ClosedAt event={event} />;
-      case EventType.Lane:
+      case EventType.LaneMoved:
         return <Lane event={event} />;
-      case EventType.Amount:
+      case EventType.AmountUpdated:
         return <Amount event={event} />;
-      case EventType.Comment:
+      case EventType.CommentCreated:
         return <Comment event={event} />;
-      case EventType.CreatedAt:
+      case EventType.Created:
         return <CreatedAt />;
-      case EventType.Assign:
+      case EventType.Assigned:
         return <Assign event={event} />;
-      case EventType.Attribute:
+      case EventType.AttributeUpdated:
         return <Attribute event={event} />;
       default:
         break;

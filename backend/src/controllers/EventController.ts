@@ -1,10 +1,12 @@
 import { Response, NextFunction } from 'express';
 import { Card } from '../entities/Card.js';
+import { Account } from '../entities/Account.js';
 import { Event, EventType } from '../entities/Event.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { database } from '../worker.js';
+import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 
 const list = async (
   req: AuthenticatedRequest,
@@ -18,7 +20,7 @@ const list = async (
 
     const query = {
       where: {
-        cardId: { $eq: req.params.id },
+        entityId: { $eq: req.params.id },
         teamId: { $eq: req.jwt.team.id!.toString() },
       },
       order: {
@@ -44,17 +46,32 @@ const create = async (
       throw new InvalidUrlError();
     }
 
-    const card = await EntityHelper.findOneById(
-      req.jwt.user,
-      Card,
-      req.params.id
-    );
+    let entity: Card | Account | undefined = undefined;
+
+    switch (req.body.entity) {
+      case 'card':
+        entity = await EntityHelper.findOneById(
+          req.jwt.user,
+          Card,
+          req.params.id
+        );
+        break;
+      case 'account':
+        entity = entity = await EntityHelper.findOneById(
+          req.jwt.user,
+          Account,
+          req.params.id
+        );
+        break;
+      default:
+        throw new InvalidRequestBodyError();
+    }
 
     const event = new Event(
-      card.teamId,
-      card.id!.toString(),
+      entity.teamId,
+      entity.id!.toString(),
       req.jwt.user.id!.toString(),
-      EventType.Comment,
+      EventType.CommentCreated,
       {
         text: req.body.text,
       }

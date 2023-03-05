@@ -172,23 +172,24 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', card);
   }
 
-  async createComment(id: string, text: string) {
-    const url = this.getUrl(`/api/cards/${id}/events`);
+  async createEvent(id: string, entity: 'card' | 'account', text: string) {
+    const url = this.getUrl(`/api/events/${id}`);
 
     return this.doFetch(url, 'POST', {
-      type: EventType.Comment,
+      type: EventType.CommentCreated,
       text: text,
+      entity: entity,
     });
   }
 
-  async getLanes() {
-    const url = this.getUrl(`/api/lanes`);
+  async getEvents(id: string) {
+    const url = this.getUrl(`/api/events/${id}`);
 
     return this.doFetch(url, 'GET');
   }
 
-  async getEvents(id: string) {
-    const url = this.getUrl(`/api/cards/${id}/events`);
+  async getLanes() {
+    const url = this.getUrl(`/api/lanes`);
 
     return this.doFetch(url, 'GET');
   }

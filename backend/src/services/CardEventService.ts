@@ -89,7 +89,7 @@ export class CardEventService {
       card.teamId,
       card.id!.toString(),
       user.id!.toString(),
-      EventType.CreatedAt
+      EventType.Created
     );
 
     await this.database.manager.save(event);
@@ -119,7 +119,7 @@ export class CardEventService {
           card.teamId,
           card.id!.toString(),
           user.id!.toString(),
-          EventType.Attribute,
+          EventType.AttributeUpdated,
           list
         );
 
@@ -134,7 +134,7 @@ export class CardEventService {
         card.teamId,
         card.id!.toString(),
         user.id!.toString(),
-        EventType.Amount,
+        EventType.AmountUpdated,
         {
           from: card.amount,
           to: body.amount,
@@ -158,7 +158,7 @@ export class CardEventService {
           card.teamId,
           card.id!.toString(),
           user.id!.toString(),
-          EventType.ClosedAt,
+          EventType.ClosedAtUpdated,
           {
             from: card.closedAt,
             to: date.toJSDate(),
@@ -178,7 +178,7 @@ export class CardEventService {
         card.teamId,
         card.id!.toString(),
         user.id!.toString(),
-        EventType.Assign,
+        EventType.Assigned,
         {
           from: card.userId,
           to: updatedUser.id,
@@ -195,7 +195,7 @@ export class CardEventService {
         card.teamId,
         card.id!.toString(),
         user.id!.toString(),
-        EventType.Lane,
+        EventType.LaneMoved,
         {
           from: card.laneId,
           to: body.lane,

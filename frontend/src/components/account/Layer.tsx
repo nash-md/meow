@@ -1,4 +1,4 @@
-import { Button } from '@adobe/react-spectrum';
+import { Button, Item, TabList, TabPanels, Tabs } from '@adobe/react-spectrum';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType } from '../../actions/Actions';
@@ -10,6 +10,7 @@ import {
   selectInterfaceStateId,
   store,
 } from '../../store/Store';
+import { Events } from '../card/Events';
 import { Form } from './Form';
 
 export const Layer = () => {
@@ -59,7 +60,27 @@ export const Layer = () => {
       </div>
 
       <div className="body">
-        <Form update={update} id={id} />
+        <Tabs height="100%">
+          {(id && (
+            <TabList>
+              <Item key="account">Account</Item>
+              <Item key="events">History</Item>
+            </TabList>
+          )) || (
+            <TabList>
+              <Item key="account">Account</Item>
+            </TabList>
+          )}
+
+          <TabPanels>
+            <Item key="account">
+              <Form update={update} id={id} />
+            </Item>
+            <Item key="events">
+              <Events entity="account" id={id} />
+            </Item>
+          </TabPanels>
+        </Tabs>
       </div>
     </div>
   );

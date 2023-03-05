@@ -122,16 +122,27 @@ try {
       CardController.update
     );
 
-  card.route('/:id/events').get(EventController.list);
-  card
-    .route('/:id/events')
+  app.use('/api/cards', card);
+
+  const events = express.Router();
+
+  events.use(express.json({ limit: '5kb' }));
+
+  events.use(verifyJwt);
+  events.use(addEntityToHeader);
+  events.use(setHeaders);
+  events.use(isDatabaseConnectionEstablished);
+
+  events.route('/:id').get(EventController.list);
+  events
+    .route('/:id')
     .post(
       rejectIfContentTypeIsNot('application/json'),
       validateAgainst(EventRequestSchema),
       EventController.create
     );
 
-  app.use('/api/cards', card);
+  app.use('/api/events', events);
 
   const team = express.Router();
 

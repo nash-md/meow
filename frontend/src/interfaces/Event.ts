@@ -6,6 +6,7 @@ export interface Event {
   readonly id: id;
   teamId: string;
   userId: string;
+  entityId: string;
   type: EventType;
   body: Record<string, EventBodyType>;
   readonly updatedAt: Date;
@@ -13,11 +14,13 @@ export interface Event {
 }
 
 export enum EventType {
-  Comment = 'comment',
-  Lane = 'lane',
-  Amount = 'amount',
-  Attribute = 'attribute',
-  ClosedAt = 'closed-at',
-  CreatedAt = 'created-at',
-  Assign = 'assign',
+  CommentCreated = 'comment-created',
+  LaneMoved = 'lane-moved',
+  AmountUpdated = 'amount-updated',
+  AttributeUpdated = 'attribute-updated',
+  ClosedAtUpdated = 'closed-at-updated',
+  NextFollowUp = 'next-follow-up',
+  Created = 'Created',
+  Assigned = 'assigned',
+  Deleted = 'delted',
 }
