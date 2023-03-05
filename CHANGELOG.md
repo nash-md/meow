@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-05
+
+- Accounts now have a tab with comments, users can comment accounts the same way as opportunities
+
 ## 2023-03-04
 
 - If the token cannot be validated upon page reload, the UI will display an error message asking the user to check their internet connection. The token will not be deleted
