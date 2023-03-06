@@ -198,7 +198,7 @@ export class CardEventService {
         EventType.LaneMoved,
         {
           from: card.laneId,
-          to: body.lane,
+          to: body.laneId,
         }
       );
 
