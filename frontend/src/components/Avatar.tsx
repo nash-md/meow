@@ -7,13 +7,15 @@ import { selectUser } from '../store/Store';
 export interface AvatarProps {
   id: User['id'] | undefined;
   width: number;
+  onClick?: () => void;
 }
 
-export const Avatar = ({ id, width }: AvatarProps) => {
+export const Avatar = ({ id, width, onClick }: AvatarProps) => {
   const user = useSelector((store: ApplicationStore) => selectUser(store, id));
 
   return (
     <div
+      onClick={onClick}
       className="avatar"
       style={{
         width: `${width}px`,

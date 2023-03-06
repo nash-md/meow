@@ -27,13 +27,6 @@ export const AccountsPage = () => {
 
   useEffect(() => {
     const execute = async () => {
-      let users = await client!.getUsers();
-
-      store.dispatch({
-        type: ActionType.USERS,
-        payload: [...users],
-      });
-
       let accounts = await client!.getAccounts();
 
       store.dispatch({

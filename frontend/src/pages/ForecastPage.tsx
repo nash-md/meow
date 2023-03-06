@@ -9,7 +9,7 @@ import { DateRangePicker, Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { selectUsers, store } from '../store/Store';
 import { useSelector } from 'react-redux';
-import { ActionType, showModalError } from '../actions/Actions';
+import { showModalError } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { DateTime, Interval } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
@@ -85,21 +85,6 @@ export const ForecastPage = () => {
       execute();
     }
   }, [client, start, end, userId, mode]);
-
-  useEffect(() => {
-    const execute = async () => {
-      let users = await client!.getUsers();
-
-      store.dispatch({
-        type: ActionType.USERS,
-        payload: [...users],
-      });
-    };
-
-    if (client) {
-      execute();
-    }
-  }, [client]);
 
   const getAge = (start: DateTime, end: DateTime) => {
     return start < end

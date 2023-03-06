@@ -12,21 +12,6 @@ export const UserList = () => {
   const id = useSelector(selectUserId);
   const users = useSelector(selectUsers);
 
-  useEffect(() => {
-    const execute = async () => {
-      let users = await client!.getUsers();
-
-      store.dispatch({
-        type: ActionType.USERS,
-        payload: [...users],
-      });
-    };
-
-    if (client) {
-      execute();
-    }
-  }, [client]);
-
   const deleteUser = async (user: User) => {
     user.status = UserStatus.Deleted;
 

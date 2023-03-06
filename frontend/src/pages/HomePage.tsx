@@ -63,13 +63,6 @@ export const HomePage = () => {
         payload: [...cards],
       });
 
-      let users = await client!.getUsers();
-
-      store.dispatch({
-        type: ActionType.USERS,
-        payload: [...users],
-      });
-
       let schemas = await client!.fetchSchemas();
 
       store.dispatch({

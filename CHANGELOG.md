@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-06
+
+- Added user settings. Users can now change settings and logout by clicking on the bottom left avatar. Account settings and user settings are now split.
+
 ## 2023-03-05
 
 - Accounts now have a tab with comments, users can comment accounts the same way as opportunities
