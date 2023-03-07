@@ -57,7 +57,6 @@ import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { Team } from './entities/Team.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
-import { RegisterInviteRequestSchema } from './middlewares/schema-validation/RegisterInviteRequestSchema.js';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -321,12 +320,7 @@ try {
   unprotected
     .route('/register')
     .post(validateAgainst(RegisterRequestSchema), RegisterController.register);
-  unprotected
-    .route('/register/invite')
-    .post(
-      validateAgainst(RegisterInviteRequestSchema),
-      RegisterController.invite
-    );
+  unprotected.route('/register/invite').get(RegisterController.invite);
   unprotected
     .route('/validate-token')
     .post(

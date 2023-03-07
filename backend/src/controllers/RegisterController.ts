@@ -8,16 +8,23 @@ import { CurrencyCode, Team } from '../entities/Team.js';
 import { User, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
+import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { log } from '../logger.js';
 import { database } from '../worker.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
 
 const invite = async (req: Request, res: Response, next: NextFunction) => {
-  log.debug(`get user by invite: ${req.body.invite}`);
+  log.debug(`get user by invite: ${req.query.invite}`);
 
   try {
-    const user = await EntityHelper.findUserByInvite(req.body.invite);
+    if (!req.query.invite || req.query.invite.toString().length !== 8) {
+      throw new InvalidRequestParameterError();
+    }
+
+    const user = await EntityHelper.findUserByInvite(
+      req.query.invite.toString()
+    );
 
     if (!user) {
       throw new EntityNotFoundError();
