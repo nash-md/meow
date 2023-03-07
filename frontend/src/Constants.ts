@@ -26,3 +26,10 @@ export const ANIMALS: string[] = [
   'Wolf',
   'Zebra',
 ];
+
+export const RESERVED_ATTRIBUTES = [
+  'id',
+  'createdat',
+  'updatedat',
+  'attribute',
+];

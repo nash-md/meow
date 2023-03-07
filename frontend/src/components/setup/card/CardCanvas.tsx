@@ -3,7 +3,7 @@ import { Key, useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
 import { showModalError, showModalSuccess } from '../../../actions/Actions';
-import { ANIMALS } from '../../../Constants';
+import { ANIMALS, RESERVED_ATTRIBUTES } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { SchemaAttribute } from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
@@ -129,6 +129,17 @@ export const CardCanvas = () => {
       )
     ) {
       setError('A dropdown list or a value cannot be empty');
+      setIsValid(false);
+
+      return;
+    }
+
+    if (
+      list.some((item) =>
+        RESERVED_ATTRIBUTES.includes(item.name.toLocaleLowerCase())
+      )
+    ) {
+      setError('This name is reserved by the system and cannot be used');
       setIsValid(false);
 
       return;

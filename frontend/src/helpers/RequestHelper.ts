@@ -371,11 +371,12 @@ export class RequestHelper {
   }
 
   async invite(invite: string) {
-    const url = this.getUrl(`/public/register/invite`);
+    const url = this.getUrl(
+      `/public/register/invite?invite=${encodeURIComponent(invite)}`
+    );
 
     const response = await this.fetchWithTimeout(url, {
-      ...this.getHeaders('POST'),
-      body: JSON.stringify({ invite }),
+      ...this.getHeaders('GET'),
     });
 
     const parsed = await this.parseJson(response);
