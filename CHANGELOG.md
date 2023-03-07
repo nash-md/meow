@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-07
+
+- The new user flow is updated to make it easier for new users to join the platform. Instead of having a password set by the administrator, new users can now simply use an invite link to get started. Once they click on the link, they'll be prompted to set their own password using a unique code provided in the invite.
+
 ## 2023-03-06
 
 - Added user settings. Users can now change settings and logout by clicking on the bottom left avatar. Account settings and user settings are now split.

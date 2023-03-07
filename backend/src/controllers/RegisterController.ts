@@ -5,10 +5,29 @@ import { Card } from '../entities/Card.js';
 import { Lane } from '../entities/Lane.js';
 import { Schema } from '../entities/Schema.js';
 import { CurrencyCode, Team } from '../entities/Team.js';
-import { User } from '../entities/User.js';
+import { User, UserStatus } from '../entities/User.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 import { log } from '../logger.js';
 import { database } from '../worker.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
+
+const invite = async (req: Request, res: Response, next: NextFunction) => {
+  log.debug(`get user by invite: ${req.body.invite}`);
+
+  try {
+    const user = await EntityHelper.findUserByInvite(req.body.invite);
+
+    if (!user) {
+      throw new EntityNotFoundError();
+    }
+
+    res.json({ name: user.name });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by name: ${req.body.name}`);
@@ -17,8 +36,32 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     const name = req.body.name.trim();
     const password = req.body.password;
 
-    await isValidName(name);
     await isValidPassword(password);
+
+    if (req.body.invite) {
+      if (req.body.invite.length !== 8) {
+        throw new InvalidRequestBodyError();
+      }
+
+      const user = await EntityHelper.findUserByInvite(req.body.invite);
+
+      if (!user) {
+        throw new EntityNotFoundError();
+      }
+
+      user.password = await new PasswordAuthenticationProvider().create(
+        password
+      );
+
+      user.invite = null;
+      user.status = UserStatus.Enabled;
+
+      await database.manager.save(user);
+
+      return res.json({ welcome: true });
+    }
+
+    await isValidName(name);
 
     const team = await database.manager.save(
       new Team(`${name}'s Team`, CurrencyCode.USD)
@@ -46,7 +89,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       new Schema(team.id!.toString(), DefaultSchema.type, DefaultSchema.schema)
     );
 
-    const user = new User(team.id!.toString(), name);
+    const user = new User(team.id!.toString(), name, UserStatus.Enabled);
 
     user.password = await new PasswordAuthenticationProvider().create(password);
 
@@ -76,4 +119,5 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 export const RegisterController = {
   register,
+  invite,
 };

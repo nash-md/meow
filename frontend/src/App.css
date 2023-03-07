@@ -30,8 +30,6 @@ h3 {
   width: 550px;
   padding-top: 50px;
   height: 100vh;
-  background-color: var(--spectrum-global-color-gray-200);
-
   padding: 20px;
 }
 
@@ -798,4 +796,24 @@ h3 {
 
 .search .header div:first-child {
   flex-grow: 1;
+}
+
+.create-user-form {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.create-user-form .send-button {
+  margin-top: 25px;
+  margin-left: 10px;
+}
+
+.create-user-confirmation {
+  padding: 5px;
+  background-color: var(--spectrum-global-color-gray-400);
+}
+
+.create-user-confirmation > div {
+  padding-bottom: 5px;
 }

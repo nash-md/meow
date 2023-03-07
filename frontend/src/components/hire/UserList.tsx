@@ -1,13 +1,13 @@
 import { Button } from '@adobe/react-spectrum';
 import { DateTime } from 'luxon';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { User, UserStatus } from '../../interfaces/User';
 import { selectUserId, selectUsers, store } from '../../store/Store';
 
-export const UserList = () => {
+export const UserList = (props: any) => {
   const { client } = useContext(RequestHelperContext);
   const id = useSelector(selectUserId);
   const users = useSelector(selectUsers);
@@ -36,6 +36,8 @@ export const UserList = () => {
         <tbody>
           <tr>
             <td>Name</td>
+            <td>Status</td>
+            <td>Invite</td>
             <td>Created</td>
             <td></td>
           </tr>
@@ -50,6 +52,21 @@ export const UserList = () => {
                 <tr key={user.id}>
                   <td style={{ width: '200px' }}>
                     <b>{user.name}</b>
+                  </td>
+                  <td>{user.status}</td>
+                  <td>
+                    {user.status === UserStatus.Invited && (
+                      <Button
+                        variant="primary"
+                        onPress={() =>
+                          props.copyToClipboard(
+                            props.createInviteUrl(user.invite)
+                          )
+                        }
+                      >
+                        Copy Invite
+                      </Button>
+                    )}
                   </td>
                   <td>{ago}</td>
 

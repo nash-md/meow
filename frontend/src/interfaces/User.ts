@@ -6,10 +6,12 @@ export interface User {
   readonly createdAt?: string;
   readonly teamId: string;
   status: UserStatus;
+  invite?: string;
   animal: string;
 }
 
 export enum UserStatus {
+  Invited = 'invited',
   Enabled = 'enabled',
   Disabled = 'disabled',
   Deleted = 'deleted',

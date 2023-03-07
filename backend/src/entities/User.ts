@@ -20,10 +20,13 @@ export class User {
   name: string;
 
   @Column({ select: false })
-  password?: string;
+  password?: string | null;
 
   @Column()
   animal?: string;
+
+  @Column()
+  invite?: string | null;
 
   @Column()
   status?: UserStatus;
@@ -37,9 +40,10 @@ export class User {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(teamId: string, name: string) {
+  constructor(teamId: string, name: string, status: UserStatus) {
     this.teamId = teamId;
     this.name = name;
+    this.status = status;
   }
 
   toJSON() {
@@ -60,6 +64,7 @@ export class User {
 }
 
 export enum UserStatus {
+  Invited = 'invited',
   Enabled = 'enabled',
   Disabled = 'disabled',
   Deleted = 'deleted',

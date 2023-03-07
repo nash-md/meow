@@ -6,31 +6,33 @@ import { RequestError } from '../../errors/RequestError';
 import { RequestTimeoutError } from '../../errors/RequestTimeoutError';
 import { store } from '../../store/Store';
 
-export const Form = () => {
+export const Form = (props: any) => {
   const { client } = useContext(RequestHelperContext);
 
   const [name, setName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [invite, setInvite] = useState<string>('');
 
   let isValidForm = useMemo(() => {
     setError('');
 
-    if (name && password) {
+    if (name) {
+      setInvite('');
+
       return true;
     }
 
     return false;
-  }, [name, password]);
+  }, [name]);
 
   const save = async () => {
     setError('');
 
     try {
-      const user = await client!.createUser(name, password);
+      const user = await client!.createUser(name); // TODO remove any
 
       setName('');
-      setPassword('');
+      setInvite(user.invite);
 
       store.dispatch({
         type: ActionType.USER_ADD,
@@ -57,8 +59,8 @@ export const Form = () => {
 
   return (
     <div className="content-box">
-      <h2 style={{ margin: 0 }}>Create New User</h2>
-      <div style={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
+      <h2>Create New User</h2>
+      <div className="create-user-form">
         <div>
           <TextField
             onChange={setName}
@@ -70,25 +72,27 @@ export const Form = () => {
           />
         </div>
 
-        <div style={{ marginLeft: '10px' }}>
-          <TextField
-            onChange={setPassword}
-            value={password}
-            aria-label="Password"
-            width="100%"
-            key="password"
-            label="Password"
-            type="password"
-          />
-        </div>
-
-        <div style={{ marginTop: '25px', marginLeft: '10px' }}>
+        <div className="send-button">
           <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
             Create
           </Button>
         </div>
       </div>
       <div style={{ color: 'red', paddingTop: '5px' }}> {error}</div>
+
+      {invite && (
+        <div className="create-user-confirmation">
+          <div>
+            <b>{props.createInviteUrl(invite)}</b>
+          </div>
+          <Button
+            variant="primary"
+            onPress={() => props.copyToClipboard(props.createInviteUrl(invite))}
+          >
+            Copy Invite
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

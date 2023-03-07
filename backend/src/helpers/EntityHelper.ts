@@ -1,5 +1,5 @@
 import { EntityTarget, ObjectLiteral } from 'typeorm';
-import { User } from '../entities/User.js';
+import { User, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { database } from '../worker.js';
 import { Card, CardStatus } from '../entities/Card.js';
@@ -95,10 +95,24 @@ async function findCardsByTeam(team: Team) {
   return list;
 }
 
+async function findUserByInvite(invite: string) {
+  const query = {
+    where: {
+      invite: { $eq: invite },
+      status: { $eq: UserStatus.Invited },
+    },
+  };
+
+  const user = await database.getMongoRepository(User).findOne(query);
+
+  return user;
+}
+
 export const EntityHelper = {
   findOneById,
   findByTeam,
   findCardsByTeam,
   findOneByIdOrNull,
   findSchemaByType,
+  findUserByInvite,
 };

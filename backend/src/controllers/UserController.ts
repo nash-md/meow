@@ -25,6 +25,16 @@ function parseUserStatus(value: unknown): UserStatus {
   }
 }
 
+function generateInviteCode(length: number): string {
+  const characters = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters[randomIndex];
+  }
+  return code;
+}
+
 const list = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -67,7 +77,8 @@ const update = async (
       user.status = parseUserStatus(req.body.status);
 
       if (user.status === UserStatus.Deleted) {
-        user.password = '';
+        user.password = null;
+        user.invite = null;
       }
     }
 
@@ -112,13 +123,14 @@ const create = async (
 ) => {
   try {
     await isValidName(req.body.name);
-    await isValidPassword(req.body.password);
 
-    const user = new User(req.jwt.team.id!.toString(), req.body.name);
-
-    user.password = await new PasswordAuthenticationProvider().create(
-      req.body.password
+    const user = new User(
+      req.jwt.team.id!.toString(),
+      req.body.name,
+      UserStatus.Invited
     );
+
+    user.invite = generateInviteCode(8);
 
     const updated = await database.manager.save(user);
 

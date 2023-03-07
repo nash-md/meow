@@ -222,10 +222,10 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async createUser(name: string, password: string) {
+  async createUser(name: string) {
     let url = this.getUrl(`/api/users/`);
 
-    return this.doFetch(url, 'POST', { name, password });
+    return this.doFetch(url, 'POST', { name });
   }
 
   async updateUser(user: User) {
@@ -351,12 +351,31 @@ export class RequestHelper {
     return parsed;
   }
 
-  async register(name: string, password: string) {
+  async register(name: string, password: string, invite?: string) {
     const url = this.getUrl(`/public/register`);
+
+    const payload: any = { name, password };
+
+    if (invite) {
+      payload.invite = invite;
+    }
 
     const response = await this.fetchWithTimeout(url, {
       ...this.getHeaders('POST'),
-      body: JSON.stringify({ name, password }),
+      body: JSON.stringify(payload),
+    });
+
+    const parsed = await this.parseJson(response);
+
+    return parsed;
+  }
+
+  async invite(invite: string) {
+    const url = this.getUrl(`/public/register/invite`);
+
+    const response = await this.fetchWithTimeout(url, {
+      ...this.getHeaders('POST'),
+      body: JSON.stringify({ invite }),
     });
 
     const parsed = await this.parseJson(response);

@@ -57,6 +57,7 @@ import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { Team } from './entities/Team.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
+import { RegisterInviteRequestSchema } from './middlewares/schema-validation/RegisterInviteRequestSchema.js';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -99,11 +100,12 @@ try {
   const card = express.Router();
 
   card.use(express.json({ limit: '5kb' }));
-
-  card.use(verifyJwt);
-  card.use(addEntityToHeader);
-  card.use(setHeaders);
-  card.use(isDatabaseConnectionEstablished);
+  card.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   card.route('/').get(CardController.list);
   card
@@ -128,10 +130,12 @@ try {
 
   events.use(express.json({ limit: '5kb' }));
 
-  events.use(verifyJwt);
-  events.use(addEntityToHeader);
-  events.use(setHeaders);
-  events.use(isDatabaseConnectionEstablished);
+  events.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   events.route('/:id').get(EventController.list);
   events
@@ -148,11 +152,12 @@ try {
 
   team.use(express.json({ limit: '5kb' }));
 
-  team.use(verifyJwt);
-  team.use(addEntityToHeader);
-  team.use(setHeaders);
-
-  team.use(isDatabaseConnectionEstablished);
+  team.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   team
     .route('/:id')
@@ -168,11 +173,12 @@ try {
 
   account.use(express.json({ limit: '5kb' }));
 
-  account.use(verifyJwt);
-  account.use(addEntityToHeader);
-  account.use(setHeaders);
-
-  account.use(isDatabaseConnectionEstablished);
+  account.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   account.route('/').get(AccountController.list);
   account
@@ -196,10 +202,12 @@ try {
 
   lane.use(express.json({ limit: '5kb' }));
 
-  lane.use(verifyJwt);
-  lane.use(addEntityToHeader);
-  lane.use(setHeaders);
-  lane.use(isDatabaseConnectionEstablished);
+  lane.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   lane.route('/').get(LaneController.list);
   lane
@@ -223,10 +231,12 @@ try {
 
   user.use(express.json({ limit: '5kb' }));
 
-  user.use(verifyJwt);
-  user.use(addEntityToHeader);
-  user.use(setHeaders);
-  user.use(isDatabaseConnectionEstablished);
+  user.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   user.route('/').get(UserController.list);
   user
@@ -264,10 +274,13 @@ try {
 
   forecast.use(express.json({ limit: '5kb' }));
 
-  forecast.use(verifyJwt);
-  forecast.use(addEntityToHeader);
-  forecast.use(setHeaders);
-  forecast.use(isDatabaseConnectionEstablished);
+  forecast.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
 
   forecast.route('/achieved').get(ForecastController.achieved);
   forecast.route('/predicted').get(ForecastController.predicted);
@@ -308,6 +321,12 @@ try {
   unprotected
     .route('/register')
     .post(validateAgainst(RegisterRequestSchema), RegisterController.register);
+  unprotected
+    .route('/register/invite')
+    .post(
+      validateAgainst(RegisterInviteRequestSchema),
+      RegisterController.invite
+    );
   unprotected
     .route('/validate-token')
     .post(

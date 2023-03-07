@@ -1,11 +1,13 @@
 import { TextField, Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ActionType } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { RequestHelper } from '../helpers/RequestHelper';
 import { store } from '../store/Store';
+import { PasswordStrength } from './register/PasswordStrength';
 
 export const Register = () => {
   const { setClient } = useContext(RequestHelperContext);
@@ -15,20 +17,10 @@ export const Register = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
-  const [strenght, setStrenght] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
     setError('');
-
-    let l = Array(9).fill(0);
-
-    if (password.length > 3) {
-      l = l.map((_, i) => (i < password.length - 3 ? 1 : 0));
-    }
-
     setIsValid(name.length >= 3 && password.length >= 3);
-
-    setStrenght([...l]);
   }, [name, password]);
 
   const authenticate = async () => {
@@ -82,6 +74,7 @@ export const Register = () => {
           <TextField
             label="Name"
             isDisabled={isLoading}
+            value={name}
             onChange={setName}
             width={180}
           />
@@ -96,19 +89,8 @@ export const Register = () => {
             isDisabled={isLoading}
           />
 
-          <div style={{ paddingTop: '5px' }}>
-            {strenght.map((value: number, index: number) => {
-              return (
-                <img
-                  key={index}
-                  src={value ? '/heart-icon-red.svg' : '/heart-icon.svg'}
-                  style={{ width: '18px', height: '22px', paddingRight: '2px' }}
-                />
-              );
-            })}
-          </div>
+          <PasswordStrength password={password} />
         </div>
-
         <div style={{ marginTop: '25px' }}>
           <Button
             onPress={authenticate}
@@ -122,7 +104,7 @@ export const Register = () => {
 
       {error}
 
-      <div style={{ paddingTop: '10px' }}>
+      <div style={{ paddingTop: '10px', display: 'none' }}>
         There is no password reset so you better remember!
       </div>
     </>
