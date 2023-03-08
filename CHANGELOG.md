@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-08
+
+- Added confirmation message to the account and opportunity forms to inform users when changes have been saved. The confirmation message will appear at the bottom of the screen and will disappear after a few seconds.
+- The Redux store now contains a complete user entity for the session
+
 ## 2023-03-07
 
 - The new user flow is updated to make it easier for new users to join the platform. Instead of having a password set by the administrator, new users can now simply use an invite link to get started. Once they click on the link, they'll be prompted to set their own password using a unique code provided in the invite.

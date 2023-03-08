@@ -16,6 +16,8 @@ import { FILTER_BY_NONE } from '../Constants';
 import { Currency } from '../components/Currency';
 import { Card } from '../interfaces/Card';
 import { ForecastSpacer } from '../components/card/ForecastSpacer';
+import { RequestError } from '../errors/RequestError';
+import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -77,7 +79,24 @@ export const ForecastPage = () => {
         setPredicted(predicted);
         setList(list);
       } catch (error) {
-        store.dispatch(showModalError(error?.toString()));
+        console.log(error);
+
+        if (error instanceof RequestError) {
+          const parsed = await error.response.json();
+
+          const text = parsed.description ? parsed.description : parsed.name;
+          store.dispatch(showModalError('Failed: ' + text));
+        } else if (error instanceof RequestTimeoutError) {
+          store.dispatch(
+            showModalError('Request Timeout Error, is your backend available?')
+          );
+        } else if (error instanceof TypeError) {
+          store.dispatch(
+            showModalError('Network Request Failed, is your backend available?')
+          );
+        } else {
+          store.dispatch(showModalError('Failed: unknown, check JS Console'));
+        }
       }
     };
 
