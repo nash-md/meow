@@ -1,7 +1,7 @@
 import { Button, Item, TabList, TabPanels, Tabs } from '@adobe/react-spectrum';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../../actions/Actions';
+import { ActionType, showModalSuccess } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { Account, AccountPreview } from '../../interfaces/Account';
 import { ApplicationStore } from '../../store/ApplicationStore';
@@ -10,6 +10,7 @@ import {
   selectInterfaceStateId,
   store,
 } from '../../store/Store';
+import { Translations } from '../../Translations';
 import { Events } from '../card/Events';
 import { Form } from './Form';
 
@@ -46,6 +47,10 @@ export const Layer = () => {
         type: ActionType.ACCOUNT_ADD,
         payload: { ...updated },
       });
+
+      store.dispatch(
+        showModalSuccess(Translations.AccountCreatedConfirmation.en)
+      );
     }
   };
 

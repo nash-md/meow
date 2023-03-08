@@ -746,6 +746,7 @@ h3 {
   background-color: #28b473;
   color: white;
   transition: transform 0.3s ease-in;
+  z-index: 100;
 }
 
 #success-modal > div {
@@ -771,6 +772,7 @@ h3 {
   background-color: #db2228;
   color: white;
   transition: transform 0.3s ease-in;
+  z-index: 100;
 }
 
 #error-modal > div {

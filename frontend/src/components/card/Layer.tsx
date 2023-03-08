@@ -1,6 +1,6 @@
 import { Button, Tabs, TabList, Item, TabPanels } from '@adobe/react-spectrum';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../../actions/Actions';
+import { ActionType, showModalSuccess } from '../../actions/Actions';
 import {
   selectCard,
   selectInterfaceStateId,
@@ -16,6 +16,7 @@ import { useContext, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
 import { User, UserStatus } from '../../interfaces/User';
+import { Translations } from '../../Translations';
 
 export const Layer = () => {
   const { client } = useContext(RequestHelperContext);
@@ -49,6 +50,9 @@ export const Layer = () => {
         type: ActionType.CARD_UPDATE,
         payload: { ...card!, ...preview },
       });
+
+      // TODO combine both dispatch to one
+      store.dispatch(showModalSuccess(Translations.CardUpdatedConfirmation.en));
     } else {
       if (!preview.laneId) {
         preview.laneId = lanes[0].id;
@@ -56,10 +60,13 @@ export const Layer = () => {
 
       const updated = await client!.createCard(preview); // TODO refactor
 
+      // TODO combine both dispatch to one
       store.dispatch({
         type: ActionType.CARD_ADD,
         payload: { ...updated },
       });
+
+      store.dispatch(showModalSuccess(Translations.CardCreatedConfirmation.en));
     }
   };
 

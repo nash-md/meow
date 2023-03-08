@@ -9,6 +9,7 @@ import {
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { CurrencyCode } from '../../../interfaces/Team';
 import { selectCurrency, selectTeamId, store } from '../../../store/Store';
+import { Translations } from '../../../Translations';
 
 function parseCurrencyKey(value: React.Key): CurrencyCode {
   switch (value) {
@@ -40,7 +41,9 @@ export const CurrencyCanvas = () => {
     try {
       await client!.updateTeam(teamId!, c);
 
-      store.dispatch(showModalSuccess());
+      store.dispatch(
+        showModalSuccess(Translations.SetupChangedConfirmation.en)
+      );
 
       store.dispatch({
         type: ActionType.TEAM_UPDATE,

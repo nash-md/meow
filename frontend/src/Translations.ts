@@ -22,4 +22,24 @@ export const Translations = {
   BoardTitlePlural: {
     en: 'Deals',
   },
+
+  SetupChangedConfirmation: {
+    en: 'Configuration saved...',
+  },
+
+  PasswordChangedConfirmation: {
+    en: 'Password changed...',
+  },
+
+  CardCreatedConfirmation: {
+    en: 'Opportunity created...',
+  },
+
+  CardUpdatedConfirmation: {
+    en: 'Opportunity updated...',
+  },
+
+  AccountCreatedConfirmation: {
+    en: 'Account created...',
+  },
 };

@@ -9,6 +9,7 @@ import {
   selectUsers,
   store,
 } from '../../store/Store';
+import { Translations } from '../../Translations';
 
 export const AnimalCanvas = () => {
   const { client } = useContext(RequestHelperContext);
@@ -28,7 +29,9 @@ export const AnimalCanvas = () => {
     try {
       await client!.updateUser(user);
 
-      store.dispatch(showModalSuccess());
+      store.dispatch(
+        showModalSuccess(Translations.SetupChangedConfirmation.en)
+      );
     } catch (error) {
       console.error(error);
 

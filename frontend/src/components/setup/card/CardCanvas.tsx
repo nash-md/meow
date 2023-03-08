@@ -8,6 +8,7 @@ import { RequestHelperContext } from '../../../context/RequestHelperContextProvi
 import { SchemaAttribute } from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType, store } from '../../../store/Store';
+import { Translations } from '../../../Translations';
 import { SelectAttribute } from './SelectAttribute';
 import { TextAreaAttribute } from './TextAreaAttribute';
 import { TextAttribute } from './TextAttribute';
@@ -171,7 +172,9 @@ export const CardCanvas = () => {
     try {
       await client!.updateSchema('card', items);
 
-      store.dispatch(showModalSuccess());
+      store.dispatch(
+        showModalSuccess(Translations.SetupChangedConfirmation.en)
+      );
     } catch (error) {
       console.error(error);
 

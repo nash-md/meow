@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { hideModal } from '../actions/Actions';
-import { selectModal, store } from '../store/Store';
+import { selectModal, selectModalText, store } from '../store/Store';
 
 export const SuccessModal = () => {
   const modal = useSelector(selectModal);
+  const text = useSelector(selectModalText);
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -30,7 +31,7 @@ export const SuccessModal = () => {
       onClick={() => setIsVisible(false)}
       className={`${isVisible ? 'show' : ''}`}
     >
-      <div>Configuration saved ...</div>
+      <div>{text}</div>
     </div>
   );
 };

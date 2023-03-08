@@ -7,6 +7,7 @@ import { ANIMALS, LANE_COLOR } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { LaneRequest } from '../../../interfaces/Lane';
 import { selectLanes, store } from '../../../store/Store';
+import { Translations } from '../../../Translations';
 import { Lane } from './Lane';
 
 export interface LaneListItem {
@@ -178,7 +179,9 @@ export const LanesCanvas = () => {
     try {
       await client?.updateLanes(updated);
 
-      store.dispatch(showModalSuccess());
+      store.dispatch(
+        showModalSuccess(Translations.SetupChangedConfirmation.en)
+      );
     } catch (error) {
       console.error(error);
 
