@@ -21,11 +21,7 @@ export interface ApplicationStore {
       id: string | undefined;
       currency: CurrencyCode | undefined;
     };
-    user: {
-      id: string | undefined;
-      name: string | undefined;
-      animal: string | undefined;
-    };
+    user: User | undefined;
   };
   browser: {
     state: BrowserState;

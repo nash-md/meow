@@ -46,9 +46,9 @@ export const selectLane = (store: ApplicationStore, id: string) =>
 export const selectSchemas = (store: RootState) => store.schemas;
 export const selectSchemaByType = (store: ApplicationStore, type: string) =>
   store.schemas.find((schema) => schema.type === type);
-export const selectName = (store: RootState) => store.session.user.name;
-export const selectUserId = (store: RootState) => store.session.user.id;
-export const selectAnimal = (store: RootState) => store.session.user.animal;
+export const selectName = (store: RootState) => store.session.user?.name;
+export const selectUserId = (store: RootState) => store.session.user?.id;
+export const selectAnimal = (store: RootState) => store.session.user?.animal;
 export const selectCurrency = (store: RootState) => store.session.team.currency;
 export const selectTeamId = (store: RootState) => store.session.team.id;
 export const selectInterfaceState = (store: RootState) => store.ui.state;

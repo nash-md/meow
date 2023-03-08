@@ -106,11 +106,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         session: {
           token: undefined,
           alerts: 0,
-          user: {
-            id: undefined,
-            name: undefined,
-            animal: undefined,
-          },
+          user: undefined,
           team: {
             id: undefined,
             currency: undefined,

@@ -32,7 +32,7 @@ cardLaneListener.startListening({
         payload: { ...card },
       });
 
-      await client.updateBoard(state.session.user.id!, state.board);
+      await client.updateBoard(state.session.user!.id, state.board);
     } catch (error) {
       let message = '';
 

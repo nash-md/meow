@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
 import { SESSION_MAX_AGE } from '../Constants.js';
 import { Team } from '../entities/Team.js';
-import { User } from '../entities/User.js';
+import { User, UserStatus } from '../entities/User.js';
 import { AuthenticationFailedError } from '../errors/AuthenticationFailedError.js';
 import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
 import { TokenHelper } from '../helpers/TokenHelper.js';
@@ -10,8 +10,6 @@ import { log } from '../logger.js';
 import { database } from '../worker.js';
 
 const handle = async (req: Request, res: Response, next: NextFunction) => {
-  log.info(`get user by name: ${req.body.name}`);
-
   try {
     let user: User | null = null;
 
@@ -41,7 +39,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
 
-    if (!user) {
+    if (!user || user.status !== UserStatus.Enabled) {
       throw new AuthenticationFailedError();
     }
 
@@ -53,11 +51,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
 
     const payload = {
       token: TokenHelper.createJwt(user, SESSION_MAX_AGE),
-      user: {
-        id: user.id,
-        name: user.name,
-        animal: user.animal,
-      },
+      user: user,
       team: {
         id: user.teamId,
         currency: team.currency,

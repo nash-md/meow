@@ -14,11 +14,7 @@ export const Default: ApplicationStore = {
       id: undefined,
       currency: undefined,
     },
-    user: {
-      id: undefined,
-      name: undefined,
-      animal: undefined,
-    }, // TODO migrate to User interface
+    user: undefined,
   },
   browser: {
     state: 'unknown',

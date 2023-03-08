@@ -44,11 +44,7 @@ export interface ApplicationPageLoadAction
 export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
   payload: {
     token: string;
-    user: {
-      id: string;
-      name: string;
-      animal: string | undefined;
-    };
+    user: User;
     team: {
       id: string;
       currency: CurrencyCode;
@@ -171,10 +167,10 @@ export type ApplicationAction =
   | ApplicationUserInterfaceStateAction
   | ApplicationUserInterfaceModalAction;
 
-export function showModalSuccess() {
+export function showModalSuccess(text?: string) {
   return {
     type: ActionType.USER_INTERFACE_MODAL,
-    payload: { modal: 'success', text: undefined },
+    payload: { modal: 'success', text: text },
   } as ApplicationUserInterfaceModalAction;
 }
 
