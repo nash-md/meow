@@ -111,3 +111,13 @@ test.serial(
     t.is(res.type, 'application/json');
   }
 );
+
+test.serial(`/register/invite with an invalid invite code 404`, async (t) => {
+  const res = await request(URL)
+    .get(`/public/register/invite?invite=8-digits`)
+    .set('Content-Type', 'application/json')
+    .set('Token', context.token);
+
+  t.is(res.statusCode, 404);
+  t.is(res.type, 'application/json');
+});

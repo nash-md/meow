@@ -5,6 +5,7 @@ import { RegisterResponseSchema } from '../middlewares/schema-validation/Registe
 import { LoginResponseSchema } from '../middlewares/schema-validation/LoginResponseSchema.js';
 import jsonwebtoken from 'jsonwebtoken';
 import { Helper } from './helpers/helper.js';
+import { UserStatus } from '../entities/User.js';
 const { sign } = jsonwebtoken;
 
 // @ts-ignore
@@ -73,13 +74,14 @@ test.serial(
 
     const validate = ajv.compile(LoginResponseSchema);
     const isValid = validate(res.body);
-    console.log(validate.errors);
+
     context.token = res.body.token;
     context.user.id = res.body.user.id;
     context.user.teamId = res.body.team.id;
 
     t.is(isValid, true);
     t.is(res.statusCode, 200);
+    t.is(res.body.user.status, UserStatus.Enabled);
     t.is(res.type, 'application/json');
   }
 );
