@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { showModalError, showModalSuccess } from '../../../actions/Actions';
 import { ANIMALS, LANE_COLOR } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { LaneRequest } from '../../../interfaces/Lane';
+import { LaneRequest, LaneType } from '../../../interfaces/Lane';
 import { selectLanes, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { Lane } from './Lane';
@@ -114,7 +114,7 @@ export const LanesCanvas = () => {
       return;
     }
 
-    if (!lanes.some((lane) => lane.type === 'closed-won')) {
+    if (!lanes.some((lane) => lane.type === LaneType.ClosedWon)) {
       // lane type should be a TS type
       setError(
         'At least one stage must be labeled as closed won. This stage will be used to mark opportunities that are won'
@@ -124,7 +124,7 @@ export const LanesCanvas = () => {
       return;
     }
 
-    if (!lanes.some((lane) => lane.type === 'closed-lost')) {
+    if (!lanes.some((lane) => lane.type === LaneType.ClosedLost)) {
       // lane type should be a TS type
       setError(
         'At least one stage must be labeled as closed lost. This stage will be used to mark opportunities you lost'
@@ -147,11 +147,11 @@ export const LanesCanvas = () => {
   };
 
   const getLaneColorCode = (type: string | undefined) => {
-    if (type === 'closed-won') {
+    if (type === LaneType.ClosedWon) {
       return LANE_COLOR.POSITIVE;
     }
 
-    if (type === 'closed-lost') {
+    if (type === LaneType.ClosedLost) {
       return LANE_COLOR.NEGATIVE;
     }
 

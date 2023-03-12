@@ -52,7 +52,8 @@ export const Card = ({ card, lane, index }: CardProps) => {
             className="card"
           >
             {closedAt &&
-              DateTime.fromJSDate(closedAt) < DateTime.now() &&
+              DateTime.fromJSDate(closedAt).startOf('day') <
+                DateTime.now().startOf('day') &&
               lane.inForecast === true && <div className="overdue"></div>}
             <div
               className={`content ${snaphot.isDragging ? 'is-dragging' : ''}`}

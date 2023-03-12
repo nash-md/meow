@@ -3,9 +3,10 @@ import { DateTime } from 'luxon';
 import QueryString from 'qs';
 import { FILTER_BY_NONE } from '../Constants.js';
 import { CardStatus } from '../entities/Card.js';
-import { Lane } from '../entities/Lane.js';
+import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { ForecastService } from '../services/ForecastService.js';
 import { database } from '../worker.js';
 
 const parseRange = (query: QueryString.ParsedQs) => {
@@ -21,51 +22,23 @@ const achieved = async (
   next: NextFunction
 ) => {
   try {
-    const direct = DatabaseHelper.get();
-    const collection = direct.collection('Cards');
-
-    const query = {
-      teamId: req.jwt.team.id!.toString(),
-      tags: {
-        type: 'closed-won', // TODO add type
-      },
-    };
-
-    const lanes = await database.manager.findBy(Lane, query);
-
     const { start, end } = parseRange(req.query);
+    const userId =
+      req.query.userId && req.query.userId !== FILTER_BY_NONE.key
+        ? req.query.userId.toString()
+        : undefined;
 
-    const match: any = {
-      $match: {
-        teamId: { $eq: req.jwt.team.id?.toString() },
-        status: { $ne: CardStatus.Deleted },
-        laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
-        updatedAt: {
-          $gt: start,
-          $lt: end,
-        },
-      },
-    };
+    const statisticService = new ForecastService(database);
 
-    if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
-      match.$match.userId = req.query.userId;
-    }
+    const forecast = await statisticService.getByLaneType(
+      LaneType.ClosedWon,
+      req.jwt.team.id!.toString(),
+      start,
+      end,
+      userId
+    );
 
-    const group = {
-      $group: {
-        _id: null,
-        amount: { $sum: '$amount' },
-        count: { $sum: 1 },
-      },
-    };
-
-    const cursor = await collection.aggregate([match, group]);
-
-    const list = await cursor.toArray();
-
-    const payload = list[0] ? list[0] : { amount: 0, count: 0 };
-
-    return res.json(payload);
+    return res.json(forecast);
   } catch (error) {
     return next(error);
   }
@@ -77,52 +50,23 @@ const predicted = async (
   next: NextFunction
 ) => {
   try {
-    const direct = DatabaseHelper.get();
-    const collection = direct.collection('Cards');
-
-    const query = {
-      teamId: req.jwt.team.id!.toString(),
-      tags: {
-        type: 'normal',
-      },
-      inForecast: true,
-    };
-
-    const lanes = await database.manager.findBy(Lane, query);
-
     const { start, end } = parseRange(req.query);
+    const userId =
+      req.query.userId && req.query.userId !== FILTER_BY_NONE.key
+        ? req.query.userId.toString()
+        : undefined;
 
-    const match: any = {
-      $match: {
-        teamId: { $eq: req.jwt.team.id?.toString() },
-        status: { $ne: CardStatus.Deleted },
-        laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
-        closedAt: {
-          $gt: start,
-          $lt: end,
-        },
-      },
-    };
+    const statisticService = new ForecastService(database);
 
-    if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
-      match.$match.userId = req.query.userId;
-    }
+    const forecast = await statisticService.getByLaneType(
+      LaneType.Normal,
+      req.jwt.team.id!.toString(),
+      start,
+      end,
+      userId
+    );
 
-    const group = {
-      $group: {
-        _id: null,
-        amount: { $sum: '$amount' },
-        count: { $sum: 1 },
-      },
-    };
-
-    const cursor = await collection.aggregate([match, group]);
-
-    const list = await cursor.toArray();
-
-    const payload = list[0] ? list[0] : { amount: 0, count: 0 };
-
-    return res.json(payload);
+    return res.json(forecast);
   } catch (error) {
     return next(error);
   }
@@ -143,7 +87,7 @@ const list = async (
       const query = {
         teamId: req.jwt.team.id!.toString(),
         tags: {
-          type: 'normal',
+          type: LaneType.Normal,
         },
         inForecast: true,
       };
@@ -167,7 +111,7 @@ const list = async (
       const query = {
         teamId: req.jwt.team.id!.toString(),
         tags: {
-          type: 'closed-won',
+          type: LaneType.ClosedWon,
         },
       };
 

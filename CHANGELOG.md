@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-12
+
+- Added `LaneType` enum to frontend and backend. Enum values are `ClosedWon`, `ClosedLost` and `Normal`
+- Moved the forecast amount calculation to a separate service to improve performance and reduce coupling between components.
+
 ## 2023-03-08
 
 - Added confirmation message to the account and opportunity forms to inform users when changes have been saved. The confirmation message will appear at the bottom of the screen and will disappear after a few seconds.

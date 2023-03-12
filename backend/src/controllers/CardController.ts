@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
 import { IS_ISO_8601_REGEXP } from '../Constants.js';
 import { Card, CardAttribute, CardStatus } from '../entities/Card.js';
-import { Lane } from '../entities/Lane.js';
+import { Lane, LaneType } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
 import { InvalidCardPropertyError } from '../errors/InvalidCardPropertyError.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
@@ -22,34 +22,6 @@ function parseCardStatus(value: unknown): CardStatus {
     default:
       throw new InvalidCardPropertyError(`Unsupported status value: ${value}`);
   }
-}
-
-function hasAttributeDifference(
-  existing: CardAttribute | undefined,
-  updated: CardAttribute | undefined
-): boolean {
-  if (!existing && !updated) {
-    return false;
-  }
-
-  if (!existing || !updated) {
-    return true;
-  }
-
-  const existingKeys = Object.keys(existing);
-  const updatedKeys = Object.keys(updated);
-
-  if (existingKeys.length !== updatedKeys.length) {
-    return true;
-  }
-
-  for (const key in existing) {
-    if (updated[key] !== existing[key]) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 const list = async (
@@ -182,10 +154,29 @@ const update = async (
     card = await cardEventService.update(req.body, card, req.jwt.user, user);
 
     card.name = req.body.name;
-    card.laneId = req.body.laneId;
 
     if (req.body.status) {
       card.status = parseCardStatus(req.body.status);
+    }
+
+    if (req.body.laneId) {
+      try {
+        const lane = await EntityHelper.findOneById(
+          req.jwt.user,
+          Lane,
+          req.body.laneId
+        );
+
+        card.laneId = lane.id!.toString();
+
+        if (lane.tags.type !== LaneType.Normal) {
+          const closedAt = DateTime.utc().startOf('day');
+
+          card.closedAt = closedAt.toJSDate();
+        }
+      } catch (error) {
+        throw new LaneNotFoundError();
+      }
     }
 
     const updated = await database.manager.save(card);

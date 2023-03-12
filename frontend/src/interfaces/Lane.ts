@@ -16,6 +16,12 @@ export interface LaneRequest {
   color?: string;
 }
 
+export enum LaneType {
+  ClosedWon = 'closed-won',
+  ClosedLost = 'closed-lost',
+  Normal = 'normal',
+}
+
 export interface Tags {
   [key: string]: string | boolean;
 }

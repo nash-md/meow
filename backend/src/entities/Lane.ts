@@ -68,6 +68,12 @@ export interface Tags {
   [key: string]: string | boolean;
 }
 
+export enum LaneType {
+  ClosedWon = 'closed-won',
+  ClosedLost = 'closed-lost',
+  Normal = 'normal',
+}
+
 export interface LaneRequest {
   id: string | undefined;
   name: string;

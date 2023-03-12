@@ -146,10 +146,11 @@ export class CardEventService {
       await this.database.manager.save(event);
     }
 
-    if (body.closedAt) {
+    if (body.closedAt && body.closedAt !== card.closedAt?.toISOString()) {
       const date = DateTime.fromISO(body.closedAt, {
         zone: 'utc',
       });
+
       if (
         date.toMillis() !==
         DateTime.fromJSDate(card.closedAt!, { zone: 'utc' }).toMillis()

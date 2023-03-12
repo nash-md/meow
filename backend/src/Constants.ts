@@ -1,3 +1,4 @@
+import { LaneType } from './entities/Lane.js';
 import { SchemaAttribute, SchemaType } from './entities/Schema.js';
 
 export const SERVICE_NAME = 'meow-backend-service';
@@ -17,13 +18,13 @@ export const DefaultLanes = [
     name: 'Closed Won',
     color: '#00b359',
     inForecast: false,
-    tags: { type: 'closed-won' },
+    tags: { type: LaneType.ClosedWon },
   },
   {
     name: 'Closed Lost',
     color: '#e30544',
     inForecast: false,
-    tags: { type: 'closed-lost' },
+    tags: { type: LaneType.ClosedLost },
   },
 ];
 
