@@ -402,23 +402,23 @@ h3 {
   border-left: 1px solid var(--spectrum-global-color-gray-400);
   box-sizing: border-box;
   right: 0;
-  position: absolute;
+  position: fixed;
   z-index: 100;
   background-color: var(--spectrum-global-color-gray-100);
-  height: 100%;
-  width: 450px;
-  padding: 15px;
+  height: 100vh;
+  width: 500px;
   display: flex;
   flex-direction: column;
   top: 0;
 }
 
 .layer .header {
-  padding-bottom: 10px;
+  padding: 15px 15px 10px 15px;
 }
 
 .layer .user-list {
   background-color: var(--spectrum-global-color-gray-200);
+  padding: 10px;
 }
 
 .avatar {
@@ -437,7 +437,35 @@ h3 {
   overflow: auto;
 }
 
+.layer .body .tab-title {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 .layer .body .attribute {
+  margin-top: 10px;
+}
+
+.layer .body .card {
+  padding: 15px;
+}
+
+.layer .body .card-dates {
+  display: flex;
+  padding: 10px 15px 20px 15px;
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
+.layer .body .card-dates > div {
+  flex-grow: 1;
+}
+
+.layer .body .card-dates > div:nth-child(2) {
+  margin-left: 15px;
+}
+
+.layer .body .card-submit {
+  padding: 10px;
   margin-top: 10px;
 }
 
@@ -445,10 +473,18 @@ h3 {
   overflow: auto;
   height: 100%;
   position: relative;
+  padding: 15px;
+}
+
+.layer .card-events .comment-form {
+  margin-bottom: 20px;
+}
+
+.layer .card-events .comment-form .submit {
+  margin-top: 10px;
 }
 
 .layer .card-events .item {
-  padding: 10px;
   font-size: 1.2em;
 }
 

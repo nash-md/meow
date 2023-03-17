@@ -7,7 +7,7 @@ import { Account, AccountPreview } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
 import { EventType } from '../interfaces/Event';
 import { Lane, LaneRequest } from '../interfaces/Lane';
-import { CurrencyCode, Team } from '../interfaces/Team';
+import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
@@ -124,6 +124,7 @@ export class RequestHelper {
     name,
     amount,
     closedAt,
+    nextFollowUpAt,
     userId,
     attributes,
     status,
@@ -135,6 +136,7 @@ export class RequestHelper {
       name,
       amount,
       closedAt,
+      nextFollowUpAt,
       userId,
       attributes,
       status,
@@ -214,6 +216,18 @@ export class RequestHelper {
     let url = this.getUrl(`/api/teams/${id}`);
 
     return this.doFetch(url, 'POST', { currency: currency });
+  }
+
+  async updateIntegration(id: Team['id'], integration: Integration) {
+    let url = this.getUrl(`/api/teams/${id}/integrations`);
+
+    return this.doFetch(url, 'POST', integration);
+  }
+
+  async getTeam(id: Team['id']): Promise<Team> {
+    let url = this.getUrl(`/api/teams/${id}`);
+
+    return this.doFetch(url, 'GET');
   }
 
   async getUsers(): Promise<User[]> {

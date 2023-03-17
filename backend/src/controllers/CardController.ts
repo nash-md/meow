@@ -1,7 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { DateTime } from 'luxon';
-import { IS_ISO_8601_REGEXP } from '../Constants.js';
-import { Card, CardAttribute, CardStatus } from '../entities/Card.js';
+import { Card, CardStatus } from '../entities/Card.js';
 import { Lane, LaneType } from '../entities/Lane.js';
 import { User } from '../entities/User.js';
 import { InvalidCardPropertyError } from '../errors/InvalidCardPropertyError.js';
@@ -9,6 +8,7 @@ import { InvalidUrlError } from '../errors/InvalidUrlError.js';
 import { LaneNotFoundError } from '../errors/LaneNotFoundError.js';
 import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
+import { RequestParser } from '../helpers/RequestParser.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { CardEventService } from '../services/CardEventService.js';
 import { database } from '../worker.js';
@@ -46,20 +46,22 @@ const create = async (
   try {
     let lane: Lane | null = null;
 
-    if (req.body.laneName) {
+    const { body } = req;
+
+    if (body.laneName) {
       const query = {
         teamId: req.jwt.team.id!.toString(),
-        name: req.body.laneName,
+        name: body.laneName,
       };
 
       lane = await database.manager.findOneBy(Lane, query);
     }
 
-    if (req.body.laneId) {
+    if (body.laneId) {
       lane = await EntityHelper.findOneByIdOrNull(
         req.jwt.user,
         Lane,
-        req.body.laneId
+        body.laneId
       );
     }
     if (!lane) {
@@ -70,20 +72,24 @@ const create = async (
       req.jwt.team.id!.toString(),
       req.jwt.user.id!.toString(),
       lane.id!.toString(),
-      req.body.name,
-      req.body.amount
+      body.name,
+      body.amount
     );
 
-    if (req.body.attributes) {
-      card.attributes = req.body.attributes;
+    if (body.attributes) {
+      card.attributes = body.attributes;
     }
 
-    if (req.body.closedAt && IS_ISO_8601_REGEXP.test(req.body.closedAt)) {
-      card.closedAt = DateTime.fromISO(req.body.closedAt, {
-        zone: 'utc',
-      }).toJSDate();
+    if (body.closedAt && RequestParser.isValidDateString(body.closedAt)) {
+      card.closedAt = RequestParser.toJsDate(body.closedAt);
     }
 
+    if (
+      body.nextFollowUpAt &&
+      RequestParser.isValidDateString(body.nextFollowUpAt)
+    ) {
+      card.nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
+    }
     const updated = await database.manager.save(card);
 
     const cardEventService = new CardEventService(database);
@@ -128,6 +134,8 @@ const update = async (
       throw new InvalidUrlError();
     }
 
+    const { body } = req;
+
     let card = await EntityHelper.findOneById(
       req.jwt.user,
       Card,
@@ -136,13 +144,9 @@ const update = async (
 
     let user: User | undefined = undefined;
 
-    if (req.body.userId) {
+    if (body.userId) {
       try {
-        user = await EntityHelper.findOneById(
-          req.jwt.user,
-          User,
-          req.body.userId
-        );
+        user = await EntityHelper.findOneById(req.jwt.user, User, body.userId);
       } catch (error) {
         throw new UserNotFoundError();
       }
@@ -151,21 +155,25 @@ const update = async (
     const cardEventService = new CardEventService(database);
 
     // TODO refactor, remove dependency from controller
-    card = await cardEventService.update(req.body, card, req.jwt.user, user);
+    card = await cardEventService.update(body, card, req.jwt.user, user);
 
     card.name = req.body.name;
 
-    if (req.body.status) {
+    if (body.status) {
       card.status = parseCardStatus(req.body.status);
     }
 
-    if (req.body.laneId) {
+    if (body.laneId) {
       try {
         const lane = await EntityHelper.findOneById(
           req.jwt.user,
           Lane,
-          req.body.laneId
+          body.laneId
         );
+
+        if (body.laneId !== card.laneId) {
+          card.inLaneSince = new Date();
+        }
 
         card.laneId = lane.id!.toString();
 

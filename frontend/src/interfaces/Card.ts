@@ -10,6 +10,7 @@ export interface Card {
   status?: CardStatus;
   attributes: CardAttribute | undefined;
   closedAt?: string;
+  nextFollowUpAt?: string;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -30,6 +31,7 @@ export interface CardPreview {
   laneId: string;
   attributes: CardAttribute | undefined;
   closedAt?: string;
+  nextFollowUpAt?: string;
 }
 
 export interface CardFormPreview {
@@ -39,4 +41,5 @@ export interface CardFormPreview {
   laneId: string;
   attributes: CardAttribute | undefined;
   closedAt?: string;
+  nextFollowUpAt?: string;
 }

@@ -18,6 +18,7 @@ import { SchemaAttribute } from '../../interfaces/Schema';
 import { SelectAttribute } from './schema/SelectAttribute';
 import { TextAreaAttribute } from './schema/TextAreaAttribute';
 import { TextAttribute } from './schema/TextAttribute';
+import { Translations } from '../../Translations';
 
 export interface FormProps {
   id: string | undefined;
@@ -52,12 +53,14 @@ export const Form = ({ update, id }: FormProps) => {
   );
 
   let isValidAmount = useMemo(
-    () => /^[\d]{1,10}$/.test(preview.amount),
+    () => /^[\d]{1,10}$/.test(preview.amount) && parseInt(preview.amount) > 0,
     [preview]
   );
 
+  let isValidNextFollowUp = useMemo(() => preview.nextFollowUpAt, [preview]);
+
   let isValidForm = useMemo(() => {
-    if (preview.name && isValidAmount) {
+    if (preview.name && isValidAmount && isValidNextFollowUp) {
       return true;
     }
 
@@ -86,7 +89,7 @@ export const Form = ({ update, id }: FormProps) => {
 
       setPreview({
         name: '',
-        amount: '0',
+        amount: '',
         laneId: '',
         attributes: { ...list },
         userId: userId!,
@@ -144,8 +147,8 @@ export const Form = ({ update, id }: FormProps) => {
   };
 
   return (
-    <div>
-      <div style={{ marginTop: '10px' }}>
+    <>
+      <div className="card">
         <TextField
           onChange={(value) => handlePreviewUpdate('name', value)}
           value={preview.name}
@@ -153,30 +156,48 @@ export const Form = ({ update, id }: FormProps) => {
           width="100%"
           key="name"
           label="Name"
+          validationState={preview.name ? 'valid' : 'invalid'}
         />
-      </div>
-      {schema?.schema.map((attribute) => {
-        return getAttribute(
-          attribute!,
-          attributes?.[attribute.key]?.toString()
-        );
-      })}
 
-      <div style={{ display: 'flex', marginTop: '10px' }}>
-        <div>
+        {schema?.schema.map((attribute) => {
+          return getAttribute(
+            attribute!,
+            attributes?.[attribute.key]?.toString()
+          );
+        })}
+
+        <div className="attribute">
           <TextField
             onChange={(value) => handlePreviewUpdate('amount', value)}
             value={preview.amount}
-            aria-label="Amount"
+            aria-label={Translations.OpportunityAmount.en}
             width="100%"
             key="amount"
             inputMode="decimal"
-            label="Amount"
+            label={Translations.OpportunityAmount.en}
             validationState={isValidAmount ? 'valid' : 'invalid'}
-            errorMessage="Invalid Amount"
+            errorMessage={Translations.OpportunityAmountInvalid.en}
           />
         </div>
-        <div style={{ marginLeft: '10px' }}>
+      </div>
+
+      <div className="card-dates">
+        <div>
+          <DatePicker
+            value={
+              preview.nextFollowUpAt
+                ? parseDate(preview.nextFollowUpAt.substring(0, 10))
+                : undefined
+            }
+            onChange={(value) =>
+              handlePreviewUpdate('nextFollowUpAt', value.toString())
+            }
+            label="Next Follow Up"
+            validationState={isValidNextFollowUp ? 'valid' : 'invalid'}
+          />
+        </div>
+
+        <div>
           <DatePicker
             value={
               preview.closedAt
@@ -189,12 +210,13 @@ export const Form = ({ update, id }: FormProps) => {
             label="Expected Close Date"
           />
         </div>
-        <div style={{ marginTop: '24px', marginLeft: '10px' }}>
-          <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
-            Save
-          </Button>
-        </div>
       </div>
-    </div>
+
+      <div className="card-submit">
+        <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
+          Save
+        </Button>
+      </div>
+    </>
   );
 };

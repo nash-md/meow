@@ -17,6 +17,7 @@ import { FilterMode } from '../pages/HomePage';
 import { Card } from '../interfaces/Card';
 import { DateTime } from 'luxon';
 import { Translations } from '../Translations';
+import { CardHelper } from '../helpers/CardHelper';
 
 const getLaneColorClassName = (color: string | undefined) => {
   if (color === LANE_COLOR.NEGATIVE) {
@@ -57,10 +58,7 @@ const getCard = (
     return;
   }
 
-  if (
-    filters.has(FilterMode.RequireUpdate) &&
-    (!closeDate || closeDate > DateTime.now())
-  ) {
+  if (filters.has(FilterMode.RequireUpdate) && !CardHelper.isOverDue(card)) {
     return;
   }
 

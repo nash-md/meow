@@ -21,6 +21,9 @@ export class Card {
   @Column()
   laneId: string;
 
+  @Column({ type: 'timestamp' })
+  inLaneSince: Date;
+
   @Column()
   name: string;
 
@@ -28,7 +31,7 @@ export class Card {
   amount: number;
 
   @Column()
-  status?: CardStatus;
+  status: CardStatus;
 
   @Column()
   attributes?: CardAttribute;
@@ -41,6 +44,9 @@ export class Card {
 
   @Column({ type: 'timestamp' })
   closedAt?: Date;
+
+  @Column({ type: 'timestamp' })
+  nextFollowUpAt?: Date;
 
   constructor(
     teamId: string,
@@ -56,6 +62,9 @@ export class Card {
     this.name = name;
     this.amount = amount;
     this.closedAt = closedAt;
+
+    this.inLaneSince = new Date();
+    this.status = CardStatus.Active;
   }
 
   @BeforeInsert()

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-17
+
+- Opportunities now store an `inLaneSince` timestamp value, enabling easier creation of statistics regarding the duration of opportunities in a particular stage.
+- Added `nextFollowUpAt` date to opportunity and user interface. The next follow-up date is now mandatory on the UI when updating an opportunity, as we believe every opportunity should have a subsequent step. On the API, `nextFollowUpAt` is optional; while it is usually clear what the next step should be after qualifying an opportunity, this may not always be the case for many API use cases, such as inbound leads.
+- Mandatory fields for new opportunities are now highlighted in red if missing.
+
 ## 2023-03-12
 
 - Added `LaneType` enum to frontend and backend. Enum values are `ClosedWon`, `ClosedLost` and `Normal`

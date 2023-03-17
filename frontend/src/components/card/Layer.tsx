@@ -124,8 +124,12 @@ export const Layer = () => {
         <Tabs height="100%">
           {(id && (
             <TabList>
-              <Item key="deal">Deal</Item>
-              <Item key="events">History</Item>
+              <Item key="deal">
+                <span className="tab-title">Opportunity</span>
+              </Item>
+              <Item key="events">
+                <span className="tab-title">History</span>
+              </Item>
             </TabList>
           )) || (
             <TabList>
@@ -133,7 +137,7 @@ export const Layer = () => {
             </TabList>
           )}
 
-          <TabPanels>
+          <TabPanels UNSAFE_style={{ padding: 0, border: 0 }}>
             <Item key="deal">
               <Form update={update} id={id} />
             </Item>

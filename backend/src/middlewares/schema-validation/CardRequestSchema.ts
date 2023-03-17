@@ -28,5 +28,6 @@ export const CardRequestSchema = {
     },
     userId: { type: 'string' },
     closedAt: { type: ['string', 'null'] },
+    nextFollowUpAt: { type: ['string', 'null'] },
   },
 };

@@ -31,6 +31,10 @@ export const Translations = {
     en: 'Password changed...',
   },
 
+  IntegrationChangedConfirmation: {
+    en: 'Integration changed...',
+  },
+
   CardCreatedConfirmation: {
     en: 'Opportunity created...',
   },
@@ -41,5 +45,13 @@ export const Translations = {
 
   AccountCreatedConfirmation: {
     en: 'Account created...',
+  },
+
+  OpportunityAmount: {
+    en: 'Amount',
+  },
+
+  OpportunityAmountInvalid: {
+    en: 'Invalid Amount',
   },
 };

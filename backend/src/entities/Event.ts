@@ -62,11 +62,11 @@ export class Event {
 export enum EventType {
   CommentCreated = 'comment-created',
   LaneMoved = 'lane-moved',
-  AmountUpdated = 'amount-updated',
-  AttributeUpdated = 'attribute-updated',
-  ClosedAtUpdated = 'closed-at-updated',
-  NextFollowUp = 'next-follow-up',
-  Created = 'Created',
+  AmountChanged = 'amount-changed',
+  AttributeChanged = 'attribute-changed',
+  ClosedAtChanged = 'closed-at-changed',
+  NextFollowUpAtChanged = 'next-follow-up-at-changed',
+  Created = 'created',
   Assigned = 'assigned',
-  Deleted = 'delted',
+  Deleted = 'deleted',
 }

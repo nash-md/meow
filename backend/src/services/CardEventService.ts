@@ -5,7 +5,7 @@ import { User } from '../entities/User.js';
 import { Event } from '../entities/Event.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { Schema, SchemaType } from '../entities/Schema.js';
-import { DateTime } from 'luxon';
+import { RequestParser } from '../helpers/RequestParser.js';
 
 interface CardAttributeChange {
   key: CardAttribute['key'];
@@ -119,7 +119,7 @@ export class CardEventService {
           card.teamId,
           card.id!.toString(),
           user.id!.toString(),
-          EventType.AttributeUpdated,
+          EventType.AttributeChanged,
           list
         );
 
@@ -134,7 +134,7 @@ export class CardEventService {
         card.teamId,
         card.id!.toString(),
         user.id!.toString(),
-        EventType.AmountUpdated,
+        EventType.AmountChanged,
         {
           from: card.amount,
           to: body.amount,
@@ -146,32 +146,48 @@ export class CardEventService {
       await this.database.manager.save(event);
     }
 
-    if (body.closedAt && body.closedAt !== card.closedAt?.toISOString()) {
-      const date = DateTime.fromISO(body.closedAt, {
-        zone: 'utc',
-      });
+    if (
+      body.closedAt &&
+      !RequestParser.isEqualDates(body.closedAt, card.closedAt)
+    ) {
+      const closedAt = RequestParser.toJsDate(body.closedAt);
 
-      if (
-        date.toMillis() !==
-        DateTime.fromJSDate(card.closedAt!, { zone: 'utc' }).toMillis()
-      ) {
-        const event = new Event(
-          card.teamId,
-          card.id!.toString(),
-          user.id!.toString(),
-          EventType.ClosedAtUpdated,
-          {
-            from: card.closedAt,
-            to: date.toJSDate(),
-          }
-        );
+      const event = new Event(
+        card.teamId,
+        card.id!.toString(),
+        user.id!.toString(),
+        EventType.ClosedAtChanged,
+        {
+          from: card.closedAt,
+          to: closedAt,
+        }
+      );
 
-        await this.database.manager.save(event);
-      }
+      await this.database.manager.save(event);
 
-      card.closedAt = DateTime.fromISO(body.closedAt, {
-        zone: 'utc',
-      }).toJSDate();
+      card.closedAt = closedAt;
+    }
+
+    if (
+      body.nextFollowUpAt &&
+      !RequestParser.isEqualDates(body.nextFollowUpAt, card.nextFollowUpAt)
+    ) {
+      const nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
+
+      const event = new Event(
+        card.teamId,
+        card.id!.toString(),
+        user.id!.toString(),
+        EventType.NextFollowUpAtChanged,
+        {
+          from: card.nextFollowUpAt,
+          to: nextFollowUpAt,
+        }
+      );
+
+      await this.database.manager.save(event);
+
+      card.nextFollowUpAt = nextFollowUpAt;
     }
 
     if (updatedUser && updatedUser.id!.toString() !== card.userId.toString()) {

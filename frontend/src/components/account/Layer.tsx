@@ -68,12 +68,18 @@ export const Layer = () => {
         <Tabs height="100%">
           {(id && (
             <TabList>
-              <Item key="account">Account</Item>
-              <Item key="events">History</Item>
+              <Item key="account">
+                <span className="tab-title">Account</span>
+              </Item>
+              <Item key="events">
+                <span className="tab-title">History</span>
+              </Item>
             </TabList>
           )) || (
             <TabList>
-              <Item key="account">Account</Item>
+              <Item key="account">
+                <span className="tab-title">Account</span>
+              </Item>
             </TabList>
           )}
 

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Edit from '@spectrum-icons/workflow/Edit';
 import { useEffect } from 'react';
 import { DateTime } from 'luxon';
 import { Card as CardEntity } from '../interfaces/Card';
@@ -9,6 +8,7 @@ import { ActionType } from '../actions/Actions';
 import { Draggable } from 'react-beautiful-dnd';
 import { Currency } from './Currency';
 import { Avatar } from './Avatar';
+import { CardHelper } from '../helpers/CardHelper';
 
 export interface CardProps {
   card: CardEntity;
@@ -51,10 +51,9 @@ export const Card = ({ card, lane, index }: CardProps) => {
             ref={provided.innerRef}
             className="card"
           >
-            {closedAt &&
-              DateTime.fromJSDate(closedAt).startOf('day') <
-                DateTime.now().startOf('day') &&
-              lane.inForecast === true && <div className="overdue"></div>}
+            {CardHelper.isOverDue(card) && lane.inForecast === true && (
+              <div className="overdue"></div>
+            )}
             <div
               className={`content ${snaphot.isDragging ? 'is-dragging' : ''}`}
               onClick={() => {

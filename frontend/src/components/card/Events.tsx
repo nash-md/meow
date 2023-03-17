@@ -11,6 +11,7 @@ import { Amount } from './events/Amount';
 import { ClosedAt } from './events/ClosedAt';
 import { Assign } from './events/Assign';
 import { Attribute } from './events/Attribute';
+import { NextFollowUpAt } from './events/NextFollowUpAt';
 
 export interface EventsProps {
   id?: string;
@@ -56,11 +57,13 @@ export const Events = ({ id, entity }: EventsProps) => {
 
   const getTitle = (event: Event) => {
     switch (event.type) {
-      case EventType.ClosedAtUpdated:
+      case EventType.ClosedAtChanged:
         return <ClosedAt event={event} />;
+      case EventType.NextFollowUpAtChanged:
+        return <NextFollowUpAt event={event} />;
       case EventType.LaneMoved:
         return <Lane event={event} />;
-      case EventType.AmountUpdated:
+      case EventType.AmountChanged:
         return <Amount event={event} />;
       case EventType.CommentCreated:
         return <Comment event={event} />;
@@ -68,7 +71,7 @@ export const Events = ({ id, entity }: EventsProps) => {
         return <CreatedAt />;
       case EventType.Assigned:
         return <Assign event={event} />;
-      case EventType.AttributeUpdated:
+      case EventType.AttributeChanged:
         return <Attribute event={event} />;
       default:
         break;
@@ -77,9 +80,9 @@ export const Events = ({ id, entity }: EventsProps) => {
 
   return (
     <div className="card-events">
-      <div style={{ padding: '10px' }}>
+      <div className="comment-form">
         <TextArea onChange={setComment} width="100%" height="80px"></TextArea>
-        <div style={{ marginTop: '10px' }}>
+        <div className="submit">
           <Button isDisabled={!isValid} variant="primary" onPress={save}>
             Save
           </Button>

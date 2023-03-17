@@ -56,7 +56,7 @@ export const Form = ({ update, id }: FormProps) => {
   };
 
   return (
-    <div>
+    <div style={{ padding: '15px' }}>
       <div style={{ marginTop: '10px' }}>
         <TextField
           onChange={(value) => handlePreviewUpdate('name', value)}

@@ -262,6 +262,9 @@ components:
         closedAt:
           type: string
           format: date-time
+        nextFollowUpAt:
+          type: string
+          format: date-time
     CardUpdateRequest:
       type: object
       properties:
@@ -280,6 +283,9 @@ components:
         closedAt:
           type: string
           format: date-time
+        nextFollowUpAt:
+          type: string
+          format: date-time
     Card:
       type: object
       properties:
@@ -296,6 +302,9 @@ components:
         amount:
           type: number
         closedAt:
+          type: string
+          format: date-time
+        nextFollowUpAt:
           type: string
           format: date-time
         updatedAt:
