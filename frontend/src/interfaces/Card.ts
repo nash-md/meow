@@ -3,10 +3,11 @@ export type id = string;
 export interface Card {
   readonly id: id;
   name: string;
-  teamId: string;
+  readonly teamId: string;
   userId: string;
   amount: number;
   laneId: string;
+  readonly inLaneSince: string;
   status?: CardStatus;
   attributes: CardAttribute | undefined;
   closedAt?: string;
