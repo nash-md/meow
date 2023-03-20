@@ -77,6 +77,10 @@ const create = async (
       }
     );
 
+    entity.updatedAt = new Date();
+
+    await database.manager.save(entity);
+
     const updated = await database.manager.save(event);
 
     return res.json(updated);

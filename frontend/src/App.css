@@ -450,6 +450,34 @@ h3 {
   padding: 15px;
 }
 
+.layer .body .card-events .statistics {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.layer .body .card-events .statistics .tile {
+  flex-grow: 1;
+  text-align: left;
+  background-color: var(--spectrum-global-color-gray-200);
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.layer .body .card-events .statistics .tile:not(:first-child) {
+  margin-left: 8px;
+}
+
+.layer .body .card-events .statistics .tile span {
+  color: var(--spectrum-global-color-gray-600);
+}
+
+.layer .body .card-events .statistics .tile h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+  font-weight: 400;
+}
+
 .layer .body .card-dates {
   display: flex;
   padding: 10px 15px 20px 15px;

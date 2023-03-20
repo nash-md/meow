@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-20
+
+- Added opportunity age and last opportunity update to history
+
 ## 2023-03-17
 
 - Opportunities now store an `inLaneSince` timestamp value, enabling easier creation of statistics regarding the duration of opportunities in a particular stage.

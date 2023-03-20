@@ -12,6 +12,9 @@ import { ClosedAt } from './events/ClosedAt';
 import { Assign } from './events/Assign';
 import { Attribute } from './events/Attribute';
 import { NextFollowUpAt } from './events/NextFollowUpAt';
+import { useSelector } from 'react-redux';
+import { ApplicationStore } from '../../store/ApplicationStore';
+import { selectCard } from '../../store/Store';
 
 export interface EventsProps {
   id?: string;
@@ -24,6 +27,8 @@ export const Events = ({ id, entity }: EventsProps) => {
   const [list, setList] = useState([]);
   const [comment, setComment] = useState('');
   const [isValid, setIsValid] = useState(false);
+
+  const card = useSelector((store: ApplicationStore) => selectCard(store, id));
 
   useEffect(() => {
     const execute = async () => {
@@ -80,6 +85,23 @@ export const Events = ({ id, entity }: EventsProps) => {
 
   return (
     <div className="card-events">
+      {card && (
+        <div className="statistics">
+          <div className="tile">
+            <span>Opportunity Age</span>
+            <h4>{DateTime.fromISO(card.createdAt!).toRelative()}</h4>
+          </div>
+          <div className="tile">
+            <span>In Stage Since</span>
+            <h4>{DateTime.fromISO(card.inLaneSince!).toRelative()}</h4>
+          </div>
+          <div className="tile">
+            <span>Last Update</span>
+            <h4>{DateTime.fromISO(card.updatedAt).toRelative()}</h4>
+          </div>
+        </div>
+      )}
+
       <div className="comment-form">
         <TextArea onChange={setComment} width="100%" height="80px"></TextArea>
         <div className="submit">
