@@ -1,8 +1,15 @@
 export interface Schema {
-  // TODO sync interfaces with be entities types
-  id: string;
-  type: string;
+  id?: string;
+  type: SchemaType;
   schema: SchemaAttribute[];
+  createdAt?: string;
+  updateAt?: string;
+  teamId?: string;
+}
+
+export enum SchemaType {
+  Card = 'card',
+  Account = 'account',
 }
 
 export interface SchemaAttribute {

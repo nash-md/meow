@@ -2,9 +2,11 @@ import { useContext, useEffect } from 'react';
 import { store } from '../store/Store';
 import { ActionType } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { CardCanvas } from '../components/setup/card/CardCanvas';
 import { CurrencyCanvas } from '../components/setup/currency/CurrencyCanvas';
 import { LanesCanvas } from '../components/setup/lane/LaneCanvas';
+import { SlackCanvas } from '../components/setup/SlackCanvas';
+import { CardSchema } from '../components/setup/card/CardSchema';
+import { AccountSchema } from '../components/setup/account/AccountSchema';
 
 export const SetupPage = () => {
   const { client } = useContext(RequestHelperContext);
@@ -35,7 +37,8 @@ export const SetupPage = () => {
     <div className="canvas">
       <CurrencyCanvas />
       <LanesCanvas />
-      <CardCanvas />
+      <CardSchema />
+      <AccountSchema />
     </div>
   );
 };

@@ -1,14 +1,14 @@
 import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { AttributeListItem } from './CardCanvas';
+import { SchemaAttribute } from '../../../interfaces/Schema';
 
 export interface TextAreaAttributeProps {
   attributeKey: string;
   name: string;
   index: number;
   remove: (index: number) => void;
-  update: (key: string, item: Partial<AttributeListItem>) => void;
+  update: (key: string, item: Partial<SchemaAttribute>) => void;
 }
 
 export const TextAreaAttribute = ({

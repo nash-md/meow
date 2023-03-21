@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
-import { DefaultSchema, DefaultLanes, DefaultCards } from '../Constants.js';
+import {
+  DefaultCardSchema,
+  DefaultAccountSchema,
+  DefaultLanes,
+  DefaultCards,
+} from '../Constants.js';
 import { Card } from '../entities/Card.js';
 import { Lane } from '../entities/Lane.js';
 import { Schema } from '../entities/Schema.js';
@@ -93,7 +98,20 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     database.manager.save(
       Schema,
-      new Schema(team.id!.toString(), DefaultSchema.type, DefaultSchema.schema)
+      new Schema(
+        team.id!.toString(),
+        DefaultCardSchema.type,
+        DefaultCardSchema.schema
+      )
+    );
+
+    database.manager.save(
+      Schema,
+      new Schema(
+        team.id!.toString(),
+        DefaultAccountSchema.type,
+        DefaultAccountSchema.schema
+      )
     );
 
     const user = new User(team.id!.toString(), name, UserStatus.Enabled);

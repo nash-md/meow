@@ -14,7 +14,7 @@ import {
   CardFormPreview,
   CardPreview,
 } from '../../interfaces/Card';
-import { SchemaAttribute } from '../../interfaces/Schema';
+import { SchemaAttribute, SchemaType } from '../../interfaces/Schema';
 import { SelectAttribute } from './schema/SelectAttribute';
 import { TextAreaAttribute } from './schema/TextAreaAttribute';
 import { TextAttribute } from './schema/TextAttribute';
@@ -49,7 +49,7 @@ export const Form = ({ update, id }: FormProps) => {
   };
 
   const schema = useSelector((store: ApplicationStore) =>
-    selectSchemaByType(store, 'card')
+    selectSchemaByType(store, SchemaType.Card)
   );
 
   let isValidAmount = useMemo(

@@ -36,20 +36,41 @@ export const DefaultCards = [
   { name: 'Horsepower Landscaping', amount: 64000 },
 ];
 
-export const DefaultSchema = {
+export const DefaultCardSchema = {
   type: SchemaType.Card,
   schema: [
     {
       key: '6cdd2d99-c0c9-1f20-60eb-5ba24d548348',
       index: 0,
       type: 'text',
-      name: 'Company Name',
+      name: 'Contact',
     },
     {
       key: 'c1cc9338-4d4c-f494-cbee-16f4faa9528c',
       index: 1,
       type: 'textarea',
       name: 'Notes',
+    },
+  ],
+} as {
+  type: SchemaType;
+  schema: SchemaAttribute[];
+};
+
+export const DefaultAccountSchema = {
+  type: SchemaType.Account,
+  schema: [
+    {
+      key: '6cdd2d99-c0c9-1f20-60eb-5ba24d548346',
+      index: 0,
+      type: 'text',
+      name: 'City',
+    },
+    {
+      key: 'c1cc9338-4d4c-f494-cbee-16f4faa95284',
+      index: 1,
+      type: 'textarea',
+      name: 'Phone',
     },
   ],
 } as {

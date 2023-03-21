@@ -2,7 +2,7 @@ import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { ANIMALS } from '../../../Constants';
-import { AttributeListItem } from './CardCanvas';
+import { SchemaAttribute } from '../../../interfaces/Schema';
 
 function removeOption<T>(items: T[], index: number): T[] {
   items.splice(index, 1);
@@ -16,7 +16,7 @@ export interface SelectAttributeProps {
   index: number;
   options: string[];
   remove: (index: number) => void;
-  update: (key: string, item: Partial<AttributeListItem>) => void;
+  update: (key: string, item: Partial<SchemaAttribute>) => void;
 }
 
 export const SelectAttribute = ({

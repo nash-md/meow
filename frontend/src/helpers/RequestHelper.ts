@@ -7,6 +7,7 @@ import { Account, AccountPreview } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
 import { EventType } from '../interfaces/Event';
 import { Lane, LaneRequest } from '../interfaces/Lane';
+import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 
@@ -333,10 +334,13 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async updateSchema(type: string, schema: any) {
+  async updateSchema(schema: Schema) {
     let url = this.getUrl(`/api/schemas/`);
 
-    return this.doFetch(url, 'POST', { type, schema });
+    return this.doFetch(url, 'POST', {
+      schema: schema.schema,
+      type: schema.type,
+    });
   }
 
   async login(name: string, password: string) {

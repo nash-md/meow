@@ -32,4 +32,6 @@ export const RESERVED_ATTRIBUTES = [
   'createdat',
   'updatedat',
   'attribute',
+  'teamid',
+  'accountid',
 ];

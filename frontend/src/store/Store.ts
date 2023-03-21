@@ -5,6 +5,7 @@ import { ApplicationStore } from './ApplicationStore';
 import { cardUpdateListener } from './CardUpdateListener';
 import { cardLaneListener } from './CardLaneListener';
 import { cardDeleteListener } from './CardDeleteListener';
+import { SchemaType } from '../interfaces/Schema';
 
 export const store = configureStore({
   reducer: application,
@@ -44,7 +45,7 @@ export const selectLanes = (store: RootState) => store.lanes;
 export const selectLane = (store: ApplicationStore, id: string) =>
   store.lanes.find((lane) => lane.id === id);
 export const selectSchemas = (store: RootState) => store.schemas;
-export const selectSchemaByType = (store: ApplicationStore, type: string) =>
+export const selectSchemaByType = (store: ApplicationStore, type: SchemaType) =>
   store.schemas.find((schema) => schema.type === type);
 export const selectName = (store: RootState) => store.session.user?.name;
 export const selectUserId = (store: RootState) => store.session.user?.id;
