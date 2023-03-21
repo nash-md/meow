@@ -20,12 +20,16 @@ export class ForecastService {
     const direct = DatabaseHelper.get();
     const collection = direct.collection('Cards');
 
-    const query = {
+    const query: any = {
       teamId: teamId,
       tags: {
         type: type,
       },
     };
+
+    if (type === LaneType.Normal) {
+      query.inForecast = true;
+    }
 
     const lanes = await this.database.manager.findBy(Lane, query);
 

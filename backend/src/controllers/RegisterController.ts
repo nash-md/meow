@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { DateTime } from 'luxon';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
 import {
   DefaultCardSchema,
@@ -124,13 +125,18 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       DefaultCards.map(async (item, index) => {
         const laneIndex = index < 4 ? index : 0;
 
+        const tomorrow = DateTime.utc()
+          .plus({ days: 1 })
+          .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+
         await database.manager.save(
           new Card(
             team.id!.toString(),
             updated.id!.toString(),
             lanes[laneIndex]!.id!.toString(),
             item.name,
-            item.amount
+            item.amount,
+            tomorrow.toJSDate()
           )
         );
       })

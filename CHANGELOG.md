@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-03-21
+
+- The React schema editing components are now shared between Account and Opportunity entities to standardize the editing process.
+- Opportunities are now automatically created upon registration with a close date set to tomorrow to improve forecast visualization.
+
 ## 2023-03-20
 
 - Added opportunity age and last opportunity update to history
