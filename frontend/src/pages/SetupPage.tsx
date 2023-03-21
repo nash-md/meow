@@ -4,7 +4,6 @@ import { ActionType } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { CurrencyCanvas } from '../components/setup/currency/CurrencyCanvas';
 import { LanesCanvas } from '../components/setup/lane/LaneCanvas';
-import { SlackCanvas } from '../components/setup/SlackCanvas';
 import { CardSchema } from '../components/setup/card/CardSchema';
 import { AccountSchema } from '../components/setup/account/AccountSchema';
 
