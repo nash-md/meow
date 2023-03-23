@@ -19,6 +19,7 @@ import { Currency } from '../components/Currency';
 import { Board } from '../components/Board';
 import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
+import { useNavigate } from 'react-router-dom';
 
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
@@ -32,6 +33,8 @@ export const HomePage = () => {
   const [filters, setFilters] = useState<Set<FilterMode>>(new Set());
 
   const { client } = useContext(RequestHelperContext);
+
+  const navigate = useNavigate();
 
   const handleFilterToggle = (key: FilterMode) => {
     console.log(key);
@@ -162,6 +165,11 @@ export const HomePage = () => {
     }
   };
 
+  if (window.location.pathname !== '/') {
+    navigate('/');
+    return null;
+  }
+
   return (
     <>
       {state === 'card-detail' && <CardLayer />}
@@ -201,7 +209,7 @@ export const HomePage = () => {
               }`}
               onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}
             >
-              Require Updates
+              Requires Update
             </button>
           </div>
         </div>
