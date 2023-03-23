@@ -23,7 +23,7 @@ export const Login = () => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(process.env.REACT_APP_URL);
+      const client = new RequestHelper(import.meta.env.VITE_URL);
       const payload = await client.login(name, password);
 
       client.token = payload.token;

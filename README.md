@@ -65,9 +65,9 @@ Change the directory to `/frontend` and install the dependencies.
 
 Before building the React frontend, you'll need to set the following variables.
 
-- `REACT_APP_URL` this is the url the frontend will try to connect to, if not set it will try to connect to the backend on the same server on `/public` and `/api`.
+- `VITE_URL` this is the url the frontend will try to connect to, if not set it will try to connect to the backend on the same server on `/public` and `/api`.
 
-This project was built with [Create React App](https://create-react-app.dev/docs/adding-typescript/) without any build modification. You can build it by executing
+This project was built with [Vite](https://vitejs.dev/guide/).
 
 `npm run build`
 

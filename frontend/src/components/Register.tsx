@@ -27,7 +27,7 @@ export const Register = () => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(process.env.REACT_APP_URL);
+      const client = new RequestHelper(import.meta.env.VITE_URL);
 
       await client.register(name, password);
 
@@ -36,7 +36,7 @@ export const Register = () => {
       client.token = payload.token;
 
       if (setClient) {
-        setClient(new RequestHelper(process.env.REACT_APP_URL, payload.token));
+        setClient(new RequestHelper(import.meta.env.VITE_URL, payload.token));
       }
 
       setClient!(client);

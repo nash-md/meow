@@ -42,7 +42,7 @@ export const SessionOrNot = () => {
 
         console.log(`found token ${context.token.substring(0, 25)}...`);
 
-        const client = new RequestHelper(process.env.REACT_APP_URL);
+        const client = new RequestHelper(import.meta.env.VITE_URL);
 
         const code = await client.isValidToken(context.token);
 
@@ -58,9 +58,7 @@ export const SessionOrNot = () => {
         const payload = await client.loginWithToken(context.token);
 
         if (setClient) {
-          setClient(
-            new RequestHelper(process.env.REACT_APP_URL, context.token)
-          );
+          setClient(new RequestHelper(import.meta.env.VITE_URL, context.token));
         }
 
         store.dispatch({

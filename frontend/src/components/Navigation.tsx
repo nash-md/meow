@@ -51,27 +51,27 @@ export const Navigation = () => {
     <>
       <div className="item">
         <Link to="/">
-          <img alt="Deals" src={`${currency?.toLocaleLowerCase()}-icon.svg`} />
+          <img alt="Deals" src={`/${currency?.toLocaleLowerCase()}-icon.svg`} />
         </Link>
       </div>
       <div className="item">
         <Link to="/forecast">
-          <img alt="Forecast" src="forecast-icon.svg" />
+          <img alt="Forecast" src="/forecast-icon.svg" />
         </Link>
       </div>
       <div className="item">
         <Link to="/accounts">
-          <img alt="Accounts" src="accounts-icon.svg" />
+          <img alt="Accounts" src="/accounts-icon.svg" />
         </Link>
       </div>
       <div className="item">
         <Link to="/hire">
-          <img alt="Hire a Specialist" src="paw-icon.svg" />
+          <img alt="Hire a Specialist" src="/paw-icon.svg" />
         </Link>
       </div>
       <div className="item">
         <Link to="/setup">
-          <img alt="Setup" src="setup-icon.svg" />
+          <img alt="Setup" src="/setup-icon.svg" />
         </Link>
       </div>{' '}
       <div className="item" style={{ flexGrow: 1 }}></div>

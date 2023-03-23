@@ -38,12 +38,13 @@ function Application() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<HomePage />}></Route>
           <Route path="/forecast" element={<ForecastPage />}></Route>
           <Route path="/setup" element={<SetupPage />}></Route>
           <Route path="/user-setup" element={<UserSetupPage />}></Route>
           <Route path="/hire" element={<HirePage />}></Route>
           <Route path="/accounts" element={<AccountsPage />}></Route>
+
+          <Route path="*" element={<HomePage />}></Route>
         </Routes>
       </Layout>
       <SuccessModal />

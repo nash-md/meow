@@ -841,7 +841,7 @@ h3 {
 
 #error-modal > div {
   line-height: 80px;
-  background-image: url(../public/error-icon.svg);
+  background-image: url(/error-icon.svg);
   background-position: left center;
   background-repeat: no-repeat;
   width: 750px;

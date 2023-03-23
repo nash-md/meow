@@ -18,7 +18,7 @@ cardLaneListener.startListening({
     const state = listenerApi.getState() as ApplicationStore;
 
     const client = new RequestHelper(
-      process.env.REACT_APP_URL,
+      import.meta.env.VITE_URL,
       state.session.token
     );
 

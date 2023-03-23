@@ -20,7 +20,7 @@ export const usePersistentToken = () => {
 
     const run = async (token: string) => {
       try {
-        const client = new RequestHelper(process.env.REACT_APP_URL!);
+        const client = new RequestHelper(import.meta.env.VITE_URL!);
 
         const response = await client.isValidToken(token);
 

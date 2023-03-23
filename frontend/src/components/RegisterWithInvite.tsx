@@ -31,7 +31,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
   useEffect(() => {
     const execute = async () => {
       try {
-        const client = new RequestHelper(process.env.REACT_APP_URL);
+        const client = new RequestHelper(import.meta.env.VITE_URL);
 
         let payload = await client.invite(invite!);
 
@@ -53,7 +53,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(process.env.REACT_APP_URL);
+      const client = new RequestHelper(import.meta.env.VITE_URL);
 
       await client.register(name, password, invite);
 
@@ -62,7 +62,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
       client.token = payload.token;
 
       if (setClient) {
-        setClient(new RequestHelper(process.env.REACT_APP_URL, payload.token));
+        setClient(new RequestHelper(import.meta.env.VITE_URL, payload.token));
       }
 
       setClient!(client);
