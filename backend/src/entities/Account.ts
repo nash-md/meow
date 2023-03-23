@@ -19,10 +19,7 @@ export class Account {
   name: string;
 
   @Column()
-  address: string;
-
-  @Column()
-  phone: string;
+  attributes?: AccountAttribute;
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -30,11 +27,9 @@ export class Account {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(teamId: string, name: string, address: string, phone: string) {
+  constructor(teamId: string, name: string) {
     this.teamId = teamId;
     this.name = name;
-    this.address = address;
-    this.phone = phone;
   }
 
   @BeforeInsert()
@@ -47,4 +42,8 @@ export class Account {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+export interface AccountAttribute {
+  [key: string]: string | number | null;
 }

@@ -1,19 +1,19 @@
-import { TextArea } from '@adobe/react-spectrum';
+import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 
-export interface TextAreaAttributeProps {
+export interface TextAttributeProps {
   attributeKey: string;
   name: string;
-  value: string | undefined;
+  value: string | number | undefined;
   update: (index: string, value: string) => void;
 }
 
-export const TextAreaAttribute = ({
+export const TextAttribute = ({
   attributeKey,
   name,
-  update,
   value: valueDefault,
-}: TextAreaAttributeProps) => {
+  update,
+}: TextAttributeProps) => {
   const [value, setValue] = useState(valueDefault);
 
   useEffect(() => {
@@ -27,11 +27,11 @@ export const TextAreaAttribute = ({
 
   return (
     <div className="attribute">
-      <TextArea
+      <TextField
         width="100%"
         aria-label={name}
         label={name}
-        value={value}
+        value={value?.toString()}
         onChange={(value) => updateValue(value)}
       />
     </div>

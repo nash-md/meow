@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 export interface SelectAttributeProps {
   attributeKey: string;
   name: string;
-  value: string | undefined;
+  value: string | number | undefined;
   options?: string[] | undefined;
   update: (index: string, value: string) => void;
 }

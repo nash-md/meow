@@ -14,11 +14,9 @@ import {
   CardFormPreview,
   CardPreview,
 } from '../../interfaces/Card';
-import { SchemaAttribute, SchemaType } from '../../interfaces/Schema';
-import { SelectAttribute } from './schema/SelectAttribute';
-import { TextAreaAttribute } from './schema/TextAreaAttribute';
-import { TextAttribute } from './schema/TextAttribute';
+import { SchemaType } from '../../interfaces/Schema';
 import { Translations } from '../../Translations';
+import { SchemaCanvas } from '../schema/SchemaCanvas';
 
 export interface FormProps {
   id: string | undefined;
@@ -70,80 +68,34 @@ export const Form = ({ update, id }: FormProps) => {
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
 
   useEffect(() => {
-    const list: CardAttribute = {};
-
     if (card) {
-      schema?.schema.map((attribute) => {
-        list[attribute.key] = card.attributes?.[attribute.key] ?? '';
-      });
-
       setPreview({
         ...card,
-        attributes: { ...list },
+        attributes: { ...card.attributes },
         amount: card.amount ? card.amount.toString() : '',
       });
     } else {
-      schema?.schema.map((attribute) => {
-        list[attribute.key] = '';
-      });
-
       setPreview({
         name: '',
         amount: '',
         laneId: '',
-        attributes: { ...list },
+        attributes: undefined,
         userId: userId!,
       });
     }
-  }, [card, schema]);
+  }, [card]);
 
   const save = () => {
     update(id, { ...preview, amount: parseInt(preview.amount) });
   };
 
-  const updateAttribute = (key: string, value: string) => {
+  const validate = (values: CardAttribute) => {
     setPreview({
       ...preview,
       attributes: {
-        ...preview.attributes,
-        [key]: value,
+        ...values,
       },
     });
-  };
-
-  const getAttribute = (
-    attribute: SchemaAttribute,
-    value: string | undefined | null
-  ) => {
-    switch (attribute.type) {
-      case 'text':
-        return (
-          <TextAttribute
-            update={updateAttribute}
-            attributeKey={attribute.key}
-            value={value ?? ''}
-            {...attribute}
-          />
-        );
-      case 'textarea':
-        return (
-          <TextAreaAttribute
-            update={updateAttribute}
-            attributeKey={attribute.key}
-            value={value ?? ''}
-            {...attribute}
-          />
-        );
-      case 'select':
-        return (
-          <SelectAttribute
-            update={updateAttribute}
-            attributeKey={attribute.key}
-            value={value ?? ''}
-            {...attribute}
-          />
-        );
-    }
   };
 
   return (
@@ -159,12 +111,11 @@ export const Form = ({ update, id }: FormProps) => {
           validationState={preview.name ? 'valid' : 'invalid'}
         />
 
-        {schema?.schema.map((attribute) => {
-          return getAttribute(
-            attribute!,
-            attributes?.[attribute.key]?.toString()
-          );
-        })}
+        <SchemaCanvas
+          values={card?.attributes}
+          schema={schema!}
+          validate={validate}
+        />
 
         <div className="attribute">
           <TextField

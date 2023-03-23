@@ -1,9 +1,15 @@
-import { Button, TextArea, TextField } from '@adobe/react-spectrum';
+import { Button, TextField } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Account, AccountPreview } from '../../interfaces/Account';
-import { selectAccount } from '../../store/Store';
+import {
+  Account,
+  AccountAttribute,
+  AccountPreview,
+} from '../../interfaces/Account';
+import { selectAccount, selectSchemaByType } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
+import { SchemaType } from '../../interfaces/Schema';
+import { SchemaCanvas } from '../schema/SchemaCanvas';
 
 export interface FormProps {
   id: Account['id'] | undefined;
@@ -14,9 +20,12 @@ export interface FormProps {
 export const Form = ({ update, id }: FormProps) => {
   const [preview, setPreview] = useState<AccountPreview>({
     name: '',
-    address: '',
-    phone: '',
+    attributes: undefined,
   });
+
+  const schema = useSelector((store: ApplicationStore) =>
+    selectSchemaByType(store, SchemaType.Account)
+  );
 
   const handlePreviewUpdate = (key: string, value: string | number) => {
     setPreview({
@@ -45,11 +54,19 @@ export const Form = ({ update, id }: FormProps) => {
     } else {
       setPreview({
         name: '',
-        address: '',
-        phone: '',
+        attributes: undefined,
       });
     }
   }, [account]);
+
+  const validate = (values: AccountAttribute) => {
+    setPreview({
+      ...preview,
+      attributes: {
+        ...values,
+      },
+    });
+  };
 
   const save = () => {
     update(id, { ...preview });
@@ -68,29 +85,11 @@ export const Form = ({ update, id }: FormProps) => {
         />
       </div>
 
-      <div style={{ marginTop: '10px' }}>
-        <TextArea
-          onChange={(value) => handlePreviewUpdate('address', value)}
-          value={preview.address}
-          aria-label="Address"
-          width="100%"
-          key="address"
-          inputMode="decimal"
-          label="Address"
-        />
-      </div>
-
-      <div style={{ marginTop: '10px' }}>
-        <TextField
-          onChange={(value) => handlePreviewUpdate('phone', value)}
-          value={preview.phone}
-          aria-label="Phone"
-          width="100%"
-          key="phone"
-          inputMode="decimal"
-          label="Phone"
-        />
-      </div>
+      <SchemaCanvas
+        values={account?.attributes}
+        schema={schema!}
+        validate={validate}
+      />
 
       <div style={{ marginTop: '24px' }}>
         <Button variant="primary" onPress={save} isDisabled={!isValidForm}>

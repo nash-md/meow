@@ -10,12 +10,11 @@ const create = async (
   next: NextFunction
 ) => {
   try {
-    const account = new Account(
-      req.jwt.team.id!.toString(),
-      req.body.name,
-      req.body.address,
-      req.body.phone
-    );
+    const account = new Account(req.jwt.team.id!.toString(), req.body.name);
+
+    if (req.body.attributes) {
+      account.attributes = req.body.attributes;
+    }
 
     const updated = await database.manager.save(account);
 
@@ -39,8 +38,10 @@ const update = async (
       );
 
       account.name = req.body.name;
-      account.address = req.body.address;
-      account.phone = req.body.phone;
+
+      if (req.body.attributes) {
+        account.attributes = req.body.attributes;
+      }
 
       const updated = await database.manager.save(account);
 

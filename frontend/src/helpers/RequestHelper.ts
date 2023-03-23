@@ -270,13 +270,12 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', account);
   }
 
-  async updateAccount({ id, name, address, phone }: Account): Promise<Account> {
+  async updateAccount({ id, name, attributes }: Account): Promise<Account> {
     let url = this.getUrl(`/api/accounts/${id}`);
 
     return this.doFetch(url, 'POST', {
       name,
-      address,
-      phone,
+      attributes,
     });
   }
 

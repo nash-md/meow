@@ -5,7 +5,14 @@ import { useSelector } from 'react-redux';
 import { ActionType } from '../actions/Actions';
 import { Layer as AccountLayer } from '../components/account/Layer';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { selectAccounts, selectInterfaceState, store } from '../store/Store';
+import { SchemaType } from '../interfaces/Schema';
+import { ApplicationStore } from '../store/ApplicationStore';
+import {
+  selectAccounts,
+  selectInterfaceState,
+  selectSchemaByType,
+  store,
+} from '../store/Store';
 
 export const AccountsPage = () => {
   const { client } = useContext(RequestHelperContext);
@@ -33,12 +40,23 @@ export const AccountsPage = () => {
         type: ActionType.ACCOUNTS,
         payload: [...accounts],
       });
+
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
+      });
     };
 
     if (client) {
       execute();
     }
   }, [client]);
+
+  const schema = useSelector((store: ApplicationStore) =>
+    selectSchemaByType(store, SchemaType.Account)
+  );
 
   return (
     <>
@@ -69,8 +87,10 @@ export const AccountsPage = () => {
             <tbody>
               <tr>
                 <td>Name</td>
-                <td>Address</td>
-                <td>Phone Number</td>
+                {schema &&
+                  schema.schema.map((attribute) => {
+                    return <td>{attribute.name}</td>;
+                  })}
                 <td>Created</td>
                 <td></td>
               </tr>
@@ -84,8 +104,10 @@ export const AccountsPage = () => {
                       <td>
                         <b>{account.name}</b>
                       </td>
-                      <td>{account.address}</td>
-                      <td>{account.phone}</td>
+                      {schema &&
+                        schema.schema.map(({ key }) => {
+                          return <td>{account.attributes?.[key]}</td>;
+                        })}
                       <td>{created.toRelative()}</td>
 
                       <td style={{ textAlign: 'right', paddingRight: '0' }}>
