@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2023-04-02
 
+- Added statistics, click [here](https://www.sales-funnel.app/updates) for a more detailed overview
 - Migrating frontend from Create React App (CRA) to Vite
 - Accounts now support a custom attribute schema
 
