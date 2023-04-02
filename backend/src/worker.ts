@@ -57,6 +57,7 @@ import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { Team } from './entities/Team.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
+import { LaneStatisticsController } from './controllers/LaneStatisticsController.js';
 
 export const database = new DataSource({
   type: 'mongodb',
@@ -209,6 +210,7 @@ try {
   );
 
   lane.route('/').get(LaneController.list);
+  lane.route('/statistic').get(LaneStatisticsController.get);
   lane
     .route('/')
     .post(

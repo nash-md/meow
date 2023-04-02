@@ -20,6 +20,7 @@ import { Board } from '../components/Board';
 import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
 import { useNavigate } from 'react-router-dom';
+import { StatisticsBoard } from '../components/StatisticsBoard';
 
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
@@ -31,6 +32,7 @@ export const HomePage = () => {
   const lanes = useSelector(selectLanes);
   const state = useSelector(selectInterfaceState);
   const [filters, setFilters] = useState<Set<FilterMode>>(new Set());
+  const [mode, setMode] = useState<'board' | 'statistics'>('board');
 
   const { client } = useContext(RequestHelperContext);
 
@@ -178,6 +180,26 @@ export const HomePage = () => {
         <div className="title">
           <div>
             <div>
+              {mode === 'board' && (
+                <button
+                  className="statistics-button"
+                  onClick={() => {
+                    setMode('statistics');
+                  }}
+                ></button>
+              )}
+
+              {mode === 'statistics' && (
+                <button
+                  className="statistics-button"
+                  style={{
+                    border: '1px solid var(--spectrum-global-color-gray-600)',
+                  }}
+                  onClick={() => {
+                    setMode('board');
+                  }}
+                ></button>
+              )}
               <h2>
                 {getTitle(cards)} -
                 <Currency value={amount} />
@@ -219,7 +241,10 @@ export const HomePage = () => {
           </div>
 
           <div className="lanes">
-            <Board filters={filters} lanes={lanes} />
+            {mode === 'board' && <Board filters={filters} lanes={lanes} />}
+            {mode === 'statistics' && (
+              <StatisticsBoard filters={filters} lanes={lanes} />
+            )}
           </div>
         </DragDropContext>
       </div>

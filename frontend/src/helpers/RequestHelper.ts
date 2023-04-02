@@ -10,6 +10,7 @@ import { Lane, LaneRequest } from '../interfaces/Lane';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
+import { FilterMode } from '../pages/HomePage';
 
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
 
@@ -193,6 +194,18 @@ export class RequestHelper {
 
   async getLanes() {
     const url = this.getUrl(`/api/lanes`);
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async getLanesStatistic(filter?: Set<FilterMode>) {
+    let url = this.getUrl(`/api/lanes/statistic`);
+
+    if (filter && filter.size > 0) {
+      const list = Array.from(filter).map((mode) => mode.toString());
+
+      url += `?filter=${list.join(',')}`;
+    }
 
     return this.doFetch(url, 'GET');
   }
