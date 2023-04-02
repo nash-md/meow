@@ -30,7 +30,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --emptyOutDir",
     "serve": "vite preview"
   },
   "eslintConfig": {
