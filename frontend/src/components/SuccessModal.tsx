@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { hideModal } from '../actions/Actions';
 import { selectModal, selectModalText, store } from '../store/Store';
 
+type Timeout = ReturnType<typeof setTimeout>;
+
 export const SuccessModal = () => {
   const modal = useSelector(selectModal);
   const text = useSelector(selectModalText);
@@ -10,7 +12,7 @@ export const SuccessModal = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | undefined = undefined;
+    let timer: Timeout | undefined = undefined;
 
     if (modal === 'success') {
       setIsVisible(true);

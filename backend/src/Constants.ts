@@ -67,9 +67,15 @@ export const DefaultAccountSchema = {
       name: 'City',
     },
     {
-      key: 'c1cc9338-4d4c-f494-cbee-16f4faa95284',
+      key: 'c1cc9138-4d4c-f494-cbee-16f4faa95284',
       index: 1,
       type: 'textarea',
+      name: 'Address',
+    },
+    {
+      key: 'c12c9338-4d4c-f494-cbee-16f4faa91284',
+      index: 2,
+      type: 'text',
       name: 'Phone',
     },
   ],

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-02
+
+- Migrating frontend from Create React App (CRA) to Vite
+- Accounts now support a custom attribute schema
+
 ## 2023-03-21
 
 - The React schema editing components are now shared between Account and Opportunity entities to standardize the editing process.
