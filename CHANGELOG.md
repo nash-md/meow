@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-09
+
+- Opportunities can now be filtered for `recently updated` items, displaying all opportunities updated within the last 3 days. Along with minor UI enhancements, the `Closed Lost` and `Closed Won` lanes have been slightly redesigned.
+
 ## 2023-04-02
 
 - Added statistics, click [here](https://www.sales-funnel.app/updates) for a more detailed overview

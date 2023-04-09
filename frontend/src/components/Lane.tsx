@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Card as CardComponent } from './Card';
-import { Lane as LaneInterface } from '../interfaces/Lane';
+import { Lane as LaneInterface, LaneType } from '../interfaces/Lane';
 import {
   selectBoardByLaneId,
   selectCards,
@@ -52,7 +52,17 @@ const getCard = (
     return;
   }
 
-  const closeDate = card.closedAt ? DateTime.fromISO(card.closedAt) : undefined;
+  const updatedAt = card.closedAt
+    ? DateTime.fromISO(card.updatedAt)
+    : undefined;
+
+  if (
+    filters.has(FilterMode.RecentlyUpdated) &&
+    updatedAt &&
+    updatedAt < DateTime.now().startOf('day').minus({ days: 3 })
+  ) {
+    return;
+  }
 
   if (filters.has(FilterMode.RequireUpdate) && lane.tags?.type !== 'normal') {
     return;
@@ -113,16 +123,7 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
         onClick={() => showLaneDetail(lane.id)}
       >
         <div style={{ flexGrow: 1 }}>{lane.name}</div>
-        {lane.inForecast === false && (
-          <div
-            className="forecast-icon"
-            style={{
-              backgroundImage: lane.color
-                ? 'url(/icon-hidden-white.svg)'
-                : 'url(/icon-hidden.svg)',
-            }}
-          ></div>
-        )}
+        {lane.inForecast === false && <div className="forecast-icon"></div>}
       </div>
 
       <div className={`sum ${getLaneColorClassName(lane.color)}`}>
@@ -137,7 +138,9 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className={`canvas ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
+              className={`canvas ${snaphot.isDraggingOver ? 'drag-over' : ''} ${
+                lane.tags?.type !== LaneType.Normal ? 'is-static' : ''
+              }`}
             >
               {list?.map((id, index) => {
                 const card = getCard(lane, cards, id, filters, userId);

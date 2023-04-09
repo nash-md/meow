@@ -5,10 +5,12 @@ import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { DateTime } from 'luxon';
 
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
   RequireUpdate = 'require-update',
+  RecentlyUpdated = 'recently-updated',
 }
 
 function parseFilterParameter(filter: string): Set<FilterMode> {
@@ -44,6 +46,12 @@ const getActiveStatisticsByLanes = async (
 
   if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
     match.$match.userId = { $eq: userId.toString() };
+  }
+
+  const threeDaysAgo = DateTime.local().startOf('day').minus({ days: 3 });
+
+  if (filter && filter.has(FilterMode.RecentlyUpdated)) {
+    match.$match.updatedAt = { $gt: threeDaysAgo.toJSDate() };
   }
 
   if (filter && filter.has(FilterMode.RequireUpdate)) {

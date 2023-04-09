@@ -25,6 +25,7 @@ import { StatisticsBoard } from '../components/StatisticsBoard';
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
   RequireUpdate = 'require-update',
+  RecentlyUpdated = 'recently-updated',
 }
 
 export const HomePage = () => {
@@ -214,8 +215,19 @@ export const HomePage = () => {
           <div className="filters-canvas">
             <button
               className={`filter ${
+                filters.has(FilterMode.RecentlyUpdated)
+                  ? 'recently-updated-active'
+                  : 'recently-updated'
+              }`}
+              onClick={() => handleFilterToggle(FilterMode.RecentlyUpdated)}
+            >
+              Recently Updated
+            </button>
+
+            <button
+              className={`filter ${
                 filters.has(FilterMode.OwnedByMe)
-                  ? ' owned-by-me-active'
+                  ? 'owned-by-me-active'
                   : 'owned-by-me'
               }`}
               onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
@@ -226,7 +238,7 @@ export const HomePage = () => {
             <button
               className={`filter ${
                 filters.has(FilterMode.RequireUpdate)
-                  ? ' require-update-active'
+                  ? 'require-update-active'
                   : 'require-update'
               }`}
               onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}

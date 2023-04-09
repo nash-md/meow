@@ -218,9 +218,9 @@ h3 {
 }
 
 .board .lane .title {
-  font-size: 1.2em;
-  font-weight: bold;
-  padding: 5px;
+  font-size: 1.3em;
+  font-weight: 800;
+  padding: 5px 8px 0px 8px;
   display: flex;
 }
 
@@ -228,6 +228,7 @@ h3 {
   margin-right: 4px;
   background-position: center center;
   background-repeat: no-repeat;
+  background-image: url(/icon-hidden.svg);
   background-size: 80%;
   width: 24px;
   opacity: 0.4;
@@ -241,6 +242,10 @@ h3 {
   border-bottom: 1px solid var(--spectrum-global-color-gray-300);
   padding: 0;
   background-color: var(--spectrum-global-color-gray-75);
+}
+
+.board .lane .canvas.is-static {
+  background-color: var(--spectrum-global-color-gray-100);
 }
 
 .board .lane .canvas.drag-over {
@@ -313,6 +318,18 @@ h3 {
   background-color: var(--spectrum-global-color-static-red-400);
 }
 
+.board button.recently-updated {
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  color: var(--spectrum-global-color-static-gray-600);
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
+.board button.recently-updated-active {
+  border: 1px solid var(--spectrum-global-color-gray-600);
+  color: white;
+  background-color: var(--spectrum-global-color-gray-600);
+}
+
 .board .lanes {
   margin-top: 10px;
   display: flex;
@@ -327,16 +344,16 @@ h3 {
 
 .board .lane .title.positive {
   background-color: var(--spectrum-global-color-static-green-400);
-  color: var(--spectrum-global-color-static-green-700);
+  color: #00613c;
 }
 
 .board .lane .title.negative {
   background-color: var(--spectrum-global-color-static-red-500);
-  color: var(--spectrum-global-color-static-red-700);
+  color: #860100;
 }
 
 .board .lane .sum {
-  padding: 5px;
+  padding: 0px 8px 5px 8px;
 }
 
 .board .lane .sum {
@@ -346,21 +363,26 @@ h3 {
 
 .board .lane .sum.positive {
   background-color: var(--spectrum-global-color-static-green-400);
-  color: var(--spectrum-global-color-static-green-700);
+  color: #00613c;
 }
 
 .board .lane .sum.negative {
   background-color: var(--spectrum-global-color-static-red-500);
-  color: var(--spectrum-global-color-static-red-700);
+  color: #860100;
 }
 
 .board .lane .card {
   margin: 6px;
   border-radius: 4px;
-  box-shadow: rgba(17, 17, 26, 0.08) 0px 1px 0px,
-    rgba(17, 17, 26, 0.15) 0px 0px 6px;
+  box-shadow: rgba(17, 17, 26, 0.1) 0px 2px 0px,
+    rgba(17, 17, 26, 0.2) 0px 0px 4px;
   cursor: move;
   position: relative;
+}
+
+.board .lane .canvas.is-static .card {
+  box-shadow: rgba(17, 17, 26, 0.15) 0px 2px 0px,
+    rgba(17, 17, 26, 0) 0px 0px 2px;
 }
 
 .board .lane .card .overdue {
@@ -374,8 +396,16 @@ h3 {
 
 .board .lane .card .content {
   padding: 6px 6px 6px 12px;
-  border-radius: 6px;
+  border-radius: 4px;
   background-color: var(--spectrum-global-color-gray-100);
+  color: var(--spectrum-global-color-gray-800);
+}
+
+.board .lane .canvas.is-static .card .content {
+  padding: 6px 6px 6px 12px;
+  border-radius: 4px;
+  background-color: var(--spectrum-global-color-gray-200);
+  color: var(--spectrum-global-color-gray-600);
 }
 
 .board .lane .card .content.is-dragging {

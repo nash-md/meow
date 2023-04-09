@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { DateTime } from 'luxon';
 import { Card as CardEntity } from '../interfaces/Card';
-import { Lane } from '../interfaces/Lane';
+import { Lane, LaneType } from '../interfaces/Lane';
 import { store } from '../store/Store';
 import { ActionType } from '../actions/Actions';
 import { Draggable } from 'react-beautiful-dnd';
@@ -64,11 +64,31 @@ export const Card = ({ card, lane, index }: CardProps) => {
                 <Avatar width={30} id={card.userId} />
               </div>
               <div className="name">{card.name}</div>
-              <Currency value={card.amount} /> -{' '}
-              {closedAt?.toLocaleDateString()}
-              <div>
-                <b>{ago}</b>
-              </div>
+
+              {lane.tags?.type == LaneType.Normal && (
+                <>
+                  <span style={{ fontSize: '1.1em' }}>
+                    <Currency value={card.amount} /> -{' '}
+                    {closedAt?.toLocaleDateString()}
+                  </span>
+                  <div>
+                    <b>{ago}</b>
+                  </div>
+                </>
+              )}
+
+              {lane.tags?.type !== LaneType.Normal && (
+                <>
+                  <span style={{ fontSize: '1.1em' }}>
+                    <Currency value={card.amount} />
+                  </span>
+                  <div>
+                    <span style={{ fontWeight: '700' }}>
+                      closed {DateTime.fromISO(card.closedAt!).toRelative()}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         );
