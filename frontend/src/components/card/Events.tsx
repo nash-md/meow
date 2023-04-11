@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
-import { TimelineSpacer } from './TimeLineSpacer';
 import { DateTime } from 'luxon';
 import { Lane } from './events/Lane';
 import { Comment } from './events/Comment';
@@ -14,7 +13,8 @@ import { Attribute } from './events/Attribute';
 import { NextFollowUpAt } from './events/NextFollowUpAt';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import { selectCard } from '../../store/Store';
+import { selectCard, selectUser } from '../../store/Store';
+import { Avatar } from '../Avatar';
 
 export interface EventsProps {
   id?: string;
@@ -29,6 +29,9 @@ export const Events = ({ id, entity }: EventsProps) => {
   const [isValid, setIsValid] = useState(false);
 
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
+  const user = useSelector((store: ApplicationStore) =>
+    selectUser(store, card?.userId)
+  );
 
   useEffect(() => {
     const execute = async () => {
@@ -114,10 +117,17 @@ export const Events = ({ id, entity }: EventsProps) => {
       {list.map((event: any, index: number) => {
         const ago = DateTime.fromISO(event.createdAt).toRelative();
         return (
-          <div key={event.id} className="item">
-            <div>{getTitle(event)}</div>
-            <span className="date">{ago}</span>
-            {index !== list.length - 1 && <TimelineSpacer />}
+          <div key={event.id} className="event-item">
+            <div className="headline">
+              <div>
+                <Avatar id={card?.userId} width={30} />
+                <div className="name">{user?.name}</div>
+              </div>
+
+              <div className="date">{ago}</div>
+            </div>
+
+            {getTitle(event)}
           </div>
         );
       })}

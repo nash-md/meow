@@ -30,7 +30,7 @@ export const isValidName = async (name: unknown) => {
 
   const query = {
     where: {
-      name: { $regex: RegExp(name, 'i') },
+      name: { $regex: RegExp(`\\b${name}\\b`, 'i') },
     },
   };
 

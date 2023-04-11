@@ -16,7 +16,7 @@ export const NextFollowUpAt = ({ event }: NextFollowUpAtProps) => {
   }
 
   return (
-    <div>
+    <div className="body">
       Next follow-up changed to <b>{parsed?.toFormat('dd LLL yyyy')}</b>
     </div>
   );

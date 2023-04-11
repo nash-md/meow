@@ -18,6 +18,7 @@ import { Card } from '../interfaces/Card';
 import { DateTime } from 'luxon';
 import { Translations } from '../Translations';
 import { CardHelper } from '../helpers/CardHelper';
+import { useLaneSummary } from '../hooks/useLaneSummary';
 
 const getLaneColorClassName = (color: string | undefined) => {
   if (color === LANE_COLOR.NEGATIVE) {
@@ -31,9 +32,7 @@ const getLaneColorClassName = (color: string | undefined) => {
   return '';
 };
 
-const getTitle = (cards: Card[], lane: LaneInterface) => {
-  const count = cards.filter((card) => card.laneId === lane.id).length;
-
+const getTitle = (count: number) => {
   return count === 1
     ? `${count} ${Translations.BoardTitle.en}`
     : `${count} ${Translations.BoardTitlePlural.en}`;
@@ -93,21 +92,7 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
     selectBoardByLaneId(store, lane.id)
   );
 
-  const [amount, setAmount] = useState(0);
-
-  useEffect(() => {
-    if (!cards) {
-      return;
-    }
-
-    setAmount(
-      cards
-        .filter((card) => card.laneId === lane.id)
-        .reduce((acc, card) => {
-          return card.amount ? acc + card.amount : acc;
-        }, 0)
-    );
-  }, [cards]);
+  const { sum, count } = useLaneSummary(lane, cards);
 
   const showLaneDetail = (id?: string) => {
     store.dispatch({
@@ -127,9 +112,10 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
       </div>
 
       <div className={`sum ${getLaneColorClassName(lane.color)}`}>
-        {getTitle(cards, lane)}-{' '}
+        {getTitle(count)}-{' '}
         <b>
-          <Currency value={amount} />
+          ss
+          <Currency value={sum} />
         </b>
       </div>
       <Droppable droppableId={lane.id}>

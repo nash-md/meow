@@ -17,7 +17,7 @@ export const Assign = ({ event }: AssignProps) => {
   );
 
   return (
-    <div>
+    <div className="body">
       Assigned opportunity from <b>{userFrom?.name}</b> to <b>{userTo?.name}</b>
     </div>
   );

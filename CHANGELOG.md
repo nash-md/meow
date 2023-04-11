@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-11
+
+- Revised the opportunity history view, text size and the layout is improved for readability.
+
 ## 2023-04-09
 
 - Opportunities can now be filtered for `recently updated` items, displaying all opportunities updated within the last 3 days. Along with minor UI enhancements, the `Closed Lost` and `Closed Won` lanes have been slightly redesigned.

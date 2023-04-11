@@ -10,7 +10,7 @@ export const Amount = ({ event }: AmountProps) => {
   const to = event.body.to ? parseInt(event.body.to.toString()) : 0;
 
   return (
-    <div>
+    <div className="body">
       Updated opportunity size from{' '}
       <b>
         <Currency value={from} />

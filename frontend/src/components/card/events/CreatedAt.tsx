@@ -1,3 +1,3 @@
 export const CreatedAt = () => {
-  return <div>Opportunity Created...</div>;
+  return <div className="body">Opportunity created...</div>;
 };
