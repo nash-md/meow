@@ -114,7 +114,6 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
       <div className={`sum ${getLaneColorClassName(lane.color)}`}>
         {getTitle(count)}-{' '}
         <b>
-          ss
           <Currency value={sum} />
         </b>
       </div>
