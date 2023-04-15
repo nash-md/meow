@@ -1,6 +1,6 @@
 import {
   Entity,
-  ObjectID,
+  ObjectId,
   ObjectIdColumn,
   BeforeUpdate,
   BeforeInsert,
@@ -10,7 +10,7 @@ import {
 @Entity({ name: 'Accounts' })
 export class Account {
   @ObjectIdColumn()
-  id: ObjectID | undefined;
+  id: ObjectId | undefined;
 
   @Column()
   teamId: string;

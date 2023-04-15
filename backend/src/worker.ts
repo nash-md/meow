@@ -16,14 +16,9 @@ import cors from 'cors';
 import compression from 'compression';
 import express from 'express';
 import http from 'http';
-import { DataSource } from 'typeorm';
 import { CardController } from './controllers/CardController.js';
 import { EventController } from './controllers/EventController.js';
-import { Card } from './entities/Card.js';
-import { Event } from './entities/Event.js';
 import { LoginController } from './controllers/LoginController.js';
-import { Account } from './entities/Account.js';
-import { User } from './entities/User.js';
 import { setHeaders } from './middlewares/setHeaders.js';
 import { rejectIfContentTypeIsNot } from './middlewares/rejectIfContentTypeIsNot.js';
 import { validateAgainst } from './middlewares/validateAgainst.js';
@@ -37,7 +32,6 @@ import { ValidateTokenRequestSchema } from './middlewares/schema-validation/Vali
 import { ValidateTokenController } from './controllers/ValidateTokenController.js';
 import { AccountController } from './controllers/AccountController.js';
 import { TeamRequestSchema } from './middlewares/schema-validation/TeamRequestSchema.js';
-import { Lane } from './entities/Lane.js';
 import { LaneController } from './controllers/LaneController.js';
 import { LaneRequestSchema } from './middlewares/schema-validation/LaneRequestSchema.js';
 import { LanesRequestSchema } from './middlewares/schema-validation/LanesRequestSchema.js';
@@ -47,7 +41,6 @@ import { UserRequestSchema } from './middlewares/schema-validation/UserRequestSc
 import { CardRequestSchema } from './middlewares/schema-validation/CardRequestSchema.js';
 import { ForecastController } from './controllers/ForecastController.js';
 import { DatabaseHelper } from './helpers/DatabaseHelper.js';
-import { Schema } from './entities/Schema.js';
 import { SchemaController } from './controllers/SchemaController.js';
 import { SchemaRequestSchema } from './middlewares/schema-validation/SchemaRequestSchema.js';
 import { BoardRequestSchema } from './middlewares/schema-validation/BoardRequestSchema.js';
@@ -55,16 +48,8 @@ import { UserUpdateRequestSchema } from './middlewares/schema-validation/UserUpd
 import { PasswordRequestSchema } from './middlewares/schema-validation/PasswordRequestSchema.js';
 import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
-import { Team } from './entities/Team.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
 import { LaneStatisticsController } from './controllers/LaneStatisticsController.js';
-
-export const database = new DataSource({
-  type: 'mongodb',
-  url: process.env.MONGODB_URI,
-  useUnifiedTopology: true,
-  entities: [Team, Account, User, Card, Lane, Event, Schema],
-});
 
 /* spinning up express */
 export const app = express();
@@ -91,9 +76,7 @@ app.use(cors(corsOptions));
 try {
   log.info('initialise database connection');
 
-  await database.initialize();
-
-  await DatabaseHelper.connect();
+  await DatabaseHelper.connect(process.env.MONGODB_URI!);
 
   log.info('database connection established');
 

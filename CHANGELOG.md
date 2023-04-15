@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-15
+
+- The database connection has been moved to a separate file from the `worker.ts` module. This change prevents issues that could occur if other components (e.g. a worker thread) import the datasource, which could inadvertently re-initialize the Express server.
+- Fixed minor issues with TypeORM `0.3.15`. The good news is that TypeORM now supports the latest MongoDB drivers. The separate `MongoClient` client used for reporting has now been initialized with the correct types.
+
 ## 2023-04-11
 
 - Revised the opportunity history view, text size and the layout is improved for readability.

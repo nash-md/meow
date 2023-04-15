@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { Account } from '../entities/Account.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 
 const create = async (
   req: AuthenticatedRequest,
@@ -16,7 +16,7 @@ const create = async (
       account.attributes = req.body.attributes;
     }
 
-    const updated = await database.manager.save(account);
+    const updated = await datasource.manager.save(account);
 
     return res.json(updated);
   } catch (error) {
@@ -43,7 +43,7 @@ const update = async (
         account.attributes = req.body.attributes;
       }
 
-      const updated = await database.manager.save(account);
+      const updated = await datasource.manager.save(account);
 
       return res.json(updated);
     }

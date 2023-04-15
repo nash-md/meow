@@ -6,8 +6,8 @@ import { User, UserStatus } from '../entities/User.js';
 import { AuthenticationFailedError } from '../errors/AuthenticationFailedError.js';
 import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
 import { TokenHelper } from '../helpers/TokenHelper.js';
-import { log } from '../logger.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
+import { ObjectId } from 'mongodb';
 
 const handle = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,11 +16,14 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
     if (req.body.token) {
       const payload = TokenHelper.verifyJwt(req.body.token);
 
-      user = await database.manager.findOneById(User, payload.userId);
+      user = await datasource.manager.findOneById(
+        User,
+        new ObjectId(payload.userId)
+      );
     }
 
     if (req.body.name) {
-      user = await database.manager.findOneBy(User, {
+      user = await datasource.manager.findOneBy(User, {
         name: req.body.name,
       });
 
@@ -43,7 +46,10 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       throw new AuthenticationFailedError();
     }
 
-    const team = await database.manager.findOneById(Team, user.teamId);
+    const team = await datasource.manager.findOneById(
+      Team,
+      new ObjectId(user.teamId)
+    );
 
     if (!team) {
       throw new TeamNotFoundError('Team not found');
@@ -53,7 +59,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       token: TokenHelper.createJwt(user, SESSION_MAX_AGE),
       user: user,
       team: {
-        id: user.teamId,
+        id: user.teamId.toString(),
         currency: team.currency,
       },
       board: user.board,

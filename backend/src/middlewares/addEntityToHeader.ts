@@ -6,7 +6,8 @@ import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
 import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
+import { ObjectId } from 'mongodb';
 
 export const addEntityToHeader = async (
   request: AuthenticatedRequest,
@@ -20,7 +21,10 @@ export const addEntityToHeader = async (
       return next(new InvalidHeaderError());
     }
 
-    const team = await database.manager.findOneById(Team, teamId);
+    const team = await datasource.manager.findOneById(
+      Team,
+      new ObjectId(teamId)
+    );
 
     if (!team) {
       return next(new TeamNotFoundError());
@@ -30,7 +34,10 @@ export const addEntityToHeader = async (
       return next(new InvalidHeaderError());
     }
 
-    const user = await database.manager.findOneById(User, userId);
+    const user = await datasource.manager.findOneById(
+      User,
+      new ObjectId(userId)
+    );
 
     if (!user) {
       return next(new UserNotFoundError());

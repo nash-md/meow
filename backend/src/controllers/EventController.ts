@@ -5,7 +5,7 @@ import { Event, EventType } from '../entities/Event.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 
 const list = async (
@@ -28,7 +28,7 @@ const list = async (
       },
     };
 
-    const events = await database.getMongoRepository(Event).findBy(query);
+    const events = await datasource.getMongoRepository(Event).find(query);
 
     return res.json(events);
   } catch (error) {
@@ -79,9 +79,9 @@ const create = async (
 
     entity.updatedAt = new Date();
 
-    await database.manager.save(entity);
+    await datasource.manager.save(entity);
 
-    const updated = await database.manager.save(event);
+    const updated = await datasource.manager.save(event);
 
     return res.json(updated);
   } catch (error) {

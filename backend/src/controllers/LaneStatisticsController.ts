@@ -31,7 +31,8 @@ const getActiveStatisticsByLanes = async (
   teamId: string,
   lanes: Lane[],
   filter?: Set<FilterMode>,
-  userId?: string
+  userId?: string,
+  filterText?: string
 ) => {
   const direct = DatabaseHelper.get();
   const collection = direct.collection('Cards');
@@ -46,6 +47,10 @@ const getActiveStatisticsByLanes = async (
 
   if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
     match.$match.userId = { $eq: userId.toString() };
+  }
+
+  if (filterText) {
+    match.$match.name = { $regex: RegExp(`${filterText}`, 'i') };
   }
 
   const threeDaysAgo = DateTime.local().startOf('day').minus({ days: 3 });
@@ -110,7 +115,8 @@ const getMovementStatisticsByLanes = async (
   teamId: string,
   lanes: Lane[],
   filter?: Set<FilterMode>,
-  userId?: string
+  userId?: string,
+  filterText?: string
 ) => {
   const direct = DatabaseHelper.get();
   const events = direct.collection('Events');
@@ -167,6 +173,12 @@ const getMovementStatisticsByLanes = async (
 
   if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
     matchNotDeletedAndFound.$match['card.userId'] = { $eq: userId.toString() };
+  }
+
+  if (filterText) {
+    matchNotDeletedAndFound.$match['card.name'] = {
+      $regex: RegExp(`${filterText}`, 'i'),
+    };
   }
 
   const projectLaneId = {
@@ -231,25 +243,30 @@ const get = async (
       ? parseFilterParameter(req.query.filter.toString())
       : undefined;
 
+    const filterText = req.query.text?.toString();
+
     const active = await getActiveStatisticsByLanes(
       teamId,
       lanes.filter((lane) => lane.tags.type === LaneType.Normal),
       filter,
-      userId
+      userId,
+      filterText
     );
 
     const won = await getMovementStatisticsByLanes(
       teamId,
       lanes.filter((lane) => lane.tags.type === LaneType.ClosedWon),
       filter,
-      userId
+      userId,
+      filterText
     );
 
     const lost = await getMovementStatisticsByLanes(
       teamId,
       lanes.filter((lane) => lane.tags.type === LaneType.ClosedLost),
       filter,
-      userId
+      userId,
+      filterText
     );
 
     return res.json({ active, lost, won });

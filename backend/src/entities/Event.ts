@@ -1,16 +1,16 @@
 import {
   Entity,
-  ObjectID,
   ObjectIdColumn,
   BeforeUpdate,
   BeforeInsert,
   Column,
+  ObjectId,
 } from 'typeorm';
 
 @Entity({ name: 'Events' })
 export class Event {
   @ObjectIdColumn()
-  id: ObjectID | undefined;
+  id: ObjectId | undefined;
 
   @Column()
   teamId: string;

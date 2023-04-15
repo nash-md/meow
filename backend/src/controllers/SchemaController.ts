@@ -3,7 +3,7 @@ import { Schema, SchemaType } from '../entities/Schema.js';
 import { InvalidSchemaPropertyError } from '../errors/InvalidSchemaPropertyError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 
 function parseSchemaType(value: unknown): SchemaType {
   switch (value) {
@@ -45,13 +45,13 @@ const create = async (
       },
     };
 
-    const schema = await database.getMongoRepository(Schema).findOneBy(query);
+    const schema = await datasource.getMongoRepository(Schema).findOneBy(query);
 
     if (schema) {
-      await database.manager.delete(Schema, schema.id);
+      await datasource.manager.delete(Schema, schema.id);
     }
 
-    const updated = await database.manager.save(
+    const updated = await datasource.manager.save(
       new Schema(
         req.jwt.team.id?.toString()!,
         parseSchemaType(req.body.type),

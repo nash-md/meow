@@ -22,7 +22,7 @@ const createJwt = (user: User, ttl: number): string => {
     iat: Date.now(),
     exp: Math.floor(Date.now() / 1000) + ttl,
     userId: user.id.toString(),
-    teamId: user.teamId,
+    teamId: user.teamId.toString(),
   };
 
   return sign(payload, process.env.SESSION_SECRET!);

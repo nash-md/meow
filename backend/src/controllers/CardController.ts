@@ -11,7 +11,7 @@ import { EntityHelper } from '../helpers/EntityHelper.js';
 import { RequestParser } from '../helpers/RequestParser.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { CardEventService } from '../services/CardEventService.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 
 function parseCardStatus(value: unknown): CardStatus {
   switch (value) {
@@ -54,7 +54,7 @@ const create = async (
         name: body.laneName,
       };
 
-      lane = await database.manager.findOneBy(Lane, query);
+      lane = await datasource.manager.findOneBy(Lane, query);
     }
 
     if (body.laneId) {
@@ -90,9 +90,9 @@ const create = async (
     ) {
       card.nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
     }
-    const updated = await database.manager.save(card);
+    const updated = await datasource.manager.save(card);
 
-    const cardEventService = new CardEventService(database);
+    const cardEventService = new CardEventService(datasource);
 
     cardEventService.add(updated, req.jwt.user);
 
@@ -152,7 +152,7 @@ const update = async (
       }
     }
 
-    const cardEventService = new CardEventService(database);
+    const cardEventService = new CardEventService(datasource);
 
     // TODO refactor, remove dependency from controller
     card = await cardEventService.update(body, card, req.jwt.user, user);
@@ -187,7 +187,7 @@ const update = async (
       }
     }
 
-    const updated = await database.manager.save(card);
+    const updated = await datasource.manager.save(card);
 
     return res.json(updated);
   } catch (error) {

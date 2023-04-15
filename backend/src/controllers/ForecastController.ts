@@ -7,7 +7,7 @@ import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { ForecastService } from '../services/ForecastService.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 
 const parseRange = (query: QueryString.ParsedQs) => {
   const end = DateTime.fromISO(`${query.end}T23:59:59Z`).toJSDate();
@@ -28,7 +28,7 @@ const achieved = async (
         ? req.query.userId.toString()
         : undefined;
 
-    const statisticService = new ForecastService(database);
+    const statisticService = new ForecastService(datasource);
 
     const forecast = await statisticService.getByLaneType(
       LaneType.ClosedWon,
@@ -56,7 +56,7 @@ const predicted = async (
         ? req.query.userId.toString()
         : undefined;
 
-    const statisticService = new ForecastService(database);
+    const statisticService = new ForecastService(datasource);
 
     const forecast = await statisticService.getByLaneType(
       LaneType.Normal,
@@ -92,7 +92,7 @@ const list = async (
         inForecast: true,
       };
 
-      const lanes = await database.manager.findBy(Lane, query);
+      const lanes = await datasource.getMongoRepository(Lane).find(query);
 
       const { start, end } = parseRange(req.query);
 
@@ -115,7 +115,7 @@ const list = async (
         },
       };
 
-      const lanes = await database.manager.findBy(Lane, query);
+      const lanes = await datasource.getMongoRepository(Lane).find(query);
 
       const { start, end } = parseRange(req.query);
 

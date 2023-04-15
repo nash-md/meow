@@ -7,8 +7,8 @@ import { InvalidUserPropertyError } from '../errors/InvalidUserPropertyError.js'
 import { UserInvalidError } from '../errors/UserInvalidError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { database } from '../worker.js';
-import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
+import { isValidName } from './RegisterControllerValidator.js';
 
 function parseUserStatus(value: unknown): UserStatus {
   switch (value) {
@@ -82,7 +82,7 @@ const update = async (
       }
     }
 
-    const updated = await database.manager.save(user);
+    const updated = await datasource.manager.save(user);
 
     return res.json(updated);
   } catch (error) {
@@ -108,7 +108,7 @@ const board = async (
 
     user.board = req.body;
 
-    await database.manager.save(user);
+    await datasource.manager.save(user);
 
     return res.json({ done: true });
   } catch (error) {
@@ -132,7 +132,7 @@ const create = async (
 
     user.invite = generateInviteCode(8);
 
-    const updated = await database.manager.save(user);
+    const updated = await datasource.manager.save(user);
 
     return res.json(updated);
   } catch (error) {
@@ -174,7 +174,7 @@ const password = async (
       req.body.updated
     );
 
-    const updated = await database.manager.save(user);
+    const updated = await datasource.manager.save(user);
 
     return res.json(updated);
   } catch (error) {

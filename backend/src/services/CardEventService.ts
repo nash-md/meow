@@ -216,6 +216,7 @@ export class CardEventService {
         {
           from: card.laneId,
           to: body.laneId,
+          inLaneSince: card.inLaneSince,
         }
       );
 

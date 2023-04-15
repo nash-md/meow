@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { Lane, LaneRequest } from '../entities/Lane.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 
 const list = async (
   req: AuthenticatedRequest,
@@ -35,7 +35,7 @@ const update = async (
       lane.name = req.body.name;
       lane.tags = req.body.tags;
 
-      const updated = await database.manager.save(lane);
+      const updated = await datasource.manager.save(lane);
 
       return res.json(updated);
     }
@@ -61,7 +61,7 @@ const updateAll = async (
 
     await Promise.all(
       lanesToDelete.map(async (lane: Lane) => {
-        await database.manager.delete(Lane, lane.id);
+        await datasource.manager.delete(Lane, lane.id);
       })
     );
 
@@ -70,7 +70,7 @@ const updateAll = async (
     await Promise.all(
       req.body.map(async (item: LaneRequest) => {
         if (!item.id) {
-          const lane = await database.manager.save(
+          const lane = await datasource.manager.save(
             new Lane(
               req.jwt.team.id!.toString(), // TODO, typecast to string on Express middleware
               item.name,
@@ -97,7 +97,7 @@ const updateAll = async (
             lane.tags = item.tags ?? {};
           }
 
-          const updated = await database.manager.save(lane);
+          const updated = await datasource.manager.save(lane);
 
           list.push(updated!);
         }

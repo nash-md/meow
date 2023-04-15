@@ -1,16 +1,16 @@
 import {
   Entity,
-  ObjectID,
   ObjectIdColumn,
   BeforeUpdate,
   BeforeInsert,
   Column,
+  ObjectId,
 } from 'typeorm';
 
 @Entity({ name: 'Schemas' })
 export class Schema {
   @ObjectIdColumn()
-  id: ObjectID | undefined;
+  id: ObjectId | undefined;
 
   @Column()
   teamId: string;

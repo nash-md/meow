@@ -17,7 +17,7 @@ import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { log } from '../logger.js';
-import { database } from '../worker.js';
+import { datasource } from '../helpers/DatabaseHelper.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
 
 const invite = async (req: Request, res: Response, next: NextFunction) => {
@@ -69,21 +69,21 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       user.invite = null;
       user.status = UserStatus.Enabled;
 
-      await database.manager.save(user);
+      await datasource.manager.save(user);
 
       return res.json({ welcome: true });
     }
 
     await isValidName(name);
 
-    const team = await database.manager.save(
+    const team = await datasource.manager.save(
       new Team(`${name}'s Team`, CurrencyCode.USD)
     );
 
     const lanes: Lane[] = [];
 
     for (const [index, item] of DefaultLanes.entries()) {
-      const lane = await database.manager.save(
+      const lane = await datasource.manager.save(
         new Lane(
           team.id!.toString(),
           item.name,
@@ -97,7 +97,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       lanes.push(lane);
     }
 
-    database.manager.save(
+    datasource.manager.save(
       Schema,
       new Schema(
         team.id!.toString(),
@@ -106,7 +106,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       )
     );
 
-    database.manager.save(
+    datasource.manager.save(
       Schema,
       new Schema(
         team.id!.toString(),
@@ -119,7 +119,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     user.password = await new PasswordAuthenticationProvider().create(password);
 
-    const updated = await database.manager.save(user);
+    const updated = await datasource.manager.save(user);
 
     await Promise.all(
       DefaultCards.map(async (item, index) => {
@@ -129,7 +129,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
           .plus({ days: 1 })
           .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
-        await database.manager.save(
+        await datasource.manager.save(
           new Card(
             team.id!.toString(),
             updated.id!.toString(),

@@ -4,10 +4,10 @@ import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 
 export class ForecastService {
-  database: DataSource;
+  datasource: DataSource;
 
-  constructor(database: DataSource) {
-    this.database = database;
+  constructor(datasource: DataSource) {
+    this.datasource = datasource;
   }
 
   async getByLaneType(
@@ -31,7 +31,7 @@ export class ForecastService {
       query.inForecast = true;
     }
 
-    const lanes = await this.database.manager.findBy(Lane, query);
+    const lanes = await this.datasource.getMongoRepository(Lane).find(query);
 
     const match: any = {
       $match: {
@@ -61,7 +61,9 @@ export class ForecastService {
 
     const list = await cursor.toArray();
 
-    const payload = list[0] ? list[0] : { amount: 0, count: 0 };
+    const payload = list[0]
+      ? { amount: list[0].amount, count: list[0].count }
+      : { amount: 0, count: 0 };
 
     return payload;
   }
