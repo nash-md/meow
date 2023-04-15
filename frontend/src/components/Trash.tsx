@@ -1,4 +1,5 @@
 import { Droppable } from 'react-beautiful-dnd';
+import { TrashIcon } from './TrashIcon';
 
 export const Trash = () => {
   return (
@@ -7,16 +8,15 @@ export const Trash = () => {
         return (
           <div
             id="trash"
-            className={`trash ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             style={{
               visibility: 'hidden',
-              backgroundImage: snaphot.isDraggingOver
-                ? 'url("/trash-icon-white.svg")'
-                : 'url("/trash-icon-white.svg")',
             }}
+            className={`trash ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             ref={provided.innerRef}
             {...provided.droppableProps}
-          ></div>
+          >
+            <TrashIcon />
+          </div>
         );
       }}
     </Droppable>

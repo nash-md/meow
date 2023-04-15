@@ -188,15 +188,19 @@ h3 {
 
 .trash {
   width: 100%;
+  color: var(--spectrum-global-color-gray-600);
   border: 1px dashed var(--spectrum-global-color-gray-600);
   background-color: var(--spectrum-global-color-gray-200);
   opacity: 1;
   height: 60px;
-  line-height: 60px;
   background-position: center center;
   background-repeat: no-repeat;
   text-align: center;
   box-sizing: border-box;
+  display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trash h4 {
@@ -206,8 +210,9 @@ h3 {
 }
 
 .trash.drag-over {
-  border: 1px dashed var(--spectrum-global-color-static-red-500);
-  background-color: var(--spectrum-global-color-gray-200);
+  border: 1px solid var(--spectrum-global-color-static-red-400);
+  background-color: var(--spectrum-global-color-static-red-400);
+  color: white;
 }
 
 .board .lane {
@@ -282,7 +287,32 @@ h3 {
 }
 
 .board .title .filters-canvas {
-  padding-top: 25px;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.board .title .filters-canvas > div:nth-child(1) {
+  flex-grow: 1;
+}
+
+.board .title .filters-canvas > div:nth-child(2) {
+  flex-shrink: 0;
+}
+
+.board .title .filters-canvas input[type='text'] {
+  background-color: var(--spectrum-global-color-gray-200);
+  border: none;
+  padding: 5px 8px 5px 8px;
+  font: inherit;
+  color: inherit;
+  box-shadow: none;
+  outline: none;
+  width: 300px;
+  font-size: 1.2em;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .board button.filter {
