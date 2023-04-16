@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { Lane as LaneInterface, LaneStatistic } from '../interfaces/Lane';
-import { FilterMode } from '../pages/HomePage';
 import { StatisticLane } from './StatisticLane';
+import { useSelector } from 'react-redux';
+import { selectFilters } from '../store/Store';
 
 export interface BoardProps {
   lanes: LaneInterface[];
-  filters: Set<FilterMode>;
 }
 
 export interface BoardStatistics {
@@ -14,14 +14,16 @@ export interface BoardStatistics {
   won: { count: number; amount: number; id: string }[];
   lost: { count: number; amount: number; id: string }[];
 }
-export const StatisticsBoard = ({ lanes, filters }: BoardProps) => {
+export const StatisticsBoard = ({ lanes }: BoardProps) => {
   const { client } = useContext(RequestHelperContext);
   const [statistics, setStatistics] = useState<BoardStatistics | undefined>();
+
+  const filters = useSelector(selectFilters);
 
   useEffect(() => {
     if (client) {
       client
-        .getLanesStatistic(filters)
+        .getLanesStatistic(filters.mode, filters.text)
         .then((payload) => {
           setStatistics(payload);
         })

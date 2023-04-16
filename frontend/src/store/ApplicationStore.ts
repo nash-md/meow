@@ -6,6 +6,7 @@ import { Lane } from '../interfaces/Lane';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode } from '../interfaces/Team';
 import { User } from '../interfaces/User';
+import { FilterMode } from '../pages/HomePage';
 
 export interface ApplicationStore {
   users: User[];
@@ -32,5 +33,9 @@ export interface ApplicationStore {
     id: undefined | Card['id'] | Lane['id'] | Account['id'];
     modal: 'success' | 'error' | undefined;
     text: string | undefined;
+    filters: {
+      text: string | undefined;
+      mode: FilterMode[];
+    };
   };
 }

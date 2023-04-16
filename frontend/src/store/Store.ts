@@ -38,23 +38,34 @@ export const selectAccount = (
   store: ApplicationStore,
   id: string | undefined
 ) => store.accounts.find((account) => account.id === id);
-export const selectUsers = (store: RootState) => store.users;
+export const selectUsers = (store: ApplicationStore) => store.users;
 export const selectUser = (store: ApplicationStore, id: string | undefined) =>
   store.users.find((user) => user.id === id);
-export const selectLanes = (store: RootState) => store.lanes;
+export const selectLanes = (store: ApplicationStore) => store.lanes;
 export const selectLane = (store: ApplicationStore, id: string) =>
   store.lanes.find((lane) => lane.id === id);
-export const selectSchemas = (store: RootState) => store.schemas;
+export const selectSchemas = (store: ApplicationStore) => store.schemas;
 export const selectSchemaByType = (store: ApplicationStore, type: SchemaType) =>
   store.schemas.find((schema) => schema.type === type);
-export const selectName = (store: RootState) => store.session.user?.name;
-export const selectUserId = (store: RootState) => store.session.user?.id;
-export const selectAnimal = (store: RootState) => store.session.user?.animal;
-export const selectCurrency = (store: RootState) => store.session.team.currency;
-export const selectTeamId = (store: RootState) => store.session.team.id;
-export const selectInterfaceState = (store: RootState) => store.ui.state;
-export const selectInterfaceStateId = (store: RootState) => store.ui.id;
-export const selectModal = (store: RootState) => store.ui.modal;
-export const selectModalText = (store: RootState) => store.ui.text;
+export const selectName = (store: ApplicationStore) => store.session.user?.name;
+export const selectUserId = (store: ApplicationStore) => store.session.user?.id;
+export const selectAnimal = (store: ApplicationStore) =>
+  store.session.user?.animal;
+export const selectCurrency = (store: ApplicationStore) =>
+  store.session.team.currency;
+export const selectTeamId = (store: ApplicationStore) => store.session.team.id;
+export const selectInterfaceState = (store: ApplicationStore) => store.ui.state;
+export const selectInterfaceStateId = (store: ApplicationStore) => store.ui.id;
+export const selectModal = (store: ApplicationStore) => store.ui.modal;
+export const selectModalText = (store: ApplicationStore) => store.ui.text;
 export const selectCard = (store: ApplicationStore, id: string | undefined) =>
   store.cards.find((card) => card.id === id);
+export const selectFilters = (store: ApplicationStore) => {
+  return {
+    mode: new Set(store.ui.filters.mode),
+    text: store.ui.filters.text,
+  };
+};
+
+export const selectFilterText = (store: ApplicationStore) =>
+  store.ui.filters.text;

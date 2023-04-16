@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
 import { Card as CardComponent } from './Card';
 import { Lane as LaneInterface, LaneType } from '../interfaces/Lane';
 import {
   selectBoardByLaneId,
   selectCards,
+  selectFilters,
   selectUserId,
   store,
 } from '../store/Store';
@@ -42,7 +42,7 @@ const getCard = (
   lane: LaneInterface,
   cards: Card[],
   id: string,
-  filters: Set<FilterMode>,
+  filters: { mode: Set<FilterMode>; text?: string },
   userId?: string
 ) => {
   const card = cards.find((listItem) => listItem.id === id)!;
@@ -56,23 +56,41 @@ const getCard = (
     : undefined;
 
   if (
-    filters.has(FilterMode.RecentlyUpdated) &&
+    filters.mode.has(FilterMode.RecentlyUpdated) &&
     updatedAt &&
     updatedAt < DateTime.now().startOf('day').minus({ days: 3 })
   ) {
     return;
   }
 
-  if (filters.has(FilterMode.RequireUpdate) && lane.tags?.type !== 'normal') {
+  if (
+    filters.mode.has(FilterMode.RequireUpdate) &&
+    lane.tags?.type !== 'normal'
+  ) {
     return;
   }
 
-  if (filters.has(FilterMode.RequireUpdate) && !CardHelper.isOverDue(card)) {
+  if (
+    filters.mode.has(FilterMode.RequireUpdate) &&
+    !CardHelper.isOverDue(card)
+  ) {
     return;
   }
 
-  if (filters.has(FilterMode.OwnedByMe) && card.userId !== userId) {
+  if (filters.mode.has(FilterMode.OwnedByMe) && card.userId !== userId) {
     return;
+  }
+
+  if (filters.text) {
+    const regex = new RegExp(`${filters.text}`, 'i');
+
+    if (regex.test(lane.name)) {
+      return card;
+    }
+
+    if (!regex.test(card.name)) {
+      return;
+    }
   }
 
   return card;
@@ -81,12 +99,12 @@ const getCard = (
 export interface LaneProps {
   lane: LaneInterface;
   numberOfLanes: number;
-  filters: Set<FilterMode>;
 }
 
-export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
+export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
   const cards = useSelector(selectCards);
   const userId = useSelector(selectUserId); // TODO a full session user should be part of the store
+  const filters = useSelector(selectFilters);
 
   const list = useSelector((store: ApplicationStore) =>
     selectBoardByLaneId(store, lane.id)
@@ -117,6 +135,7 @@ export const Lane = ({ lane, numberOfLanes, filters }: LaneProps) => {
           <Currency value={sum} />
         </b>
       </div>
+
       <Droppable droppableId={lane.id}>
         {(provided, snaphot) => {
           return (

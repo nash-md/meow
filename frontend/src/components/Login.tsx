@@ -40,7 +40,7 @@ export const Login = () => {
       console.error(error);
 
       if (error instanceof RequestError) {
-        const parsed = await error.response.json();
+        const parsed = await error.response.json(); // TODO parse can fail and should have a catch
 
         const text = parsed.description ? parsed.description : parsed.name;
 

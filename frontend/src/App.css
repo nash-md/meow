@@ -281,16 +281,25 @@ h3 {
   padding: 20px;
 }
 
-.board .title div:first-child {
+.board .title > div:first-child {
   display: flex;
   flex-direction: row;
 }
 
+.board .title .sum {
+  display: flex;
+  flex-direction: row;
+  padding-top: 10px;
+  padding-bottom: 30px;
+  align-items: center;
+}
+
 .board .title .filters-canvas {
-  padding-top: 40px;
+  padding-top: 0px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  align-content: center;
 }
 
 .board .title .filters-canvas > div:nth-child(1) {
@@ -305,11 +314,13 @@ h3 {
   background-color: var(--spectrum-global-color-gray-200);
   border: none;
   padding: 5px 8px 5px 8px;
+  box-sizing: border-box;
   font: inherit;
   color: inherit;
   box-shadow: none;
   outline: none;
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   font-size: 1.2em;
   line-height: 1.5;
   font-weight: 500;

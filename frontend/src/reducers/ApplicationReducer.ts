@@ -98,8 +98,13 @@ export const application = (state = Default, action: ApplicationAction) => {
           ...state.ui,
           modal: undefined,
           text: undefined,
+          filters: {
+            mode: [],
+            text: '',
+          },
         },
       };
+
     case ActionType.LOGOUT:
       return {
         ...state,
@@ -118,6 +123,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         board: {},
         schemas: [],
       };
+
     case ActionType.USERS:
       return {
         ...state,
@@ -165,6 +171,9 @@ export const application = (state = Default, action: ApplicationAction) => {
           id: undefined,
           modal: undefined,
           text: undefined,
+          filters: {
+            ...state.ui.filters,
+          },
         },
         board: {
           ...state.board,
@@ -269,6 +278,9 @@ export const application = (state = Default, action: ApplicationAction) => {
           id: undefined,
           modal: undefined,
           text: undefined,
+          filters: {
+            ...state.ui.filters,
+          },
         },
       };
 
@@ -311,6 +323,7 @@ export const application = (state = Default, action: ApplicationAction) => {
           }),
         ],
       };
+
     case ActionType.BROWSER_STATE:
       return {
         ...state,
@@ -324,6 +337,9 @@ export const application = (state = Default, action: ApplicationAction) => {
           id: action.payload.id,
           modal: state.ui.modal,
           text: undefined,
+          filters: {
+            ...state.ui.filters,
+          },
         },
       };
 
@@ -336,6 +352,19 @@ export const application = (state = Default, action: ApplicationAction) => {
           text: action.payload.text,
         },
       };
+
+    case ActionType.FILTER_UPDATE:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          filters: {
+            mode: [...action.payload.mode],
+            text: action.payload.text,
+          },
+        },
+      };
+
     default:
       return state;
   }

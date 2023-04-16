@@ -43,7 +43,7 @@ export class RequestHelper {
       segments.push(strip(segment));
     }
 
-    return `${segments.join('/')}`;
+    return `${segments.join('/')}`; // TODO migrate to URL class
   }
 
   getHeaders(method: 'POST' | 'GET' | 'DELETE') {
@@ -198,16 +198,20 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async getLanesStatistic(filter?: Set<FilterMode>) {
-    let url = this.getUrl(`/api/lanes/statistic`);
+  async getLanesStatistic(filter?: Set<FilterMode>, text?: string) {
+    let url = new URL(this.getUrl(`/api/lanes/statistic`));
 
     if (filter && filter.size > 0) {
       const list = Array.from(filter).map((mode) => mode.toString());
 
-      url += `?filter=${list.join(',')}`;
+      url.searchParams.append('filter', list.join(','));
     }
 
-    return this.doFetch(url, 'GET');
+    if (text) {
+      url.searchParams.append('text', text);
+    }
+
+    return this.doFetch(url.toString(), 'GET');
   }
 
   async updateLane(lane: Lane) {
@@ -333,7 +337,7 @@ export class RequestHelper {
         start: start.toISODate(),
         end: end.toISODate(),
         userId: userId,
-        mode: mode,
+        mode: mode.toString(),
       })}`
     );
 

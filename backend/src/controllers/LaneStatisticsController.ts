@@ -164,6 +164,23 @@ const getMovementStatisticsByLanes = async (
     },
   };
 
+  const lookupLane = {
+    $lookup: {
+      from: 'Lanes',
+      let: { laneId: { $toObjectId: '$latest.body.to' } },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $eq: ['$_id', '$$laneId'],
+            },
+          },
+        },
+      ],
+      as: 'lane',
+    },
+  };
+
   const matchNotDeletedAndFound: any = {
     $match: {
       'card.status': { $ne: CardStatus.Deleted },
@@ -176,11 +193,12 @@ const getMovementStatisticsByLanes = async (
   }
 
   if (filterText) {
-    matchNotDeletedAndFound.$match['card.name'] = {
-      $regex: RegExp(`${filterText}`, 'i'),
-    };
+    matchNotDeletedAndFound.$match.$or = [
+      { 'card.name': { $regex: RegExp(`${filterText}`, 'i') } },
+      { 'lane.name': { $regex: RegExp(`${filterText}`, 'i') } },
+    ];
   }
-
+  console.log(JSON.stringify(matchNotDeletedAndFound));
   const projectLaneId = {
     $project: {
       _id: 1,
@@ -216,6 +234,7 @@ const getMovementStatisticsByLanes = async (
     groupByCardId,
     matchLatestLaneMove,
     lookupCard,
+    lookupLane,
     matchNotDeletedAndFound,
     projectLaneId,
     unwind,

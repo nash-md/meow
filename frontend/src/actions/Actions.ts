@@ -6,6 +6,7 @@ import { Lane } from '../interfaces/Lane';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode } from '../interfaces/Team';
 import { User } from '../interfaces/User';
+import { FilterMode } from '../pages/HomePage';
 import { ApplicationStore } from '../store/ApplicationStore';
 
 export enum ActionType {
@@ -30,6 +31,7 @@ export enum ActionType {
   BROWSER_STATE = 'BROWSER_STATE',
   USER_INTERFACE_STATE = 'USER_INTERFACE_STATE',
   USER_INTERFACE_MODAL = 'USER_INTERFACE_MODAL',
+  FILTER_UPDATE = 'FILTER_UPDATE',
 }
 
 export interface Action<T extends ActionType> {
@@ -144,6 +146,14 @@ export interface ApplicationUserInterfaceModalAction
   };
 }
 
+export interface ApplicationFilterAction
+  extends Action<ActionType.FILTER_UPDATE> {
+  payload: {
+    mode: FilterMode[];
+    text?: string;
+  };
+}
+
 export type ApplicationAction =
   | ApplicationPageLoadAction
   | ApplicationLoginAction
@@ -165,7 +175,8 @@ export type ApplicationAction =
   | ApplicationLaneUpdateAction
   | ApplicationBrowserStateAction
   | ApplicationUserInterfaceStateAction
-  | ApplicationUserInterfaceModalAction;
+  | ApplicationUserInterfaceModalAction
+  | ApplicationFilterAction;
 
 export function showModalSuccess(text?: string) {
   return {
@@ -200,4 +211,11 @@ export function pageLoadWithError(text: string, token?: string) {
     type: ActionType.PAGE_LOAD,
     payload: { modal: 'error', text: text, token },
   } as ApplicationPageLoadAction;
+}
+
+export function updateFilter(filter: Set<FilterMode>, text?: string) {
+  return {
+    type: ActionType.FILTER_UPDATE,
+    payload: { mode: Array.from(filter.values()), text: text },
+  } as ApplicationFilterAction;
 }

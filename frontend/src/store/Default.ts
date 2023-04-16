@@ -25,5 +25,9 @@ export const Default: ApplicationStore = {
     id: undefined,
     modal: undefined,
     text: undefined,
+    filters: {
+      text: '',
+      mode: [],
+    },
   },
 };
