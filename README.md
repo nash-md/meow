@@ -1,4 +1,4 @@
-# Meow - Open Sales Funnel
+# Meow - Open Sales Pipeline
 
 Welcome to the world of free sales funnel management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the funnel. Meow was built to simplify your sales process, giving you a bird's eye view of your entire funnel.
 

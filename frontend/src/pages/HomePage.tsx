@@ -4,11 +4,12 @@ import { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   selectCards,
+  selectFilters,
   selectInterfaceState,
   selectLanes,
   store,
 } from '../store/Store';
-import { ActionType } from '../actions/Actions';
+import { ActionType, updateFilter } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
@@ -32,25 +33,29 @@ export const HomePage = () => {
   const cards = useSelector(selectCards);
   const lanes = useSelector(selectLanes);
   const state = useSelector(selectInterfaceState);
-  const [filters, setFilters] = useState<Set<FilterMode>>(new Set());
+  const filters = useSelector(selectFilters);
+
   const [mode, setMode] = useState<'board' | 'statistics'>('board');
+  const [text, setText] = useState<string>('');
 
   const { client } = useContext(RequestHelperContext);
 
   const navigate = useNavigate();
 
   const handleFilterToggle = (key: FilterMode) => {
-    console.log(key);
-
-    const updated = new Set(filters);
+    const updated = new Set(filters.mode);
     if (updated.has(key)) {
       updated.delete(key);
     } else {
       updated.add(key);
     }
 
-    setFilters(updated);
+    store.dispatch(updateFilter(updated, text));
   };
+
+  useEffect(() => {
+    store.dispatch(updateFilter(new Set(filters.mode), text));
+  }, [text]);
 
   // TODO combine this to one call
   useEffect(() => {
@@ -180,7 +185,7 @@ export const HomePage = () => {
       <div className="board">
         <div className="title">
           <div>
-            <div>
+            <div className="sum">
               {mode === 'board' && (
                 <button
                   className="statistics-button"
@@ -205,46 +210,56 @@ export const HomePage = () => {
                 {getTitle(cards)} -
                 <Currency value={amount} />
               </h2>
-            </div>
-            <div style={{ paddingLeft: '10px' }}>
-              <Button variant="primary" onPress={() => showCardDetail()}>
-                Add
-              </Button>
+
+              <div style={{ paddingLeft: '10px' }}>
+                <Button variant="primary" onPress={() => showCardDetail()}>
+                  Add
+                </Button>
+              </div>
             </div>
           </div>
+
           <div className="filters-canvas">
-            <button
-              className={`filter ${
-                filters.has(FilterMode.RecentlyUpdated)
-                  ? 'recently-updated-active'
-                  : 'recently-updated'
-              }`}
-              onClick={() => handleFilterToggle(FilterMode.RecentlyUpdated)}
-            >
-              Recently Updated
-            </button>
+            <div>
+              <input
+                onChange={(event) => setText(event.target.value)}
+                placeholder="Search by name or stage"
+                type="text"
+              />
+            </div>
 
-            <button
-              className={`filter ${
-                filters.has(FilterMode.OwnedByMe)
-                  ? 'owned-by-me-active'
-                  : 'owned-by-me'
-              }`}
-              onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
-            >
-              Only My Opportunities
-            </button>
-
-            <button
-              className={`filter ${
-                filters.has(FilterMode.RequireUpdate)
-                  ? 'require-update-active'
-                  : 'require-update'
-              }`}
-              onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}
-            >
-              Requires Update
-            </button>
+            <div>
+              <button
+                className={`filter ${
+                  filters.mode.has(FilterMode.RecentlyUpdated)
+                    ? 'recently-updated-active'
+                    : 'recently-updated'
+                }`}
+                onClick={() => handleFilterToggle(FilterMode.RecentlyUpdated)}
+              >
+                Recently Updated
+              </button>
+              <button
+                className={`filter ${
+                  filters.mode.has(FilterMode.OwnedByMe)
+                    ? 'owned-by-me-active'
+                    : 'owned-by-me'
+                }`}
+                onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
+              >
+                Only My Opportunities
+              </button>
+              <button
+                className={`filter ${
+                  filters.mode.has(FilterMode.RequireUpdate)
+                    ? 'require-update-active'
+                    : 'require-update'
+                }`}
+                onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}
+              >
+                Requires Update
+              </button>
+            </div>
           </div>
         </div>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
@@ -253,10 +268,8 @@ export const HomePage = () => {
           </div>
 
           <div className="lanes">
-            {mode === 'board' && <Board filters={filters} lanes={lanes} />}
-            {mode === 'statistics' && (
-              <StatisticsBoard filters={filters} lanes={lanes} />
-            )}
+            {mode === 'board' && <Board lanes={lanes} />}
+            {mode === 'statistics' && <StatisticsBoard lanes={lanes} />}
           </div>
         </DragDropContext>
       </div>

@@ -191,7 +191,7 @@ export const LanesCanvas = () => {
 
   return (
     <div className="content-box">
-      <h2>Funnel</h2>
+      <h2>Stages</h2>
 
       <div className="setup-funnel">
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>

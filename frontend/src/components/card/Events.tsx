@@ -120,7 +120,7 @@ export const Events = ({ id, entity }: EventsProps) => {
           <div key={event.id} className="event-item">
             <div className="headline">
               <div>
-                <Avatar id={card?.userId} width={30} />
+                <Avatar id={event.userId} width={30} />
                 <div className="name">{user?.name}</div>
               </div>
 

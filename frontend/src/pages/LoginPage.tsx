@@ -5,6 +5,7 @@ import { ErrorModal } from '../components/ErrorModal';
 import { Login } from '../components/Login';
 import { Register } from '../components/Register';
 import { RegisterWithInvite } from '../components/RegisterWithInvite';
+import ScreenResolutionWarning from '../ScreenResolutionWarning';
 
 export default function LoginPage() {
   const [invite, setInvite] = useState<string>('');
@@ -45,6 +46,7 @@ export default function LoginPage() {
         ) : (
           <RegisterWithInvite invite={invite} />
         )}
+        <ScreenResolutionWarning message="This application is built for desktops, small screens are not supported." />
       </div>
       <ErrorModal />
     </>

@@ -27,7 +27,7 @@ h3 {
 
 .welcome-page {
   margin: auto;
-  width: 550px;
+  max-width: 550px;
   padding-top: 50px;
   height: 100vh;
   padding: 20px;
@@ -35,7 +35,14 @@ h3 {
 
 .welcome-page .login {
   display: flex;
+  flex-direction: column;
   padding-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .welcome-page .login {
+    flex-direction: row;
+  }
 }
 
 .welcome-page .login > div {
@@ -44,7 +51,14 @@ h3 {
 
 .welcome-page .register {
   display: flex;
+  flex-direction: column;
   padding-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .welcome-page .register {
+    flex-direction: row;
+  }
 }
 
 .welcome-page .register > div {
@@ -1026,4 +1040,13 @@ h3 {
 .lane .statistics-canvas span {
   color: var(--spectrum-global-color-gray-400);
   font-size: 1.4em;
+}
+
+.screen-resolution-warning {
+  background-color: var(--spectrum-global-color-red-400);
+  color: white;
+  text-align: center;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 10px;
 }

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-18
+
+- Added a screen resolution warning at login, emphasizing that the application is currently designed for desktop use only.
+- Enabled full-text search on the frontend, allowing users to easily search for opportunities or stage names from the top-left corner of their dashboard.
+
 ## 2023-04-15
 
 - The database connection has been moved to a separate file from the `worker.ts` module. This change prevents issues that could occur if other components (e.g. a worker thread) import the datasource, which could inadvertently re-initialize the Express server.
