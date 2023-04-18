@@ -199,7 +199,18 @@ export class RequestHelper {
   }
 
   async getLanesStatistic(filter?: Set<FilterMode>, text?: string) {
-    let url = new URL(this.getUrl(`/api/lanes/statistic`));
+    let url = undefined;
+
+    // TODO refactor
+    if (!this.url) {
+      url = new URL(this.getUrl(`/api/lanes/statistic`));
+    } else {
+      url = new URL(
+        `${window.location.protocol}//${window.location.host}${this.getUrl(
+          `/api/lanes/statistic`
+        )}`
+      );
+    }
 
     if (filter && filter.size > 0) {
       const list = Array.from(filter).map((mode) => mode.toString());
