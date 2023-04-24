@@ -7,9 +7,9 @@ import {
 } from '@internationalized/date';
 import { DateRangePicker, Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
-import { selectUsers, store } from '../store/Store';
+import { selectInterfaceState, selectUsers, store } from '../store/Store';
 import { useSelector } from 'react-redux';
-import { showModalError } from '../actions/Actions';
+import { ActionType, showModalError } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { DateTime, Interval } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
@@ -18,6 +18,8 @@ import { Card } from '../interfaces/Card';
 import { ForecastSpacer } from '../components/card/ForecastSpacer';
 import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
+import { Layer as CardLayer } from '../components/card/Layer';
+import { UserStatus } from '../interfaces/User';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -45,6 +47,7 @@ export const ForecastPage = () => {
   const [mode, setMode] = useState<'achieved' | 'predicted'>('achieved');
   const [list, setList] = useState([]);
   const users = useSelector(selectUsers);
+  const state = useSelector(selectInterfaceState);
 
   const setRange = (range: { start: CalendarDate; end: CalendarDate }) => {
     setEnd(range.end);
@@ -105,158 +108,189 @@ export const ForecastPage = () => {
     }
   }, [client, start, end, userId, mode]);
 
+  useEffect(() => {
+    const execute = async () => {
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
+      });
+    };
+
+    if (client) {
+      execute();
+    }
+  }, [client]);
+
+  // TODO move to helper or entity
   const getAge = (start: DateTime, end: DateTime) => {
     return start < end
       ? `${Interval.fromDateTimes(start, end).length('days').toFixed(2)} days`
       : '-';
   };
 
+  const showCardDetail = (id?: string) => {
+    store.dispatch({
+      type: ActionType.USER_INTERFACE_STATE,
+      payload: { state: 'card-detail', id: id },
+    });
+  };
+
   return (
-    <div className="forecast">
-      <div className="filter">
-        <div>
-          <Picker
-            defaultSelectedKey={userId}
-            onSelectionChange={(key) => {
-              setUserId(key.toString());
-            }}
-          >
-            {[
-              { id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name },
-              ...users,
-            ].map((user) => {
-              return <Item key={user.id}>{user.name}</Item>;
-            })}
-          </Picker>
-        </div>
-        <div>
-          <b>Close Date</b>&nbsp;
-          <DateRangePicker
-            aria-label="date"
-            value={{
-              start: start,
-              end: end,
-            }}
-            maxVisibleMonths={2}
-            hourCycle={24}
-            onChange={setRange}
-            minValue={min}
-            maxValue={max}
-          />
-        </div>
-      </div>
-      <div className="canvas">
-        <section className="content-box tile">
-          <h3 className="name">Closed Won</h3>
+    <>
+      {state === 'card-detail' && <CardLayer />}
+      <div className="forecast">
+        <div className="filter">
           <div>
-            <div className="metric" style={{ width: '320px' }}>
-              <div>
-                <h4 style={{ display: 'inline-block', marginRight: '10px' }}>
-                  <Currency value={achieved.amount} />{' '}
-                </h4>
-                <span>
-                  {(
-                    (achieved.amount * 100) /
-                    (achieved.amount + predicted.amount)
-                  ).toFixed(2)}
-                  %
-                </span>
+            <Picker
+              defaultSelectedKey={userId}
+              onSelectionChange={(key) => {
+                setUserId(key.toString());
+              }}
+            >
+              {[
+                { id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name },
+                ...users.filter((user) => user.status === UserStatus.Enabled),
+              ].map((user) => {
+                return <Item key={user.id}>{user.name}</Item>;
+              })}
+            </Picker>
+          </div>
+          <div>
+            <b>Close Date</b>&nbsp;
+            <DateRangePicker
+              aria-label="date"
+              value={{
+                start: start,
+                end: end,
+              }}
+              maxVisibleMonths={2}
+              hourCycle={24}
+              onChange={setRange}
+              minValue={min}
+              maxValue={max}
+            />
+          </div>
+        </div>
+        <div className="canvas">
+          <section className="content-box tile">
+            <h3 className="name">Closed Won</h3>
+            <div>
+              <div className="metric" style={{ width: '320px' }}>
+                <div>
+                  <h4 style={{ display: 'inline-block', marginRight: '10px' }}>
+                    <Currency value={achieved.amount} />{' '}
+                  </h4>
+                  <span>
+                    {(
+                      (achieved.amount * 100) /
+                      (achieved.amount + predicted.amount)
+                    ).toFixed(2)}
+                    %
+                  </span>
+                </div>
+
+                <span>Value</span>
               </div>
 
-              <span>Value</span>
+              <ForecastSpacer />
+
+              <div className="metric" style={{ width: '320px' }}>
+                <h4>
+                  <Currency value={predicted.amount} />
+                </h4>
+                <span>Pipeline - not closed yet</span>
+              </div>
+
+              <ForecastSpacer />
+
+              <div className="metric">
+                <h4>
+                  <Currency value={predicted.amount + achieved.amount} />
+                </h4>
+                <span>Prediction - Value</span>
+              </div>
             </div>
 
-            <ForecastSpacer />
+            <div>
+              <div className="metric" style={{ width: '320px' }}>
+                <h4>{achieved.count}</h4>
+                <span>Number of Deals</span>
+              </div>
 
-            <div className="metric" style={{ width: '320px' }}>
-              <h4>
-                <Currency value={predicted.amount} />
-              </h4>
-              <span>Pipeline - not closed yet</span>
+              <ForecastSpacer />
+
+              <div className="metric" style={{ width: '320px' }}>
+                <h4>{predicted.count}</h4>
+                <span>Pipeline - not closed yet - Number of Deals</span>
+              </div>
+
+              <ForecastSpacer />
+
+              <div className="metric">
+                <h4>{predicted.count + achieved.count}</h4>
+                <span>Prediction - Count</span>
+              </div>
             </div>
+          </section>
 
-            <ForecastSpacer />
+          <section className="content-box tile">
+            <Picker
+              defaultSelectedKey={mode}
+              onSelectionChange={(key) => {
+                setMode(key.toString() as 'achieved' | 'predicted');
+              }}
+            >
+              <Item key="achieved">Closed Won</Item>
+              <Item key="predicted">All Open</Item>
+            </Picker>
 
-            <div className="metric">
-              <h4>
-                <Currency value={predicted.amount + achieved.amount} />
-              </h4>
-              <span>Prediction - Value</span>
-            </div>
-          </div>
+            <table className="list" style={{ width: '100%' }}>
+              <tbody>
+                <tr>
+                  <td>Name</td>
+                  <td>Amount</td>
+                  <td>Created</td>
+                  <td>Closed</td>
+                  <td>Deal Duration</td>
+                  <td>User</td>
+                </tr>
+                {list.map((card: Card, index) => {
+                  const created = DateTime.fromISO(card.createdAt);
+                  const closed = card.closedAt
+                    ? DateTime.fromISO(card.closedAt)
+                    : undefined;
 
-          <div>
-            <div className="metric" style={{ width: '320px' }}>
-              <h4>{achieved.count}</h4>
-              <span>Number of Deals</span>
-            </div>
+                  const user = users.find((user) => user.id === card.userId);
 
-            <ForecastSpacer />
-
-            <div className="metric" style={{ width: '320px' }}>
-              <h4>{predicted.count}</h4>
-              <span>Pipeline - not closed yet - Number of Deals</span>
-            </div>
-
-            <ForecastSpacer />
-
-            <div className="metric">
-              <h4>{predicted.count + achieved.count}</h4>
-              <span>Prediction - Count</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="content-box tile">
-          <Picker
-            defaultSelectedKey={mode}
-            onSelectionChange={(key) => {
-              setMode(key.toString() as 'achieved' | 'predicted');
-            }}
-          >
-            <Item key="achieved">Closed Won</Item>
-            <Item key="predicted">All Open</Item>
-          </Picker>
-
-          <table className="list" style={{ width: '100%' }}>
-            <tbody>
-              <tr>
-                <td>Name</td>
-                <td>Amount</td>
-                <td>Created</td>
-                <td>Closed</td>
-                <td>Deal Duration</td>
-                <td>User</td>
-              </tr>
-              {list.map((card: Card, index) => {
-                const created = DateTime.fromISO(card.createdAt);
-                const closed = card.closedAt
-                  ? DateTime.fromISO(card.closedAt)
-                  : undefined;
-
-                const user = users.find((user) => user.id === card.userId);
-
-                return (
-                  <tr key={index}>
-                    <td>
-                      <b>{card.name}</b>
-                    </td>
-                    <td>
-                      <b>
-                        <Currency key={card.id} value={card.amount} />
-                      </b>
-                    </td>
-                    <td>{created.toRelative()}</td>
-                    <td>{closed ? closed.toRelative() : ''}</td>
-                    <td>{closed ? getAge(created, closed) : ''}</td>
-                    <td>{user?.name}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </section>
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <span
+                          onClick={() => showCardDetail(card.id)}
+                          className="direct-link"
+                        >
+                          {card.name}
+                        </span>
+                      </td>
+                      <td>
+                        <b>
+                          <Currency key={card.id} value={card.amount} />
+                        </b>
+                      </td>
+                      <td>{created.toRelative()}</td>
+                      <td>{closed ? closed.toRelative() : ''}</td>
+                      <td>{closed ? getAge(created, closed) : ''}</td>
+                      <td>{user?.name}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

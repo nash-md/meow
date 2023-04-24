@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-24
+
+- Added the ability to open and edit opportunities directly from the forecast view, improving the overall user experience.
+
 ## 2023-04-18
 
 - Added a screen resolution warning at login, emphasizing that the application is currently designed for desktop use only.

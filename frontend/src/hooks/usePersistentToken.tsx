@@ -15,6 +15,7 @@ export const usePersistentToken = () => {
   const token = useSelector(selectToken);
   const key = 'token';
 
+  // TODO refactor, remove dispatch
   useEffect(() => {
     console.log(`get token from local browser storage`);
 
@@ -23,8 +24,6 @@ export const usePersistentToken = () => {
         const client = new RequestHelper(import.meta.env.VITE_URL!);
 
         const response = await client.isValidToken(token);
-
-        console.log(response);
 
         // setPersistentToken(token);
       } catch (error) {

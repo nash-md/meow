@@ -34,4 +34,5 @@ export const RESERVED_ATTRIBUTES = [
   'attribute',
   'teamid',
   'accountid',
+  'attributes',
 ];
