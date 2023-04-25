@@ -116,6 +116,13 @@ export const ForecastPage = () => {
         type: ActionType.SCHEMAS,
         payload: [...schemas],
       });
+
+      let cards = await client!.getCards();
+
+      store.dispatch({
+        type: ActionType.CARDS,
+        payload: [...cards],
+      });
     };
 
     if (client) {

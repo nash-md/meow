@@ -136,7 +136,19 @@ const list = async (
       match.$match.userId = req.query.userId;
     }
 
-    const cursor = await collection.aggregate([match]);
+    const project = {
+      $project: {
+        _id: 0,
+      },
+    };
+
+    const add = {
+      $addFields: {
+        id: '$_id',
+      },
+    };
+
+    const cursor = await collection.aggregate([match, add, project]);
 
     const list = await cursor.toArray();
 
