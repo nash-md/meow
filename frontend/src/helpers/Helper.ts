@@ -1,3 +1,5 @@
+import { DEFAULT_LANGUAGE, DEFAULT_REGION } from '../Constants';
+
 function generateUUID() {
   let uuid = '';
   for (let i = 0; i < 32; i++) {
@@ -9,6 +11,19 @@ function generateUUID() {
   return uuid;
 }
 
+const getBrowserLocale = () => {
+  if (!Intl || !Intl.Locale) {
+    return `${DEFAULT_LANGUAGE}-${DEFAULT_REGION}`;
+  }
+
+  const locale = new Intl.Locale(navigator.language ?? DEFAULT_LANGUAGE);
+
+  return locale.region
+    ? `${locale.language}-${locale.region}`
+    : locale.language;
+};
+
 export const Helper = {
   generateUUID,
+  getBrowserLocale,
 };

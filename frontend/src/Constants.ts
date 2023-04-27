@@ -36,3 +36,7 @@ export const RESERVED_ATTRIBUTES = [
   'accountid',
   'attributes',
 ];
+
+export const DEFAULT_REGION = 'US';
+export const DEFAULT_LANGUAGE = 'en';
+export const DEFAULT_CURRENCY = 'USD';
