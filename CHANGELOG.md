@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-04-27
+
+- The user's preferred browser language is now used to format all currency values. This means that the currency symbols and formatting will now reflect the user's language and region preferences based on the team's configured currency symbol.
+
 ## 2023-04-24
 
 - Added the ability to open and edit opportunities directly from the forecast view, improving the overall user experience.
