@@ -2,7 +2,7 @@ import { Button, Item, Picker } from '@adobe/react-spectrum';
 import { Key, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { ANIMALS } from '../../../Constants';
-import { Helper } from '../../../helpers/Helper';
+import { generateUUID } from '../../../helpers/Helper';
 import { Schema, SchemaAttribute } from '../../../interfaces/Schema';
 import { SelectAttribute } from './SelectAttribute';
 import { TextAreaAttribute } from './TextAreaAttribute';
@@ -52,7 +52,7 @@ export const SchemaCanvas = ({
     setItems([
       ...items,
       {
-        key: Helper.generateUUID(),
+        key: generateUUID(),
         index: items.length,
         type: type,
         name: ANIMALS[items.length],

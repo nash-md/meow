@@ -3,6 +3,7 @@ import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
+import { ListView } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode } from '../interfaces/Team';
 import { User } from '../interfaces/User';
@@ -32,6 +33,7 @@ export enum ActionType {
   USER_INTERFACE_STATE = 'USER_INTERFACE_STATE',
   USER_INTERFACE_MODAL = 'USER_INTERFACE_MODAL',
   FILTER_UPDATE = 'FILTER_UPDATE',
+  ACCOUNT_LIST_VIEW = 'ACCOUNT_LIST_VIEW',
 }
 
 export interface Action<T extends ActionType> {
@@ -154,6 +156,11 @@ export interface ApplicationFilterAction
   };
 }
 
+export interface AccountListViewAction
+  extends Action<ActionType.ACCOUNT_LIST_VIEW> {
+  payload: ListView;
+}
+
 export type ApplicationAction =
   | ApplicationPageLoadAction
   | ApplicationLoginAction
@@ -176,7 +183,8 @@ export type ApplicationAction =
   | ApplicationBrowserStateAction
   | ApplicationUserInterfaceStateAction
   | ApplicationUserInterfaceModalAction
-  | ApplicationFilterAction;
+  | ApplicationFilterAction
+  | AccountListViewAction;
 
 export function showModalSuccess(text?: string) {
   return {
@@ -218,4 +226,11 @@ export function updateFilter(filter: Set<FilterMode>, text?: string) {
     type: ActionType.FILTER_UPDATE,
     payload: { mode: Array.from(filter.values()), text: text },
   } as ApplicationFilterAction;
+}
+
+export function setAccountListView(view: ListView) {
+  return {
+    type: ActionType.ACCOUNT_LIST_VIEW,
+    payload: view,
+  } as AccountListViewAction;
 }

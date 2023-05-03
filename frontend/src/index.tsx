@@ -6,18 +6,14 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { store } from './store/Store';
 import { defaultTheme, Provider } from '@adobe/react-spectrum';
 import { RequestHelperContextProvider } from './context/RequestHelperContextProvider';
-import { Helper } from './helpers/Helper';
+import { getBrowserLocale } from './helpers/Helper';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
-  <Provider
-    height="100%"
-    locale={Helper.getBrowserLocale()}
-    theme={defaultTheme}
-  >
+  <Provider height="100%" locale={getBrowserLocale()} theme={defaultTheme}>
     <ReduxProvider store={store}>
       <RequestHelperContextProvider>
         <SessionOrNot />

@@ -29,5 +29,10 @@ export const Default: ApplicationStore = {
       text: '',
       mode: [],
     },
+    accounts: {
+      direction: 'desc',
+      column: undefined,
+      text: undefined,
+    },
   },
 };

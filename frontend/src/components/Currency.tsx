@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectCurrency } from '../store/Store';
 import { DEFAULT_CURRENCY } from '../Constants';
-import { Helper } from '../helpers/Helper';
+import { getBrowserLocale } from '../helpers/Helper';
 
 export interface CurrencyProps {
   value: number;
@@ -12,7 +12,7 @@ export const Currency = ({ value }: CurrencyProps) => {
 
   return (
     <>
-      {value?.toLocaleString(Helper.getBrowserLocale(), {
+      {value?.toLocaleString(getBrowserLocale(), {
         style: 'currency',
         currency: currency ?? DEFAULT_CURRENCY,
       })}

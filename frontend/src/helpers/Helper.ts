@@ -1,6 +1,6 @@
 import { DEFAULT_LANGUAGE, DEFAULT_REGION } from '../Constants';
 
-function generateUUID() {
+export function generateUUID() {
   let uuid = '';
   for (let i = 0; i < 32; i++) {
     if (i === 8 || i === 12 || i === 16 || i === 20) {
@@ -11,7 +11,18 @@ function generateUUID() {
   return uuid;
 }
 
-const getBrowserLocale = () => {
+export function isValidId(idStr: string): boolean {
+  if (
+    typeof idStr !== 'string' ||
+    idStr.length !== 24 ||
+    !/^[0-9a-fA-F]{24}$/.test(idStr)
+  ) {
+    return false;
+  }
+  return true;
+}
+
+export const getBrowserLocale = () => {
   if (!Intl || !Intl.Locale) {
     return `${DEFAULT_LANGUAGE}-${DEFAULT_REGION}`;
   }
@@ -23,7 +34,14 @@ const getBrowserLocale = () => {
     : locale.language;
 };
 
-export const Helper = {
-  generateUUID,
-  getBrowserLocale,
-};
+export function isNullOrUndefined(value: unknown): boolean {
+  return value === null || value === undefined;
+}
+
+export function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}

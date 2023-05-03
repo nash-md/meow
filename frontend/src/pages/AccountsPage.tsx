@@ -1,25 +1,32 @@
 import { Button, TextField } from '@adobe/react-spectrum';
-import { DateTime } from 'luxon';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../actions/Actions';
+import { ActionType, setAccountListView } from '../actions/Actions';
 import { Layer as AccountLayer } from '../components/account/Layer';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { SchemaType } from '../interfaces/Schema';
-import { ApplicationStore } from '../store/ApplicationStore';
 import {
+  selectAccountListView,
   selectAccounts,
   selectInterfaceState,
   selectSchemaByType,
   store,
 } from '../store/Store';
+import { ListViewHelper } from '../helpers/ListViewHelper';
+import { ListHeader } from '../components/account/ListHeader';
+import { ListRow } from '../components/account/ListRow';
+import { ApplicationStore } from '../store/ApplicationStore';
+import { SchemaType } from '../interfaces/Schema';
 
 export const AccountsPage = () => {
   const { client } = useContext(RequestHelperContext);
   const state = useSelector(selectInterfaceState);
   const accounts = useSelector(selectAccounts);
   const [search, setSearch] = useState('');
-  const [searchRegex, setSearchRegex] = useState(new RegExp('', 'i'));
+  const view = useSelector(selectAccountListView);
+
+  const schema = useSelector((store: ApplicationStore) =>
+    selectSchemaByType(store, SchemaType.Account)
+  );
 
   const showAccountDetail = (id?: string) => {
     store.dispatch({
@@ -29,7 +36,12 @@ export const AccountsPage = () => {
   };
 
   useEffect(() => {
-    setSearchRegex(new RegExp(search, 'i'));
+    store.dispatch(
+      setAccountListView({
+        ...view,
+        text: search,
+      })
+    );
   }, [search]);
 
   useEffect(() => {
@@ -54,15 +66,46 @@ export const AccountsPage = () => {
     }
   }, [client]);
 
-  const schema = useSelector((store: ApplicationStore) =>
-    selectSchemaByType(store, SchemaType.Account)
-  );
+  const rows = useMemo(() => {
+    let list = [];
+
+    if (view.text) {
+      const regex = new RegExp(view.text, 'i');
+
+      list = accounts.filter((item) => regex.test(item.name));
+    } else {
+      list = [...accounts];
+    }
+
+    return list
+      .map((account) => {
+        const row: Record<string, string | number | null | undefined> = {
+          id: account.id,
+          Name: account.name,
+        };
+
+        schema?.schema.map(({ name, key }) => {
+          row[name] = account.attributes?.[key];
+        });
+
+        row.CreatedAt = account.createdAt;
+
+        return row;
+      })
+      .sort((a, b) =>
+        ListViewHelper.orderBy(
+          view.direction,
+          a[view.column ?? 'Name'],
+          b[view.column ?? 'Name']
+        )
+      );
+  }, [schema, view]);
 
   return (
     <>
       {state === 'account-detail' && <AccountLayer />}
-      <div className="canvas search">
-        <div className="header">
+      <div className="canvas">
+        <div className="account-search-header">
           <div>
             <Button variant="primary" onPress={() => showAccountDetail()}>
               Add
@@ -81,46 +124,15 @@ export const AccountsPage = () => {
           </div>
         </div>
         <div className="content-box tile">
-          <h2>Accounts</h2>
+          <h2>{rows.length} Accounts</h2>
 
-          <table className="list" style={{ width: '100%' }}>
+          <table className="account-list" style={{ width: '100%' }}>
             <tbody>
-              <tr>
-                <td>Name</td>
-                {schema &&
-                  schema.schema.map((attribute) => {
-                    return <td>{attribute.name}</td>;
-                  })}
-                <td>Created</td>
-                <td></td>
-              </tr>
-              {accounts
-                .filter((item) => searchRegex.test(item.name))
-                .map((account, index) => {
-                  const created = DateTime.fromISO(account.createdAt);
+              <ListHeader />
 
-                  return (
-                    <tr key={index}>
-                      <td>
-                        <b>{account.name}</b>
-                      </td>
-                      {schema &&
-                        schema.schema.map(({ key }) => {
-                          return <td>{account.attributes?.[key]}</td>;
-                        })}
-                      <td>{created.toRelative()}</td>
-
-                      <td style={{ textAlign: 'right', paddingRight: '0' }}>
-                        <Button
-                          onPress={() => showAccountDetail(account.id)}
-                          variant="primary"
-                        >
-                          edit
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {rows.map((item) => {
+                return <ListRow key={item.id} item={item} />;
+              })}
             </tbody>
           </table>
         </div>

@@ -193,6 +193,37 @@ h3 {
   color: var(--spectrum-global-color-gray-600);
 }
 
+.page .main .canvas .content-box .account-list {
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+
+.page .main .canvas .content-box .account-list tr:first-child {
+  background-color: var(--spectrum-global-color-gray-300);
+  font-weight: bold;
+  color: var(--spectrum-global-color-gray-500);
+  cursor: pointer;
+}
+
+.page .main .canvas .content-box .account-list tr .header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.page .main .canvas .content-box .account-list tr .header > div:first-child {
+  padding-right: 5px;
+}
+
+.page .main .canvas .content-box .account-list td.header:hover {
+  color: var(--spectrum-global-color-gray-600);
+}
+
+.page .main .canvas .content-box .account-list td {
+  font-size: 1rem;
+  padding: 6px;
+}
+
 .trash-canvas {
   position: absolute;
   top: 20px;
@@ -960,13 +991,13 @@ h3 {
   transform: translateY(-80px); /* Move the div up 100px */
 }
 
-.search .header {
+.account-search-header {
   display: flex;
   flex-direction: row;
   padding-bottom: 20px;
 }
 
-.search .header div:first-child {
+.account-search-header div:first-child {
   flex-grow: 1;
 }
 

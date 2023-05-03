@@ -1,21 +1,12 @@
 import { ActionType, ApplicationAction } from '../actions/Actions';
+import { isValidId } from '../helpers/Helper';
 import { Account } from '../interfaces/Account';
 import { Board } from '../interfaces/Board';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
+import { ListView } from '../interfaces/ListView';
+import { InterfaceState } from '../store/ApplicationStore';
 import { Default } from '../store/Default';
-
-// TODO move to helper
-function isValidId(idStr: string): boolean {
-  if (
-    typeof idStr !== 'string' ||
-    idStr.length !== 24 ||
-    !/^[0-9a-fA-F]{24}$/.test(idStr)
-  ) {
-    return false;
-  }
-  return true;
-}
 
 function moveCardOnBoard(
   id: Card['id'],
@@ -94,15 +85,6 @@ export const application = (state = Default, action: ApplicationAction) => {
           },
         },
         board: { ...action.payload.board },
-        ui: {
-          ...state.ui,
-          modal: undefined,
-          text: undefined,
-          filters: {
-            mode: [],
-            text: '',
-          },
-        },
       };
 
     case ActionType.LOGOUT:
@@ -122,6 +104,21 @@ export const application = (state = Default, action: ApplicationAction) => {
         users: [],
         board: {},
         schemas: [],
+        ui: {
+          state: <InterfaceState>'default',
+          id: undefined,
+          modal: undefined,
+          text: undefined,
+          filters: {
+            text: '',
+            mode: [],
+          },
+          accounts: {
+            direction: <ListView['direction']>'desc',
+            column: undefined,
+            text: undefined,
+          },
+        },
       };
 
     case ActionType.USERS:
@@ -173,6 +170,9 @@ export const application = (state = Default, action: ApplicationAction) => {
           text: undefined,
           filters: {
             ...state.ui.filters,
+          },
+          accounts: {
+            ...state.ui.accounts,
           },
         },
         board: {
@@ -281,6 +281,9 @@ export const application = (state = Default, action: ApplicationAction) => {
           filters: {
             ...state.ui.filters,
           },
+          accounts: {
+            ...state.ui.accounts,
+          },
         },
       };
 
@@ -340,6 +343,9 @@ export const application = (state = Default, action: ApplicationAction) => {
           filters: {
             ...state.ui.filters,
           },
+          accounts: {
+            ...state.ui.accounts,
+          },
         },
       };
 
@@ -361,6 +367,17 @@ export const application = (state = Default, action: ApplicationAction) => {
           filters: {
             mode: [...action.payload.mode],
             text: action.payload.text,
+          },
+        },
+      };
+
+    case ActionType.ACCOUNT_LIST_VIEW:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          accounts: {
+            ...action.payload,
           },
         },
       };

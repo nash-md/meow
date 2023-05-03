@@ -69,3 +69,5 @@ export const selectFilters = (store: ApplicationStore) => {
 
 export const selectFilterText = (store: ApplicationStore) =>
   store.ui.filters.text;
+export const selectAccountListView = (store: ApplicationStore) =>
+  store.ui.accounts;

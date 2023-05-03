@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-05-03
+
+- Updated the account table view: You can now sort by clicking on the column header. The default sort order is descending. Click the header again to change it to ascending.
+
 ## 2023-04-27
 
 - The user's preferred browser language is now used to format all currency values. This means that the currency symbols and formatting will now reflect the user's language and region preferences based on the team's configured currency symbol.
