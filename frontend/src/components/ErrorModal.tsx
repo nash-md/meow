@@ -20,7 +20,7 @@ export const ErrorModal = () => {
   const hide = () => {
     setIsVisible(false);
 
-    store.dispatch(store.dispatch(hideModal()));
+    store.dispatch(hideModal());
   };
 
   return (

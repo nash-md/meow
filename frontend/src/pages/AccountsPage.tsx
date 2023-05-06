@@ -1,43 +1,53 @@
 import { Button, TextField } from '@adobe/react-spectrum';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ActionType, setAccountListView } from '../actions/Actions';
+import { setListView, showAccountLayer } from '../actions/Actions';
 import { Layer as AccountLayer } from '../components/account/Layer';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import {
-  selectAccountListView,
   selectAccounts,
   selectInterfaceState,
   selectSchemaByType,
+  selectView,
   store,
 } from '../store/Store';
 import { ListViewHelper } from '../helpers/ListViewHelper';
-import { ListHeader } from '../components/account/ListHeader';
-import { ListRow } from '../components/account/ListRow';
 import { ApplicationStore } from '../store/ApplicationStore';
 import { SchemaType } from '../interfaces/Schema';
+import { ListHeader } from '../components/list/ListHeader';
+import { toRelativeDate } from '../helpers/DateHelper';
 
 export const AccountsPage = () => {
-  const { client } = useContext(RequestHelperContext);
   const state = useSelector(selectInterfaceState);
   const accounts = useSelector(selectAccounts);
   const [search, setSearch] = useState('');
-  const view = useSelector(selectAccountListView);
+  const view = useSelector((store: ApplicationStore) =>
+    selectView(store, 'accounts')
+  );
+
+  const [attributes, setAttributes] = useState<Array<string>>([]);
 
   const schema = useSelector((store: ApplicationStore) =>
     selectSchemaByType(store, SchemaType.Account)
   );
 
-  const showAccountDetail = (id?: string) => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'account-detail', id: id },
-    });
+  const columns = attributes
+    ? ['Name', ...attributes, 'CreatedAt']
+    : ['Name', 'CreatedAt'];
+
+  interface Row {
+    id: string;
+    Name: string;
+    CreatedAt: string | null;
+    [key: string]: string | number | null | undefined;
+  }
+
+  const openAccount = (id?: string) => {
+    store.dispatch(showAccountLayer(id));
   };
 
   useEffect(() => {
     store.dispatch(
-      setAccountListView({
+      setListView('accounts', {
         ...view,
         text: search,
       })
@@ -45,26 +55,10 @@ export const AccountsPage = () => {
   }, [search]);
 
   useEffect(() => {
-    const execute = async () => {
-      let accounts = await client!.getAccounts();
-
-      store.dispatch({
-        type: ActionType.ACCOUNTS,
-        payload: [...accounts],
-      });
-
-      let schemas = await client!.fetchSchemas();
-
-      store.dispatch({
-        type: ActionType.SCHEMAS,
-        payload: [...schemas],
-      });
-    };
-
-    if (client) {
-      execute();
+    if (schema) {
+      setAttributes(schema.schema.map((attribute) => attribute.name));
     }
-  }, [client]);
+  }, [schema]);
 
   const rows = useMemo(() => {
     let list = [];
@@ -77,29 +71,35 @@ export const AccountsPage = () => {
       list = [...accounts];
     }
 
+    const column = view.column ?? columns[0]!;
+
     return list
       .map((account) => {
-        const row: Record<string, string | number | null | undefined> = {
+        const row: Row = {
           id: account.id,
           Name: account.name,
+          CreatedAt: account.createdAt,
         };
 
         schema?.schema.map(({ name, key }) => {
           row[name] = account.attributes?.[key];
         });
 
-        row.CreatedAt = account.createdAt;
-
         return row;
       })
       .sort((a, b) =>
-        ListViewHelper.orderBy(
-          view.direction,
-          a[view.column ?? 'Name'],
-          b[view.column ?? 'Name']
-        )
+        ListViewHelper.orderBy(view.direction, a[column], b[column])
       );
-  }, [schema, view]);
+  }, [schema, view, accounts]);
+
+  function getTableData(
+    key: string,
+    value: string | number | null | undefined
+  ) {
+    if (attributes.includes(key)) {
+      return <td>{value}</td>;
+    }
+  }
 
   return (
     <>
@@ -107,7 +107,7 @@ export const AccountsPage = () => {
       <div className="canvas">
         <div className="account-search-header">
           <div>
-            <Button variant="primary" onPress={() => showAccountDetail()}>
+            <Button variant="primary" onPress={() => openAccount()}>
               Add
             </Button>
           </div>
@@ -126,12 +126,34 @@ export const AccountsPage = () => {
         <div className="content-box tile">
           <h2>{rows.length} Accounts</h2>
 
-          <table className="account-list" style={{ width: '100%' }}>
+          <table className="list" style={{ width: '100%' }}>
             <tbody>
-              <ListHeader />
+              <ListHeader
+                name="accounts"
+                sort={setListView}
+                view={view}
+                columns={columns}
+              />
 
-              {rows.map((item) => {
-                return <ListRow key={item.id} item={item} />;
+              {rows.map((row, index) => {
+                return (
+                  <tr key={index}>
+                    <td>
+                      <span
+                        onClick={() => openAccount(row.id?.toString())}
+                        className="direct-link"
+                      >
+                        {row.Name}
+                      </span>
+                    </td>
+
+                    {Object.entries(row).map(([key, value]) => {
+                      return getTableData(key, value);
+                    })}
+
+                    <td>{toRelativeDate(row.CreatedAt)}</td>
+                  </tr>
+                );
               })}
             </tbody>
           </table>

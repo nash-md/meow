@@ -1,11 +1,12 @@
 import logger from 'redux-logger';
 import { configureStore } from '@reduxjs/toolkit';
 import { application } from '../reducers/ApplicationReducer';
-import { ApplicationStore } from './ApplicationStore';
+import { ApplicationStore, ListName } from './ApplicationStore';
 import { cardUpdateListener } from './CardUpdateListener';
 import { cardLaneListener } from './CardLaneListener';
 import { cardDeleteListener } from './CardDeleteListener';
 import { SchemaType } from '../interfaces/Schema';
+import { UserStatus } from '../interfaces/User';
 
 export const store = configureStore({
   reducer: application,
@@ -18,8 +19,6 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-// export type ApplicatonDispatch = typeof store.dispatch;
 
 export const selectIsPageLoaded = (store: RootState) =>
   store.browser.isPageLoaded;
@@ -39,6 +38,8 @@ export const selectAccount = (
   id: string | undefined
 ) => store.accounts.find((account) => account.id === id);
 export const selectUsers = (store: ApplicationStore) => store.users;
+export const selectActiveUsers = (store: ApplicationStore) =>
+  store.users.filter((user) => user.status === UserStatus.Enabled);
 export const selectUser = (store: ApplicationStore, id: string | undefined) =>
   store.users.find((user) => user.id === id);
 export const selectLanes = (store: ApplicationStore) => store.lanes;
@@ -66,8 +67,8 @@ export const selectFilters = (store: ApplicationStore) => {
     text: store.ui.filters.text,
   };
 };
-
-export const selectFilterText = (store: ApplicationStore) =>
-  store.ui.filters.text;
 export const selectAccountListView = (store: ApplicationStore) =>
   store.ui.accounts;
+export const selectUserListView = (store: ApplicationStore) => store.ui.users;
+export const selectView = (store: ApplicationStore, name: ListName) =>
+  store.ui[name];

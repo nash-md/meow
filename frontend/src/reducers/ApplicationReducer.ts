@@ -118,6 +118,16 @@ export const application = (state = Default, action: ApplicationAction) => {
             column: undefined,
             text: undefined,
           },
+          users: {
+            direction: <ListView['direction']>'desc',
+            column: undefined,
+            text: undefined,
+          },
+          forecast: {
+            direction: <ListView['direction']>'desc',
+            column: undefined,
+            text: undefined,
+          },
         },
       };
 
@@ -164,16 +174,11 @@ export const application = (state = Default, action: ApplicationAction) => {
         cards: [...state.cards, action.payload],
 
         ui: {
+          ...state.ui,
           state: Default.ui.state,
           id: undefined,
           modal: undefined,
           text: undefined,
-          filters: {
-            ...state.ui.filters,
-          },
-          accounts: {
-            ...state.ui.accounts,
-          },
         },
         board: {
           ...state.board,
@@ -274,16 +279,11 @@ export const application = (state = Default, action: ApplicationAction) => {
         accounts: [...state.accounts, action.payload],
 
         ui: {
+          ...state.ui,
           state: Default.ui.state,
           id: undefined,
           modal: undefined,
           text: undefined,
-          filters: {
-            ...state.ui.filters,
-          },
-          accounts: {
-            ...state.ui.accounts,
-          },
         },
       };
 
@@ -336,16 +336,11 @@ export const application = (state = Default, action: ApplicationAction) => {
       return {
         ...state,
         ui: {
+          ...state.ui,
           state: action.payload.state,
           id: action.payload.id,
           modal: state.ui.modal,
           text: undefined,
-          filters: {
-            ...state.ui.filters,
-          },
-          accounts: {
-            ...state.ui.accounts,
-          },
         },
       };
 
@@ -371,14 +366,12 @@ export const application = (state = Default, action: ApplicationAction) => {
         },
       };
 
-    case ActionType.ACCOUNT_LIST_VIEW:
+    case ActionType.LIST_VIEW:
       return {
         ...state,
         ui: {
           ...state.ui,
-          accounts: {
-            ...action.payload,
-          },
+          [action.payload.name]: { ...action.payload.view },
         },
       };
 

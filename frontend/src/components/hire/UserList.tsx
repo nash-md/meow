@@ -1,18 +1,64 @@
 import { Button } from '@adobe/react-spectrum';
-import { DateTime } from 'luxon';
-import { useContext } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../../actions/Actions';
+import { ActionType, setListView } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { User, UserStatus } from '../../interfaces/User';
-import { selectUserId, selectUsers, store } from '../../store/Store';
+import { UserStatus } from '../../interfaces/User';
+import {
+  selectUserId,
+  selectUsers,
+  selectView,
+  store,
+} from '../../store/Store';
+import { ListViewHelper } from '../../helpers/ListViewHelper';
+import { ListHeader } from '../list/ListHeader';
+import { ApplicationStore } from '../../store/ApplicationStore';
+import { toRelativeDate } from '../../helpers/DateHelper';
 
 export const UserList = (props: any) => {
   const { client } = useContext(RequestHelperContext);
   const id = useSelector(selectUserId);
   const users = useSelector(selectUsers);
+  const view = useSelector((store: ApplicationStore) =>
+    selectView(store, 'users')
+  );
 
-  const deleteUser = async (user: User) => {
+  const columns = ['Name', 'Status', 'Invite', 'CreatedAt', null];
+
+  interface Row {
+    id: string;
+    Name: string;
+    Status: UserStatus;
+    Invite: string | undefined;
+    CreatedAt: string | undefined;
+    [key: string]: string | UserStatus | undefined;
+  }
+
+  const rows = useMemo(() => {
+    let list = [...users.filter((user) => user.status !== UserStatus.Deleted)];
+
+    const column = view.column ?? (columns[0] as string);
+
+    return list
+      .map((user) => {
+        const row: Row = {
+          id: user.id,
+          Name: user.name,
+          Status: user.status,
+          Invite: user.invite,
+          CreatedAt: user.createdAt,
+        };
+
+        return row;
+      })
+      .sort((a, b) =>
+        ListViewHelper.orderBy(view.direction, a[column], b[column])
+      );
+  }, [view, users]);
+
+  const deleteUser = async (id: string) => {
+    const user = users.find((user) => user.id === id)!;
+
     user.status = UserStatus.Deleted;
 
     try {
@@ -32,54 +78,49 @@ export const UserList = (props: any) => {
   return (
     <div className="content-box">
       <h2>Users</h2>
-      <table className="list">
+      <table className="list" style={{ width: '100%' }}>
         <tbody>
-          <tr>
-            <td>Name</td>
-            <td>Status</td>
-            <td>Invite</td>
-            <td>Created</td>
-            <td></td>
-          </tr>
-          {users
-            .filter((user) => user.status !== UserStatus.Deleted)
-            .map((user) => {
-              const ago = user.createdAt
-                ? DateTime.fromISO(user.createdAt).toRelative()
-                : '';
+          <ListHeader
+            name="users"
+            sort={setListView}
+            columns={columns}
+            view={view}
+          />
 
-              return (
-                <tr key={user.id}>
-                  <td style={{ width: '200px' }}>
-                    <b>{user.name}</b>
-                  </td>
-                  <td>{user.status}</td>
-                  <td>
-                    {user.status === UserStatus.Invited && (
-                      <Button
-                        variant="primary"
-                        onPress={() =>
-                          props.copyToClipboard(
-                            props.createInviteUrl(user.invite)
-                          )
-                        }
-                      >
-                        Copy Invite
-                      </Button>
-                    )}
-                  </td>
-                  <td>{ago}</td>
+          {rows.map((row, index) => {
+            return (
+              <tr key={index}>
+                <td style={{ width: '200px' }}>
+                  <b>{row.Name}</b>
+                </td>
+                <td>{row.Status}</td>
+                <td>
+                  {row.Status === UserStatus.Invited && (
+                    <Button
+                      variant="primary"
+                      onPress={() =>
+                        props.copyToClipboard(props.createInviteUrl(row.Invite))
+                      }
+                    >
+                      Copy Invite
+                    </Button>
+                  )}
+                </td>
+                <td>{toRelativeDate(row.CreatedAt)}</td>
 
-                  <td>
-                    {user.id !== id && (
-                      <Button variant="cta" onPress={() => deleteUser(user)}>
-                        delete
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
+                <td style={{ textAlign: 'right' }}>
+                  {row.id !== id && (
+                    <Button
+                      variant="cta"
+                      onPress={() => deleteUser(row.id!.toString())}
+                    >
+                      delete
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

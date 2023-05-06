@@ -1,6 +1,6 @@
 import { Button } from '@adobe/react-spectrum';
 import { useSelector } from 'react-redux';
-import { ActionType } from '../../actions/Actions';
+import { ActionType, hideLayer } from '../../actions/Actions';
 import { selectInterfaceStateId, store } from '../../store/Store';
 import { Form } from './Form';
 
@@ -8,10 +8,7 @@ export const Layer = () => {
   const id = useSelector(selectInterfaceStateId);
 
   const hideCardDetail = () => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'default', id: undefined },
-    });
+    store.dispatch(hideLayer());
   };
 
   return (

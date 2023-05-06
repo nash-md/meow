@@ -9,7 +9,7 @@ import {
   selectLanes,
   store,
 } from '../store/Store';
-import { ActionType, updateFilter } from '../actions/Actions';
+import { ActionType, showCardLayer, updateFilter } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
@@ -57,28 +57,13 @@ export const HomePage = () => {
     store.dispatch(updateFilter(new Set(filters.mode), text));
   }, [text]);
 
-  // TODO combine this to one call
   useEffect(() => {
     const execute = async () => {
-      let lanes = await client!.getLanes();
-
-      store.dispatch({
-        type: ActionType.LANES,
-        payload: [...lanes],
-      });
-
       let cards = await client!.getCards();
 
       store.dispatch({
         type: ActionType.CARDS,
         payload: [...cards],
-      });
-
-      let schemas = await client!.fetchSchemas();
-
-      store.dispatch({
-        type: ActionType.SCHEMAS,
-        payload: [...schemas],
       });
     };
 
@@ -87,11 +72,8 @@ export const HomePage = () => {
     }
   }, [client]);
 
-  const showCardDetail = (id?: string) => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'card-detail', id: id },
-    });
+  const openCard = (id?: string) => {
+    store.dispatch(showCardLayer(id));
   };
 
   const [amount, setAmount] = useState(0);
@@ -212,7 +194,7 @@ export const HomePage = () => {
               </h2>
 
               <div style={{ paddingLeft: '10px' }}>
-                <Button variant="primary" onPress={() => showCardDetail()}>
+                <Button variant="primary" onPress={() => openCard()}>
                   Add
                 </Button>
               </div>

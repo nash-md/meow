@@ -1,7 +1,7 @@
 import { Button, Item, TabList, TabPanels, Tabs } from '@adobe/react-spectrum';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { ActionType, showModalSuccess } from '../../actions/Actions';
+import { ActionType, hideLayer, showModalSuccess } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { Account, AccountPreview } from '../../interfaces/Account';
 import { ApplicationStore } from '../../store/ApplicationStore';
@@ -23,10 +23,7 @@ export const Layer = () => {
   );
 
   const hideAccountDetail = () => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'default', id: undefined },
-    });
+    store.dispatch(hideLayer());
   };
 
   const update = async (

@@ -1,11 +1,11 @@
 import { Button, Tabs, TabList, Item, TabPanels } from '@adobe/react-spectrum';
 import { useSelector } from 'react-redux';
-import { ActionType, showModalSuccess } from '../../actions/Actions';
+import { ActionType, hideLayer, showModalSuccess } from '../../actions/Actions';
 import {
+  selectActiveUsers,
   selectCard,
   selectInterfaceStateId,
   selectLanes,
-  selectUsers,
   store,
 } from '../../store/Store';
 import { Form } from './Form';
@@ -15,7 +15,7 @@ import { RequestHelperContext } from '../../context/RequestHelperContextProvider
 import { useContext, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
-import { User, UserStatus } from '../../interfaces/User';
+import { User } from '../../interfaces/User';
 import { Translations } from '../../Translations';
 
 export const Layer = () => {
@@ -23,14 +23,11 @@ export const Layer = () => {
   const id = useSelector(selectInterfaceStateId);
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
   const [isUserLayerVisible, setIsUserLayerVisible] = useState(false);
-  const users = useSelector(selectUsers);
+  const users = useSelector(selectActiveUsers);
   const lanes = useSelector(selectLanes);
 
   const hideCardDetail = () => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'default', id: undefined },
-    });
+    store.dispatch(hideLayer());
   };
 
   const assign = async (id: User['id']) => {
@@ -94,28 +91,23 @@ export const Layer = () => {
         <div className="user-list">
           <table>
             <tbody>
-              {users
-                .filter((user) => user.status !== UserStatus.Deleted)
-                .map((user: User) => {
-                  return (
-                    <tr key={user.id}>
-                      <td>
-                        <Avatar width={36} id={user.id} />
-                      </td>
-                      <td>
-                        <b>{user.name}</b>
-                      </td>
-                      <td>
-                        <Button
-                          variant="primary"
-                          onPress={() => assign(user.id)}
-                        >
-                          assign
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {users.map((user: User) => {
+                return (
+                  <tr key={user.id}>
+                    <td>
+                      <Avatar width={36} id={user.id} />
+                    </td>
+                    <td>
+                      <b>{user.name}</b>
+                    </td>
+                    <td>
+                      <Button variant="primary" onPress={() => assign(user.id)}>
+                        assign
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

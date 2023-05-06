@@ -34,5 +34,15 @@ export const Default: ApplicationStore = {
       column: undefined,
       text: undefined,
     },
+    users: {
+      direction: 'desc',
+      column: undefined,
+      text: undefined,
+    },
+    forecast: {
+      direction: 'desc',
+      column: undefined,
+      text: undefined,
+    },
   },
 };

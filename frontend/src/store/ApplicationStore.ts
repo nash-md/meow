@@ -15,6 +15,8 @@ export type InterfaceState =
   | 'lane-detail'
   | 'account-detail';
 
+export type ListName = 'accounts' | 'users' | 'forecast';
+
 export interface ApplicationStore {
   users: User[];
   accounts: Account[];
@@ -45,5 +47,7 @@ export interface ApplicationStore {
       mode: FilterMode[];
     };
     accounts: ListView;
+    users: ListView;
+    forecast: ListView;
   };
 }

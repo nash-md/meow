@@ -185,6 +185,7 @@ h3 {
   background-color: var(--spectrum-global-color-gray-300);
   font-weight: bold;
   color: var(--spectrum-global-color-gray-500);
+  cursor: pointer;
 }
 
 .page .main .canvas .content-box .list td {
@@ -193,33 +194,26 @@ h3 {
   color: var(--spectrum-global-color-gray-600);
 }
 
-.page .main .canvas .content-box .account-list {
-  margin-top: 10px;
-  border-collapse: collapse;
-}
-
-.page .main .canvas .content-box .account-list tr:first-child {
-  background-color: var(--spectrum-global-color-gray-300);
-  font-weight: bold;
-  color: var(--spectrum-global-color-gray-500);
-  cursor: pointer;
-}
-
-.page .main .canvas .content-box .account-list tr .header {
+.page .main .canvas .content-box .list tr .header {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.page .main .canvas .content-box .account-list tr .header > div:first-child {
+.page .main .canvas .content-box .list tr .header > div:first-child {
   padding-right: 5px;
 }
 
-.page .main .canvas .content-box .account-list td.header:hover {
+.page .main .canvas .content-box .list tr .header > div svg {
+  padding-left: 5px;
+  display: block;
+}
+
+.page .main .canvas .content-box .list td.header:hover {
   color: var(--spectrum-global-color-gray-600);
 }
 
-.page .main .canvas .content-box .account-list td {
+.page .main .canvas .content-box .list td {
   font-size: 1rem;
   padding: 6px;
 }
@@ -888,6 +882,13 @@ h3 {
   padding: 10px;
   width: 200px;
   height: 60px;
+  margin-left: 10px;
+  margin-right: 10px;
+  box-sizing: border-box;
+}
+
+.setup-card .item .reference {
+  width: 200px;
   margin-left: 10px;
   margin-right: 10px;
   box-sizing: border-box;

@@ -5,10 +5,10 @@ import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListView } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
-import { CurrencyCode } from '../interfaces/Team';
+import { CurrencyCode, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
-import { ApplicationStore } from '../store/ApplicationStore';
+import { ApplicationStore, ListName } from '../store/ApplicationStore';
 
 export enum ActionType {
   PAGE_LOAD = 'PAGE_LOAD',
@@ -33,7 +33,7 @@ export enum ActionType {
   USER_INTERFACE_STATE = 'USER_INTERFACE_STATE',
   USER_INTERFACE_MODAL = 'USER_INTERFACE_MODAL',
   FILTER_UPDATE = 'FILTER_UPDATE',
-  ACCOUNT_LIST_VIEW = 'ACCOUNT_LIST_VIEW',
+  LIST_VIEW = 'LIST_VIEW',
 }
 
 export interface Action<T extends ActionType> {
@@ -136,7 +136,7 @@ export interface ApplicationUserInterfaceStateAction
   extends Action<ActionType.USER_INTERFACE_STATE> {
   payload: {
     state: ApplicationStore['ui']['state'];
-    id: undefined | Card['id'];
+    id: undefined | Card['id'] | Account['id'] | Lane['id'];
   };
 }
 
@@ -156,9 +156,12 @@ export interface ApplicationFilterAction
   };
 }
 
-export interface AccountListViewAction
-  extends Action<ActionType.ACCOUNT_LIST_VIEW> {
-  payload: ListView;
+export interface ApplicationListViewAction
+  extends Action<ActionType.LIST_VIEW> {
+  payload: {
+    name: ListName;
+    view: ListView;
+  };
 }
 
 export type ApplicationAction =
@@ -184,7 +187,7 @@ export type ApplicationAction =
   | ApplicationUserInterfaceStateAction
   | ApplicationUserInterfaceModalAction
   | ApplicationFilterAction
-  | AccountListViewAction;
+  | ApplicationListViewAction;
 
 export function showModalSuccess(text?: string) {
   return {
@@ -214,6 +217,13 @@ export function pageLoad(token?: string) {
   } as ApplicationPageLoadAction;
 }
 
+export function login(token: string, user: User, team: Team, board: Board) {
+  return {
+    type: ActionType.LOGIN,
+    payload: { token, user, team, board },
+  } as ApplicationLoginAction;
+}
+
 export function pageLoadWithError(text: string, token?: string) {
   return {
     type: ActionType.PAGE_LOAD,
@@ -228,9 +238,46 @@ export function updateFilter(filter: Set<FilterMode>, text?: string) {
   } as ApplicationFilterAction;
 }
 
-export function setAccountListView(view: ListView) {
+export function setListView(name: ListName, view: ListView) {
   return {
-    type: ActionType.ACCOUNT_LIST_VIEW,
-    payload: view,
-  } as AccountListViewAction;
+    type: ActionType.LIST_VIEW,
+    payload: {
+      view,
+      name,
+    },
+  } as ApplicationListViewAction;
 }
+
+export const showAccountLayer = (
+  id?: string
+): ApplicationUserInterfaceStateAction => {
+  return {
+    type: ActionType.USER_INTERFACE_STATE,
+    payload: { state: 'account-detail', id: id },
+  };
+};
+
+export const showCardLayer = (
+  id?: string
+): ApplicationUserInterfaceStateAction => {
+  return {
+    type: ActionType.USER_INTERFACE_STATE,
+    payload: { state: 'card-detail', id: id },
+  };
+};
+
+export const showLaneLayer = (
+  id?: string
+): ApplicationUserInterfaceStateAction => {
+  return {
+    type: ActionType.USER_INTERFACE_STATE,
+    payload: { state: 'lane-detail', id: id },
+  };
+};
+
+export const hideLayer = (): ApplicationUserInterfaceStateAction => {
+  return {
+    type: ActionType.USER_INTERFACE_STATE,
+    payload: { state: 'default', id: undefined },
+  };
+};

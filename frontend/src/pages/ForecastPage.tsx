@@ -7,19 +7,19 @@ import {
 } from '@internationalized/date';
 import { DateRangePicker, Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
-import { selectInterfaceState, selectUsers, store } from '../store/Store';
+import { selectActiveUsers, selectInterfaceState, store } from '../store/Store';
 import { useSelector } from 'react-redux';
-import { ActionType, showModalError } from '../actions/Actions';
+import { showModalError } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { DateTime, Interval } from 'luxon';
+import { DateTime } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
 import { Currency } from '../components/Currency';
-import { Card } from '../interfaces/Card';
 import { ForecastSpacer } from '../components/card/ForecastSpacer';
 import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { UserStatus } from '../interfaces/User';
+import { CardList } from '../components/forecast/CardList';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -44,9 +44,7 @@ export const ForecastPage = () => {
   const [userId, setUserId] = useState(FILTER_BY_NONE.key);
   const [achieved, setAchieved] = useState({ amount: 0, count: 0 });
   const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
-  const [mode, setMode] = useState<'achieved' | 'predicted'>('achieved');
-  const [list, setList] = useState([]);
-  const users = useSelector(selectUsers);
+  const users = useSelector(selectActiveUsers);
   const state = useSelector(selectInterfaceState);
 
   const setRange = (range: { start: CalendarDate; end: CalendarDate }) => {
@@ -60,7 +58,7 @@ export const ForecastPage = () => {
 
     const execute = async () => {
       try {
-        const [achieved, predicted, list] = await Promise.all([
+        const [achieved, predicted] = await Promise.all([
           client!.fetchForecastAchieved(
             DateTime.fromISO(start.toString()),
             DateTime.fromISO(end.toString()),
@@ -71,16 +69,9 @@ export const ForecastPage = () => {
             DateTime.fromISO(end.toString()),
             userId
           ),
-          client!.fetchForecastList(
-            DateTime.fromISO(start.toString()),
-            DateTime.fromISO(end.toString()),
-            userId,
-            mode
-          ),
         ]);
         setAchieved(achieved);
         setPredicted(predicted);
-        setList(list);
       } catch (error) {
         console.log(error);
 
@@ -103,46 +94,10 @@ export const ForecastPage = () => {
       }
     };
 
-    if (start && end && client && userId && mode) {
+    if (start && end && client && userId) {
       execute();
     }
-  }, [client, start, end, userId, mode]);
-
-  useEffect(() => {
-    const execute = async () => {
-      let schemas = await client!.fetchSchemas();
-
-      store.dispatch({
-        type: ActionType.SCHEMAS,
-        payload: [...schemas],
-      });
-
-      let cards = await client!.getCards();
-
-      store.dispatch({
-        type: ActionType.CARDS,
-        payload: [...cards],
-      });
-    };
-
-    if (client) {
-      execute();
-    }
-  }, [client]);
-
-  // TODO move to helper or entity
-  const getAge = (start: DateTime, end: DateTime) => {
-    return start < end
-      ? `${Interval.fromDateTimes(start, end).length('days').toFixed(2)} days`
-      : '-';
-  };
-
-  const showCardDetail = (id?: string) => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'card-detail', id: id },
-    });
-  };
+  }, [client, start, end, userId]);
 
   return (
     <>
@@ -158,7 +113,7 @@ export const ForecastPage = () => {
             >
               {[
                 { id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name },
-                ...users.filter((user) => user.status === UserStatus.Enabled),
+                ...users,
               ].map((user) => {
                 return <Item key={user.id}>{user.name}</Item>;
               })}
@@ -242,60 +197,7 @@ export const ForecastPage = () => {
             </div>
           </section>
 
-          <section className="content-box tile">
-            <Picker
-              defaultSelectedKey={mode}
-              onSelectionChange={(key) => {
-                setMode(key.toString() as 'achieved' | 'predicted');
-              }}
-            >
-              <Item key="achieved">Closed Won</Item>
-              <Item key="predicted">All Open</Item>
-            </Picker>
-
-            <table className="list" style={{ width: '100%' }}>
-              <tbody>
-                <tr>
-                  <td>Name</td>
-                  <td>Amount</td>
-                  <td>Created</td>
-                  <td>Closed</td>
-                  <td>Deal Duration</td>
-                  <td>User</td>
-                </tr>
-                {list.map((card: Card, index) => {
-                  const created = DateTime.fromISO(card.createdAt);
-                  const closed = card.closedAt
-                    ? DateTime.fromISO(card.closedAt)
-                    : undefined;
-
-                  const user = users.find((user) => user.id === card.userId);
-
-                  return (
-                    <tr key={index}>
-                      <td>
-                        <span
-                          onClick={() => showCardDetail(card.id)}
-                          className="direct-link"
-                        >
-                          {card.name}
-                        </span>
-                      </td>
-                      <td>
-                        <b>
-                          <Currency key={card.id} value={card.amount} />
-                        </b>
-                      </td>
-                      <td>{created.toRelative()}</td>
-                      <td>{closed ? closed.toRelative() : ''}</td>
-                      <td>{closed ? getAge(created, closed) : ''}</td>
-                      <td>{user?.name}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
+          <CardList userId={userId} start={start} end={end} />
         </div>
       </div>
     </>

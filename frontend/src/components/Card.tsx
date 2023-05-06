@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { Card as CardEntity } from '../interfaces/Card';
 import { Lane, LaneType } from '../interfaces/Lane';
 import { store } from '../store/Store';
-import { ActionType } from '../actions/Actions';
+import { showCardLayer } from '../actions/Actions';
 import { Draggable } from 'react-beautiful-dnd';
 import { Currency } from './Currency';
 import { Avatar } from './Avatar';
@@ -34,11 +34,8 @@ export const Card = ({ card, lane, index }: CardProps) => {
     }
   }, [card]);
 
-  const showCardDetail = (id?: string) => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'card-detail', id: id },
-    });
+  const openCard = (id?: string) => {
+    store.dispatch(showCardLayer(id));
   };
 
   return (
@@ -57,7 +54,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
             <div
               className={`content ${snaphot.isDragging ? 'is-dragging' : ''}`}
               onClick={() => {
-                showCardDetail(card.id);
+                openCard(card.id);
               }}
             >
               <div style={{ marginBottom: '4px' }}>

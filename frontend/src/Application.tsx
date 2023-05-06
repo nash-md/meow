@@ -19,6 +19,7 @@ import { store } from './store/Store';
 function Application() {
   const { client } = useContext(RequestHelperContext);
 
+  // TODO combine this to one call
   useEffect(() => {
     const execute = async () => {
       let users = await client!.getUsers();
@@ -26,6 +27,27 @@ function Application() {
       store.dispatch({
         type: ActionType.USERS,
         payload: [...users],
+      });
+
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
+      });
+
+      let accounts = await client!.getAccounts();
+
+      store.dispatch({
+        type: ActionType.ACCOUNTS,
+        payload: [...accounts],
+      });
+
+      let lanes = await client!.getLanes();
+
+      store.dispatch({
+        type: ActionType.LANES,
+        payload: [...lanes],
       });
     };
 

@@ -8,7 +8,7 @@ import {
   store,
 } from '../store/Store';
 import { Droppable } from 'react-beautiful-dnd';
-import { ActionType } from '../actions/Actions';
+import { showLaneLayer } from '../actions/Actions';
 import { Currency } from './Currency';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../store/ApplicationStore';
@@ -112,18 +112,15 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
 
   const { sum, count } = useLaneSummary(lane, cards);
 
-  const showLaneDetail = (id?: string) => {
-    store.dispatch({
-      type: ActionType.USER_INTERFACE_STATE,
-      payload: { state: 'lane-detail', id: id },
-    });
+  const openLane = (id?: string) => {
+    store.dispatch(showLaneLayer(id));
   };
 
   return (
     <div className="lane" style={{ width: `${100 / numberOfLanes}%` }}>
       <div
         className={`title ${getLaneColorClassName(lane.color)}`}
-        onClick={() => showLaneDetail(lane.id)}
+        onClick={() => openLane(lane.id)}
       >
         <div style={{ flexGrow: 1 }}>{lane.name}</div>
         {lane.inForecast === false && <div className="forecast-icon"></div>}
