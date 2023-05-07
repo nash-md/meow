@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-05-07
+
+- Added filters to table list views: Users can now filter opportunities, users, and accounts.
+
 ## 2023-05-03
 
 - Updated the account table view: You can now sort by clicking on the column header. The default sort order is descending. Click the header again to change it to ascending.
