@@ -1,7 +1,6 @@
 import './App.css';
 import { useBrowserState } from './hooks/useBrowserState';
 import { useSelector } from 'react-redux';
-
 import Application from './Application';
 import LoginPage from './pages/LoginPage';
 import {
@@ -12,16 +11,17 @@ import {
   store,
 } from './store/Store';
 import { useContext, useEffect } from 'react';
-import { RequestHelper } from './helpers/RequestHelper';
+import { RequestHelper, getBaseUrl } from './helpers/RequestHelper';
 import {
   readContextFromLocalStorage,
   writeContextToLocalStorage,
 } from './helpers/LocalStorageHelper';
-import { ActionType, pageLoad, pageLoadWithError } from './actions/Actions';
+import { login, pageLoad, pageLoadWithError } from './actions/Actions';
 import { RequestHelperContext } from './context/RequestHelperContextProvider';
 import { YouAreOffline } from './components/YouAreOffline';
 import { RequestTimeoutError } from './errors/RequestTimeoutError';
 import { Translations } from './Translations';
+import { RequestHelperUrlError } from './errors/RequestHelperUrlError';
 
 export const SessionOrNot = () => {
   const { setClient } = useContext(RequestHelperContext);
@@ -42,7 +42,7 @@ export const SessionOrNot = () => {
 
         console.log(`found token ${context.token.substring(0, 25)}...`);
 
-        const client = new RequestHelper(import.meta.env.VITE_URL);
+        const client = new RequestHelper(getBaseUrl());
 
         const code = await client.isValidToken(context.token);
 
@@ -55,21 +55,27 @@ export const SessionOrNot = () => {
 
         store.dispatch(pageLoad(context.token));
 
-        const payload = await client.loginWithToken(context.token);
+        const { token, user, team, board } = await client.loginWithToken(
+          context.token
+        );
 
         if (setClient) {
-          setClient(new RequestHelper(import.meta.env.VITE_URL, context.token));
+          client.token = token;
+
+          setClient(client);
         }
 
-        store.dispatch({
-          type: ActionType.LOGIN,
-          payload: payload,
-        });
+        client.token = token;
+
+        store.dispatch(login(token, user, team, board));
       } catch (error) {
         let text = Translations.SessionUnhandledError.en;
         let token = undefined;
 
-        if (error instanceof RequestTimeoutError) {
+        if (error instanceof RequestHelperUrlError) {
+          text = Translations.RequestHelperError.en;
+          token = context.token;
+        } else if (error instanceof RequestTimeoutError) {
           text = Translations.SessionTimeoutError.en;
           token = context.token;
         } else if (error instanceof TypeError) {

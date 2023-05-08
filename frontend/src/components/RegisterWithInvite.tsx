@@ -1,12 +1,11 @@
 import { TextField, Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
-import { ActionType } from '../actions/Actions';
+import { login } from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { RequestError } from '../errors/RequestError';
-import { RequestTimeoutError } from '../errors/RequestTimeoutError';
-import { RequestHelper } from '../helpers/RequestHelper';
+import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
 import { store } from '../store/Store';
 import { PasswordStrength } from './register/PasswordStrength';
+import { getErrorMessage } from '../helpers/ErrorHelper';
 
 export interface RegisterWithInviteProps {
   invite?: string;
@@ -31,7 +30,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
   useEffect(() => {
     const execute = async () => {
       try {
-        const client = new RequestHelper(import.meta.env.VITE_URL);
+        const client = new RequestHelper(getBaseUrl());
 
         let payload = await client.invite(invite!);
 
@@ -53,43 +52,23 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(import.meta.env.VITE_URL);
+      const client = new RequestHelper(getBaseUrl());
 
       await client.register(name, password, invite);
 
-      const payload = await client.login(name, password);
+      const { token, user, team, board } = await client.login(name, password);
 
-      client.token = payload.token;
-
-      if (setClient) {
-        setClient(new RequestHelper(import.meta.env.VITE_URL, payload.token));
-      }
+      client.token = token;
 
       setClient!(client);
       setIsLoading(false);
 
-      store.dispatch({
-        type: ActionType.LOGIN,
-        payload: payload,
-      });
+      store.dispatch(login(token, user, team, board));
     } catch (error) {
-      setIsLoading(false);
-
       console.error(error);
 
-      if (error instanceof RequestError) {
-        const parsed = await error.response.json();
-
-        const text = parsed.description ? parsed.description : parsed.name;
-
-        setError('Failed: ' + text);
-      } else if (error instanceof RequestTimeoutError) {
-        setError('Request Timeout Error, is your backend available?');
-      } else if (error instanceof TypeError) {
-        setError('Network Request Failed, is your backend available?');
-      } else {
-        setError('Failed: unknown, check JS Console');
-      }
+      setIsLoading(false);
+      setError(await getErrorMessage(error));
     }
   };
 

@@ -2,9 +2,8 @@ import { Button, TextField } from '@adobe/react-spectrum';
 import { useState, useMemo, useContext } from 'react';
 import { ActionType } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { RequestError } from '../../errors/RequestError';
-import { RequestTimeoutError } from '../../errors/RequestTimeoutError';
 import { store } from '../../store/Store';
+import { getErrorMessage } from '../../helpers/ErrorHelper';
 
 export const Form = (props: any) => {
   const { client } = useContext(RequestHelperContext);
@@ -41,19 +40,7 @@ export const Form = (props: any) => {
     } catch (error) {
       console.error(error);
 
-      if (error instanceof RequestError) {
-        const parsed = await error.response.json();
-
-        const text = parsed.description ? parsed.description : parsed.name;
-
-        setError('Failed: ' + text);
-      } else if (error instanceof RequestTimeoutError) {
-        setError('Request Timeout Error, is your backend available?');
-      } else if (error instanceof TypeError) {
-        setError('Network Request Failed, is your backend available?');
-      } else {
-        setError('Failed: unknown, check JS Console');
-      }
+      setError(await getErrorMessage(error));
     }
   };
 

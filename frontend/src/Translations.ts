@@ -1,4 +1,8 @@
 export const Translations = {
+  RequestHelperError: {
+    en: 'Please check your setup, the RequestHelper could not determine the backend, either set VITE_URL or the windows object needs to be set',
+  },
+
   SessionTypeError: {
     en: 'Your session could not be validated, the page was unable to communicate with the server',
   },

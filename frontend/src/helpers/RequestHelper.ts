@@ -11,39 +11,70 @@ import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
+import { RequestHelperUrlError } from '../errors/RequestHelperUrlError';
 
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
 
-export const stripLeadingSlash = (value: string) => {
-  return value.startsWith('/') ? value.substring(1, value.length) : value;
-};
-
-export const stripTrailingSlash = (value: string) => {
-  return value.endsWith('/') ? value.substring(0, value.length - 1) : value;
-};
-
 export const strip = (value: string) => {
-  let segment = value.endsWith('/') ? value.substr(0, value.length - 1) : value;
-  return segment.startsWith('/') ? segment.substr(1, segment.length) : segment;
+  let segment = value.endsWith('/')
+    ? value.substring(0, value.length - 1)
+    : value;
+  return segment.startsWith('/')
+    ? segment.substring(1, segment.length)
+    : segment;
+};
+
+const createUrlOrThrow = (url: string): URL => {
+  try {
+    return new URL(url);
+  } catch (error) {
+    throw new RequestHelperUrlError(error as Error);
+  }
+};
+
+export const getBaseUrl = (): URL => {
+  if (import.meta.env.VITE_URL) {
+    const url = import.meta.env.VITE_URL.toString() as string;
+
+    return createUrlOrThrow(url);
+  }
+
+  if (typeof window !== 'undefined') {
+    const url = `${window.location.protocol}//${window.location.host}`;
+
+    return createUrlOrThrow(url);
+  }
+
+  throw new RequestHelperUrlError(
+    new Error('VITE_URL not set and window object undefined')
+  );
 };
 
 export class RequestHelper {
   token: string | undefined;
-  url: string | undefined;
+  base: URL;
+  timeout: number;
 
-  constructor(url: string | undefined, token?: string) {
-    this.url = url;
+  constructor(base: URL, token?: string, timeout: number = 8000) {
+    this.base = base;
     this.token = token;
+    this.timeout = timeout;
   }
 
-  getUrl(segment?: string) {
-    const segments = this.url ? [this.url] : [];
+  getUrl(path?: string): URL {
+    const segments = this.base
+      ? [...this.base.pathname.split('/').filter((segment) => segment !== '')]
+      : [];
 
-    if (segment) {
-      segments.push(strip(segment));
+    const url = new URL(this.base!);
+
+    if (path) {
+      segments.push(strip(path));
     }
 
-    return `${segments.join('/')}`; // TODO migrate to URL class
+    url.pathname = segments.join('/');
+
+    return url;
   }
 
   getHeaders(method: 'POST' | 'GET' | 'DELETE') {
@@ -72,9 +103,9 @@ export class RequestHelper {
   }
 
   async fetchWithTimeout(
-    url: string,
+    url: URL,
     request: RequestInit,
-    timeout = 8000
+    timeout = this.timeout
   ): Promise<Response> {
     try {
       const controller = new AbortController();
@@ -108,7 +139,7 @@ export class RequestHelper {
     try {
       const body = await response.json();
 
-      return body as any; // TODO refactor
+      return body as any; // TODO return body as unknown
     } catch (error) {
       throw new ResponseParseError(response, 'Invalid JSON document');
     }
@@ -120,41 +151,27 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async updateCard({
-    id,
-    laneId,
-    name,
-    amount,
-    closedAt,
-    nextFollowUpAt,
-    userId,
-    attributes,
-    status,
-  }: Card) {
-    let url = this.getUrl(`/api/cards/${id}`);
+  async updateCard(card: Card) {
+    let url = this.getUrl(`/api/cards/${card.id}`);
 
     return this.doFetch(url, 'POST', {
-      laneId,
-      name,
-      amount,
-      closedAt,
-      nextFollowUpAt,
-      userId,
-      attributes,
-      status,
+      laneId: card.laneId,
+      name: card.name,
+      amount: card.amount,
+      closedAt: card.closedAt,
+      nextFollowUpAt: card.nextFollowUpAt,
+      userId: card.userId,
+      attributes: card.attributes,
+      status: card.status,
     });
   }
 
-  async doFetch(url: string, method: HttpMethod, body?: any) {
+  async doFetch(url: URL, method: HttpMethod, body?: any) {
     try {
-      const request = body
-        ? {
-            ...this.getHeaderWithAuthentication(method),
-            body: JSON.stringify(body),
-          }
-        : {
-            ...this.getHeaderWithAuthentication(method),
-          };
+      const request = {
+        ...this.getHeaderWithAuthentication(method),
+        ...(body ? { body: JSON.stringify(body) } : {}),
+      };
 
       const response = await this.fetchWithTimeout(url, request);
 
@@ -199,18 +216,7 @@ export class RequestHelper {
   }
 
   async getLanesStatistic(filter?: Set<FilterMode>, text?: string) {
-    let url = undefined;
-
-    // TODO refactor
-    if (!this.url) {
-      url = new URL(this.getUrl(`/api/lanes/statistic`));
-    } else {
-      url = new URL(
-        `${window.location.protocol}//${window.location.host}${this.getUrl(
-          `/api/lanes/statistic`
-        )}`
-      );
-    }
+    let url = this.getUrl(`/api/lanes/statistic`);
 
     if (filter && filter.size > 0) {
       const list = Array.from(filter).map((mode) => mode.toString());
@@ -222,7 +228,15 @@ export class RequestHelper {
       url.searchParams.append('text', text);
     }
 
-    return this.doFetch(url.toString(), 'GET');
+    return this.doFetch(url, 'GET');
+  }
+
+  async addSlackWithAuthenticationCode(code: string) {
+    let url = this.getUrl(`/api/slack/complete-setup`);
+
+    return this.doFetch(url, 'POST', {
+      code: code,
+    });
   }
 
   async updateLane(lane: Lane) {
@@ -287,6 +301,7 @@ export class RequestHelper {
   }
 
   async updateBoard(id: string, board: any) {
+    // TODO add type
     let url = this.getUrl(`/api/users/${id}/board`);
 
     return this.doFetch(url, 'POST', board);
@@ -314,25 +329,25 @@ export class RequestHelper {
   }
 
   async fetchForecastAchieved(start: DateTime, end: DateTime, userId: string) {
-    let url = this.getUrl(
-      `/api/forecast/achieved?${new URLSearchParams({
-        start: start.toISODate(),
-        end: end.toISODate(),
-        userId: userId,
-      })}`
-    );
+    let url = this.getUrl(`/api/forecast/achieved`);
+
+    url.search = new URLSearchParams({
+      start: start.toISODate(),
+      end: end.toISODate(),
+      userId: userId,
+    }).toString();
 
     return this.doFetch(url, 'GET');
   }
 
   async fetchForecastPredicted(start: DateTime, end: DateTime, userId: string) {
-    let url = this.getUrl(
-      `/api/forecast/predicted?${new URLSearchParams({
-        start: start.toISODate(),
-        end: end.toISODate(),
-        userId: userId,
-      })}`
-    );
+    let url = this.getUrl(`/api/forecast/predicted`);
+
+    url.search = new URLSearchParams({
+      start: start.toISODate(),
+      end: end.toISODate(),
+      userId: userId,
+    }).toString();
 
     return this.doFetch(url, 'GET');
   }
@@ -343,14 +358,14 @@ export class RequestHelper {
     userId: string,
     mode: 'achieved' | 'predicted'
   ) {
-    let url = this.getUrl(
-      `/api/forecast/list?${new URLSearchParams({
-        start: start.toISODate(),
-        end: end.toISODate(),
-        userId: userId,
-        mode: mode.toString(),
-      })}`
-    );
+    let url = this.getUrl(`/api/forecast/list`);
+
+    url.search = new URLSearchParams({
+      start: start.toISODate(),
+      end: end.toISODate(),
+      userId: userId,
+      mode: mode.toString(),
+    }).toString();
 
     return this.doFetch(url, 'GET');
   }
@@ -416,9 +431,11 @@ export class RequestHelper {
   }
 
   async invite(invite: string) {
-    const url = this.getUrl(
-      `/public/register/invite?invite=${encodeURIComponent(invite)}`
-    );
+    const url = this.getUrl(`/public/register/invite`);
+
+    url.search = new URLSearchParams({
+      invite: invite,
+    }).toString();
 
     const response = await this.fetchWithTimeout(url, {
       ...this.getHeaders('GET'),

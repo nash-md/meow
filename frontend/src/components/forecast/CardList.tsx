@@ -6,17 +6,17 @@ import { useSelector } from 'react-redux';
 import { selectUsers, selectView, store } from '../../store/Store';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { CalendarDate } from '@internationalized/date';
-import { RequestError } from '../../errors/RequestError';
 import { DateTime } from 'luxon';
 import {
+  ActionType,
   setListView,
   showCardLayer,
   showModalError,
 } from '../../actions/Actions';
-import { RequestTimeoutError } from '../../errors/RequestTimeoutError';
 import { toIntervalInDays, toRelativeDate } from '../../helpers/DateHelper';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { Currency } from '../Currency';
+import { getErrorMessage } from '../../helpers/ErrorHelper';
 
 const columns = [
   'Name',
@@ -59,6 +59,21 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
   };
 
   useEffect(() => {
+    const execute = async () => {
+      let cards = await client!.getCards(); // TODO missing fetch
+
+      store.dispatch({
+        type: ActionType.CARDS,
+        payload: [...cards],
+      });
+    };
+
+    if (client) {
+      execute();
+    }
+  }, [client]);
+
+  useEffect(() => {
     start.toString();
     end.toString();
 
@@ -76,22 +91,9 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
       } catch (error) {
         console.log(error);
 
-        if (error instanceof RequestError) {
-          const parsed = await error.response.json();
+        const message = await getErrorMessage(error);
 
-          const text = parsed.description ? parsed.description : parsed.name;
-          store.dispatch(showModalError('Failed: ' + text));
-        } else if (error instanceof RequestTimeoutError) {
-          store.dispatch(
-            showModalError('Request Timeout Error, is your backend available?')
-          );
-        } else if (error instanceof TypeError) {
-          store.dispatch(
-            showModalError('Network Request Failed, is your backend available?')
-          );
-        } else {
-          store.dispatch(showModalError('Failed: unknown, check JS Console'));
-        }
+        store.dispatch(showModalError(message));
       }
     };
 

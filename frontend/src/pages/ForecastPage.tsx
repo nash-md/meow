@@ -15,11 +15,9 @@ import { DateTime } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
 import { Currency } from '../components/Currency';
 import { ForecastSpacer } from '../components/card/ForecastSpacer';
-import { RequestError } from '../errors/RequestError';
-import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { Layer as CardLayer } from '../components/card/Layer';
-import { UserStatus } from '../interfaces/User';
 import { CardList } from '../components/forecast/CardList';
+import { getErrorMessage } from '../helpers/ErrorHelper';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -75,22 +73,9 @@ export const ForecastPage = () => {
       } catch (error) {
         console.log(error);
 
-        if (error instanceof RequestError) {
-          const parsed = await error.response.json();
+        const message = await getErrorMessage(error);
 
-          const text = parsed.description ? parsed.description : parsed.name;
-          store.dispatch(showModalError('Failed: ' + text));
-        } else if (error instanceof RequestTimeoutError) {
-          store.dispatch(
-            showModalError('Request Timeout Error, is your backend available?')
-          );
-        } else if (error instanceof TypeError) {
-          store.dispatch(
-            showModalError('Network Request Failed, is your backend available?')
-          );
-        } else {
-          store.dispatch(showModalError('Failed: unknown, check JS Console'));
-        }
+        store.dispatch(showModalError(message));
       }
     };
 

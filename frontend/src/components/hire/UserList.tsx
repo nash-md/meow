@@ -1,5 +1,5 @@
 import { Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, setListView } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
