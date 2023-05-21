@@ -68,7 +68,7 @@ export const SelectAttribute = ({
                 <TextField value={name} onChange={setName} />
               </div>
               <div className="select">
-                {options.map((option, index) => {
+                {options?.map((option, index) => {
                   return (
                     <div key={index} className="option">
                       <div className="name">

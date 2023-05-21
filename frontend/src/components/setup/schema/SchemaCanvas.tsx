@@ -67,18 +67,10 @@ export const SchemaCanvas = ({
     };
 
     if (type === SchemaAttributeType.Select) {
-      (item as SchemaSelectAttribute).options = [];
+      (item as SchemaSelectAttribute).options = [ANIMALS[0], ANIMALS[1]];
     }
 
-    setItems([
-      ...items,
-      {
-        key: generateUUID(),
-        index: items.length,
-        type: type,
-        name: ANIMALS[items.length],
-      },
-    ]);
+    setItems([...items, item]);
   };
 
   const remove = (index: number) => {
