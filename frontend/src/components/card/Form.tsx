@@ -8,15 +8,11 @@ import {
   selectUserId,
 } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import {
-  Card,
-  CardAttribute,
-  CardFormPreview,
-  CardPreview,
-} from '../../interfaces/Card';
+import { Card, CardFormPreview, CardPreview } from '../../interfaces/Card';
 import { SchemaType } from '../../interfaces/Schema';
 import { Translations } from '../../Translations';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
+import { Attribute } from '../../interfaces/Attribute';
 
 export interface FormProps {
   id: string | undefined;
@@ -26,7 +22,7 @@ export interface FormProps {
 // TODO rename component
 export const Form = ({ update, id }: FormProps) => {
   const userId = useSelector(selectUserId);
-  const [attributes, setAttributes] = useState<CardAttribute>({});
+  const [attributes, setAttributes] = useState<Attribute>({});
   const [preview, setPreview] = useState<CardFormPreview>({
     name: '',
     amount: '',
@@ -89,7 +85,7 @@ export const Form = ({ update, id }: FormProps) => {
     update(id, { ...preview, amount: parseInt(preview.amount) });
   };
 
-  const validate = (values: CardAttribute) => {
+  const validate = (values: Attribute) => {
     setPreview({
       ...preview,
       attributes: {

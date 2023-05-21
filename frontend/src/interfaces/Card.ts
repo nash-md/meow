@@ -1,3 +1,5 @@
+import { Attribute } from './Attribute';
+
 export type id = string;
 
 export interface Card {
@@ -9,15 +11,11 @@ export interface Card {
   laneId: string;
   readonly inLaneSince: string;
   status?: CardStatus;
-  attributes: CardAttribute | undefined;
+  attributes: Attribute | undefined;
   closedAt?: string;
   nextFollowUpAt?: string;
   readonly createdAt: string;
   readonly updatedAt: string;
-}
-
-export interface CardAttribute {
-  [key: string]: string | number | null | boolean;
 }
 
 export enum CardStatus {
@@ -30,7 +28,7 @@ export interface CardPreview {
   userId: string;
   amount: number;
   laneId: string;
-  attributes: CardAttribute | undefined;
+  attributes: Attribute | undefined;
   closedAt?: string;
   nextFollowUpAt?: string;
 }
@@ -40,7 +38,7 @@ export interface CardFormPreview {
   userId: string;
   amount: string;
   laneId: string;
-  attributes: CardAttribute | undefined;
+  attributes: Attribute | undefined;
   closedAt?: string;
   nextFollowUpAt?: string;
 }

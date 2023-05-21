@@ -16,14 +16,16 @@ export const Attribute = ({ event }: AttributeProps) => {
             case 'added':
               return (
                 <span key={index}>
-                  <b> {item.name}</b> was added, value is <b>{item.value}</b>.
+                  <b> {item.name}</b> was added, value is{' '}
+                  <b>{item.value?.toString()}</b>.
                 </span>
               );
 
             case 'updated':
               return (
                 <span key={index}>
-                  <b>{item.name}</b> was changed to <b>{item.value}</b>.
+                  <b>{item.name}</b> was changed to{' '}
+                  <b>{item.value?.toString()}</b>.
                 </span>
               );
 

@@ -38,7 +38,7 @@ export const AccountsPage = () => {
     id: string;
     Name: string;
     CreatedAt: string | null;
-    [key: string]: string | number | null | undefined;
+    [key: string]: string | number | null | boolean | undefined;
   }
 
   const openAccount = (id?: string) => {
@@ -94,7 +94,7 @@ export const AccountsPage = () => {
 
   function getTableData(
     key: string,
-    value: string | number | null | undefined
+    value: string | number | null | boolean | undefined
   ) {
     if (attributes.includes(key)) {
       return <td>{value?.toString()}</td>;

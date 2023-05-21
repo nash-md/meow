@@ -139,25 +139,25 @@ h3 {
 
 @media (prefers-color-scheme: dark) {
   .page .navigation .user-menu .wrapper .link.user-settings {
-    background-image: url(../user-settings-icon-light.svg);
+    background-image: url(../public/user-settings-icon-light.svg);
   }
 }
 
 @media (prefers-color-scheme: light) {
   .page .navigation .user-menu .wrapper .link.user-settings {
-    background-image: url(../user-settings-icon.svg);
+    background-image: url(../public/user-settings-icon.svg);
   }
 }
 
 @media (prefers-color-scheme: dark) {
   .page .navigation .user-menu .wrapper .link.logout {
-    background-image: url(../exit-icon-light.svg);
+    background-image: url(../public/exit-icon-light.svg);
   }
 }
 
 @media (prefers-color-scheme: light) {
   .page .navigation .user-menu .wrapper .link.logout {
-    background-image: url(../exit-icon.svg);
+    background-image: url(../public/exit-icon.svg);
   }
 }
 
@@ -272,7 +272,7 @@ h3 {
   margin-right: 4px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-image: url(/icon-hidden.svg);
+  background-image: url(../public/icon-hidden.svg);
   background-size: 80%;
   width: 24px;
   opacity: 0.4;
@@ -698,7 +698,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 80%;
-  background-image: url(../drag-icon.svg);
+  background-image: url(../public/drag-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -708,7 +708,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 60%;
-  background-image: url(../trash-icon.svg);
+  background-image: url(../public/trash-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -851,7 +851,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 80%;
-  background-image: url(../drag-icon.svg);
+  background-image: url(../public/drag-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -861,7 +861,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 60%;
-  background-image: url(../trash-icon.svg);
+  background-image: url(../public/trash-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -975,7 +975,7 @@ h3 {
 
 #success-modal > div {
   line-height: 80px;
-  background-image: url(../confirmation-icon.svg);
+  background-image: url(../public/confirmation-icon.svg);
   background-position: left center;
   background-repeat: no-repeat;
   width: 600px;
@@ -1001,7 +1001,7 @@ h3 {
 
 #error-modal > div {
   line-height: 80px;
-  background-image: url(/error-icon.svg);
+  background-image: url(../public/error-icon.svg);
   background-position: left center;
   background-repeat: no-repeat;
   width: 750px;
@@ -1057,7 +1057,7 @@ h3 {
 
 @media (prefers-color-scheme: light) {
   .statistics-button {
-    background-image: url(./statistics-icon.svg);
+    background-image: url(../public/statistics-icon.svg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 75%;
@@ -1066,7 +1066,7 @@ h3 {
 
 @media (prefers-color-scheme: dark) {
   .statistics-button {
-    background-image: url(./statistics-icon-white.svg);
+    background-image: url(../public/statistics-icon-white.svg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 75%;

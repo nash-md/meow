@@ -1,15 +1,12 @@
 import { Button, TextField } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Account,
-  AccountAttribute,
-  AccountPreview,
-} from '../../interfaces/Account';
+import { Account, AccountPreview } from '../../interfaces/Account';
 import { selectAccount, selectSchemaByType } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { SchemaType } from '../../interfaces/Schema';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
+import { Attribute } from '../../interfaces/Attribute';
 
 export interface FormProps {
   id: Account['id'] | undefined;
@@ -27,7 +24,7 @@ export const Form = ({ update, id }: FormProps) => {
     selectSchemaByType(store, SchemaType.Account)
   );
 
-  const handlePreviewUpdate = (key: string, value: string | number) => {
+  const handlePreviewUpdate = (key: string, value: Attribute[typeof key]) => {
     setPreview({
       ...preview,
       [key]: value,
@@ -59,7 +56,7 @@ export const Form = ({ update, id }: FormProps) => {
     }
   }, [account]);
 
-  const validate = (values: AccountAttribute) => {
+  const validate = (values: Attribute) => {
     setPreview({
       ...preview,
       attributes: {

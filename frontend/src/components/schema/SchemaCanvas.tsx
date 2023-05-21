@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { CardAttribute } from '../../interfaces/Card';
 import {
   SchemaAttribute,
   Schema,
@@ -10,11 +9,12 @@ import { TextAreaAttribute } from './TextAreaAttribute';
 import { TextAttribute } from './TextAttribute';
 import { ReferenceAttribute } from './ReferenceAttribute';
 import { BooleanAttribute } from './BooleanAttribute';
+import { Attribute } from '../../interfaces/Attribute';
 
 export interface SchemaCanvasProps {
   schema: Schema;
-  values?: CardAttribute;
-  validate: (values: CardAttribute) => void;
+  values?: Attribute;
+  validate: (values: Attribute) => void;
 }
 
 const toStringOrNull = (value: unknown) => {
@@ -22,7 +22,7 @@ const toStringOrNull = (value: unknown) => {
     return null;
   }
 
-  return value.toString();
+  return value ? value.toString() : null;
 };
 
 const toBooleanOrNull = (value: unknown): boolean | null => {
@@ -38,13 +38,13 @@ export const SchemaCanvas = ({
   values: valuesImport,
   validate,
 }: SchemaCanvasProps) => {
-  const [values, setValues] = useState<CardAttribute | undefined>(valuesImport);
+  const [values, setValues] = useState<Attribute | undefined>(valuesImport);
 
   useEffect(() => {
     setValues(valuesImport);
   }, [valuesImport]);
 
-  const updateAttribute = (key: string, value: string | boolean) => {
+  const updateAttribute = (key: string, value: Attribute[typeof key]) => {
     setValues({ ...values, [key]: value });
 
     validate({ ...values, [key]: value });
