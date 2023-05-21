@@ -6,6 +6,7 @@ import {
   BeforeInsert,
   Column,
 } from 'typeorm';
+import { Attribute } from './Attribute.js';
 
 @Entity({ name: 'Accounts' })
 export class Account {
@@ -19,7 +20,7 @@ export class Account {
   name: string;
 
   @Column()
-  attributes?: AccountAttribute;
+  attributes?: Attribute;
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -42,8 +43,4 @@ export class Account {
   insertUpdated() {
     this.updatedAt = new Date();
   }
-}
-
-export interface AccountAttribute {
-  [key: string]: string | number | null;
 }

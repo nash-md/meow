@@ -3,10 +3,18 @@ import { Key, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { ANIMALS } from '../../../Constants';
 import { generateUUID } from '../../../helpers/Helper';
-import { Schema, SchemaAttribute } from '../../../interfaces/Schema';
+import {
+  Schema,
+  SchemaAttribute,
+  SchemaAttributeType,
+  SchemaReferenceAttribute,
+  SchemaSelectAttribute,
+} from '../../../interfaces/Schema';
 import { SelectAttribute } from './SelectAttribute';
 import { TextAreaAttribute } from './TextAreaAttribute';
 import { TextAttribute } from './TextAttribute';
+import { ReferenceAttribute } from './ReferenceAttribute';
+import { BooleanAttribute } from './BooleanAttribute';
 
 function moveAttribute<T>(items: T[], from: number, to: number): T[] {
   const lane = items[from];
@@ -35,7 +43,9 @@ export const SchemaCanvas = ({
   validate,
 }: SchemaCanvasProps) => {
   const [items, setItems] = useState<Array<SchemaAttribute>>([]);
-  const [type, setType] = useState<SchemaAttribute['type']>('text');
+  const [type, setType] = useState<SchemaAttributeType>(
+    SchemaAttributeType.Text
+  );
   const [schema, setSchema] = useState(schemaImported);
 
   useEffect(() => {
@@ -49,6 +59,17 @@ export const SchemaCanvas = ({
   }, [schemaImported]);
 
   const add = () => {
+    const item = {
+      key: generateUUID(),
+      index: items.length,
+      type: type,
+      name: ANIMALS[items.length],
+    };
+
+    if (type === SchemaAttributeType.Select) {
+      (item as SchemaSelectAttribute).options = [];
+    }
+
     setItems([
       ...items,
       {
@@ -56,7 +77,6 @@ export const SchemaCanvas = ({
         index: items.length,
         type: type,
         name: ANIMALS[items.length],
-        options: [],
       },
     ]);
   };
@@ -114,41 +134,55 @@ export const SchemaCanvas = ({
 
   const onDragStart = () => {};
 
-  const getAttribute = (item: any, index: Number) => {
+  const getAttribute = (item: SchemaAttribute) => {
     switch (item.type) {
-      case 'text':
+      case SchemaAttributeType.Text:
         return (
           <TextAttribute
             update={update}
             remove={remove}
-            key={index}
-            index={index}
             attributeKey={item.key}
             {...item}
           />
         );
-      case 'textarea':
+      case SchemaAttributeType.TextArea:
         return (
           <TextAreaAttribute
             update={update}
             remove={remove}
-            key={index}
-            index={index}
             attributeKey={item.key}
             {...item}
           />
         );
-      case 'select':
+      case SchemaAttributeType.Select:
         return (
           <SelectAttribute
             update={update}
             remove={remove}
-            key={index}
-            index={index}
+            attributeKey={item.key}
+            {...(item as SchemaSelectAttribute)}
+          />
+        );
+      case SchemaAttributeType.Reference:
+        return (
+          <ReferenceAttribute
+            update={update}
+            remove={remove}
+            attributeKey={item.key}
+            {...(item as SchemaReferenceAttribute)}
+          />
+        );
+      case SchemaAttributeType.Boolean:
+        return (
+          <BooleanAttribute
+            update={update}
+            remove={remove}
             attributeKey={item.key}
             {...item}
           />
         );
+      default:
+        return <div>Unknown attribute type</div>;
     }
   };
 
@@ -159,8 +193,8 @@ export const SchemaCanvas = ({
           {(provided, snaphot) => {
             return (
               <div ref={provided.innerRef} {...provided.droppableProps}>
-                {items.map((item, index) => {
-                  return getAttribute(item, index);
+                {items.map((item) => {
+                  return getAttribute(item);
                 })}
 
                 {provided.placeholder}
@@ -169,17 +203,18 @@ export const SchemaCanvas = ({
           }}
         </Droppable>
       </DragDropContext>
-
       <div className="add-attribute">
         <Picker
           defaultSelectedKey="text"
           onSelectionChange={(key: Key) =>
-            setType(key.toString() as SchemaAttribute['type'])
+            setType(key.toString() as SchemaAttributeType)
           }
         >
           <Item key="text">Text</Item>
           <Item key="textarea">TextArea</Item>
           <Item key="select">Dropdown</Item>
+          <Item key="reference">Reference</Item>
+          <Item key="boolean">Checkbox</Item>
         </Picker>
 
         <Button onPress={add} variant="secondary">

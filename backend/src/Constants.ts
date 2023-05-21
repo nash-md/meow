@@ -8,6 +8,7 @@ export const MAXIMUM_LENGTH_OF_USER_PASSWORD = 40;
 export const MINIMUM_LENGTH_OF_USER_PASSWORD = 3;
 export const IS_ISO_8601_REGEXP =
   /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})?)?$/;
+export const IS_ISO_8601_DATE_REGEXP = /^\d{4}-\d{2}-\d{2}$/;
 export const FILTER_BY_NONE = { name: 'Everyone', key: 'all' };
 
 export const DefaultLanes = [

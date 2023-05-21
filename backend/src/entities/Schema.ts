@@ -50,10 +50,19 @@ export enum SchemaType {
   Account = 'account',
 }
 
+export enum SchemaAttributeType {
+  Text = 'text',
+  TextArea = 'textarea',
+  Select = 'select',
+  Reference = 'reference',
+  Boolean = 'boolean',
+  Email = 'email',
+}
+
 export interface SchemaAttribute {
   key: string;
   index: number;
   name: string;
-  type: 'text' | 'textarea' | 'select';
+  type: SchemaAttributeType;
   options?: string[];
 }

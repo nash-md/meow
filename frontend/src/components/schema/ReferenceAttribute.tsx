@@ -6,7 +6,7 @@ import { selectAccounts } from '../../store/Store';
 export interface ReferenceAttributeProps {
   attributeKey: string;
   name: string;
-  value: string;
+  value: string | null;
   update: (index: string, value: string) => void;
 }
 

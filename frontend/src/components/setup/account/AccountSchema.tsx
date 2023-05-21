@@ -1,10 +1,19 @@
 import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { showModalError, showModalSuccess } from '../../../actions/Actions';
+import {
+  ActionType,
+  showModalError,
+  showModalSuccess,
+} from '../../../actions/Actions';
 import { RESERVED_ATTRIBUTES } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { Schema, SchemaType } from '../../../interfaces/Schema';
+import {
+  Schema,
+  SchemaAttributeType,
+  SchemaReferenceAttribute,
+  SchemaType,
+} from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
@@ -72,6 +81,28 @@ export const AccountSchema = () => {
       return;
     }
 
+    if (
+      list.some(
+        (item) =>
+          item.type === SchemaAttributeType.Reference &&
+          (item as SchemaReferenceAttribute).reference === 'account'
+      )
+    ) {
+      setError('You cannot reference the the same item');
+      setIsValid(false);
+
+      return;
+    }
+
+    let startsOrEndsWithSpaces = /(^\s+)|(\s+$)/;
+
+    if (list.some((item) => startsOrEndsWithSpaces.test(item.name))) {
+      setError('A field cannot start or end with spaces');
+      setIsValid(false);
+
+      return;
+    }
+
     setError('');
     setIsValid(true);
 
@@ -85,6 +116,13 @@ export const AccountSchema = () => {
       store.dispatch(
         showModalSuccess(Translations.SetupChangedConfirmation.en)
       );
+
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
+      });
     } catch (error) {
       console.error(error);
 

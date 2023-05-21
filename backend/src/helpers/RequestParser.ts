@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { IS_ISO_8601_REGEXP } from '../Constants.js';
+import { IS_ISO_8601_DATE_REGEXP, IS_ISO_8601_REGEXP } from '../Constants.js';
 
 function isEqualDates(
   first: Date | string | undefined,
@@ -22,12 +22,20 @@ function isEqualDates(
   return firstDateTime.toMillis() === secondDateTime.toMillis();
 }
 
-function isValidDateString(date: unknown) {
+function isValidDateTimeString(date: unknown) {
   if (typeof date !== 'string') {
     return false;
   }
 
   return IS_ISO_8601_REGEXP.test(date);
+}
+
+function isValidDateString(date: unknown) {
+  if (typeof date !== 'string') {
+    return false;
+  }
+
+  return IS_ISO_8601_DATE_REGEXP.test(date);
 }
 
 function toJsDate(date: string) {
@@ -36,6 +44,7 @@ function toJsDate(date: string) {
 
 export const RequestParser = {
   isEqualDates,
+  isValidDateTimeString,
   isValidDateString,
   toJsDate,
 };

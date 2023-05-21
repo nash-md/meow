@@ -23,7 +23,7 @@ export const CardRequestSchema = {
     attributes: {
       type: 'object',
       additionalProperties: {
-        type: ['string', 'number', 'null'],
+        type: ['string', 'number', 'null', 'boolean'],
       },
     },
     userId: { type: 'string' },

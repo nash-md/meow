@@ -17,7 +17,7 @@ export interface Card {
 }
 
 export interface CardAttribute {
-  [key: string]: string | number | null;
+  [key: string]: string | number | null | boolean;
 }
 
 export enum CardStatus {

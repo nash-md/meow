@@ -97,7 +97,7 @@ export const AccountsPage = () => {
     value: string | number | null | undefined
   ) {
     if (attributes.includes(key)) {
-      return <td>{value}</td>;
+      return <td>{value?.toString()}</td>;
     }
   }
 

@@ -1,5 +1,4 @@
 import { ListView } from '../interfaces/ListView';
-import { Schema } from '../interfaces/Schema';
 import { isNullOrUndefined, isNumber, isString } from './Helper';
 
 export const ListViewHelper = {

@@ -1,7 +1,11 @@
 import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { showModalError, showModalSuccess } from '../../../actions/Actions';
+import {
+  ActionType,
+  showModalError,
+  showModalSuccess,
+} from '../../../actions/Actions';
 import { RESERVED_ATTRIBUTES } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { Schema, SchemaType } from '../../../interfaces/Schema';
@@ -72,6 +76,15 @@ export const CardSchema = () => {
       return;
     }
 
+    let startsOrEndsWithSpaces = /(^\s+)|(\s+$)/;
+
+    if (list.some((item) => startsOrEndsWithSpaces.test(item.name))) {
+      setError('A field cannot start or end with spaces');
+      setIsValid(false);
+
+      return;
+    }
+
     setError('');
     setIsValid(true);
 
@@ -85,6 +98,13 @@ export const CardSchema = () => {
       store.dispatch(
         showModalSuccess(Translations.SetupChangedConfirmation.en)
       );
+
+      let schemas = await client!.fetchSchemas();
+
+      store.dispatch({
+        type: ActionType.SCHEMAS,
+        payload: [...schemas],
+      });
     } catch (error) {
       console.error(error);
 

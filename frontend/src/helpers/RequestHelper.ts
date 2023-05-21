@@ -332,8 +332,8 @@ export class RequestHelper {
     let url = this.getUrl(`/api/forecast/achieved`);
 
     url.search = new URLSearchParams({
-      start: start.toISODate(),
-      end: end.toISODate(),
+      start: start.toISODate() ?? '',
+      end: end.toISODate() ?? '',
       userId: userId,
     }).toString();
 
@@ -344,8 +344,8 @@ export class RequestHelper {
     let url = this.getUrl(`/api/forecast/predicted`);
 
     url.search = new URLSearchParams({
-      start: start.toISODate(),
-      end: end.toISODate(),
+      start: start.toISODate() ?? '',
+      end: end.toISODate() ?? '',
       userId: userId,
     }).toString();
 
@@ -361,8 +361,8 @@ export class RequestHelper {
     let url = this.getUrl(`/api/forecast/list`);
 
     url.search = new URLSearchParams({
-      start: start.toISODate(),
-      end: end.toISODate(),
+      start: start.toISODate() ?? '',
+      end: end.toISODate() ?? '',
       userId: userId,
       mode: mode.toString(),
     }).toString();

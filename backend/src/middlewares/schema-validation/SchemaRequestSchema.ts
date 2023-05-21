@@ -1,3 +1,5 @@
+import { SchemaAttributeType } from '../../entities/Schema.js';
+
 export const SchemaRequestSchema = {
   type: 'object',
   required: ['type', 'schema'],
@@ -13,12 +15,13 @@ export const SchemaRequestSchema = {
           name: { type: 'string' },
           type: {
             type: 'string',
-            enum: ['text', 'textarea', 'select'],
+            enum: Object.values(SchemaAttributeType),
           },
           options: {
             type: 'array',
             items: { type: 'string' },
           },
+          reference: { type: 'string' },
         },
         required: ['key', 'index', 'name', 'type'],
       },

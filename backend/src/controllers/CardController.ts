@@ -73,28 +73,35 @@ const create = async (
       req.jwt.user.id!.toString(),
       lane.id!.toString(),
       body.name,
-      body.amount
+      parseInt(body.amount)
     );
 
     if (body.attributes) {
       card.attributes = body.attributes;
     }
 
-    if (body.closedAt && RequestParser.isValidDateString(body.closedAt)) {
+    if (body.closedAt && RequestParser.isValidDateTimeString(body.closedAt)) {
       card.closedAt = RequestParser.toJsDate(body.closedAt);
     }
 
     if (
       body.nextFollowUpAt &&
-      RequestParser.isValidDateString(body.nextFollowUpAt)
+      RequestParser.isValidDateTimeString(body.nextFollowUpAt)
     ) {
       card.nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
     }
+
     const updated = await datasource.manager.save(card);
 
     const cardEventService = new CardEventService(datasource);
 
     cardEventService.add(updated, req.jwt.user);
+
+    await cardEventService.storeLaneAmountChange(
+      card.teamId,
+      card.userId,
+      card.laneId
+    );
 
     return res.json(updated);
   } catch (error) {
@@ -152,6 +159,8 @@ const update = async (
       }
     }
 
+    const hasAmountUpdate = card.amount !== body.amount ? true : false;
+
     const cardEventService = new CardEventService(datasource);
 
     // TODO refactor, remove dependency from controller
@@ -163,6 +172,8 @@ const update = async (
       card.status = parseCardStatus(req.body.status);
     }
 
+    let previousLaneId: string | undefined = undefined;
+
     if (body.laneId) {
       try {
         const lane = await EntityHelper.findOneById(
@@ -172,6 +183,8 @@ const update = async (
         );
 
         if (body.laneId !== card.laneId) {
+          previousLaneId = card.laneId;
+
           card.inLaneSince = new Date();
         }
 
@@ -188,6 +201,27 @@ const update = async (
     }
 
     const updated = await datasource.manager.save(card);
+
+    if (previousLaneId) {
+      await cardEventService.storeLaneAmountChange(
+        card.teamId,
+        card.userId,
+        previousLaneId
+      );
+      await cardEventService.storeLaneAmountChange(
+        card.teamId,
+        card.userId,
+        card.laneId
+      );
+    }
+
+    if (hasAmountUpdate) {
+      await cardEventService.storeLaneAmountChange(
+        card.teamId,
+        card.userId,
+        card.laneId
+      );
+    }
 
     return res.json(updated);
   } catch (error) {

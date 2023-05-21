@@ -139,25 +139,25 @@ h3 {
 
 @media (prefers-color-scheme: dark) {
   .page .navigation .user-menu .wrapper .link.user-settings {
-    background-image: url(../public/user-settings-icon-light.svg);
+    background-image: url(../user-settings-icon-light.svg);
   }
 }
 
 @media (prefers-color-scheme: light) {
   .page .navigation .user-menu .wrapper .link.user-settings {
-    background-image: url(../public/user-settings-icon.svg);
+    background-image: url(../user-settings-icon.svg);
   }
 }
 
 @media (prefers-color-scheme: dark) {
   .page .navigation .user-menu .wrapper .link.logout {
-    background-image: url(../public/exit-icon-light.svg);
+    background-image: url(../exit-icon-light.svg);
   }
 }
 
 @media (prefers-color-scheme: light) {
   .page .navigation .user-menu .wrapper .link.logout {
-    background-image: url(../public/exit-icon.svg);
+    background-image: url(../exit-icon.svg);
   }
 }
 
@@ -698,7 +698,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 80%;
-  background-image: url(../public/drag-icon.svg);
+  background-image: url(../drag-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -708,7 +708,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 60%;
-  background-image: url(../public/trash-icon.svg);
+  background-image: url(../trash-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -851,7 +851,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 80%;
-  background-image: url(../public/drag-icon.svg);
+  background-image: url(../drag-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
@@ -861,14 +861,14 @@ h3 {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 60%;
-  background-image: url(../public/trash-icon.svg);
+  background-image: url(../trash-icon.svg);
   opacity: 0.3;
   width: 100%;
   height: 100%;
 }
 
 .setup-card .item .placeholder-text {
-  border: 1px dashed grey;
+  border: 1px dashed var(--spectrum-global-color-gray-600);
   padding: 10px;
   width: 200px;
   height: 30px;
@@ -878,13 +878,35 @@ h3 {
 }
 
 .setup-card .item .placeholder-textarea {
-  border: 1px dashed grey;
+  border: 1px dashed var(--spectrum-global-color-gray-600);
   padding: 10px;
   width: 200px;
   height: 60px;
   margin-left: 10px;
   margin-right: 10px;
   box-sizing: border-box;
+}
+
+.setup-card .item .placeholder-boolean {
+  border: 1px dashed var(--spectrum-global-color-gray-600);
+  padding: 5px;
+  width: 200px;
+  height: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+}
+
+.setup-card .item .placeholder-boolean > div:first-child {
+  border: 2px solid var(--spectrum-global-color-gray-600);
+  width: 15px;
+}
+
+.setup-card .item .placeholder-boolean > div:nth-child(2) {
+  margin-left: 5px;
+  line-height: 18px;
 }
 
 .setup-card .item .reference {
@@ -953,7 +975,7 @@ h3 {
 
 #success-modal > div {
   line-height: 80px;
-  background-image: url(../public/confirmation-icon.svg);
+  background-image: url(../confirmation-icon.svg);
   background-position: left center;
   background-repeat: no-repeat;
   width: 600px;
@@ -1035,7 +1057,7 @@ h3 {
 
 @media (prefers-color-scheme: light) {
   .statistics-button {
-    background-image: url(../public/statistics-icon.svg);
+    background-image: url(./statistics-icon.svg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 75%;
@@ -1044,7 +1066,7 @@ h3 {
 
 @media (prefers-color-scheme: dark) {
   .statistics-button {
-    background-image: url(../public/statistics-icon-white.svg);
+    background-image: url(./statistics-icon-white.svg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 75%;

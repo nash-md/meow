@@ -198,7 +198,7 @@ const getMovementStatisticsByLanes = async (
       { 'lane.name': { $regex: RegExp(`${filterText}`, 'i') } },
     ];
   }
-  console.log(JSON.stringify(matchNotDeletedAndFound));
+
   const projectLaneId = {
     $project: {
       _id: 1,

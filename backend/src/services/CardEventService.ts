@@ -1,81 +1,15 @@
 import { DataSource } from 'typeorm';
-import { Card, CardAttribute } from '../entities/Card.js';
+import { Card } from '../entities/Card.js';
 import { EventType } from '../entities/Event.js';
 import { User } from '../entities/User.js';
 import { Event } from '../entities/Event.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
-import { Schema, SchemaType } from '../entities/Schema.js';
+import { SchemaType } from '../entities/Schema.js';
 import { RequestParser } from '../helpers/RequestParser.js';
-
-interface CardAttributeChange {
-  key: CardAttribute['key'];
-  type: 'added' | 'updated' | 'removed';
-  name?: string;
-  value?: string | number | null | undefined;
-}
-
-function getAttributeListDifference(
-  existing: CardAttribute = {},
-  updated: CardAttribute = {}
-): CardAttributeChange[] {
-  const list: CardAttributeChange[] = [];
-
-  for (const key in existing) {
-    let type = 'updated' as typeof list[number]['type'];
-
-    if (existing[key] !== '' && updated[key] === '') {
-      type = 'removed';
-    }
-
-    if (existing[key] === '' && updated[key] !== '') {
-      type = 'added';
-    }
-
-    if (updated[key] !== existing[key]) {
-      const item: CardAttributeChange = { key: key, type: type };
-
-      if (updated[key] && updated[key] !== '') {
-        item.value = updated[key];
-      }
-
-      list.push(item);
-    }
-  }
-
-  for (const key in updated) {
-    if (!existing.hasOwnProperty(key)) {
-      list.push({ key: key, type: 'added', value: updated[key] });
-    }
-  }
-
-  for (const key in existing) {
-    if (!updated.hasOwnProperty(key)) {
-      list.push({ key: key, type: 'removed', value: null });
-    }
-  }
-
-  return list;
-}
-
-const filterAttributeList = (
-  schema: Schema | null,
-  list: CardAttributeChange[]
-) => {
-  if (!schema || list.length === 0) {
-    return [];
-  }
-
-  const filtered = list
-    .filter((item) => schema?.schema.find((a) => a.key === item.key))
-    .map((item) => {
-      const attribute = schema?.schema.find((a) => a.key === item.key);
-      if (attribute) {
-        return { ...item, name: attribute.name };
-      }
-    });
-
-  return filtered;
-};
+import {
+  filterAttributeList,
+  getAttributeListDifference,
+} from '../helpers/AttributeHelper.js';
 
 export class CardEventService {
   database: DataSource;
@@ -137,7 +71,7 @@ export class CardEventService {
         EventType.AmountChanged,
         {
           from: card.amount,
-          to: body.amount,
+          to: parseInt(body.amount),
         }
       );
 
@@ -224,5 +158,28 @@ export class CardEventService {
     }
 
     return card;
+  }
+
+  async storeLaneAmountChange(teamId: string, userId: string, laneId: string) {
+    const amount = await EntityHelper.getTotalAmountByLaneId(teamId, laneId);
+
+    let event = await EntityHelper.findEventByTypeAndDay(
+      teamId,
+      laneId,
+      EventType.LaneAmountChanged,
+      new Date()
+    );
+
+    if (event) {
+      event.body = {
+        amount: amount,
+      };
+    } else {
+      event = new Event(teamId, laneId, userId, EventType.LaneAmountChanged, {
+        amount: amount,
+      });
+    }
+
+    await this.database.manager.save(event);
   }
 }

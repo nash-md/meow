@@ -4,10 +4,11 @@ import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { Card, CardStatus } from '../entities/Card.js';
 import { Team } from '../entities/Team.js';
 import { Schema, SchemaType } from '../entities/Schema.js';
-import { Event } from '../entities/Event.js';
+import { Event, EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
-import { datasource } from './DatabaseHelper.js';
+import { DatabaseHelper, datasource } from './DatabaseHelper.js';
 import { ObjectId } from 'mongodb';
+import { DateTime } from 'luxon';
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
@@ -153,6 +154,58 @@ async function findEventsByUserId(
   return events;
 }
 
+async function findEventByTypeAndDay(
+  teamId: string,
+  laneId: string,
+  type: EventType,
+  date: Date
+) {
+  const d = DateTime.fromJSDate(date).toUTC();
+  const startOfDay = d.startOf('day').toJSDate();
+  const endOfDay = d.endOf('day').toJSDate();
+
+  const query = {
+    teamId: { $eq: teamId },
+    entityId: { $eq: laneId },
+    type: { $eq: type },
+    createdAt: {
+      $gt: startOfDay,
+      $lt: endOfDay,
+    },
+  };
+
+  let event = await datasource.getMongoRepository(Event).findOneBy(query);
+
+  return event;
+}
+
+async function getTotalAmountByLaneId(teamId: string, laneId: string) {
+  const direct = DatabaseHelper.get();
+  const collection = direct.collection('Cards');
+
+  const pipeline = [
+    {
+      $match: {
+        status: { $ne: CardStatus.Deleted },
+        teamId: teamId,
+        laneId: laneId,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$amount' },
+      },
+    },
+  ];
+
+  const cursor = await collection.aggregate(pipeline);
+
+  const result = await cursor.toArray();
+
+  return result && result[0] ? result[0].total : 0;
+}
+
 async function getLanes(teamId: string) {
   const query = {
     teamId: { $eq: teamId },
@@ -174,5 +227,7 @@ export const EntityHelper = {
   findCardByName,
   findUserByName,
   findEventsByUserId,
+  findEventByTypeAndDay,
+  getTotalAmountByLaneId,
   getLanes,
 };

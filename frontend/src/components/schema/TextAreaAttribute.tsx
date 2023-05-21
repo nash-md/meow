@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 export interface TextAreaAttributeProps {
   attributeKey: string;
   name: string;
-  value: string | number | undefined;
+  value: string | null;
   update: (index: string, value: string) => void;
 }
 
