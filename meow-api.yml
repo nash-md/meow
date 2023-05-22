@@ -241,6 +241,123 @@ paths:
           5XX:
             description: Unexpected error.
             $ref: '#/components/responses/ServerError'
+  /api/forecast/achieved:
+    get:
+      operationId: fetchAchievedForecast
+      summary: fetch achieved forecast
+      security:
+        - AuthenticationToken: []
+      description: fetch achieved forecast
+      parameters:
+        - name: userId
+          in: query
+          description: User identifier
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start date for the forecast
+          required: true
+          schema:
+            type: string
+        - name: end
+          in: query
+          description: End date for the forecast
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
+  /api/forecast/predicted:
+    get:
+      operationId: fetchPredictedForecast
+      summary: fetch predicted forecast
+      security:
+        - AuthenticationToken: []
+      description: fetch predicted forecast
+      parameters:
+        - name: userId
+          in: query
+          description: User identifier
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start date for the forecast
+          required: true
+          schema:
+            type: string
+        - name: end
+          in: query
+          description: End date for the forecast
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
+  /api/forecast/list:
+    get:
+      operationId: fetchForecastList
+      summary: fetch predicted list
+      security:
+        - AuthenticationToken: []
+      description: fetch predicted list
+      parameters:
+        - name: userId
+          in: query
+          description: User identifier
+          required: false
+          schema:
+            type: string
+        - name: mode
+          in: query
+          description: Query mode
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Start date for the forecast
+          required: true
+          schema:
+            type: string
+        - name: end
+          in: query
+          description: End date for the forecast
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json: {}
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
 components:
   securitySchemes:
     AuthenticationToken:
