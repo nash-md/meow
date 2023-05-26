@@ -1115,3 +1115,23 @@ h3 {
   font-weight: 600;
   text-decoration: none;
 }
+
+.color-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: relative;
+  margin-right: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.color-circle > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.color-circle-selected {
+  padding: 3px;
+}

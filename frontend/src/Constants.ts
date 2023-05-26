@@ -1,4 +1,15 @@
 export const COLORS = ['#067BC2', '#067BC2', '#ECC30B', '#F37748', '#D56062'];
+export const USER_COLORS = [
+  '#FF6392',
+  '#FC7E39',
+  '#F9F9F9',
+  '#69DA98',
+  '#5AA9E6',
+  '#EF5F5F',
+  '#5FE3EF',
+  '#5FEFCB',
+  '#D06FD1',
+];
 export const FILTER_BY_NONE = { name: 'Everyone', key: 'all' };
 export enum LANE_COLOR {
   DEFAULT = 'white',

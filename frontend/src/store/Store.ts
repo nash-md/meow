@@ -52,6 +52,8 @@ export const selectName = (store: ApplicationStore) => store.session.user?.name;
 export const selectUserId = (store: ApplicationStore) => store.session.user?.id;
 export const selectAnimal = (store: ApplicationStore) =>
   store.session.user?.animal;
+export const selectColor = (store: ApplicationStore) =>
+  store.session.user?.color;
 export const selectCurrency = (store: ApplicationStore) =>
   store.session.team.currency;
 export const selectTeamId = (store: ApplicationStore) => store.session.team.id;

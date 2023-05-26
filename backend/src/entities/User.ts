@@ -32,6 +32,9 @@ export class User {
   status?: UserStatus;
 
   @Column()
+  color?: string;
+
+  @Column()
   board?: { [key: string]: Card['id'][] };
 
   @Column({ type: 'timestamp' })

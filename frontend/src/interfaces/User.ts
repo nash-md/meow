@@ -7,7 +7,8 @@ export interface User {
   readonly teamId: string;
   status: UserStatus;
   invite?: string;
-  animal: string;
+  animal?: string;
+  color?: string;
 }
 
 export enum UserStatus {

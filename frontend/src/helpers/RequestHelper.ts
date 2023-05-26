@@ -125,7 +125,7 @@ export class RequestHelper {
         throw new RequestError(request, response, 'request failed');
       }
 
-      return response;
+      return response; // TODO return  return { promise, controller };
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         throw new RequestTimeoutError(error);
@@ -291,6 +291,7 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', {
       animal: user.animal,
       status: user.status,
+      color: user.color,
     });
   }
 

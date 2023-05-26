@@ -1,10 +1,10 @@
-import { AnimalCanvas } from '../components/setup/AnimalCanvas';
+import { FormCanvas } from '../components/setup/user/FormCanvas';
 import { PasswordCanvas } from '../components/setup/PasswordCanvas';
 
 export const UserSetupPage = () => {
   return (
     <div className="canvas">
-      <AnimalCanvas />
+      <FormCanvas />
       <PasswordCanvas />
     </div>
   );

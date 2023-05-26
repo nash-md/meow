@@ -16,6 +16,7 @@ export enum ActionType {
   LOGOUT = 'LOGOUT',
   USERS = 'USERS',
   USER_ADD = 'USER_ADD',
+  USER_SETTINGS_UPDATE = 'USER_SETTINGS_UPDATE',
   ACCOUNTS = 'ACCOUNTS',
   ACCOUNT_ADD = 'ACCOUNT_ADD',
   ACCOUNT_UPDATE = 'ACCOUNT_UPDATE',
@@ -64,6 +65,11 @@ export interface ApplicationUsersAction extends Action<ActionType.USERS> {
 }
 
 export interface ApplicationUserAddAction extends Action<ActionType.USER_ADD> {
+  payload: User;
+}
+
+export interface ApplicationUserUpdateAction
+  extends Action<ActionType.USER_SETTINGS_UPDATE> {
   payload: User;
 }
 
@@ -170,6 +176,7 @@ export type ApplicationAction =
   | ApplicationLogoutAction
   | ApplicationUsersAction
   | ApplicationUserAddAction
+  | ApplicationUserUpdateAction
   | ApplicationCardsAction
   | ApplicationCardAddAction
   | ApplicationCardUpdateAction

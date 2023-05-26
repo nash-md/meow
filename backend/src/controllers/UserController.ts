@@ -69,6 +69,10 @@ const update = async (
       user.animal = req.body.animal;
     }
 
+    if (req.body.color) {
+      user.color = req.body.color;
+    }
+
     if (req.body.status) {
       if (user.id === req.jwt.user.id) {
         throw new InvalidRequestBodyError();

@@ -5,6 +5,7 @@ import { Board } from '../interfaces/Board';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListView } from '../interfaces/ListView';
+import { User } from '../interfaces/User';
 import { InterfaceState } from '../store/ApplicationStore';
 import { Default } from '../store/Default';
 
@@ -140,6 +141,24 @@ export const application = (state = Default, action: ApplicationAction) => {
       return {
         ...state,
         users: [...state.users, action.payload],
+      };
+
+    case ActionType.USER_SETTINGS_UPDATE:
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          user: { ...action.payload },
+        },
+        users: [
+          ...state.users.map((item: User) => {
+            if (item.id === action.payload.id) {
+              return { ...action.payload };
+            } else {
+              return { ...item };
+            }
+          }),
+        ],
       };
 
     case ActionType.CARDS:
