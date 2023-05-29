@@ -6,10 +6,12 @@ import {
   DefaultAccountSchema,
   DefaultLanes,
   DefaultCards,
+  DefaultAccounts,
 } from '../Constants.js';
 import { Card } from '../entities/Card.js';
 import { Lane } from '../entities/Lane.js';
 import { Schema } from '../entities/Schema.js';
+import { Account } from '../entities/Account.js';
 import { CurrencyCode, Team } from '../entities/Team.js';
 import { User, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
@@ -19,6 +21,7 @@ import { EntityHelper } from '../helpers/EntityHelper.js';
 import { log } from '../logger.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
+import { CardEventService } from '../services/CardEventService.js';
 
 const invite = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by invite: ${req.query.invite}`);
@@ -115,11 +118,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       )
     );
 
-    const user = new User(team.id!.toString(), name, UserStatus.Enabled);
+    let user = new User(team.id!.toString(), name, UserStatus.Enabled);
 
     user.password = await new PasswordAuthenticationProvider().create(password);
 
-    const updated = await datasource.manager.save(user);
+    user = await datasource.manager.save(user);
+
+    const cardEventService = new CardEventService(datasource);
 
     await Promise.all(
       DefaultCards.map(async (item, index) => {
@@ -129,15 +134,31 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
           .plus({ days: 1 })
           .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
-        await datasource.manager.save(
+        const card = await datasource.manager.save(
           new Card(
             team.id!.toString(),
-            updated.id!.toString(),
+            user.id!.toString(),
             lanes[laneIndex]!.id!.toString(),
             item.name,
             item.amount,
             tomorrow.toJSDate()
           )
+        );
+
+        await cardEventService.add(card, user);
+
+        await cardEventService.storeLaneAmountChange(
+          card.teamId,
+          card.userId,
+          card.laneId
+        );
+      })
+    );
+
+    await Promise.all(
+      DefaultAccounts.map(async (item, index) => {
+        await datasource.manager.save(
+          new Account(team.id!.toString()!, item.name)
         );
       })
     );

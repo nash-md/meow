@@ -30,7 +30,7 @@ export const DefaultLanes = [
 ];
 
 export const DefaultCards = [
-  { name: 'Paw Prints Photography', amount: 16000 },
+  { name: 'Paw Prints Photography', amount: 32000 },
   { name: 'Squirrelly Sweets', amount: 80000 },
   { name: 'Monkey Business Consulting', amount: 28000 },
   { name: 'Snail Mail Emporium', amount: 20000 },
@@ -84,6 +84,8 @@ export const DefaultAccountSchema = {
   type: SchemaType;
   schema: SchemaAttribute[];
 };
+
+export const DefaultAccounts = [{ name: 'Unicorn Corporate' }];
 
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
