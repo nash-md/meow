@@ -7,18 +7,19 @@ import { store } from './store/Store';
 import { defaultTheme, Provider } from '@adobe/react-spectrum';
 import { RequestHelperContextProvider } from './context/RequestHelperContextProvider';
 import { getBrowserLocale } from './helpers/Helper';
+import ErrorBoundary from './ErrorBoundary';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
   <Provider height="100%" locale={getBrowserLocale()} theme={defaultTheme}>
-    <ReduxProvider store={store}>
-      <RequestHelperContextProvider>
-        <SessionOrNot />
-      </RequestHelperContextProvider>
-    </ReduxProvider>
+    <ErrorBoundary>
+      <ReduxProvider store={store}>
+        <RequestHelperContextProvider>
+          <SessionOrNot />
+        </RequestHelperContextProvider>
+      </ReduxProvider>
+    </ErrorBoundary>
   </Provider>
 );
 

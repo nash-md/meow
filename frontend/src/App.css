@@ -366,8 +366,8 @@ h3 {
 }
 
 .board button.filter {
-  font-family: adobe-clean-ux, adobe-clean, Source Sans Pro, -apple-system,
-    BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+  font-family: adobe-clean-ux, adobe-clean, Source Sans Pro, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Roboto, sans-serif;
   border-radius: 6px;
   padding: 5px 10px 5px 10px;
   margin-right: 5px;
@@ -454,8 +454,7 @@ h3 {
 .board .lane .card {
   margin: 6px;
   border-radius: 4px;
-  box-shadow: rgba(17, 17, 26, 0.08) 0px 2px 2px,
-    rgba(17, 17, 26, 0.1) 0px 0px 4px;
+  box-shadow: rgba(17, 17, 26, 0.08) 0px 2px 2px, rgba(17, 17, 26, 0.1) 0px 0px 4px;
   cursor: move;
   position: relative;
 }
@@ -1134,4 +1133,42 @@ h3 {
 
 .color-circle-selected {
   padding: 3px;
+}
+
+.forecast-tab {
+  margin-bottom: 15px;
+}
+
+.forecast-button {
+  display: inline-block;
+}
+
+.forecast-button > div {
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  padding: 10px;
+  border-radius: 4px;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 0;
+}
+
+.forecast-button > div:hover {
+  border: 1px solid var(--spectrum-global-color-gray-600);
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
+.forecast-button > div .icon {
+  height: 16px;
+  margin-right: 10px;
+}
+
+.forecast-button > div a {
+  text-decoration: none;
+  color: var(--spectrum-global-color-gray-800);
+}
+
+.error-boundary {
+  padding: 10px;
+  font-size: 1.1em;
 }
