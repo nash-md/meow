@@ -153,6 +153,28 @@ paths:
         5XX:
           description: Unexpected error.
           $ref: '#/components/responses/ServerError'
+  /api/schemas:
+    get:
+      operationId: fetchSchemas
+      summary: fetch schemas
+      security:
+        - AuthenticationToken: []
+      description: fetch all schemas
+      parameters: 
+        - in:  query
+          name: type
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          $ref: '#/components/responses/SchemaListResponse'
+        '400':
+          description: the server did not understand the request
+          $ref: '#/components/responses/BadRequest'
+        5XX:
+          description: Unexpected error.
+          $ref: '#/components/responses/ServerError'
   /api/accounts:
       get:
         operationId: fetchAccounts
@@ -181,7 +203,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountCreateRequest'
+                $ref: '#/components/schemas/AccountCreateOrUpdateRequest'
         responses:
           '200':
             description: OK
@@ -227,7 +249,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountUpdateRequest'
+                $ref: '#/components/schemas/AccountCreateOrUpdateRequest'
         responses:
           '200':
             description: OK
@@ -430,41 +452,37 @@ components:
         createdAt:
           type: string
           format: date-time
-    AccountCreateRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        address:
-          type: string
-        phone:
-          type: string
-    AccountUpdateRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        address:
-          type: string
-        phone:
-          type: string
     Account:
       type: object
       properties:
         id:
           type: string
+        teamId:
+          type: string
         name:
           type: string
-        address:
-          type: string
-        phone:
-          type: string
-        updatedAt:
-          type: string
-          format: date-time
+        attributes:
+          $ref: '#/components/schemas/Attribute'
         createdAt:
           type: string
           format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountCreateOrUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/Attribute'
+    Attribute:
+      type: object
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: integer
+          - type: 'null'
     User:
       type: object
       properties:
@@ -501,6 +519,45 @@ components:
           type: string
           format: date-time
           readOnly: true
+    SchemaAttribute:
+      description: response to a create accoount request
+      type: object
+      properties:
+        key:
+          type: string
+        index:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [text, textarea, select, reference, boolean, email]
+        options:
+          type: array
+          items:
+            type: string
+    SchemaType:
+      type: string
+      enum: [card, account]
+    Schema:
+      type: object
+      properties:
+        id:
+          type: string
+        teamId:
+          type: string
+        type:
+          $ref: '#/components/schemas/SchemaType'
+        schema:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaAttribute'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     Error:
       type: object
       properties:
@@ -638,3 +695,14 @@ components:
             items:
               type: object
               $ref: '#/components/schemas/Account'
+    SchemaListResponse:
+      description: list all schemas
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              $ref: '#/components/schemas/Schema'
+          
+          
