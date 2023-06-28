@@ -17,6 +17,7 @@ You can freely add or remove custom attributes to suit the needs of your organiz
 - `Textarea` - an area where you can take notes
 - `Text` - a text input field
 - `Dropdown` - a select menu
+- `Checkbox` - a boolean value
 
 You can arrange the order of the attributes by dragging and dropping them on the left side of the list. Once you have made your changes, be sure to press `Save` to persist your setup.
 
