@@ -90,6 +90,7 @@ The project currently has a few direct dependencies on [MongoDB](https://www.mon
 [Setup the Sales Funnel](docs/sales-funnel.md) <br>
 [Configure Opportunities](docs/opportunity-setup.md) <br>
 [Create Leads via API](docs/create-leads.md) <br>
+[Create Accounts via API](docs/create-accounts-via-api.md) <br>
 [Changelog](CHANGELOG.md)
 
 ### Security
