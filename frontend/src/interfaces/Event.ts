@@ -15,7 +15,7 @@ export interface Event {
 
 export enum EventType {
   CommentCreated = 'comment-created',
-  LaneMoved = 'lane-moved',
+  CardMoved = 'card-moved',
   AmountChanged = 'amount-changed',
   AttributeChanged = 'attribute-changed',
   ClosedAtChanged = 'closed-at-changed',

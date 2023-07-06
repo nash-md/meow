@@ -1,8 +1,7 @@
-import { Entity, ObjectId, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column } from 'typeorm';
-import { Attribute } from './Attribute.js';
+import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
 
-@Entity({ name: 'Accounts' })
-export class Account {
+@Entity({ name: 'Flags' })
+export class Flag {
   @ObjectIdColumn()
   id: ObjectId | undefined;
 
@@ -13,7 +12,7 @@ export class Account {
   name: string;
 
   @Column()
-  attributes?: Attribute;
+  value: string | number | boolean | null | string[] | number[];
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -21,9 +20,10 @@ export class Account {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(teamId: string, name: string) {
+  constructor(teamId: string, name: string, value: any = null) {
     this.teamId = teamId;
     this.name = name;
+    this.value = value;
   }
 
   @BeforeInsert()

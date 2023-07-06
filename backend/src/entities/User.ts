@@ -1,11 +1,4 @@
-import {
-  Entity,
-  ObjectIdColumn,
-  BeforeUpdate,
-  BeforeInsert,
-  Column,
-  ObjectId,
-} from 'typeorm';
+import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
 import { Card } from './Card.js';
 
 @Entity({ name: 'Users' })
@@ -33,6 +26,9 @@ export class User {
 
   @Column()
   color?: string;
+
+  @Column()
+  flags?: Flag[];
 
   @Column()
   board?: { [key: string]: Card['id'][] };
@@ -72,4 +68,8 @@ export enum UserStatus {
   Disabled = 'disabled',
   Deleted = 'deleted',
   SingleSignOn = 'single-sign-on',
+}
+
+export interface Flag {
+  [key: string]: string | number | boolean | null;
 }
