@@ -1,11 +1,4 @@
-import {
-  Entity,
-  ObjectIdColumn,
-  BeforeUpdate,
-  BeforeInsert,
-  Column,
-  ObjectId,
-} from 'typeorm';
+import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
 
 @Entity({ name: 'Events' })
 export class Event {
@@ -33,13 +26,7 @@ export class Event {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(
-    teamId: string,
-    entityId: string,
-    userId: string,
-    type: EventType,
-    body?: any
-  ) {
+  constructor(teamId: string, entityId: string, userId: string, type: EventType, body?: any) {
     this.teamId = teamId;
     this.entityId = entityId;
     this.userId = userId;
@@ -61,7 +48,7 @@ export class Event {
 
 export enum EventType {
   CommentCreated = 'comment-created',
-  LaneMoved = 'lane-moved',
+  CardMoved = 'card-moved',
   LaneAmountChanged = 'lane-amount-changed',
   AmountChanged = 'amount-changed',
   AttributeChanged = 'attribute-changed',

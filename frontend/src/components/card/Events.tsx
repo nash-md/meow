@@ -29,9 +29,7 @@ export const Events = ({ id, entity }: EventsProps) => {
   const [isValid, setIsValid] = useState(false);
 
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
-  const user = useSelector((store: ApplicationStore) =>
-    selectUser(store, card?.userId)
-  );
+  const user = useSelector((store: ApplicationStore) => selectUser(store, card?.userId));
 
   useEffect(() => {
     const execute = async () => {
@@ -69,7 +67,7 @@ export const Events = ({ id, entity }: EventsProps) => {
         return <ClosedAt event={event} />;
       case EventType.NextFollowUpAtChanged:
         return <NextFollowUpAt event={event} />;
-      case EventType.LaneMoved:
+      case EventType.CardMoved:
         return <Lane event={event} />;
       case EventType.AmountChanged:
         return <Amount event={event} />;
