@@ -97,7 +97,7 @@ export const AccountsPage = () => {
     value: string | number | null | boolean | undefined
   ) {
     if (attributes.includes(key)) {
-      return <td>{value?.toString()}</td>;
+      return <td key={key}>{value?.toString()}</td>;
     }
   }
 
@@ -135,9 +135,9 @@ export const AccountsPage = () => {
                 columns={columns}
               />
 
-              {rows.map((row, index) => {
+              {rows.map((row) => {
                 return (
-                  <tr key={index}>
+                  <tr key={row.id}>
                     <td>
                       <span
                         onClick={() => openAccount(row.id?.toString())}

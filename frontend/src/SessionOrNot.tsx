@@ -16,7 +16,7 @@ import {
   readContextFromLocalStorage,
   writeContextToLocalStorage,
 } from './helpers/LocalStorageHelper';
-import { login, pageLoad, pageLoadWithError } from './actions/Actions';
+import { ActionType, login, pageLoad, pageLoadWithError } from './actions/Actions';
 import { RequestHelperContext } from './context/RequestHelperContextProvider';
 import { YouAreOffline } from './components/YouAreOffline';
 import { RequestTimeoutError } from './errors/RequestTimeoutError';
@@ -47,17 +47,13 @@ export const SessionOrNot = () => {
         const code = await client.isValidToken(context.token);
 
         if (code === 'expired') {
-          store.dispatch(
-            pageLoadWithError(Translations.SessionExpiredError.en)
-          );
+          store.dispatch(pageLoadWithError(Translations.SessionExpiredError.en));
           return;
         }
 
         store.dispatch(pageLoad(context.token));
 
-        const { token, user, team, board } = await client.loginWithToken(
-          context.token
-        );
+        const { token, user, team, board } = await client.loginWithToken(context.token);
 
         if (setClient) {
           client.token = token;
@@ -100,7 +96,18 @@ export const SessionOrNot = () => {
     });
   }, [token, isPageLoaded]);
 
-  useBrowserState();
+  const browserState = useBrowserState();
+
+  useEffect(() => {
+    if (browserState === 'unknown') {
+      return;
+    }
+
+    store.dispatch({
+      type: ActionType.BROWSER_STATE,
+      payload: browserState,
+    });
+  }, [browserState]);
 
   const getPage = (userId: string | undefined) => {
     return !userId ? <LoginPage /> : <Application />;

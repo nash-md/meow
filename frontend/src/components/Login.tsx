@@ -31,6 +31,7 @@ export const Login = () => {
 
   const authenticate = async () => {
     try {
+      setError('');
       setIsLoading(true);
 
       const client = new RequestHelper(getBaseUrl());
@@ -52,31 +53,28 @@ export const Login = () => {
 
   return (
     <>
-      <div className="login" style={{ marginTop: '20px' }}>
+      <div className="login">
         <div>
           <TextField
             label="Name"
             onChange={setName}
             onKeyDown={handleKeyDown}
-            width={180}
+            isDisabled={isLoading}
+            width="100%"
           />
         </div>
-
         <div>
           <TextField
             type="password"
             label="Password"
             onChange={setPassword}
             onKeyDown={handleKeyDown}
-            width={200}
+            isDisabled={isLoading}
+            width="100%"
           />
         </div>
         <div style={{ marginTop: '25px' }}>
-          <Button
-            onPress={authenticate}
-            isDisabled={isLoading || !isValid}
-            variant="cta"
-          >
+          <Button onPress={authenticate} isDisabled={isLoading || !isValid} variant="cta">
             Login
           </Button>
         </div>

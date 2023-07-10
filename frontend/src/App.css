@@ -37,6 +37,11 @@ h3 {
   display: flex;
   flex-direction: column;
   padding-bottom: 10px;
+  margin-top: 20px;
+}
+
+.welcome-page .login div:nth-child(-n + 2) {
+  flex-grow: 1;
 }
 
 @media (min-width: 768px) {
@@ -68,6 +73,13 @@ h3 {
 .page {
   display: flex;
   min-height: 100vh;
+  flex-direction: row;
+}
+
+@media (max-width: 600px) {
+  .page {
+    flex-direction: column;
+  }
 }
 
 .page .navigation {
@@ -86,6 +98,57 @@ h3 {
 
 .page .navigation .item img {
   width: 28px;
+}
+
+.page .navigation .burger {
+  color: white;
+  display: flex;
+}
+
+.page .navigation .burger .icon-canvas {
+  padding: 0px 0 0px 5px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.page .navigation .burger div:first-child {
+  flex-grow: 1;
+  position: relative;
+}
+
+.page .navigation .burger-items {
+  text-align: left;
+  color: white;
+  font-size: 1.2em;
+  margin-top: 15px;
+}
+
+.page .navigation .burger-items .headline {
+  font-size: 1.2em;
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+.page .navigation .item-mobile {
+  padding: 6px;
+  margin-bottom: 10px;
+}
+
+.page .navigation .item-mobile.logout {
+  text-decoration: underline;
+}
+
+.page .navigation .item-mobile img {
+  width: 28px;
+  margin-right: 10px;
+  display: block;
+}
+
+.page .navigation .item-mobile a {
+  color: white;
+  display: flex;
+  align-items: center;
 }
 
 .page .navigation .user-menu {
@@ -341,8 +404,22 @@ h3 {
   align-content: center;
 }
 
+@media (max-width: 600px) {
+  .board .title .filters-canvas {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
 .board .title .filters-canvas > div:nth-child(1) {
   flex-grow: 1;
+}
+
+@media (max-width: 600px) {
+  .board .title .filters-canvas > div:nth-child(1) {
+    width: 100%;
+    padding-bottom: 10px;
+  }
 }
 
 .board .title .filters-canvas > div:nth-child(2) {
@@ -687,6 +764,7 @@ h3 {
 
 .setup-funnel .lane .button {
   width: 30px;
+  min-width: 30px;
   background-color: var(--spectrum-global-color-gray-300);
   position: relative;
   border-radius: 2px;

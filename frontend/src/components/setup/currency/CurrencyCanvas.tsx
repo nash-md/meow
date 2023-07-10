@@ -1,11 +1,7 @@
 import { Picker, Item } from '@adobe/react-spectrum';
 import { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  ActionType,
-  showModalError,
-  showModalSuccess,
-} from '../../../actions/Actions';
+import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { CurrencyCode } from '../../../interfaces/Team';
 import { selectCurrency, selectTeamId, store } from '../../../store/Store';
@@ -29,9 +25,7 @@ export const CurrencyCanvas = () => {
 
   const configuredCurrency = useSelector(selectCurrency);
   const teamId = useSelector(selectTeamId);
-  const [currency, setCurrency] = useState<CurrencyCode>(
-    configuredCurrency ?? CurrencyCode.USD
-  );
+  const [currency, setCurrency] = useState<CurrencyCode>(configuredCurrency ?? CurrencyCode.USD);
 
   const updateCurrencyCode = async (key: React.Key) => {
     const c = parseCurrencyKey(key);
@@ -41,9 +35,7 @@ export const CurrencyCanvas = () => {
     try {
       await client!.updateTeam(teamId!, c);
 
-      store.dispatch(
-        showModalSuccess(Translations.SetupChangedConfirmation.en)
-      );
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
 
       store.dispatch({
         type: ActionType.TEAM_UPDATE,

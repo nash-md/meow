@@ -48,6 +48,8 @@ export const RESERVED_ATTRIBUTES = [
   'attributes',
 ];
 
+export const RESERVED_USERS = ['id', 'all'];
+
 export const DEFAULT_REGION = 'US';
 export const DEFAULT_LANGUAGE = 'en';
 export const DEFAULT_CURRENCY = 'USD';

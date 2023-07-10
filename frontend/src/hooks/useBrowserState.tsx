@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ActionType } from '../actions/Actions';
 import { BrowserState } from '../interfaces/BrowserState';
-import { store } from '../store/Store';
-
 export const useBrowserState = () => {
   const [state, setState] = useState<BrowserState>('unknown');
 
@@ -18,15 +16,5 @@ export const useBrowserState = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (state === 'unknown') {
-      return;
-    }
-
-    // TODO move to component
-    store.dispatch({
-      type: ActionType.BROWSER_STATE,
-      payload: state,
-    });
-  }, [state]);
+  return state;
 };
