@@ -6,10 +6,7 @@ import { Event } from '../entities/Event.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { SchemaType } from '../entities/Schema.js';
 import { RequestParser } from '../helpers/RequestParser.js';
-import {
-  filterAttributeList,
-  getAttributeListDifference,
-} from '../helpers/AttributeHelper.js';
+import { filterAttributeList, getAttributeListDifference } from '../helpers/AttributeHelper.js';
 
 export class CardEventService {
   database: DataSource;
@@ -29,22 +26,11 @@ export class CardEventService {
     await this.database.manager.save(event);
   }
 
-  async update(
-    body: Record<string, any>,
-    card: Card,
-    user: User,
-    updatedUser?: User
-  ) {
-    const schema = await EntityHelper.findSchemaByType(
-      card.teamId,
-      SchemaType.Card
-    );
+  async update(body: Record<string, any>, card: Card, user: User, updatedUser?: User) {
+    const schema = await EntityHelper.findSchemaByType(card.teamId, SchemaType.Card);
 
     if (body.attributes) {
-      const changes = getAttributeListDifference(
-        card.attributes,
-        body.attributes
-      );
+      const changes = getAttributeListDifference(card.attributes, body.attributes);
 
       const list = filterAttributeList(schema, changes);
 
@@ -80,10 +66,7 @@ export class CardEventService {
       await this.database.manager.save(event);
     }
 
-    if (
-      body.closedAt &&
-      !RequestParser.isEqualDates(body.closedAt, card.closedAt)
-    ) {
+    if (body.closedAt && !RequestParser.isEqualDates(body.closedAt, card.closedAt)) {
       const closedAt = RequestParser.toJsDate(body.closedAt);
 
       const event = new Event(
@@ -146,7 +129,7 @@ export class CardEventService {
         card.teamId,
         card.id!.toString(),
         user.id!.toString(),
-        EventType.LaneMoved,
+        EventType.CardMoved,
         {
           from: card.laneId,
           to: body.laneId,

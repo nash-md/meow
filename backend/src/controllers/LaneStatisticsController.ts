@@ -60,10 +60,7 @@ const getActiveStatisticsByLanes = async (
   }
 
   if (filter && filter.has(FilterMode.RequireUpdate)) {
-    match.$match.$or = [
-      { nextFollowUpAt: { $lt: new Date() } },
-      { closedAt: { $lt: new Date() } },
-    ];
+    match.$match.$or = [{ nextFollowUpAt: { $lt: new Date() } }, { closedAt: { $lt: new Date() } }];
   }
 
   const group = {
@@ -82,10 +79,7 @@ const getActiveStatisticsByLanes = async (
       },
       timeInLaneTotal: {
         $sum: {
-          $divide: [
-            { $subtract: [new Date(), '$inLaneSince'] },
-            1000 * 60 * 60,
-          ],
+          $divide: [{ $subtract: [new Date(), '$inLaneSince'] }, 1000 * 60 * 60],
         },
       },
     },
@@ -123,7 +117,7 @@ const getMovementStatisticsByLanes = async (
 
   const match = {
     $match: {
-      type: { $eq: EventType.LaneMoved },
+      type: { $eq: EventType.CardMoved },
       teamId: { $eq: teamId },
     },
   };
@@ -247,20 +241,14 @@ const getMovementStatisticsByLanes = async (
   return statistics;
 };
 
-const get = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const teamId = req.jwt.team.id!.toString();
     const userId = req.jwt.user.id?.toString();
 
     const lanes = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
-    const filter = req.query.filter
-      ? parseFilterParameter(req.query.filter.toString())
-      : undefined;
+    const filter = req.query.filter ? parseFilterParameter(req.query.filter.toString()) : undefined;
 
     const filterText = req.query.text?.toString();
 

@@ -2,26 +2,24 @@ import { Checkbox, Item, Picker, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { LaneListItem } from './LaneCanvas';
+import { LaneType } from '../../../interfaces/Lane';
 
 export interface LaneProps {
   id: number;
   key: number;
   name: string;
   index: number;
-  type: string | undefined;
+  type?: LaneType;
   inForecast: boolean;
   remove: (index: number) => void;
-  update: (
-    index: number,
-    item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>
-  ) => void;
+  update: (index: number, item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>) => void;
 }
 
 export const Lane = (props: LaneProps) => {
   const [id, setId] = useState<number>(props.id);
   const [name, setName] = useState<string>(props.name);
   const [inForecast, setInForecast] = useState<boolean>(props.inForecast);
-  const [type, setType] = useState<string | undefined>(props.type);
+  const [type, setType] = useState<LaneType | undefined>(props.type);
 
   useEffect(() => {
     props.update(props.id, { name, inForecast, type });
@@ -38,11 +36,7 @@ export const Lane = (props: LaneProps) => {
     <Draggable draggableId={`drag_${id}`} index={props.index}>
       {(provided, snaphot) => {
         return (
-          <div
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-          >
+          <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`lane ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
                 <div className="drag"></div>
@@ -59,7 +53,7 @@ export const Lane = (props: LaneProps) => {
               <div className="attribute">
                 <Picker
                   selectedKey={type}
-                  onSelectionChange={(value) => setType(value.toString())}
+                  onSelectionChange={(value) => setType(value.toString() as LaneType)}
                 >
                   <Item key="normal">Normal</Item>
                   <Item key="closed-won">Closed Won</Item>
@@ -68,10 +62,7 @@ export const Lane = (props: LaneProps) => {
               </div>
 
               <div className="attribute">
-                <Checkbox
-                  isSelected={!inForecast}
-                  onChange={(value) => setInForecast(!value)}
-                >
+                <Checkbox isSelected={!inForecast} onChange={(value) => setInForecast(!value)}>
                   Exclude from Forecast
                 </Checkbox>
               </div>

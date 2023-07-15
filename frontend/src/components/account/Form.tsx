@@ -39,9 +39,7 @@ export const Form = ({ update, id }: FormProps) => {
     return false;
   }, [preview]);
 
-  const account = useSelector((store: ApplicationStore) =>
-    selectAccount(store, id)
-  );
+  const account = useSelector((store: ApplicationStore) => selectAccount(store, id));
 
   useEffect(() => {
     if (account) {
@@ -86,6 +84,7 @@ export const Form = ({ update, id }: FormProps) => {
         values={account?.attributes}
         schema={schema!}
         validate={validate}
+        isDisabled={false}
       />
 
       <div style={{ marginTop: '24px' }}>
