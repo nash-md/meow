@@ -3,12 +3,9 @@ import { Lane, LaneRequest } from '../entities/Lane.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
+import { Board } from '../entities/Board.js';
 
-const list = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const lanes = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
@@ -18,18 +15,10 @@ const list = async (
   }
 };
 
-const update = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     if (req.params.id) {
-      const lane = await EntityHelper.findOneById(
-        req.jwt.user,
-        Lane,
-        req.params.id
-      );
+      const lane = await EntityHelper.findOneById(req.jwt.user, Lane, req.params.id);
 
       lane.inForecast = req.body.inForecast;
       lane.name = req.body.name;
@@ -45,11 +34,7 @@ const update = async (
 };
 
 // TODO switch to upsert
-const updateAll = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const updateAll = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const lanesInDatabase = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
@@ -65,6 +50,13 @@ const updateAll = async (
       })
     );
 
+    let board = await EntityHelper.findOneByTeam(Board, req.jwt.team);
+
+    /* TODO temporary migration, if board does not exist just create it */
+    if (!board) {
+      board = await datasource.manager.save(new Board('default', req.jwt.team.id!.toString()));
+    }
+
     const list: Lane[] = [];
 
     await Promise.all(
@@ -73,6 +65,7 @@ const updateAll = async (
           const lane = await datasource.manager.save(
             new Lane(
               req.jwt.team.id!.toString(), // TODO, typecast to string on Express middleware
+              board!.id!.toString(),
               item.name,
               item.index,
               item.tags ?? {},
@@ -83,11 +76,7 @@ const updateAll = async (
 
           list.push(lane);
         } else {
-          const lane = await EntityHelper.findOneById(
-            req.jwt.user,
-            Lane,
-            item.id
-          );
+          const lane = await EntityHelper.findOneById(req.jwt.user, Lane, item.id);
 
           if (lane) {
             lane.name = item.name;
