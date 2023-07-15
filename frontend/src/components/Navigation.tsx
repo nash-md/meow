@@ -29,10 +29,7 @@ export const Navigation = () => {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent<Document>) {
-      if (
-        layerRef.current &&
-        !layerRef.current.contains(event.target as Node)
-      ) {
+      if (layerRef.current && !layerRef.current.contains(event.target as Node)) {
         setUserMenu(false);
       }
     }
@@ -78,11 +75,7 @@ export const Navigation = () => {
       <div className="user-menu">
         {userMenue && (
           <div className={userMenue ? 'wrapper' : ''} ref={layerRef}>
-            <Link
-              onClick={handleLinkClick}
-              to="/user-setup"
-              className="link user-settings"
-            >
+            <Link onClick={handleLinkClick} to="/user-setup" className="link user-settings">
               Settings
             </Link>
             <div onClick={logout} className="link logout">
@@ -90,11 +83,7 @@ export const Navigation = () => {
             </div>
           </div>
         )}
-        <Avatar
-          onClick={() => setUserMenu(!userMenue)}
-          width={36}
-          id={userId}
-        />
+        <Avatar onClick={() => setUserMenu(!userMenue)} width={36} id={userId} />
       </div>
     </>
   );

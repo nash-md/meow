@@ -1,11 +1,4 @@
-import {
-  Entity,
-  ObjectIdColumn,
-  BeforeUpdate,
-  BeforeInsert,
-  Column,
-  ObjectId,
-} from 'typeorm';
+import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
 
 @Entity({ name: 'Teams' })
 export class Team {
@@ -50,7 +43,7 @@ export class Team {
       return {
         key: integration.key,
         attributes: Object.keys(integration.attributes).reduce(
-          (acc, curr) => ({ ...acc, [curr]: null }),
+          (accumulated, current) => ({ ...accumulated, [current]: null }),
           {}
         ),
       };
@@ -60,6 +53,12 @@ export class Team {
       ...this,
       integrations: filteredIntegrations,
     };
+  }
+
+  findIntegrationByKey(key: string) {
+    return this.integrations?.find(
+      (integration) => integration.key === key // TODO add enum
+    );
   }
 }
 

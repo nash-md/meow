@@ -99,11 +99,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
             <PasswordStrength password={password} />
           </div>
           <div style={{ marginTop: '25px' }}>
-            <Button
-              onPress={authenticate}
-              isDisabled={isLoading || !isValid}
-              variant="cta"
-            >
+            <Button onPress={authenticate} isDisabled={isLoading || !isValid} variant="cta">
               Register
             </Button>
           </div>
@@ -114,16 +110,14 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
         <>
           {' '}
           <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            The invite link you used was invalid. Please check if you added or
-            removed characters, if this does not help check with the person who
-            invited you.
+            The invite link you used was invalid. Please check if you added or removed characters,
+            if this does not help check with the person who invited you.
           </div>
           <a href="/">Leave Sign Up</a>
         </>
       ) : (
         <div style={{ paddingTop: '10px' }}>
-          You register with an invite link, your name is already set, just
-          define your password.
+          You register with an invite link, your name is already set, just define your password.
         </div>
       )}
     </>

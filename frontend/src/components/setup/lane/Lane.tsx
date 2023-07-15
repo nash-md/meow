@@ -44,6 +44,7 @@ export const Lane = (props: LaneProps) => {
               <div className="attribute">
                 <TextField
                   onChange={setName}
+                  onBlur={() => setName(name.trim())}
                   value={name}
                   aria-label="Name"
                   width="100%"

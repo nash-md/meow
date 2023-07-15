@@ -7,25 +7,13 @@ import { selectUsers, selectView, store } from '../../store/Store';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { CalendarDate } from '@internationalized/date';
 import { DateTime } from 'luxon';
-import {
-  ActionType,
-  setListView,
-  showCardLayer,
-  showModalError,
-} from '../../actions/Actions';
+import { ActionType, setListView, showCardLayer, showModalError } from '../../actions/Actions';
 import { toIntervalInDays, toRelativeDate } from '../../helpers/DateHelper';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { Currency } from '../Currency';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
 
-const columns = [
-  'Name',
-  'Amount',
-  'Created',
-  'Closed',
-  'Deal Duration',
-  'User',
-];
+const columns = ['Name', 'Amount', 'Created', 'Closed', 'Deal Duration', 'User'];
 
 interface Row {
   id: string;
@@ -121,13 +109,11 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
         return row;
       })
-      .sort((a, b) =>
-        ListViewHelper.orderBy(view.direction, a[column], b[column])
-      );
+      .sort((a, b) => ListViewHelper.orderBy(view.direction, a[column], b[column]));
   }, [view, list]);
 
   return (
-    <section className="content-box tile">
+    <section className="content-box tile" style={{ overflow: 'auto' }}>
       <Picker
         defaultSelectedKey={mode}
         onSelectionChange={(key) => {
@@ -140,21 +126,13 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
       <table className="list" style={{ width: '100%' }}>
         <tbody>
-          <ListHeader
-            name="forecast"
-            sort={setListView}
-            view={view}
-            columns={columns}
-          />
+          <ListHeader name="forecast" sort={setListView} view={view} columns={columns} />
 
           {rows.map((row, index) => {
             return (
               <tr key={index}>
                 <td>
-                  <span
-                    onClick={() => openCard(row.id)}
-                    className="direct-link"
-                  >
+                  <span onClick={() => openCard(row.id)} className="direct-link">
                     {row.Name}
                   </span>
                 </td>

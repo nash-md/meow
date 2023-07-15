@@ -7,14 +7,16 @@ import { User } from '../entities/User.js';
 import { Event } from '../entities/Event.js';
 import { Schema } from '../entities/Schema.js';
 import { MongoClient } from 'mongodb';
+import { Flag } from '../entities/Flag.js';
+import { Flow } from '../entities/flows/Flow.js';
+import { Board } from '../entities/Board.js';
 
 let client: MongoClient;
 
 export let datasource = new DataSource({
   type: 'mongodb',
   url: undefined,
-  useUnifiedTopology: true,
-  entities: [Team, Account, User, Card, Lane, Event, Schema],
+  entities: [],
 });
 
 const connect = async (uri: string) => {
@@ -28,7 +30,7 @@ const connect = async (uri: string) => {
     type: 'mongodb',
     url: uri,
     useUnifiedTopology: true,
-    entities: [Team, Account, User, Card, Lane, Event, Schema],
+    entities: [Team, Board, Lane, Account, User, Card, Event, Schema, Flag, Flow],
   });
 
   await datasource.initialize();

@@ -4,12 +4,7 @@ import { useSelector } from 'react-redux';
 import { ActionType, setListView } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { UserStatus } from '../../interfaces/User';
-import {
-  selectUserId,
-  selectUsers,
-  selectView,
-  store,
-} from '../../store/Store';
+import { selectUserId, selectUsers, selectView, store } from '../../store/Store';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { ListHeader } from '../list/ListHeader';
 import { ApplicationStore } from '../../store/ApplicationStore';
@@ -19,9 +14,7 @@ export const UserList = (props: any) => {
   const { client } = useContext(RequestHelperContext);
   const id = useSelector(selectUserId);
   const users = useSelector(selectUsers);
-  const view = useSelector((store: ApplicationStore) =>
-    selectView(store, 'users')
-  );
+  const view = useSelector((store: ApplicationStore) => selectView(store, 'users'));
 
   const columns = ['Name', 'Status', 'Invite', 'CreatedAt', null];
 
@@ -51,9 +44,7 @@ export const UserList = (props: any) => {
 
         return row;
       })
-      .sort((a, b) =>
-        ListViewHelper.orderBy(view.direction, a[column], b[column])
-      );
+      .sort((a, b) => ListViewHelper.orderBy(view.direction, a[column], b[column]));
   }, [view, users]);
 
   const deleteUser = async (id: string) => {
@@ -80,12 +71,7 @@ export const UserList = (props: any) => {
       <h2>Users</h2>
       <table className="list" style={{ width: '100%' }}>
         <tbody>
-          <ListHeader
-            name="users"
-            sort={setListView}
-            columns={columns}
-            view={view}
-          />
+          <ListHeader name="users" sort={setListView} columns={columns} view={view} />
 
           {rows.map((row, index) => {
             return (
@@ -98,9 +84,7 @@ export const UserList = (props: any) => {
                   {row.Status === UserStatus.Invited && (
                     <Button
                       variant="primary"
-                      onPress={() =>
-                        props.copyToClipboard(props.createInviteUrl(row.Invite))
-                      }
+                      onPress={() => props.copyToClipboard(props.createInviteUrl(row.Invite))}
                     >
                       Copy Invite
                     </Button>
@@ -110,10 +94,7 @@ export const UserList = (props: any) => {
 
                 <td style={{ textAlign: 'right' }}>
                   {row.id !== id && (
-                    <Button
-                      variant="cta"
-                      onPress={() => deleteUser(row.id!.toString())}
-                    >
+                    <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
                       delete
                     </Button>
                   )}

@@ -16,12 +16,8 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
     if (req.body.token) {
       const payload = TokenHelper.verifyJwt(req.body.token);
 
-      user = await datasource.manager.findOneById(
-        User,
-        new ObjectId(payload.userId)
-      );
+      user = await datasource.manager.findOneById(User, new ObjectId(payload.userId));
     }
-
     if (req.body.name) {
       user = await datasource.manager.findOneBy(User, {
         name: req.body.name,
@@ -31,11 +27,10 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
         throw new AuthenticationFailedError();
       }
 
-      const isValidPassword =
-        await new PasswordAuthenticationProvider().authenticate(
-          user,
-          req.body.password
-        );
+      const isValidPassword = await new PasswordAuthenticationProvider().authenticate(
+        user,
+        req.body.password
+      );
 
       if (!isValidPassword) {
         throw new AuthenticationFailedError();
@@ -46,10 +41,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       throw new AuthenticationFailedError();
     }
 
-    const team = await datasource.manager.findOneById(
-      Team,
-      new ObjectId(user.teamId)
-    );
+    const team = await datasource.manager.findOneById(Team, new ObjectId(user.teamId));
 
     if (!team) {
       throw new TeamNotFoundError('Team not found');

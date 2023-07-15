@@ -70,11 +70,7 @@ export const Register = () => {
           <PasswordStrength password={password} />
         </div>
         <div style={{ marginTop: '25px' }}>
-          <Button
-            onPress={authenticate}
-            isDisabled={isLoading || !isValid}
-            variant="cta"
-          >
+          <Button onPress={authenticate} isDisabled={isLoading || !isValid} variant="cta">
             Register
           </Button>
         </div>

@@ -24,11 +24,7 @@ export const ErrorModal = () => {
   };
 
   return (
-    <div
-      id="error-modal"
-      onClick={() => hide()}
-      className={`${isVisible ? 'show' : ''}`}
-    >
+    <div id="error-modal" onClick={() => hide()} className={`${isVisible ? 'show' : ''}`}>
       <div>{text}</div>
     </div>
   );

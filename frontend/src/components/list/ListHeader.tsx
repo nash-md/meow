@@ -20,9 +20,7 @@ export const ListHeader = ({ name, view, columns, sort }: ListHeaderProps) => {
       direction = view.direction === 'desc' ? 'asc' : 'desc';
     }
 
-    store.dispatch(
-      sort(name, { ...view, direction: direction, column: column })
-    );
+    store.dispatch(sort(name, { ...view, direction: direction, column: column }));
   };
 
   const getArrow = (column: string) => {

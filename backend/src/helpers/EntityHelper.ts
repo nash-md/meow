@@ -9,6 +9,8 @@ import { Lane } from '../entities/Lane.js';
 import { DatabaseHelper, datasource } from './DatabaseHelper.js';
 import { ObjectId } from 'mongodb';
 import { DateTime } from 'luxon';
+import { Flag } from '../entities/Flag.js';
+import { Flow } from '../entities/flows/Flow.js';
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
@@ -32,10 +34,7 @@ async function findOneById<Entity extends ObjectLiteral>(
     throw new EntityNotFoundError();
   }
 
-  if (
-    entity instanceof Team &&
-    entity.id?.toString() === user.teamId?.toString()
-  ) {
+  if (entity instanceof Team && entity.id?.toString() === user.teamId?.toString()) {
     return entity;
   }
 
@@ -59,7 +58,17 @@ async function findOneByIdOrNull<Entity extends ObjectLiteral>(
   }
 }
 
-async function findByTeam<Entity extends ObjectLiteral>(
+async function findByTeam<Entity extends ObjectLiteral>(target: EntityTarget<Entity>, team: Team) {
+  const query: any = {
+    teamId: { $eq: team.id!.toString() },
+  };
+
+  const list = await datasource.manager.getMongoRepository(target).find(query);
+
+  return list;
+}
+
+async function findOneByTeam<Entity extends ObjectLiteral>(
   target: EntityTarget<Entity>,
   team: Team
 ) {
@@ -67,7 +76,7 @@ async function findByTeam<Entity extends ObjectLiteral>(
     teamId: { $eq: team.id!.toString() },
   };
 
-  const list = await datasource.manager.getMongoRepository(target).find(query);
+  const list = await datasource.manager.getMongoRepository(target).findOne(query);
 
   return list;
 }
@@ -87,10 +96,7 @@ async function findCardsByTeam(team: Team) {
   const query = {
     where: {
       teamId: { $eq: team.id!.toString() },
-      $or: [
-        { status: { $exists: false } },
-        { status: { $ne: CardStatus.Deleted } },
-      ],
+      $or: [{ status: { $exists: false } }, { status: { $ne: CardStatus.Deleted } }],
     },
   };
 
@@ -123,6 +129,28 @@ async function findCardByName(teamId: string, name: string) {
   return user;
 }
 
+async function findFlagByName(teamId: string, name: string) {
+  const query = {
+    name: { $eq: name },
+    teamId: { $eq: teamId },
+  };
+
+  let flag = await datasource.manager.getMongoRepository(Flag).findOneBy(query);
+
+  return flag;
+}
+
+async function findOrCreateFlagByName(teamId: string, name: string) {
+  const query = {
+    name: { $eq: name },
+    teamId: { $eq: teamId },
+  };
+
+  let flag = await datasource.manager.getMongoRepository(Flag).findOneBy(query);
+
+  return flag ? flag : new Flag(teamId, name);
+}
+
 async function findUserByName(teamId: string, name: string) {
   const query = {
     name: new RegExp(name, 'i'),
@@ -134,12 +162,19 @@ async function findUserByName(teamId: string, name: string) {
   return user;
 }
 
-async function findEventsByUserId(
-  teamId: string,
-  userId: string,
-  start: Date,
-  end: Date
-) {
+async function findFlowByEvent(teamId: string, type: EventType, value: string) {
+  const query = {
+    teamId: { $eq: teamId },
+    trigger: { $eq: type },
+    value: { $eq: value },
+  };
+
+  let flow = await datasource.getMongoRepository(Flow).findOneBy(query);
+
+  return flow;
+}
+
+async function findEventsByUserId(teamId: string, userId: string, start: Date, end: Date) {
   const query = {
     userId: { $eq: userId },
     teamId: { $eq: teamId },
@@ -154,12 +189,7 @@ async function findEventsByUserId(
   return events;
 }
 
-async function findEventByTypeAndDay(
-  teamId: string,
-  laneId: string,
-  type: EventType,
-  date: Date
-) {
+async function findEventByTypeAndDay(teamId: string, laneId: string, type: EventType, date: Date) {
   const d = DateTime.fromJSDate(date).toUTC();
   const startOfDay = d.startOf('day').toJSDate();
   const endOfDay = d.endOf('day').toJSDate();
@@ -219,6 +249,7 @@ async function getLanes(teamId: string) {
 export const EntityHelper = {
   findOneById,
   findByTeam,
+  findOneByTeam,
   findCardsByTeam,
   findOneByIdOrNull,
   findSchemaByType,
@@ -226,8 +257,11 @@ export const EntityHelper = {
   isValidEntityId,
   findCardByName,
   findUserByName,
+  findFlowByEvent,
   findEventsByUserId,
   findEventByTypeAndDay,
   getTotalAmountByLaneId,
   getLanes,
+  findFlagByName,
+  findOrCreateFlagByName,
 };

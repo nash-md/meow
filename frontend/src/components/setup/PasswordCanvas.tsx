@@ -31,9 +31,7 @@ export const PasswordCanvas = () => {
     try {
       await client!.updatePassword(id!, existing, updated);
 
-      store.dispatch(
-        showModalSuccess(Translations.PasswordChangedConfirmation.en)
-      );
+      store.dispatch(showModalSuccess(Translations.PasswordChangedConfirmation.en));
     } catch (error: any) {
       if (error?.response.status === 401) {
         setError('Current Password is invalid');

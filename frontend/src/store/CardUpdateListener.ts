@@ -1,9 +1,5 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import {
-  ActionType,
-  ApplicationCardUpdateAction,
-  showModalError,
-} from '../actions/Actions';
+import { ActionType, ApplicationCardUpdateAction, showModalError } from '../actions/Actions';
 import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
 import { ApplicationStore } from './ApplicationStore';
 import { store } from './Store';

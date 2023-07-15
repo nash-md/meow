@@ -65,8 +65,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
               {lane.tags?.type == LaneType.Normal && (
                 <>
                   <span style={{ fontSize: '1.1em' }}>
-                    <Currency value={card.amount} /> -{' '}
-                    {closedAt?.toLocaleDateString()}
+                    <Currency value={card.amount} /> - {closedAt?.toLocaleDateString()}
                   </span>
                   <div>
                     <b>{ago}</b>

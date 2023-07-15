@@ -1,6 +1,7 @@
 import {
   MAXIMUM_LENGTH_OF_USER_PASSWORD,
   MINIMUM_LENGTH_OF_USER_PASSWORD,
+  RESERVED_USERS,
 } from '../Constants.js';
 import { User } from '../entities/User.js';
 import { InvalidUserPropertyError } from '../errors/InvalidUserPropertyError.js';
@@ -26,6 +27,10 @@ const isString = (value: unknown): value is string => {
 export const isValidName = async (name: unknown) => {
   if (!isString(name)) {
     throw new InvalidUserPropertyError('name it not type string');
+  }
+
+  if (RESERVED_USERS.includes(name)) {
+    throw new InvalidUserPropertyError(`${name} is reserved and cannot be used`);
   }
 
   const query = {

@@ -8,11 +8,7 @@ import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 
-const list = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.params.id) {
       throw new InvalidUrlError();
@@ -36,11 +32,7 @@ const list = async (
   }
 };
 
-const create = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const create = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.params.id) {
       throw new InvalidUrlError();
@@ -50,18 +42,10 @@ const create = async (
 
     switch (req.body.entity) {
       case 'card':
-        entity = await EntityHelper.findOneById(
-          req.jwt.user,
-          Card,
-          req.params.id
-        );
+        entity = await EntityHelper.findOneById(req.jwt.user, Card, req.params.id);
         break;
       case 'account':
-        entity = entity = await EntityHelper.findOneById(
-          req.jwt.user,
-          Account,
-          req.params.id
-        );
+        entity = entity = await EntityHelper.findOneById(req.jwt.user, Account, req.params.id);
         break;
       default:
         throw new InvalidRequestBodyError();
@@ -83,7 +67,7 @@ const create = async (
 
     const updated = await datasource.manager.save(event);
 
-    return res.json(updated);
+    return res.status(201).json(updated);
   } catch (error) {
     return next(error);
   }

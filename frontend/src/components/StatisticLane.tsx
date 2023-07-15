@@ -37,10 +37,7 @@ const getTitle = (cards: Card[], lane: LaneInterface) => {
     : `${count} ${Translations.BoardTitlePlural.en}`;
 };
 
-const getStatisticsByLane = (
-  statistics: BoardStatistics | undefined,
-  lane: Lane
-) => {
+const getStatisticsByLane = (statistics: BoardStatistics | undefined, lane: Lane) => {
   if (!statistics) {
     return;
   }
@@ -58,11 +55,7 @@ export interface StatisticLaneProps {
   statistics: BoardStatistics | undefined;
 }
 
-export const StatisticLane = ({
-  lane,
-  numberOfLanes,
-  statistics,
-}: StatisticLaneProps) => {
+export const StatisticLane = ({ lane, numberOfLanes, statistics }: StatisticLaneProps) => {
   const cards = useSelector(selectCards);
   const [amount, setAmount] = useState(0);
 
@@ -99,9 +92,7 @@ export const StatisticLane = ({
           <div
             className="forecast-icon"
             style={{
-              backgroundImage: lane.color
-                ? 'url(/icon-hidden-white.svg)'
-                : 'url(/icon-hidden.svg)',
+              backgroundImage: lane.color ? 'url(/icon-hidden-white.svg)' : 'url(/icon-hidden.svg)',
             }}
           ></div>
         )}
