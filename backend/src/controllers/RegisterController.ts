@@ -22,6 +22,7 @@ import { log } from '../logger.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
 import { CardEventService } from '../services/CardEventService.js';
+import { Board } from '../entities/Board.js';
 
 const invite = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by invite: ${req.query.invite}`);
@@ -31,9 +32,7 @@ const invite = async (req: Request, res: Response, next: NextFunction) => {
       throw new InvalidRequestParameterError();
     }
 
-    const user = await EntityHelper.findUserByInvite(
-      req.query.invite.toString()
-    );
+    const user = await EntityHelper.findUserByInvite(req.query.invite.toString());
 
     if (!user) {
       throw new EntityNotFoundError();
@@ -65,9 +64,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
         throw new EntityNotFoundError();
       }
 
-      user.password = await new PasswordAuthenticationProvider().create(
-        password
-      );
+      user.password = await new PasswordAuthenticationProvider().create(password);
 
       user.invite = null;
       user.status = UserStatus.Enabled;
@@ -79,9 +76,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     await isValidName(name);
 
-    const team = await datasource.manager.save(
-      new Team(`${name}'s Team`, CurrencyCode.USD)
-    );
+    const team = await datasource.manager.save(new Team(`${name}'s Team`, CurrencyCode.USD));
+
+    const board = await datasource.manager.save(new Board('default', team.id!.toString()));
 
     const lanes: Lane[] = [];
 
@@ -89,6 +86,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       const lane = await datasource.manager.save(
         new Lane(
           team.id!.toString(),
+          board.id!.toString(),
           item.name,
           index,
           item.tags,
@@ -102,20 +100,12 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     datasource.manager.save(
       Schema,
-      new Schema(
-        team.id!.toString(),
-        DefaultCardSchema.type,
-        DefaultCardSchema.schema
-      )
+      new Schema(team.id!.toString(), DefaultCardSchema.type, DefaultCardSchema.schema)
     );
 
     datasource.manager.save(
       Schema,
-      new Schema(
-        team.id!.toString(),
-        DefaultAccountSchema.type,
-        DefaultAccountSchema.schema
-      )
+      new Schema(team.id!.toString(), DefaultAccountSchema.type, DefaultAccountSchema.schema)
     );
 
     let user = new User(team.id!.toString(), name, UserStatus.Enabled);
@@ -147,19 +137,13 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
         await cardEventService.add(card, user);
 
-        await cardEventService.storeLaneAmountChange(
-          card.teamId,
-          card.userId,
-          card.laneId
-        );
+        await cardEventService.storeLaneAmountChange(card.teamId, card.userId, card.laneId);
       })
     );
 
     await Promise.all(
       DefaultAccounts.map(async (item, index) => {
-        await datasource.manager.save(
-          new Account(team.id!.toString()!, item.name)
-        );
+        await datasource.manager.save(new Account(team.id!.toString()!, item.name));
       })
     );
 

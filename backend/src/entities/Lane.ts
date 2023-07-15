@@ -1,11 +1,4 @@
-import {
-  Entity,
-  ObjectIdColumn,
-  BeforeUpdate,
-  BeforeInsert,
-  Column,
-  ObjectId,
-} from 'typeorm';
+import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
 
 @Entity({ name: 'Lanes' })
 export class Lane {
@@ -14,6 +7,9 @@ export class Lane {
 
   @Column()
   teamId: string;
+
+  @Column()
+  boardId: string;
 
   @Column()
   name: string;
@@ -38,6 +34,7 @@ export class Lane {
 
   constructor(
     teamId: string,
+    boardId: string,
     name: string,
     index: number,
     tags: Tags,
@@ -45,6 +42,7 @@ export class Lane {
     color?: string
   ) {
     this.teamId = teamId;
+    this.boardId = boardId;
     this.name = name;
     this.index = index;
     this.tags = tags;
