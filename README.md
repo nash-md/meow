@@ -6,6 +6,8 @@ Welcome to the world of free sales funnel management. You can use it setup your 
 
 ## Try It
 
+![Frontend and Backend](https://github.com/nash-md/meow/actions/workflows/build_all.yml/badge.svg)
+
 Do you not have a server? - [Try this ](https://hello.sales-funnel.app/).
 
 ## How to Install
