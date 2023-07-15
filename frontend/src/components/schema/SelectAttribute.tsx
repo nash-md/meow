@@ -6,6 +6,7 @@ export interface SelectAttributeProps {
   name: string;
   value: string | null;
   options?: string[] | undefined;
+  isDisabled: boolean;
   update: (index: string, value: string) => void;
 }
 
@@ -15,6 +16,7 @@ export const SelectAttribute = ({
   update,
   options,
   value: valueDefault,
+  isDisabled,
 }: SelectAttributeProps) => {
   const [value, setValue] = useState(valueDefault);
 
@@ -35,6 +37,7 @@ export const SelectAttribute = ({
           aria-label={name}
           label={name}
           selectedKey={value}
+          isDisabled={isDisabled}
           onSelectionChange={(key) => updateValue(key.toString())}
         >
           {options?.map((option) => {

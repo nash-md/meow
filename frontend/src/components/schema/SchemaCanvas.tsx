@@ -1,21 +1,11 @@
 import { useEffect, useState } from 'react';
-import {
-  SchemaAttribute,
-  Schema,
-  SchemaSelectAttribute,
-} from '../../interfaces/Schema';
+import { SchemaAttribute, Schema, SchemaSelectAttribute } from '../../interfaces/Schema';
 import { SelectAttribute } from './SelectAttribute';
 import { TextAreaAttribute } from './TextAreaAttribute';
 import { TextAttribute } from './TextAttribute';
 import { ReferenceAttribute } from './ReferenceAttribute';
 import { BooleanAttribute } from './BooleanAttribute';
 import { Attribute } from '../../interfaces/Attribute';
-
-export interface SchemaCanvasProps {
-  schema: Schema;
-  values?: Attribute;
-  validate: (values: Attribute) => void;
-}
 
 const toStringOrNull = (value: unknown) => {
   if (typeof value === 'undefined' || value === null) {
@@ -33,10 +23,18 @@ const toBooleanOrNull = (value: unknown): boolean | null => {
   return Boolean(value);
 };
 
+export interface SchemaCanvasProps {
+  schema: Schema;
+  values?: Attribute;
+  isDisabled: boolean;
+  validate: (values: Attribute) => void;
+}
+
 export const SchemaCanvas = ({
   schema,
   values: valuesImport,
   validate,
+  isDisabled,
 }: SchemaCanvasProps) => {
   const [values, setValues] = useState<Attribute | undefined>(valuesImport);
 
@@ -50,10 +48,7 @@ export const SchemaCanvas = ({
     validate({ ...values, [key]: value });
   };
 
-  const getAttribute = (
-    attribute: SchemaAttribute,
-    value: string | number | boolean | null
-  ) => {
+  const getAttribute = (attribute: SchemaAttribute, value: string | number | boolean | null) => {
     switch (attribute.type) {
       case 'text':
         return (
@@ -61,6 +56,7 @@ export const SchemaCanvas = ({
             update={updateAttribute}
             attributeKey={attribute.key}
             value={toStringOrNull(value)}
+            isDisabled={isDisabled}
             {...attribute}
           />
         );
@@ -70,6 +66,7 @@ export const SchemaCanvas = ({
             update={updateAttribute}
             attributeKey={attribute.key}
             value={toStringOrNull(value)}
+            isDisabled={isDisabled}
             {...attribute}
           />
         );
@@ -80,6 +77,7 @@ export const SchemaCanvas = ({
             attributeKey={attribute.key}
             value={toStringOrNull(value)}
             {...(attribute as SchemaSelectAttribute)}
+            isDisabled={isDisabled}
           />
         );
       case 'reference':
@@ -89,6 +87,7 @@ export const SchemaCanvas = ({
             attributeKey={attribute.key}
             value={toStringOrNull(value)}
             {...attribute}
+            isDisabled={isDisabled}
           />
         );
       case 'boolean':
@@ -98,6 +97,7 @@ export const SchemaCanvas = ({
             attributeKey={attribute.key}
             value={toBooleanOrNull(value)}
             {...attribute}
+            isDisabled={isDisabled}
           />
         );
     }

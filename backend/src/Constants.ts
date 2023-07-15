@@ -109,3 +109,15 @@ export const ANIMALS: string[] = [
   'Wolf',
   'Zebra',
 ];
+
+export const RESERVED_ATTRIBUTES = [
+  'id',
+  'createdat',
+  'updatedat',
+  'attribute',
+  'teamid',
+  'accountid',
+  'attributes',
+];
+
+export const RESERVED_USERS = ['id', 'all'];

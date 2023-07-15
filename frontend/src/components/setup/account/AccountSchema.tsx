@@ -1,11 +1,7 @@
 import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  ActionType,
-  showModalError,
-  showModalSuccess,
-} from '../../../actions/Actions';
+import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { RESERVED_ATTRIBUTES } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import {
@@ -18,6 +14,7 @@ import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
+import { hasDuplicateEntries } from '../../../helpers/Helper';
 
 export const AccountSchema = () => {
   const [isValid, setIsValid] = useState(false);
@@ -58,10 +55,7 @@ export const AccountSchema = () => {
 
     if (
       filtered.some(
-        (i) =>
-          !i.options ||
-          i.options.length === 0 ||
-          i.options.some((option) => !option)
+        (i) => !i.options || i.options.length === 0 || i.options.some((option) => !option)
       )
     ) {
       setError('A dropdown list or a value cannot be empty');
@@ -70,11 +64,14 @@ export const AccountSchema = () => {
       return;
     }
 
-    if (
-      list.some((item) =>
-        RESERVED_ATTRIBUTES.includes(item.name.toLocaleLowerCase())
-      )
-    ) {
+    if (filtered.some((i) => i.options && hasDuplicateEntries(i.options))) {
+      setError('Each value in a dropdown must be unique');
+      setIsValid(false);
+
+      return;
+    }
+
+    if (list.some((item) => RESERVED_ATTRIBUTES.includes(item.name.toLocaleLowerCase()))) {
       setError('This name is reserved by the system and cannot be used');
       setIsValid(false);
 
@@ -113,9 +110,7 @@ export const AccountSchema = () => {
     try {
       await client!.updateSchema(updatedSchema);
 
-      store.dispatch(
-        showModalSuccess(Translations.SetupChangedConfirmation.en)
-      );
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
 
       let schemas = await client!.fetchSchemas();
 

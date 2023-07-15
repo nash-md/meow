@@ -11,12 +11,8 @@ export function generateUUID() {
   return uuid;
 }
 
-export function isValidId(idStr: string): boolean {
-  if (
-    typeof idStr !== 'string' ||
-    idStr.length !== 24 ||
-    !/^[0-9a-fA-F]{24}$/.test(idStr)
-  ) {
+export function isValidId(value: string): boolean {
+  if (typeof value !== 'string' || value.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(value)) {
     return false;
   }
   return true;
@@ -29,9 +25,7 @@ export const getBrowserLocale = () => {
 
   const locale = new Intl.Locale(navigator.language ?? DEFAULT_LANGUAGE);
 
-  return locale.region
-    ? `${locale.language}-${locale.region}`
-    : locale.language;
+  return locale.region ? `${locale.language}-${locale.region}` : locale.language;
 };
 
 export function isNullOrUndefined(value: unknown): boolean {
@@ -44,4 +38,10 @@ export function isNumber(value: unknown): value is number {
 
 export function isString(value: unknown): value is string {
   return typeof value === 'string';
+}
+
+export function hasDuplicateEntries(array: string[]): boolean {
+  return array.some((value, index) => {
+    return array.indexOf(value) !== index;
+  });
 }

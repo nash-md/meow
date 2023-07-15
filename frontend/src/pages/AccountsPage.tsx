@@ -20,9 +20,7 @@ export const AccountsPage = () => {
   const state = useSelector(selectInterfaceState);
   const accounts = useSelector(selectAccounts);
   const [search, setSearch] = useState('');
-  const view = useSelector((store: ApplicationStore) =>
-    selectView(store, 'accounts')
-  );
+  const view = useSelector((store: ApplicationStore) => selectView(store, 'accounts'));
 
   const [attributes, setAttributes] = useState<Array<string>>([]);
 
@@ -30,9 +28,7 @@ export const AccountsPage = () => {
     selectSchemaByType(store, SchemaType.Account)
   );
 
-  const columns = attributes
-    ? ['Name', ...attributes, 'CreatedAt']
-    : ['Name', 'CreatedAt'];
+  const columns = attributes ? ['Name', ...attributes, 'CreatedAt'] : ['Name', 'CreatedAt'];
 
   interface Row {
     id: string;
@@ -87,15 +83,10 @@ export const AccountsPage = () => {
 
         return row;
       })
-      .sort((a, b) =>
-        ListViewHelper.orderBy(view.direction, a[column], b[column])
-      );
+      .sort((a, b) => ListViewHelper.orderBy(view.direction, a[column], b[column]));
   }, [schema, view, accounts]);
 
-  function getTableData(
-    key: string,
-    value: string | number | null | boolean | undefined
-  ) {
+  function getTableData(key: string, value: string | number | null | boolean | undefined) {
     if (attributes.includes(key)) {
       return <td key={key}>{value?.toString()}</td>;
     }
@@ -123,26 +114,18 @@ export const AccountsPage = () => {
             />
           </div>
         </div>
-        <div className="content-box tile">
+        <div className="content-box tile" style={{ overflow: 'auto' }}>
           <h2>{rows.length} Accounts</h2>
 
           <table className="list" style={{ width: '100%' }}>
             <tbody>
-              <ListHeader
-                name="accounts"
-                sort={setListView}
-                view={view}
-                columns={columns}
-              />
+              <ListHeader name="accounts" sort={setListView} view={view} columns={columns} />
 
               {rows.map((row) => {
                 return (
                   <tr key={row.id}>
                     <td>
-                      <span
-                        onClick={() => openAccount(row.id?.toString())}
-                        className="direct-link"
-                      >
+                      <span onClick={() => openAccount(row.id?.toString())} className="direct-link">
                         {row.Name}
                       </span>
                     </td>

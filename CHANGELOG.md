@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-07-14
+
+- Improved the layout and responsiveness on mobile devices for a better user experience.
+- Added a warning and lock mechanism for 'Closed Won' and 'Closed Lost' opportunities. They need to be unlocked first before any edits can be made.
+- Implemented input sanitization in the schema editor: attribute names are now automatically trimmed of leading and trailing whitespaces upon losing focus (blur event).
+
 ## 2023-05-07
 
 - Added filters to table list views: Users can now filter opportunities, users, and accounts.

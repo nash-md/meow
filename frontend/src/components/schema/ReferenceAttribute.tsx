@@ -7,6 +7,7 @@ export interface ReferenceAttributeProps {
   attributeKey: string;
   name: string;
   value: string | null;
+  isDisabled: boolean;
   update: (index: string, value: string) => void;
 }
 
@@ -14,6 +15,7 @@ export const ReferenceAttribute = ({
   attributeKey,
   name,
   value: valueDefault,
+  isDisabled,
   update,
 }: ReferenceAttributeProps) => {
   const [value, setValue] = useState(valueDefault);
@@ -35,6 +37,7 @@ export const ReferenceAttribute = ({
         aria-label={name}
         label={name}
         selectedKey={value}
+        isDisabled={isDisabled}
         onSelectionChange={(key) => updateValue(key.toString())}
       >
         {accounts?.map((account) => {

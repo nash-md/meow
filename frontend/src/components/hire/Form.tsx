@@ -4,6 +4,7 @@ import { ActionType } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { store } from '../../store/Store';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
+import { RESERVED_USERS } from '../../Constants';
 
 export const Form = (props: any) => {
   const { client } = useContext(RequestHelperContext);
@@ -15,7 +16,7 @@ export const Form = (props: any) => {
   let isValidForm = useMemo(() => {
     setError('');
 
-    if (name) {
+    if (name && !RESERVED_USERS.includes(name)) {
       setInvite('');
 
       return true;
@@ -51,6 +52,7 @@ export const Form = (props: any) => {
         <div>
           <TextField
             onChange={setName}
+            onBlur={() => setName(name.trim())}
             value={name}
             aria-label="Name"
             width="100%"

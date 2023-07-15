@@ -38,14 +38,9 @@ export interface SchemaCanvasProps {
   validate: (schema: Schema) => void;
 }
 
-export const SchemaCanvas = ({
-  schema: schemaImported,
-  validate,
-}: SchemaCanvasProps) => {
+export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasProps) => {
   const [items, setItems] = useState<Array<SchemaAttribute>>([]);
-  const [type, setType] = useState<SchemaAttributeType>(
-    SchemaAttributeType.Text
-  );
+  const [type, setType] = useState<SchemaAttributeType>(SchemaAttributeType.Text);
   const [schema, setSchema] = useState(schemaImported);
 
   useEffect(() => {
@@ -105,17 +100,13 @@ export const SchemaCanvas = ({
   };
 
   const onDragEnd = async (result: DropResult) => {
-    console.log(
-      `move from ${result.source.index} to ${result.destination?.index}`
-    );
+    console.log(`move from ${result.source.index} to ${result.destination?.index}`);
 
-    const list = moveAttribute(
-      items,
-      result.source.index,
-      result.destination!.index
-    ).map((item, index) => {
-      return { ...item, index };
-    });
+    const list = moveAttribute(items, result.source.index, result.destination!.index).map(
+      (item, index) => {
+        return { ...item, index };
+      }
+    );
 
     setItems([...list]);
 
@@ -129,22 +120,10 @@ export const SchemaCanvas = ({
   const getAttribute = (item: SchemaAttribute) => {
     switch (item.type) {
       case SchemaAttributeType.Text:
-        return (
-          <TextAttribute
-            update={update}
-            remove={remove}
-            attributeKey={item.key}
-            {...item}
-          />
-        );
+        return <TextAttribute update={update} remove={remove} attributeKey={item.key} {...item} />;
       case SchemaAttributeType.TextArea:
         return (
-          <TextAreaAttribute
-            update={update}
-            remove={remove}
-            attributeKey={item.key}
-            {...item}
-          />
+          <TextAreaAttribute update={update} remove={remove} attributeKey={item.key} {...item} />
         );
       case SchemaAttributeType.Select:
         return (
@@ -166,15 +145,10 @@ export const SchemaCanvas = ({
         );
       case SchemaAttributeType.Boolean:
         return (
-          <BooleanAttribute
-            update={update}
-            remove={remove}
-            attributeKey={item.key}
-            {...item}
-          />
+          <BooleanAttribute update={update} remove={remove} attributeKey={item.key} {...item} />
         );
       default:
-        return <div>Unknown attribute type</div>;
+        return <div>Unknown attribute type</div>; // TODO should throw
     }
   };
 
@@ -198,9 +172,7 @@ export const SchemaCanvas = ({
       <div className="add-attribute">
         <Picker
           defaultSelectedKey="text"
-          onSelectionChange={(key: Key) =>
-            setType(key.toString() as SchemaAttributeType)
-          }
+          onSelectionChange={(key: Key) => setType(key.toString() as SchemaAttributeType)}
         >
           <Item key="text">Text</Item>
           <Item key="textarea">TextArea</Item>

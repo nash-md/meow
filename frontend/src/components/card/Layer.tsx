@@ -17,6 +17,7 @@ import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
 import { User } from '../../interfaces/User';
 import { Translations } from '../../Translations';
+import useMobileLayout from '../../hooks/useMobileLayout';
 
 export const Layer = () => {
   const { client } = useContext(RequestHelperContext);
@@ -25,6 +26,7 @@ export const Layer = () => {
   const [isUserLayerVisible, setIsUserLayerVisible] = useState(false);
   const users = useSelector(selectActiveUsers);
   const lanes = useSelector(selectLanes);
+  const isMobileLayout = useMobileLayout();
 
   const hideCardDetail = () => {
     store.dispatch(hideLayer());
@@ -68,7 +70,7 @@ export const Layer = () => {
   };
 
   return (
-    <div className="layer">
+    <div className={`layer ${isMobileLayout ? 'mobile' : 'desktop'}`}>
       <div className="header">
         {card?.userId && (
           <div

@@ -15,7 +15,7 @@ export interface LaneListItem {
   name: string;
   index: number;
   inForecast: boolean;
-  type?: string;
+  type?: LaneType;
   color?: string;
   externalId?: string;
 }
@@ -54,7 +54,7 @@ export const LanesCanvas = () => {
         inForecast: lane.inForecast,
         color: lane.color,
         externalId: lane.id,
-        type: lane.tags?.type?.toString() ?? undefined,
+        type: (lane.tags?.type?.toString() as LaneType) ?? undefined,
       };
     });
 
@@ -62,17 +62,13 @@ export const LanesCanvas = () => {
   }, [existingLanes]);
 
   const onDragEnd = async (result: DropResult) => {
-    console.log(
-      `move from ${result.source.index} to ${result.destination?.index}`
-    );
+    console.log(`move from ${result.source.index} to ${result.destination?.index}`);
 
-    const list = moveLane(
-      lanes,
-      result.source.index,
-      result.destination!.index
-    ).map((item, index) => {
-      return { ...item, index };
-    });
+    const list = moveLane(lanes, result.source.index, result.destination!.index).map(
+      (item, index) => {
+        return { ...item, index };
+      }
+    );
 
     setLanes([...list]);
   };
@@ -80,9 +76,7 @@ export const LanesCanvas = () => {
   const onDragStart = () => {};
 
   const add = () => {
-    const name = ANIMALS[ANIMALS.length - lanes.length]
-      ? ANIMALS[lanes.length]
-      : '...';
+    const name = ANIMALS[ANIMALS.length - lanes.length] ? ANIMALS[lanes.length] : '...';
 
     setLanes([
       ...lanes,
@@ -95,10 +89,7 @@ export const LanesCanvas = () => {
     ]);
   };
 
-  const update = (
-    index: number,
-    item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>
-  ) => {
+  const update = (index: number, item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>) => {
     lanes[index].name = item.name;
     lanes[index].inForecast = item.inForecast;
     lanes[index].type = item.type;
@@ -125,7 +116,6 @@ export const LanesCanvas = () => {
     }
 
     if (!lanes.some((lane) => lane.type === LaneType.ClosedLost)) {
-      // lane type should be a TS type
       setError(
         'At least one stage must be labeled as closed lost. This stage will be used to mark opportunities you lost'
       );
@@ -179,9 +169,7 @@ export const LanesCanvas = () => {
     try {
       await client?.updateLanes(updated);
 
-      store.dispatch(
-        showModalSuccess(Translations.SetupChangedConfirmation.en)
-      );
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
     } catch (error) {
       console.error(error);
 

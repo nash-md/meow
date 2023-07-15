@@ -1,10 +1,7 @@
 import { Item, Picker, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import {
-  SchemaReferenceAttribute,
-  SchemaType,
-} from '../../../interfaces/Schema';
+import { SchemaReferenceAttribute, SchemaType } from '../../../interfaces/Schema';
 
 const options = Object.entries(SchemaType);
 
@@ -36,18 +33,14 @@ export const ReferenceAttribute = ({
     <Draggable draggableId={`drag_${attributeKey}`} index={index}>
       {(provided, snaphot) => {
         return (
-          <div
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-          >
+          <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`item ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
                 <div className="drag"></div>
               </div>
 
               <div className="name">
-                <TextField value={name} onChange={setName} />
+                <TextField value={name} onChange={setName} onBlur={() => setName(name.trim())} />
               </div>
               <div className="reference">
                 <Picker

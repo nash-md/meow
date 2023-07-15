@@ -2,17 +2,27 @@ import { Button, TextField, DatePicker } from '@adobe/react-spectrum';
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { parseDate } from '@internationalized/date';
-import {
-  selectCard,
-  selectSchemaByType,
-  selectUserId,
-} from '../../store/Store';
+import { selectCard, selectLane, selectSchemaByType, selectUserId } from '../../store/Store';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Card, CardFormPreview, CardPreview } from '../../interfaces/Card';
 import { SchemaType } from '../../interfaces/Schema';
 import { Translations } from '../../Translations';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { Attribute } from '../../interfaces/Attribute';
+import { LANE_COLOR } from '../../Constants';
+import { IconLock } from './IconLock';
+
+const getBannerColorClassName = (color: string | undefined) => {
+  if (color === LANE_COLOR.NEGATIVE) {
+    return 'negative';
+  }
+
+  if (color === LANE_COLOR.POSITIVE) {
+    return 'positive';
+  }
+
+  return '';
+};
 
 export interface FormProps {
   id: string | undefined;
@@ -62,6 +72,12 @@ export const Form = ({ update, id }: FormProps) => {
   }, [preview]);
 
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
+  const lane = useSelector((store: ApplicationStore) => selectLane(store, card?.laneId));
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsDisabled(lane && lane.tags?.type !== 'normal' ? true : false);
+  }, [lane]);
 
   useEffect(() => {
     if (card) {
@@ -96,6 +112,15 @@ export const Form = ({ update, id }: FormProps) => {
 
   return (
     <>
+      {isDisabled && (
+        <div className={`lock ${getBannerColorClassName(lane?.color)}`}>
+          <div>This opportunity is closed, do you want to unlock? </div>
+          <div className="button" onClick={() => setIsDisabled(!isDisabled)}>
+            <IconLock />
+          </div>
+        </div>
+      )}
+
       <div className="card">
         <TextField
           onChange={(value) => handlePreviewUpdate('name', value)}
@@ -104,10 +129,12 @@ export const Form = ({ update, id }: FormProps) => {
           width="100%"
           key="name"
           label="Name"
+          isDisabled={isDisabled}
           validationState={preview.name ? 'valid' : 'invalid'}
         />
 
         <SchemaCanvas
+          isDisabled={isDisabled}
           values={card?.attributes}
           schema={schema!}
           validate={validate}
@@ -121,6 +148,7 @@ export const Form = ({ update, id }: FormProps) => {
             width="100%"
             key="amount"
             inputMode="decimal"
+            isDisabled={isDisabled}
             label={Translations.OpportunityAmount.en}
             validationState={isValidAmount ? 'valid' : 'invalid'}
             errorMessage={Translations.OpportunityAmountInvalid.en}
@@ -136,31 +164,25 @@ export const Form = ({ update, id }: FormProps) => {
                 ? parseDate(preview.nextFollowUpAt.substring(0, 10))
                 : undefined
             }
-            onChange={(value) =>
-              handlePreviewUpdate('nextFollowUpAt', value.toString())
-            }
+            onChange={(value) => handlePreviewUpdate('nextFollowUpAt', value.toString())}
             label="Next Follow Up"
             validationState={isValidNextFollowUp ? 'valid' : 'invalid'}
+            isDisabled={isDisabled}
           />
         </div>
 
         <div>
           <DatePicker
-            value={
-              preview.closedAt
-                ? parseDate(preview.closedAt.substring(0, 10))
-                : undefined
-            }
-            onChange={(value) =>
-              handlePreviewUpdate('closedAt', value.toString())
-            }
+            value={preview.closedAt ? parseDate(preview.closedAt.substring(0, 10)) : undefined}
+            onChange={(value) => handlePreviewUpdate('closedAt', value.toString())}
             label="Expected Close Date"
+            isDisabled={isDisabled}
           />
         </div>
       </div>
 
       <div className="card-submit">
-        <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
+        <Button variant="primary" onPress={save} isDisabled={!isValidForm || isDisabled}>
           Save
         </Button>
       </div>

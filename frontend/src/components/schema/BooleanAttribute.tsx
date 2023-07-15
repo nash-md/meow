@@ -5,6 +5,7 @@ export interface BooleanAttributeProps {
   attributeKey: string;
   name: string;
   value: boolean | null;
+  isDisabled: boolean;
   update: (index: string, value: boolean) => void;
 }
 
@@ -13,6 +14,7 @@ export const BooleanAttribute = ({
   name,
   value: valueDefault,
   update,
+  isDisabled,
 }: BooleanAttributeProps) => {
   const [value, setValue] = useState(valueDefault);
 
@@ -31,6 +33,7 @@ export const BooleanAttribute = ({
         onChange={(value) => updateValue(value)}
         value={value?.toString()}
         isSelected={value ? true : false}
+        isDisabled={isDisabled}
       >
         {name}
       </Checkbox>

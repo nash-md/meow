@@ -19,7 +19,7 @@ const createJwt = (user: User, ttl: number): string => {
   }
 
   const payload: TokenPayload = {
-    iat: Date.now(),
+    iat: Date.now() / 1000,
     exp: Math.floor(Date.now() / 1000) + ttl,
     userId: user.id.toString(),
     teamId: user.teamId.toString(),

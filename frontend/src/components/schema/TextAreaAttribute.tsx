@@ -5,6 +5,7 @@ export interface TextAreaAttributeProps {
   attributeKey: string;
   name: string;
   value: string | null;
+  isDisabled: boolean;
   update: (index: string, value: string) => void;
 }
 
@@ -13,6 +14,7 @@ export const TextAreaAttribute = ({
   name,
   update,
   value: valueDefault,
+  isDisabled,
 }: TextAreaAttributeProps) => {
   const [value, setValue] = useState(valueDefault);
 
@@ -32,6 +34,7 @@ export const TextAreaAttribute = ({
         aria-label={name}
         label={name}
         value={value?.toString()}
+        isDisabled={isDisabled}
         onChange={(value) => updateValue(value)}
       />
     </div>

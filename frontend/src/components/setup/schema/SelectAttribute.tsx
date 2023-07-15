@@ -54,18 +54,14 @@ export const SelectAttribute = ({
     <Draggable draggableId={`drag_${attributeKey}`} index={index}>
       {(provided, snaphot) => {
         return (
-          <div
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-          >
+          <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`item ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
                 <div className="drag"></div>
               </div>
 
               <div className="name">
-                <TextField value={name} onChange={setName} />
+                <TextField value={name} onChange={setName} onBlur={() => setName(name.trim())} />
               </div>
               <div className="select">
                 {options?.map((option, index) => {
@@ -76,12 +72,10 @@ export const SelectAttribute = ({
                           width="100%"
                           value={option}
                           onChange={(value) => setOption(value, index)}
+                          onBlur={() => setOption(options[index].trim(), index)}
                         />
                       </div>
-                      <div
-                        className="remove"
-                        onClick={() => removeOptiom(index)}
-                      >
+                      <div className="remove" onClick={() => removeOptiom(index)}>
                         <img src="/remove-icon.svg" />
                       </div>
                     </div>

@@ -41,8 +41,7 @@ export interface Action<T extends ActionType> {
   type: T;
 }
 
-export interface ApplicationPageLoadAction
-  extends Action<ActionType.PAGE_LOAD> {
+export interface ApplicationPageLoadAction extends Action<ActionType.PAGE_LOAD> {
   payload: { modal?: 'error'; text?: string; token?: string };
 }
 
@@ -68,8 +67,7 @@ export interface ApplicationUserAddAction extends Action<ActionType.USER_ADD> {
   payload: User;
 }
 
-export interface ApplicationUserUpdateAction
-  extends Action<ActionType.USER_SETTINGS_UPDATE> {
+export interface ApplicationUserUpdateAction extends Action<ActionType.USER_SETTINGS_UPDATE> {
   payload: User;
 }
 
@@ -81,33 +79,27 @@ export interface ApplicationCardAddAction extends Action<ActionType.CARD_ADD> {
   payload: Card;
 }
 
-export interface ApplicationCardUpdateAction
-  extends Action<ActionType.CARD_UPDATE> {
+export interface ApplicationCardUpdateAction extends Action<ActionType.CARD_UPDATE> {
   payload: Card;
 }
 
-export interface ApplicationCardRefreshAction
-  extends Action<ActionType.CARD_REFRESH> {
+export interface ApplicationCardRefreshAction extends Action<ActionType.CARD_REFRESH> {
   payload: Card;
 }
 
-export interface ApplicationCardLaneAction
-  extends Action<ActionType.CARD_LANE> {
+export interface ApplicationCardLaneAction extends Action<ActionType.CARD_LANE> {
   payload: { card: Card; from: Lane['id']; to: Lane['id']; index: number };
 }
 
-export interface ApplicationCardDeleteAction
-  extends Action<ActionType.CARD_DELETE> {
+export interface ApplicationCardDeleteAction extends Action<ActionType.CARD_DELETE> {
   payload: Card;
 }
 
-export interface ApplicationAccountAddAction
-  extends Action<ActionType.ACCOUNT_ADD> {
+export interface ApplicationAccountAddAction extends Action<ActionType.ACCOUNT_ADD> {
   payload: Account;
 }
 
-export interface ApplicationAccountUpdateAction
-  extends Action<ActionType.ACCOUNT_UPDATE> {
+export interface ApplicationAccountUpdateAction extends Action<ActionType.ACCOUNT_UPDATE> {
   payload: Account;
 }
 
@@ -115,8 +107,7 @@ export interface ApplicationAccountsAction extends Action<ActionType.ACCOUNTS> {
   payload: Account[];
 }
 
-export interface ApplicationTeamUpdateAction
-  extends Action<ActionType.TEAM_UPDATE> {
+export interface ApplicationTeamUpdateAction extends Action<ActionType.TEAM_UPDATE> {
   payload: CurrencyCode;
 }
 
@@ -128,13 +119,11 @@ export interface ApplicationLanesAction extends Action<ActionType.LANES> {
   payload: Lane[];
 }
 
-export interface ApplicationLaneUpdateAction
-  extends Action<ActionType.LANE_UPDATE> {
+export interface ApplicationLaneUpdateAction extends Action<ActionType.LANE_UPDATE> {
   payload: Lane;
 }
 
-export interface ApplicationBrowserStateAction
-  extends Action<ActionType.BROWSER_STATE> {
+export interface ApplicationBrowserStateAction extends Action<ActionType.BROWSER_STATE> {
   payload: BrowserState;
 }
 
@@ -154,16 +143,15 @@ export interface ApplicationUserInterfaceModalAction
   };
 }
 
-export interface ApplicationFilterAction
-  extends Action<ActionType.FILTER_UPDATE> {
+export interface ApplicationFilterAction extends Action<ActionType.FILTER_UPDATE> {
   payload: {
     mode: FilterMode[];
     text?: string;
+    userId: string;
   };
 }
 
-export interface ApplicationListViewAction
-  extends Action<ActionType.LIST_VIEW> {
+export interface ApplicationListViewAction extends Action<ActionType.LIST_VIEW> {
   payload: {
     name: ListName;
     view: ListView;
@@ -238,10 +226,10 @@ export function pageLoadWithError(text: string, token?: string) {
   } as ApplicationPageLoadAction;
 }
 
-export function updateFilter(filter: Set<FilterMode>, text?: string) {
+export function updateFilter(filter: Set<FilterMode>, userId: string, text?: string) {
   return {
     type: ActionType.FILTER_UPDATE,
-    payload: { mode: Array.from(filter.values()), text: text },
+    payload: { mode: Array.from(filter.values()), text: text, userId: userId },
   } as ApplicationFilterAction;
 }
 
@@ -255,27 +243,21 @@ export function setListView(name: ListName, view: ListView) {
   } as ApplicationListViewAction;
 }
 
-export const showAccountLayer = (
-  id?: string
-): ApplicationUserInterfaceStateAction => {
+export const showAccountLayer = (id?: string): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
     payload: { state: 'account-detail', id: id },
   };
 };
 
-export const showCardLayer = (
-  id?: string
-): ApplicationUserInterfaceStateAction => {
+export const showCardLayer = (id?: string): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
     payload: { state: 'card-detail', id: id },
   };
 };
 
-export const showLaneLayer = (
-  id?: string
-): ApplicationUserInterfaceStateAction => {
+export const showLaneLayer = (id?: string): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
     payload: { state: 'lane-detail', id: id },
