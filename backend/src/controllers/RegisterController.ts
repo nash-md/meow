@@ -18,11 +18,11 @@ import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
-import { log } from '../logger.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
-import { CardEventService } from '../services/CardEventService.js';
 import { Board } from '../entities/Board.js';
+import { EventHelper } from '../helpers/EventHelper.js';
+import { log } from '../worker.js';
 
 const invite = async (req: Request, res: Response, next: NextFunction) => {
   log.debug(`get user by invite: ${req.query.invite}`);
@@ -114,7 +114,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     user = await datasource.manager.save(user);
 
-    const cardEventService = new CardEventService(datasource);
+    //const cardEventService = new CardEventService(datasource);
 
     await Promise.all(
       DefaultCards.map(async (item, index) => {
@@ -135,9 +135,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
           )
         );
 
-        await cardEventService.add(card, user);
-
-        await cardEventService.storeLaneAmountChange(card.teamId, card.userId, card.laneId);
+        EventHelper.get().emit('card', { user: user, card: card.toPlain() });
       })
     );
 

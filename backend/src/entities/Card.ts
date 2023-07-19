@@ -1,11 +1,4 @@
-import {
-  Entity,
-  ObjectId,
-  ObjectIdColumn,
-  BeforeUpdate,
-  BeforeInsert,
-  Column,
-} from 'typeorm';
+import { Entity, ObjectId, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column } from 'typeorm';
 import { Attribute } from './Attribute.js';
 
 @Entity({ name: 'Cards' })
@@ -68,6 +61,26 @@ export class Card {
     this.status = CardStatus.Active;
   }
 
+  toPlain(): PlainCard {
+    // TODO, validate id, createdAt, updatedAt
+
+    return {
+      id: this.id!,
+      teamId: this.teamId,
+      userId: this.userId,
+      laneId: this.laneId,
+      inLaneSince: this.inLaneSince,
+      name: this.name,
+      amount: this.amount,
+      status: this.status,
+      attributes: this.attributes,
+      createdAt: this.createdAt!,
+      updatedAt: this.updatedAt!,
+      closedAt: this.closedAt,
+      nextFollowUpAt: this.nextFollowUpAt,
+    };
+  }
+
   @BeforeInsert()
   insertCreated() {
     this.updatedAt = new Date();
@@ -83,4 +96,20 @@ export class Card {
 export enum CardStatus {
   Active = 'active',
   Deleted = 'deleted',
+}
+
+export interface PlainCard {
+  id: ObjectId;
+  teamId: string;
+  userId: string;
+  laneId: string;
+  inLaneSince: Date;
+  name: string;
+  amount: number;
+  status: CardStatus;
+  attributes?: Attribute;
+  createdAt: Date;
+  updatedAt: Date;
+  closedAt?: Date;
+  nextFollowUpAt?: Date;
 }

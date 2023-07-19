@@ -26,6 +26,17 @@ export class Account {
     this.name = name;
   }
 
+  toPlain(): PlainAccount {
+    return {
+      id: this.id!,
+      teamId: this.teamId,
+      name: this.name,
+      attributes: this.attributes,
+      createdAt: this.createdAt!,
+      updatedAt: this.updatedAt!,
+    };
+  }
+
   @BeforeInsert()
   insertCreated() {
     this.updatedAt = new Date();
@@ -36,4 +47,13 @@ export class Account {
   insertUpdated() {
     this.updatedAt = new Date();
   }
+}
+
+export interface PlainAccount {
+  id: ObjectId;
+  teamId: string;
+  name: string;
+  attributes?: Attribute;
+  createdAt: Date;
+  updatedAt: Date;
 }

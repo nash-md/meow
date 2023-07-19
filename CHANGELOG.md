@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-07-18
+
+- Opportunity and Account histories are now created in an event-driven approach via an emitter. Currently, there is one strategy implemented using the internal Node.js event API.
+- The Logger is now configured directly on the `worker``, not in a separate file.
+
 ## 2023-07-14
 
 - Improved the layout and responsiveness on mobile devices for a better user experience.

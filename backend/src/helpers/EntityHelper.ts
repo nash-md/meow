@@ -246,6 +246,12 @@ async function getLanes(teamId: string) {
   return lanes;
 }
 
+async function persist<Entity extends ObjectLiteral>(target: EntityTarget<Entity>, entity: Entity) {
+  const updated = await datasource.manager.getMongoRepository(target).save(entity);
+
+  return updated;
+}
+
 export const EntityHelper = {
   findOneById,
   findByTeam,
@@ -264,4 +270,5 @@ export const EntityHelper = {
   getLanes,
   findFlagByName,
   findOrCreateFlagByName,
+  persist,
 };

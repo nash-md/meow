@@ -3,8 +3,7 @@ const { sign, verify } = jsonwebtoken;
 
 import { User } from '../entities/User.js';
 import { UserInvalidError } from '../errors/UserInvalidError.js';
-
-import { log } from '../logger.js';
+import { log } from '../worker.js';
 
 export interface TokenPayload {
   userId: string;

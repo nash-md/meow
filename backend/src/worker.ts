@@ -1,4 +1,14 @@
-import { log } from './logger.js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+// @ts-ignore
+export const log = pino({
+  name: SERVICE_NAME,
+  level: process.env.LOG_LEVEL || 'info',
+});
+
+process.on('uncaughtException', log.fatal.bind(log));
 
 const IP_ADDRESS = process.env.IP_ADDRESS || '127.0.0.1';
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 9000;
@@ -49,7 +59,15 @@ import { PasswordRequestSchema } from './middlewares/schema-validation/PasswordR
 import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
+import { SlackController } from './controllers/SlackController.js';
 import { LaneStatisticsController } from './controllers/LaneStatisticsController.js';
+import { EventHelper } from './helpers/EventHelper.js';
+import { NodeEventStrategy } from './events/NodeEventStrategy.js';
+import { LaneEventListener } from './events/LaneEventListener.js';
+import { CardEventListener } from './events/CardEventListener.js';
+import { AccountEventListener } from './events/AccountEventListener.js';
+import { SERVICE_NAME } from './Constants.js';
+import pino from 'pino';
 
 /* spinning up express */
 export const app = express();
@@ -80,15 +98,18 @@ try {
 
   log.info('database connection established');
 
+  const strategy = new NodeEventStrategy();
+
+  strategy.register('lane', LaneEventListener.onLaneUpdate);
+  strategy.register('card', CardEventListener.onCardUpdateOrCreate);
+  strategy.register('account', AccountEventListener.onAccountUpdate);
+
+  EventHelper.set(strategy);
+
   const card = express.Router();
 
   card.use(express.json({ limit: '5kb' }));
-  card.use(
-    verifyJwt,
-    addEntityToHeader,
-    setHeaders,
-    isDatabaseConnectionEstablished
-  );
+  card.use(verifyJwt, addEntityToHeader, setHeaders, isDatabaseConnectionEstablished);
 
   card.route('/').get(CardController.list);
   card
@@ -113,12 +134,7 @@ try {
 
   events.use(express.json({ limit: '5kb' }));
 
-  events.use(
-    verifyJwt,
-    addEntityToHeader,
-    setHeaders,
-    isDatabaseConnectionEstablished
-  );
+  events.use(verifyJwt, addEntityToHeader, setHeaders, isDatabaseConnectionEstablished);
 
   events.route('/:id').get(EventController.list);
   events
@@ -135,13 +151,9 @@ try {
 
   team.use(express.json({ limit: '5kb' }));
 
-  team.use(
-    verifyJwt,
-    addEntityToHeader,
-    setHeaders,
-    isDatabaseConnectionEstablished
-  );
+  team.use(verifyJwt, addEntityToHeader, setHeaders, isDatabaseConnectionEstablished);
 
+  team.route('/:id').get(TeamController.get);
   team
     .route('/:id')
     .post(
@@ -149,6 +161,9 @@ try {
       validateAgainst(TeamRequestSchema),
       TeamController.update
     );
+  team
+    .route('/:id/integrations')
+    .post(rejectIfContentTypeIsNot('application/json'), TeamController.updateIntegration);
 
   app.use('/api/teams', team);
 
@@ -156,12 +171,7 @@ try {
 
   account.use(express.json({ limit: '5kb' }));
 
-  account.use(
-    verifyJwt,
-    addEntityToHeader,
-    setHeaders,
-    isDatabaseConnectionEstablished
-  );
+  account.use(verifyJwt, addEntityToHeader, setHeaders, isDatabaseConnectionEstablished);
 
   account.route('/').get(AccountController.list);
   account
@@ -178,6 +188,7 @@ try {
       validateAgainst(AccountRequestSchema),
       AccountController.update
     );
+  account.route('/:id').get(AccountController.fetch);
 
   app.use('/api/accounts', account);
 
@@ -185,12 +196,7 @@ try {
 
   lane.use(express.json({ limit: '5kb' }));
 
-  lane.use(
-    verifyJwt,
-    addEntityToHeader,
-    setHeaders,
-    isDatabaseConnectionEstablished
-  );
+  lane.use(verifyJwt, addEntityToHeader, setHeaders, isDatabaseConnectionEstablished);
 
   lane.route('/').get(LaneController.list);
   lane.route('/statistic').get(LaneStatisticsController.get);
@@ -215,12 +221,7 @@ try {
 
   user.use(express.json({ limit: '5kb' }));
 
-  user.use(
-    verifyJwt,
-    addEntityToHeader,
-    setHeaders,
-    isDatabaseConnectionEstablished
-  );
+  user.use(verifyJwt, addEntityToHeader, setHeaders, isDatabaseConnectionEstablished);
 
   user.route('/').get(UserController.list);
   user
@@ -269,6 +270,7 @@ try {
   forecast.route('/achieved').get(ForecastController.achieved);
   forecast.route('/predicted').get(ForecastController.predicted);
   forecast.route('/list').get(ForecastController.list);
+  forecast.route('/time-series').get(ForecastController.series);
 
   app.use('/api/forecast', forecast);
 
@@ -299,19 +301,14 @@ try {
   unprotected.use(setHeaders);
   unprotected.use(isDatabaseConnectionEstablished);
 
-  unprotected
-    .route('/login')
-    .post(validateAgainst(LoginRequestSchema), LoginController.handle);
+  unprotected.route('/login').post(validateAgainst(LoginRequestSchema), LoginController.handle);
   unprotected
     .route('/register')
     .post(validateAgainst(RegisterRequestSchema), RegisterController.register);
   unprotected.route('/register/invite').get(RegisterController.invite);
   unprotected
     .route('/validate-token')
-    .post(
-      validateAgainst(ValidateTokenRequestSchema),
-      ValidateTokenController.validate
-    );
+    .post(validateAgainst(ValidateTokenRequestSchema), ValidateTokenController.validate);
 
   app.use('/public', unprotected);
 } catch (error) {

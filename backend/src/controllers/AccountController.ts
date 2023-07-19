@@ -3,14 +3,10 @@ import { Account } from '../entities/Account.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
-import { AccountEventService } from '../services/AccountEventService.js';
 import { InvalidUrlError } from '../errors/InvalidUrlError.js';
+import { EventHelper } from '../helpers/EventHelper.js';
 
-const create = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const create = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const account = new Account(req.jwt.team.id!.toString(), req.body.name);
 
@@ -20,21 +16,15 @@ const create = async (
 
     const updated = await datasource.manager.save(account);
 
-    const accountEventService = new AccountEventService(datasource);
+    EventHelper.get().emit('account', { user: req.jwt.user, account: account.toPlain() });
 
-    accountEventService.add(updated, req.jwt.user);
-
-    return res.json(updated);
+    return res.status(201).json(updated);
   } catch (error) {
     return next(error);
   }
 };
 
-const update = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.params.id) {
       throw new InvalidUrlError();
@@ -42,19 +32,23 @@ const update = async (
 
     const { body } = req;
 
-    let account = await EntityHelper.findOneById(
-      req.jwt.user,
-      Account,
-      req.params.id
-    );
+    let account = await EntityHelper.findOneById(req.jwt.user, Account, req.params.id);
 
-    const accountEventService = new AccountEventService(datasource);
-
-    account = await accountEventService.update(body, account, req.jwt.user);
+    const original = account.toPlain();
 
     account.name = req.body.name;
 
+    if (body.attributes) {
+      account.attributes = body.attributes;
+    }
+
     const updated = await datasource.manager.save(account);
+
+    EventHelper.get().emit('account', {
+      user: req.jwt.user,
+      account: account.toPlain(),
+      updated: original,
+    });
 
     return res.json(updated);
   } catch (error) {
@@ -62,15 +56,25 @@ const update = async (
   }
 };
 
-const list = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const cards = await EntityHelper.findByTeam(Account, req.jwt.team);
+    const accounts = await EntityHelper.findByTeam(Account, req.jwt.team);
 
-    return res.json(cards);
+    return res.json(accounts);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const fetch = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    if (!req.params.id) {
+      throw new InvalidUrlError();
+    }
+
+    const account = await EntityHelper.findOneById(req.jwt.user, Account, req.params.id);
+
+    return res.json(account);
   } catch (error) {
     return next(error);
   }
@@ -80,4 +84,5 @@ export const AccountController = {
   update,
   create,
   list,
+  fetch,
 };

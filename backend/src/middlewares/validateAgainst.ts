@@ -1,8 +1,8 @@
 import Ajv from 'ajv';
 import { Response } from 'express';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
-import { log } from '../logger.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
+import { log } from '../worker.js';
 
 export const validateAgainst = (schema: {}) => {
   // @ts-ignore
@@ -10,11 +10,7 @@ export const validateAgainst = (schema: {}) => {
 
   const validate = ajv.compile(schema);
 
-  return (
-    request: AuthenticatedRequest,
-    response: Response,
-    next: Function
-  ) => {
+  return (request: AuthenticatedRequest, response: Response, next: Function) => {
     const isValid = validate(request.body);
     if (isValid) {
       return next();
@@ -22,9 +18,7 @@ export const validateAgainst = (schema: {}) => {
       let message = '';
 
       if (validate.errors) {
-        message = validate.errors
-          .map((error: any) => JSON.stringify(error))
-          .toString();
+        message = validate.errors.map((error: any) => JSON.stringify(error)).toString();
       }
 
       log.info(`JSON schema validation failed ${message}`);

@@ -10,8 +10,8 @@ import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { RequestParser } from '../helpers/RequestParser.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { CardEventService } from '../services/CardEventService.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
+import { EventHelper } from '../helpers/EventHelper.js';
 
 function parseCardStatus(value: unknown): CardStatus {
   switch (value) {
@@ -24,11 +24,7 @@ function parseCardStatus(value: unknown): CardStatus {
   }
 }
 
-const list = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const cards = await EntityHelper.findCardsByTeam(req.jwt.team);
 
@@ -38,11 +34,7 @@ const list = async (
   }
 };
 
-const create = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const create = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     let lane: Lane | null = null;
 
@@ -58,12 +50,9 @@ const create = async (
     }
 
     if (body.laneId) {
-      lane = await EntityHelper.findOneByIdOrNull(
-        req.jwt.user,
-        Lane,
-        body.laneId
-      );
+      lane = await EntityHelper.findOneByIdOrNull(req.jwt.user, Lane, body.laneId);
     }
+
     if (!lane) {
       throw new LaneNotFoundError();
     }
@@ -84,46 +73,32 @@ const create = async (
       card.closedAt = RequestParser.toJsDate(body.closedAt);
     }
 
-    if (
-      body.nextFollowUpAt &&
-      RequestParser.isValidDateTimeString(body.nextFollowUpAt)
-    ) {
+    if (body.nextFollowUpAt && RequestParser.isValidDateTimeString(body.nextFollowUpAt)) {
       card.nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
     }
 
     const updated = await datasource.manager.save(card);
 
-    const cardEventService = new CardEventService(datasource);
+    EventHelper.get().emit('card', {
+      user: req.jwt.user,
+      card: updated.toPlain(),
+    });
 
-    cardEventService.add(updated, req.jwt.user);
+    EventHelper.get().emit('lane', { user: req.jwt.user, laneId: card.laneId });
 
-    await cardEventService.storeLaneAmountChange(
-      card.teamId,
-      card.userId,
-      card.laneId
-    );
-
-    return res.json(updated);
+    return res.status(201).json(updated);
   } catch (error) {
     return next(error);
   }
 };
 
-const get = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.params.id) {
       throw new InvalidUrlError();
     }
 
-    const card = await EntityHelper.findOneById(
-      req.jwt.user,
-      Card,
-      req.params.id
-    );
+    const card = await EntityHelper.findOneById(req.jwt.user, Card, req.params.id);
 
     return res.json(card);
   } catch (error) {
@@ -131,11 +106,7 @@ const get = async (
   }
 };
 
-const update = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.params.id) {
       throw new InvalidUrlError();
@@ -143,44 +114,56 @@ const update = async (
 
     const { body } = req;
 
-    let card = await EntityHelper.findOneById(
-      req.jwt.user,
-      Card,
-      req.params.id
-    );
+    let card = await EntityHelper.findOneById(req.jwt.user, Card, req.params.id);
+
+    const original = card.toPlain();
 
     let user: User | undefined = undefined;
+
+    card.name = req.body.name;
 
     if (body.userId) {
       try {
         user = await EntityHelper.findOneById(req.jwt.user, User, body.userId);
+
+        card.userId = user.id!.toString();
       } catch (error) {
         throw new UserNotFoundError();
       }
     }
 
-    const hasAmountUpdate = card.amount !== body.amount ? true : false;
+    if (body.attributes) {
+      card.attributes = body.attributes;
+    }
 
-    const cardEventService = new CardEventService(datasource);
-
-    // TODO refactor, remove dependency from controller
-    card = await cardEventService.update(body, card, req.jwt.user, user);
-
-    card.name = req.body.name;
+    if (card.amount !== body.amount) {
+      card.amount = body.amount;
+    }
 
     if (body.status) {
       card.status = parseCardStatus(req.body.status);
+    }
+
+    if (body.closedAt && !RequestParser.isEqualDates(body.closedAt, card.closedAt)) {
+      const closedAt = RequestParser.toJsDate(body.closedAt);
+
+      card.closedAt = closedAt;
+    }
+
+    if (
+      body.nextFollowUpAt &&
+      !RequestParser.isEqualDates(body.nextFollowUpAt, card.nextFollowUpAt)
+    ) {
+      const nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
+
+      card.nextFollowUpAt = nextFollowUpAt;
     }
 
     let previousLaneId: string | undefined = undefined;
 
     if (body.laneId) {
       try {
-        const lane = await EntityHelper.findOneById(
-          req.jwt.user,
-          Lane,
-          body.laneId
-        );
+        const lane = await EntityHelper.findOneById(req.jwt.user, Lane, body.laneId);
 
         if (body.laneId !== card.laneId) {
           previousLaneId = card.laneId;
@@ -203,25 +186,11 @@ const update = async (
     const updated = await datasource.manager.save(card);
 
     if (previousLaneId) {
-      await cardEventService.storeLaneAmountChange(
-        card.teamId,
-        card.userId,
-        previousLaneId
-      );
-      await cardEventService.storeLaneAmountChange(
-        card.teamId,
-        card.userId,
-        card.laneId
-      );
+      EventHelper.get().emit('lane', { user: req.jwt.user, laneId: previousLaneId });
     }
 
-    if (hasAmountUpdate) {
-      await cardEventService.storeLaneAmountChange(
-        card.teamId,
-        card.userId,
-        card.laneId
-      );
-    }
+    EventHelper.get().emit('lane', { user: req.jwt.user, laneId: card.laneId });
+    EventHelper.get().emit('card', { user: req.jwt.user, card: original, updated: card.toPlain() });
 
     return res.json(updated);
   } catch (error) {
