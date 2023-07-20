@@ -59,8 +59,8 @@ import { PasswordRequestSchema } from './middlewares/schema-validation/PasswordR
 import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
-import { SlackController } from './controllers/SlackController.js';
 import { LaneStatisticsController } from './controllers/LaneStatisticsController.js';
+
 import { EventHelper } from './helpers/EventHelper.js';
 import { NodeEventStrategy } from './events/NodeEventStrategy.js';
 import { LaneEventListener } from './events/LaneEventListener.js';
