@@ -60,7 +60,6 @@ import { TeamController } from './controllers/TeamController.js';
 import { AccountRequestSchema } from './middlewares/schema-validation/AccountRequestSchema.js';
 import { EventRequestSchema } from './middlewares/schema-validation/EventRequestSchema.js';
 import { LaneStatisticsController } from './controllers/LaneStatisticsController.js';
-
 import { EventHelper } from './helpers/EventHelper.js';
 import { NodeEventStrategy } from './events/NodeEventStrategy.js';
 import { LaneEventListener } from './events/LaneEventListener.js';
@@ -270,7 +269,6 @@ try {
   forecast.route('/achieved').get(ForecastController.achieved);
   forecast.route('/predicted').get(ForecastController.predicted);
   forecast.route('/list').get(ForecastController.list);
-  forecast.route('/time-series').get(ForecastController.series);
 
   app.use('/api/forecast', forecast);
 
