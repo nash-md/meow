@@ -391,8 +391,7 @@ h3 {
 .board .title .sum {
   display: flex;
   flex-direction: row;
-  padding-top: 10px;
-  padding-bottom: 30px;
+  padding-bottom: 40px;
   align-items: center;
 }
 
@@ -1133,13 +1132,29 @@ h3 {
 }
 
 .account-search-header {
-  display: flex;
-  flex-direction: row;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
 }
 
-.account-search-header div:first-child {
-  flex-grow: 1;
+.account-search-header > div:first-child {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 30px;
+  align-items: center;
+}
+
+.account-search-header input[type='text'] {
+  background-color: var(--spectrum-global-color-gray-200);
+  border: none;
+  padding: 5px 8px 5px 8px;
+  box-sizing: border-box;
+  font: inherit;
+  box-shadow: none;
+  outline: none;
+  width: 100%;
+  max-width: 300px;
+  font-size: 1.2em;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .create-user-form {

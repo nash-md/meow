@@ -1,4 +1,4 @@
-import { Button, TextField } from '@adobe/react-spectrum';
+import { Button } from '@adobe/react-spectrum';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { setListView, showAccountLayer } from '../actions/Actions';
@@ -98,25 +98,26 @@ export const AccountsPage = () => {
       <div className="canvas">
         <div className="account-search-header">
           <div>
-            <Button variant="primary" onPress={() => openAccount()}>
-              Add
-            </Button>
+            <h2>Accounts {rows.length}</h2>
+            <div style={{ paddingLeft: '10px' }}>
+              <Button variant="primary" onPress={() => openAccount()}>
+                Add
+              </Button>
+            </div>
           </div>
 
-          <div>
-            <TextField
-              onChange={setSearch}
+          <div className="input">
+            <input
+              onChange={(event) => setSearch(event.target.value)}
               value={search}
-              aria-label="Name"
-              width="100%"
-              key="search"
-              placeholder="Search"
+              aria-label="Account Name"
+              placeholder="Search by Name"
+              type="text"
             />
           </div>
         </div>
-        <div className="content-box tile" style={{ overflow: 'auto' }}>
-          <h2>{rows.length} Accounts</h2>
 
+        <div className="content-box tile" style={{ overflow: 'auto' }}>
           <table className="list" style={{ width: '100%' }}>
             <tbody>
               <ListHeader name="accounts" sort={setListView} view={view} columns={columns} />

@@ -85,7 +85,9 @@ The root directory of this project contains a `Dockerfile` and a `docker-compose
 
 ### Database Support
 
-The project currently has a few direct dependencies on [MongoDB](https://www.mongodb.com/) for the backend, but it can be easily switched to another database supported by TypeORM.
+This project leverages TypeORM, a powerful Object-Relational Mapping (ORM) library. In addition to TypeORM, this project heavily depends on MongoDB](https://www.mongodb.com/).
+
+While it is possible to replace MongoDB with another database, please note that due to the significant dependencies and specific optimizations tailored for MongoDB, such a migration might be challenging.
 
 ### Documentation
 

@@ -1,7 +1,7 @@
 import { ActionType, ApplicationAction } from '../actions/Actions';
+import { BoardHelper } from '../helpers/BoardHelper';
 import { isValidId } from '../helpers/Helper';
 import { Account } from '../interfaces/Account';
-import { Board } from '../interfaces/Board';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListView } from '../interfaces/ListView';
@@ -9,49 +9,6 @@ import { User } from '../interfaces/User';
 import { InterfaceState } from '../store/ApplicationStore';
 import { Default } from '../store/Default';
 
-function moveCardOnBoard(
-  id: Card['id'],
-  from: Card['id'][],
-  to: Card['id'][] | undefined,
-  index: number
-): [Card['id'][], Card['id'][]] {
-  const indexInFrom = from.findIndex((cardId) => cardId === id);
-
-  if (indexInFrom === -1) {
-    throw new Error(`card with id ${id} not found in from array`);
-  }
-
-  const [removedCardId] = from.splice(indexInFrom, 1);
-
-  if (to) {
-    to.splice(index, 0, removedCardId);
-  } else {
-    to = [id];
-  }
-
-  return [from, to];
-}
-
-function removeCardFromBoard(id: Card['id'], list: Card['id'][]) {
-  const index = list.findIndex((cardId) => cardId === id);
-
-  if (index === -1) {
-    throw new Error(`card with id ${id} not found in from array`);
-  }
-
-  list.splice(index, 1);
-
-  return list;
-}
-
-function isOnBoard(id: Card['id'], board: Board | undefined) {
-  for (const laneId in board) {
-    if (board[laneId].some((card) => card === id)) {
-      return true;
-    }
-  }
-  return false;
-}
 export const application = (state = Default, action: ApplicationAction) => {
   switch (action.type) {
     case ActionType.PAGE_LOAD:
@@ -112,6 +69,7 @@ export const application = (state = Default, action: ApplicationAction) => {
           text: undefined,
           filters: {
             text: '',
+            userId: 'all',
             mode: [],
           },
           accounts: {
@@ -164,11 +122,15 @@ export const application = (state = Default, action: ApplicationAction) => {
     case ActionType.CARDS:
       // check if cards were found that are not on the board
       action.payload.map((card) => {
-        if (!isOnBoard(card.id, state.board) && isValidId(card.laneId)) {
-          if (state.board[card.laneId]) {
-            state.board[card.laneId].push(card.id);
-          } else {
-            state.board[card.laneId] = [card.id];
+        if (!BoardHelper.isOnBoard(card, state.board) && isValidId(card.laneId)) {
+          BoardHelper.add(card, state.board);
+        }
+
+        if (!BoardHelper.isInCorrectLane(card, state.board)) {
+          const position = BoardHelper.getPosition(card, state.board);
+
+          if (position) {
+            BoardHelper.move(card, state.board[position.laneId], state.board[card.laneId]);
           }
         }
       });
@@ -209,8 +171,8 @@ export const application = (state = Default, action: ApplicationAction) => {
         ...state.board,
       };
 
-      const [from, to] = moveCardOnBoard(
-        action.payload.card.id,
+      const [from, to] = BoardHelper.move(
+        action.payload.card,
         updated[action.payload.from],
         updated[action.payload.to],
         action.payload.index
@@ -253,10 +215,7 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.CARD_DELETE:
-      state.board[action.payload.laneId] = removeCardFromBoard(
-        action.payload.id,
-        state.board[action.payload.laneId]
-      );
+      state.board[action.payload.laneId] = BoardHelper.remove(action.payload, state.board);
 
       return {
         ...state,
@@ -381,6 +340,7 @@ export const application = (state = Default, action: ApplicationAction) => {
           filters: {
             mode: [...action.payload.mode],
             text: action.payload.text,
+            userId: action.payload.userId,
           },
         },
       };

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-07-22
+
+- The Account and Opportunity pages now share the same header layout to provide a consistent user experience. This change simplifies the process of searching for information and adding new accounts or opportunities.
+
 ## 2023-07-18
 
 - Opportunity and Account histories are now created in an event-driven approach via an emitter. Currently, there is one strategy implemented using the internal Node.js event API.
