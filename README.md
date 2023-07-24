@@ -1,14 +1,34 @@
 # Meow - Open Sales Pipeline
 
-Welcome to the world of free sales funnel management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the funnel. Meow was built to simplify your sales process, giving you a bird's eye view of your entire funnel.
+Welcome to the world of free sales pipeline management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the funnel. Meow was built to simplify your sales process, giving you a bird's eye view of your entire funnel.
 
-<img src="dashboard.png" alt="Meow Dashboard" width="800">
+Manage your sales and accounts all in one place.
+
+Manage customer data and create/edit profiles of companies you work with.
+Create a data schema that fits your needs using our intuitive drag-and-drop editor.
+Forecast sales performance, monitor your team's progress, and analyze changes in sales stages over time.
+Through these features, Meow enables streamlined sales management and offers critical insights to drive your success.
+<img src="dashboard-view-screenshot.webp" alt="Meow Dashboard" width="800">
 
 ## Try It
 
 ![Frontend and Backend](https://github.com/nash-md/meow/actions/workflows/build_all.yml/badge.svg)
 
 Do you not have a server? - [Try this ](https://hello.sales-funnel.app/).
+
+## Features
+
+Manage your customer data, create, modify, and delete profiles for individual customers and companies. Additionally, customize data fields to align the account data with specific business requirements.
+
+<img src="account-list-view-screenshot.webp" alt="Meow Account List" width="800">
+
+Create a schema for your data. Easily customize the data model with our intuitive drag-and-drop editor. Store all the relevant information for your accounts and opportunities.
+
+<img src="schema-editor-view-screenshot.webp" alt="Meow Schema Editor" width="800">
+
+Forecast your sales performance. Select your preferred time range, and get an overview of team performance and sales cycle progression. Gain insights into how stages in your sales process evolve over time.
+
+<img src="forecast-view-screenshot.webp" alt="Meow Dashboard" width="800">
 
 ## How to Install
 
