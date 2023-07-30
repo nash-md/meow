@@ -16,12 +16,8 @@ import { RequestHelperUrlError } from '../errors/RequestHelperUrlError';
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
 
 export const strip = (value: string) => {
-  let segment = value.endsWith('/')
-    ? value.substring(0, value.length - 1)
-    : value;
-  return segment.startsWith('/')
-    ? segment.substring(1, segment.length)
-    : segment;
+  let segment = value.endsWith('/') ? value.substring(0, value.length - 1) : value;
+  return segment.startsWith('/') ? segment.substring(1, segment.length) : segment;
 };
 
 const createUrlOrThrow = (url: string): URL => {
@@ -45,9 +41,7 @@ export const getBaseUrl = (): URL => {
     return createUrlOrThrow(url);
   }
 
-  throw new RequestHelperUrlError(
-    new Error('VITE_URL not set and window object undefined')
-  );
+  throw new RequestHelperUrlError(new Error('VITE_URL not set and window object undefined'));
 };
 
 export class RequestHelper {
@@ -147,6 +141,12 @@ export class RequestHelper {
 
   async getCards(): Promise<Card[]> {
     const url = this.getUrl(`/api/cards`);
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async getCard(id: Card['id']): Promise<Card> {
+    const url = this.getUrl(`/api/cards/${id}`);
 
     return this.doFetch(url, 'GET');
   }
@@ -329,6 +329,12 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
+  async getAccount(id: Account['id']): Promise<Account> {
+    const url = this.getUrl(`/api/accounts/${id}`);
+
+    return this.doFetch(url, 'GET');
+  }
+
   async fetchForecastAchieved(start: DateTime, end: DateTime, userId: string) {
     let url = this.getUrl(`/api/forecast/achieved`);
 
@@ -381,7 +387,7 @@ export class RequestHelper {
     let url = this.getUrl(`/api/schemas/`);
 
     return this.doFetch(url, 'POST', {
-      schema: schema.schema,
+      schema: schema.attributes,
       type: schema.type,
     });
   }

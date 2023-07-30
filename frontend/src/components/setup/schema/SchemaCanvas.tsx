@@ -9,12 +9,14 @@ import {
   SchemaAttributeType,
   SchemaReferenceAttribute,
   SchemaSelectAttribute,
+  SchemaType,
 } from '../../../interfaces/Schema';
 import { SelectAttribute } from './SelectAttribute';
 import { TextAreaAttribute } from './TextAreaAttribute';
 import { TextAttribute } from './TextAttribute';
 import { ReferenceAttribute } from './ReferenceAttribute';
 import { BooleanAttribute } from './BooleanAttribute';
+import { EmailAttribute } from './EmailAttribute';
 
 function moveAttribute<T>(items: T[], from: number, to: number): T[] {
   const lane = items[from];
@@ -33,6 +35,22 @@ function removeAttribute<T>(items: T[], index: number): T[] {
   return items;
 }
 
+const getOptions = (schema: Schema) => {
+  const list = [
+    <Item key="text">Text</Item>,
+    <Item key="email">Email</Item>,
+    <Item key="textarea">TextArea</Item>,
+    <Item key="select">Dropdown</Item>,
+    <Item key="boolean">Checkbox</Item>,
+  ];
+
+  if (schema.type === SchemaType.Card) {
+    list.push(<Item key="reference">Reference</Item>);
+  }
+
+  return list;
+};
+
 export interface SchemaCanvasProps {
   schema: Schema;
   validate: (schema: Schema) => void;
@@ -46,7 +64,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
   useEffect(() => {
     const list: SchemaAttribute[] = [];
 
-    schemaImported.schema.map((item) => {
+    schemaImported.attributes.map((item) => {
       list[item.index] = item;
     });
 
@@ -79,7 +97,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
     setItems([...list]);
 
     if (schema) {
-      validate({ ...schema, schema: [...list] });
+      validate({ ...schema, attributes: [...list] });
     }
   };
 
@@ -95,7 +113,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
     setItems([...list]);
 
     if (schema) {
-      validate({ ...schema, schema: [...list] });
+      validate({ ...schema, attributes: [...list] });
     }
   };
 
@@ -111,7 +129,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
     setItems([...list]);
 
     if (schema) {
-      validate({ ...schema, schema: [...list] });
+      validate({ ...schema, attributes: [...list] });
     }
   };
 
@@ -121,6 +139,8 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
     switch (item.type) {
       case SchemaAttributeType.Text:
         return <TextAttribute update={update} remove={remove} attributeKey={item.key} {...item} />;
+      case SchemaAttributeType.Email:
+        return <EmailAttribute update={update} remove={remove} attributeKey={item.key} {...item} />;
       case SchemaAttributeType.TextArea:
         return (
           <TextAreaAttribute update={update} remove={remove} attributeKey={item.key} {...item} />
@@ -174,11 +194,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
           defaultSelectedKey="text"
           onSelectionChange={(key: Key) => setType(key.toString() as SchemaAttributeType)}
         >
-          <Item key="text">Text</Item>
-          <Item key="textarea">TextArea</Item>
-          <Item key="select">Dropdown</Item>
-          <Item key="reference">Reference</Item>
-          <Item key="boolean">Checkbox</Item>
+          {getOptions(schema)}
         </Picker>
 
         <Button onPress={add} variant="secondary">

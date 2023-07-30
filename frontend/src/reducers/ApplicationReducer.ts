@@ -166,7 +166,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         },
       };
 
-    case ActionType.CARD_LANE:
+    case ActionType.CARD_MOVE:
       const updated = {
         ...state.board,
       };
@@ -199,8 +199,7 @@ export const application = (state = Default, action: ApplicationAction) => {
           }),
         ],
       };
-
-    case ActionType.CARD_REFRESH:
+    case ActionType.CARD_UPDATE_ON_SERVER:
       return {
         ...state,
         cards: [

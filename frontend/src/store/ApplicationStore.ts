@@ -9,11 +9,7 @@ import { CurrencyCode } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 
-export type InterfaceState =
-  | 'default'
-  | 'card-detail'
-  | 'lane-detail'
-  | 'account-detail';
+export type InterfaceState = 'default' | 'card-detail' | 'lane-detail' | 'account-detail';
 
 export type ListName = 'accounts' | 'users' | 'forecast';
 
@@ -45,6 +41,7 @@ export interface ApplicationStore {
     filters: {
       text: string | undefined;
       mode: FilterMode[];
+      userId: string;
     };
     accounts: ListView;
     users: ListView;

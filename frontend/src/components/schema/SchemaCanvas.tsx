@@ -6,6 +6,7 @@ import { TextAttribute } from './TextAttribute';
 import { ReferenceAttribute } from './ReferenceAttribute';
 import { BooleanAttribute } from './BooleanAttribute';
 import { Attribute } from '../../interfaces/Attribute';
+import { EmailAttribute } from './EmailAttribute';
 
 const toStringOrNull = (value: unknown) => {
   if (typeof value === 'undefined' || value === null) {
@@ -42,10 +43,17 @@ export const SchemaCanvas = ({
     setValues(valuesImport);
   }, [valuesImport]);
 
-  const updateAttribute = (key: string, value: Attribute[typeof key]) => {
-    setValues({ ...values, [key]: value });
+  const updateAttribute = (key: string, value: Attribute[typeof key] | null) => {
+    const updated = { ...values };
 
-    validate({ ...values, [key]: value });
+    if (value === null) {
+      delete updated[key];
+    } else {
+      updated[key] = value;
+    }
+
+    setValues({ ...updated });
+    validate({ ...updated });
   };
 
   const getAttribute = (attribute: SchemaAttribute, value: string | number | boolean | null) => {
@@ -53,6 +61,16 @@ export const SchemaCanvas = ({
       case 'text':
         return (
           <TextAttribute
+            update={updateAttribute}
+            attributeKey={attribute.key}
+            value={toStringOrNull(value)}
+            isDisabled={isDisabled}
+            {...attribute}
+          />
+        );
+      case 'email':
+        return (
+          <EmailAttribute
             update={updateAttribute}
             attributeKey={attribute.key}
             value={toStringOrNull(value)}
@@ -105,7 +123,7 @@ export const SchemaCanvas = ({
 
   return (
     <>
-      {schema?.schema.map((attribute) => {
+      {schema?.attributes?.map((attribute) => {
         return getAttribute(attribute!, values?.[attribute.key] ?? null);
       })}
     </>

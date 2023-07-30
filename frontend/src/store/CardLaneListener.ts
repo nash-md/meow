@@ -1,5 +1,10 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { ActionType, ApplicationCardLaneAction, showModalError } from '../actions/Actions';
+import {
+  ActionType,
+  ApplicationCardLaneAction,
+  updateCardFromServer,
+  showModalError,
+} from '../actions/Actions';
 import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
 import { ApplicationStore } from './ApplicationStore';
 import { store } from './Store';
@@ -8,7 +13,7 @@ import { getErrorMessage } from '../helpers/ErrorHelper';
 export const cardLaneListener = createListenerMiddleware();
 
 cardLaneListener.startListening({
-  type: ActionType.CARD_LANE,
+  type: ActionType.CARD_MOVE,
   effect: async (action, listenerApi) => {
     const state = listenerApi.getState() as ApplicationStore;
 
@@ -21,10 +26,7 @@ cardLaneListener.startListening({
       if (casted.payload.from !== casted.payload.to) {
         const card = await client.updateCard(casted.payload.card); // TODO update with one API call
 
-        store.dispatch({
-          type: ActionType.CARD_REFRESH,
-          payload: { ...card },
-        });
+        store.dispatch(updateCardFromServer({ ...card }));
       }
 
       await client.updateBoard(state.session.user!.id, state.board);

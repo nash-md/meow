@@ -1,11 +1,4 @@
-import {
-  Entity,
-  ObjectIdColumn,
-  BeforeUpdate,
-  BeforeInsert,
-  Column,
-  ObjectId,
-} from 'typeorm';
+import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
 
 @Entity({ name: 'Schemas' })
 export class Schema {
@@ -19,7 +12,7 @@ export class Schema {
   type: SchemaType;
 
   @Column({ type: 'json' })
-  schema: SchemaAttribute[];
+  attributes: SchemaAttribute[];
 
   @Column({ type: 'timestamp' })
   createdAt?: Date;
@@ -27,10 +20,10 @@ export class Schema {
   @Column({ type: 'timestamp' })
   updatedAt?: Date;
 
-  constructor(teamId: string, type: SchemaType, schema: SchemaAttribute[]) {
+  constructor(teamId: string, type: SchemaType, attributes: SchemaAttribute[]) {
     this.teamId = teamId;
     this.type = type;
-    this.schema = schema;
+    this.attributes = attributes;
   }
 
   @BeforeInsert()
@@ -59,10 +52,23 @@ export enum SchemaAttributeType {
   Email = 'email',
 }
 
-export interface SchemaAttribute {
+export interface BaseSchemaAttribute {
   key: string;
   index: number;
   name: string;
   type: SchemaAttributeType;
-  options?: string[];
 }
+
+export interface SchemaReferenceAttribute extends BaseSchemaAttribute {
+  entity: SchemaType | null;
+  relationship: 'one-to-one' | 'one-to-many' | 'many-to-one';
+}
+
+export interface SchemaSelectAttribute extends BaseSchemaAttribute {
+  options: string[];
+}
+
+export type SchemaAttribute =
+  | BaseSchemaAttribute
+  | SchemaReferenceAttribute
+  | SchemaSelectAttribute;

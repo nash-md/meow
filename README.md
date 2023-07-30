@@ -8,6 +8,7 @@ Manage customer data and create/edit profiles of companies you work with.
 Create a data schema that fits your needs using our intuitive drag-and-drop editor.
 Forecast sales performance, monitor your team's progress, and analyze changes in sales stages over time.
 Through these features, Meow enables streamlined sales management and offers critical insights to drive your success.
+
 <img src="dashboard-view-screenshot.webp" alt="Meow Dashboard" width="800">
 
 ## Try It

@@ -24,10 +24,11 @@ export const Default: ApplicationStore = {
     state: 'default',
     id: undefined,
     modal: undefined,
-    text: undefined,
+    text: '',
     filters: {
       text: '',
       mode: [],
+      userId: '',
     },
     accounts: {
       direction: 'desc',

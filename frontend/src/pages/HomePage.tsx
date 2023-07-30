@@ -135,7 +135,7 @@ export const HomePage = () => {
         card!.laneId = result.destination.droppableId;
 
         store.dispatch({
-          type: ActionType.CARD_LANE,
+          type: ActionType.CARD_MOVE,
           payload: {
             card: card,
             to: result.destination.droppableId,
@@ -223,9 +223,7 @@ export const HomePage = () => {
               </button>
               <button
                 className={`filter ${
-                  filters.mode.has(FilterMode.OwnedByMe)
-                    ? 'owned-by-me-active'
-                    : 'owned-by-me'
+                  filters.mode.has(FilterMode.OwnedByMe) ? 'owned-by-me-active' : 'owned-by-me'
                 }`}
                 onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
               >

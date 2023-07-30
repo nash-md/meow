@@ -24,8 +24,8 @@ export enum ActionType {
   CARDS = 'CARDS',
   CARD_ADD = 'CARD_ADD',
   CARD_UPDATE = 'CARD_UPDATE',
-  CARD_REFRESH = 'CARD_REFRESH',
-  CARD_LANE = 'CARD_LANE',
+  CARD_UPDATE_ON_SERVER = 'CARD_UPDATE_ON_SERVER',
+  CARD_MOVE = 'CARD_MOVE',
   CARD_DELETE = 'CARD_DELETE',
   SCHEMAS = 'SCHEMAS',
   LANES = 'LANES',
@@ -83,11 +83,12 @@ export interface ApplicationCardUpdateAction extends Action<ActionType.CARD_UPDA
   payload: Card;
 }
 
-export interface ApplicationCardRefreshAction extends Action<ActionType.CARD_REFRESH> {
+export interface ApplicationCardUpdateOnServerAction
+  extends Action<ActionType.CARD_UPDATE_ON_SERVER> {
   payload: Card;
 }
 
-export interface ApplicationCardLaneAction extends Action<ActionType.CARD_LANE> {
+export interface ApplicationCardLaneAction extends Action<ActionType.CARD_MOVE> {
   payload: { card: Card; from: Lane['id']; to: Lane['id']; index: number };
 }
 
@@ -168,7 +169,7 @@ export type ApplicationAction =
   | ApplicationCardsAction
   | ApplicationCardAddAction
   | ApplicationCardUpdateAction
-  | ApplicationCardRefreshAction
+  | ApplicationCardUpdateOnServerAction
   | ApplicationCardLaneAction
   | ApplicationCardDeleteAction
   | ApplicationAccountsAction
@@ -268,5 +269,40 @@ export const hideLayer = (): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
     payload: { state: 'default', id: undefined },
+  };
+};
+
+export const addCard = (card: Card): ApplicationCardAddAction => {
+  return {
+    type: ActionType.CARD_ADD,
+    payload: card,
+  };
+};
+
+export const updateCard = (card: Card): ApplicationCardUpdateAction => {
+  return {
+    type: ActionType.CARD_UPDATE,
+    payload: card,
+  };
+};
+
+export const updateCardFromServer = (card: Card): ApplicationCardUpdateOnServerAction => {
+  return {
+    type: ActionType.CARD_UPDATE_ON_SERVER,
+    payload: card,
+  };
+};
+
+export const addAccoount = (account: Account): ApplicationAccountAddAction => {
+  return {
+    type: ActionType.ACCOUNT_ADD,
+    payload: account,
+  };
+};
+
+export const updateAccount = (account: Account): ApplicationAccountUpdateAction => {
+  return {
+    type: ActionType.ACCOUNT_UPDATE,
+    payload: account,
   };
 };

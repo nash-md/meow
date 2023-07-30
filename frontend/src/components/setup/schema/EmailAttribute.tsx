@@ -1,32 +1,28 @@
-import { Item, Picker, TextField } from '@adobe/react-spectrum';
+import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { SchemaReferenceAttribute, SchemaType } from '../../../interfaces/Schema';
+import { SchemaAttribute } from '../../../interfaces/Schema';
 
-export interface ReferenceAttributeProps {
+export interface EmailAttributeProps {
   attributeKey: string;
   name: string;
   index: number;
-  entity: SchemaType | null;
   remove: (index: number) => void;
-  update: (key: string, item: Partial<SchemaReferenceAttribute>) => void;
+  update: (key: string, item: Partial<SchemaAttribute>) => void;
 }
 
-export const ReferenceAttribute = ({
+export const EmailAttribute = ({
   attributeKey,
   name: nameDefault,
-  entity: entityDefault,
   index,
   remove,
   update,
-}: ReferenceAttributeProps) => {
+}: EmailAttributeProps) => {
   const [name, setName] = useState(nameDefault);
-  const [entity, setEntity] = useState(entityDefault);
-  const relationship = 'many-to-one';
 
   useEffect(() => {
-    update(attributeKey, { name, entity, relationship });
-  }, [name, entity]);
+    update(attributeKey, { name });
+  }, [name]);
 
   return (
     <Draggable draggableId={`drag_${attributeKey}`} index={index}>
@@ -41,18 +37,11 @@ export const ReferenceAttribute = ({
               <div className="name">
                 <TextField value={name} onChange={setName} onBlur={() => setName(name.trim())} />
               </div>
-              <div className="reference">
-                <Picker
-                  width="100%"
-                  selectedKey={entity}
-                  onSelectionChange={(key) => setEntity(key.toString() as SchemaType)}
-                >
-                  {Object.entries(SchemaType)
-                    .filter((item) => item[1] === 'account')
-                    .map(([value, key]) => {
-                      return <Item key={key}>{value}</Item>;
-                    })}
-                </Picker>
+              <div
+                className="placeholder-text"
+                style={{ lineHeight: '28px', padding: '0 0 0 5px' }}
+              >
+                @
               </div>
               <div onClick={() => remove(index)} className="button">
                 <div className="remove"></div>

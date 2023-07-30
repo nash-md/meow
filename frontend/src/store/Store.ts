@@ -5,8 +5,9 @@ import { ApplicationStore, ListName } from './ApplicationStore';
 import { cardUpdateListener } from './CardUpdateListener';
 import { cardLaneListener } from './CardLaneListener';
 import { cardDeleteListener } from './CardDeleteListener';
-import { SchemaType } from '../interfaces/Schema';
+import { SchemaReferenceAttribute, SchemaType } from '../interfaces/Schema';
 import { UserStatus } from '../interfaces/User';
+import { SchemaHelper } from '../helpers/SchemaHelper';
 
 export const store = configureStore({
   reducer: application,
@@ -24,7 +25,7 @@ export const selectIsPageLoaded = (store: RootState) => store.browser.isPageLoad
 export const selectBrowserState = (store: RootState) => store.browser.state;
 export const selectToken = (store: RootState) => store.session.token;
 export const selectCards = (store: RootState) => store.cards;
-export const selectCardByLaneId = (store: ApplicationStore, id: string | undefined) =>
+export const selectCardsByLaneId = (store: ApplicationStore, id: string | undefined) =>
   store.cards.filter((card) => card.laneId === id);
 export const selectBoard = (store: RootState) => store.board;
 export const selectBoardByLaneId = (store: ApplicationStore, id: string) => store.board[id];
@@ -37,8 +38,10 @@ export const selectActiveUsers = (store: ApplicationStore) =>
 export const selectUser = (store: ApplicationStore, id: string | undefined) =>
   store.users.find((user) => user.id === id);
 export const selectLanes = (store: ApplicationStore) => store.lanes;
-export const selectLane = (store: ApplicationStore, id: string | undefined) =>
-  store.lanes.find((lane) => lane.id === id);
+export const selectLane = (store: ApplicationStore, id?: string) => {
+  return id ? store.lanes.find((lane) => lane.id === id) : undefined;
+};
+
 export const selectSchemas = (store: ApplicationStore) => store.schemas;
 export const selectSchemaByType = (store: ApplicationStore, type: SchemaType) =>
   store.schemas.find((schema) => schema.type === type);
@@ -58,8 +61,23 @@ export const selectFilters = (store: ApplicationStore) => {
   return {
     mode: new Set(store.ui.filters.mode),
     text: store.ui.filters.text,
+    userId: store.ui.filters.userId,
   };
 };
 export const selectAccountListView = (store: ApplicationStore) => store.ui.accounts;
 export const selectUserListView = (store: ApplicationStore) => store.ui.users;
 export const selectView = (store: ApplicationStore, name: ListName) => store.ui[name];
+
+export const selectReferencesTo = (store: ApplicationStore, entity: string) => {
+  const list: SchemaReferenceAttribute[] = [];
+
+  store.schemas.forEach((schema) => {
+    return schema.attributes?.forEach((attribute) => {
+      if (SchemaHelper.isSchemaAttribute(attribute)) {
+        list.push({ ...attribute });
+      }
+    });
+  });
+
+  return list;
+};

@@ -52,7 +52,7 @@ export const AccountsPage = () => {
 
   useEffect(() => {
     if (schema) {
-      setAttributes(schema.schema.map((attribute) => attribute.name));
+      setAttributes(schema.attributes.map((attribute) => attribute.name));
     }
   }, [schema]);
 
@@ -77,7 +77,7 @@ export const AccountsPage = () => {
           CreatedAt: account.createdAt,
         };
 
-        schema?.schema.map(({ name, key }) => {
+        schema?.attributes.map(({ name, key }) => {
           row[name] = account.attributes?.[key];
         });
 

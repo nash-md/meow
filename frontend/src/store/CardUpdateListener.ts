@@ -1,5 +1,10 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { ActionType, ApplicationCardUpdateAction, showModalError } from '../actions/Actions';
+import {
+  ActionType,
+  ApplicationCardUpdateAction,
+  updateCardFromServer,
+  showModalError,
+} from '../actions/Actions';
 import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
 import { ApplicationStore } from './ApplicationStore';
 import { store } from './Store';
@@ -19,10 +24,7 @@ cardUpdateListener.startListening({
     try {
       const card = await client.updateCard(casted.payload);
 
-      store.dispatch({
-        type: ActionType.CARD_REFRESH,
-        payload: { ...card },
-      });
+      store.dispatch(updateCardFromServer({ ...card }));
     } catch (error) {
       console.error(error);
       const message = await getErrorMessage(error);

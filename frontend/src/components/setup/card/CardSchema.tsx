@@ -4,12 +4,13 @@ import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { RESERVED_ATTRIBUTES } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { Schema, SchemaType } from '../../../interfaces/Schema';
+import { Schema, SchemaSelectAttribute, SchemaType } from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { hasDuplicateEntries } from '../../../helpers/Helper';
+import { SchemaHelper } from '../../../helpers/SchemaHelper';
 
 export const CardSchema = () => {
   const [isValid, setIsValid] = useState(false);
@@ -21,12 +22,12 @@ export const CardSchema = () => {
 
   const [updatedSchema, setUpdatedSchema] = useState<Schema>({
     type: SchemaType.Card,
-    schema: [],
+    attributes: [],
   });
 
   useEffect(() => {
     if (schema) {
-      setUpdatedSchema({ ...schema, schema: [...schema.schema] });
+      setUpdatedSchema({ ...schema, attributes: [...schema.attributes] });
     }
   }, [schema]);
 
@@ -37,7 +38,7 @@ export const CardSchema = () => {
       return;
     }
 
-    const list = schema.schema;
+    const list = schema.attributes;
 
     if (list.some((item) => !item.name)) {
       setError('An attribute name cannot be empty');
@@ -46,7 +47,9 @@ export const CardSchema = () => {
       return;
     }
 
-    const filtered = list.filter((item) => item.type === 'select');
+    const filtered: SchemaSelectAttribute[] = list
+      .filter((item) => SchemaHelper.isSelectAttribute(item))
+      .map((item) => item as SchemaSelectAttribute);
 
     if (
       filtered.some(

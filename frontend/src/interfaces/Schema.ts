@@ -1,7 +1,7 @@
 export interface Schema {
   id?: string;
   type: SchemaType;
-  schema: SchemaAttribute[];
+  attributes: SchemaAttribute[];
   createdAt?: string;
   updateAt?: string;
   teamId?: string;
@@ -21,18 +21,23 @@ export enum SchemaAttributeType {
   Email = 'email',
 }
 
-export interface SchemaAttribute {
+export interface BaseSchemaAttribute {
   key: string;
   index: number;
   name: string;
   type: SchemaAttributeType;
-  options?: string[] | null;
 }
 
-export interface SchemaReferenceAttribute extends SchemaAttribute {
-  reference: string | null;
+export interface SchemaReferenceAttribute extends BaseSchemaAttribute {
+  entity: SchemaType | null;
+  relationship: 'one-to-one' | 'one-to-many' | 'many-to-one';
 }
 
-export interface SchemaSelectAttribute extends SchemaAttribute {
+export interface SchemaSelectAttribute extends BaseSchemaAttribute {
   options: string[];
 }
+
+export type SchemaAttribute =
+  | BaseSchemaAttribute
+  | SchemaReferenceAttribute
+  | SchemaSelectAttribute;

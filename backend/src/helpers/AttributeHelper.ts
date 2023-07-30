@@ -51,18 +51,15 @@ export const getAttributeListDifference = (
   return list;
 };
 
-export const filterAttributeList = (
-  schema: Schema | null,
-  list: AttributeChange[]
-) => {
+export const filterAttributeList = (schema: Schema | null, list: AttributeChange[]) => {
   if (!schema || list.length === 0) {
     return [];
   }
 
   const filtered = list
-    .filter((item) => schema?.schema.find((a) => a.key === item.key))
+    .filter((item) => schema?.attributes.find((a) => a.key === item.key))
     .map((item) => {
-      const attribute = schema?.schema.find((a) => a.key === item.key);
+      const attribute = schema?.attributes.find((a) => a.key === item.key);
       if (attribute) {
         return { ...item, name: attribute.name };
       }
