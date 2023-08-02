@@ -325,7 +325,7 @@ h3 {
 }
 
 .board .lane .title {
-  font-size: 1.3em;
+  font-size: 1.2em;
   font-weight: 800;
   padding: 5px 8px 0px 8px;
   display: flex;
@@ -448,6 +448,7 @@ h3 {
   padding: 5px 10px 5px 10px;
   margin-right: 5px;
   font-weight: 600;
+  height: 32px;
 }
 
 .board button.owned-by-me {
@@ -577,8 +578,8 @@ h3 {
 }
 
 .board .lane .card .content .name {
-  font-size: 1.4em;
-  line-height: 1.4em;
+  font-size: 1.3em;
+  line-height: 1.3em;
   font-weight: 600;
 }
 
@@ -784,6 +785,12 @@ h3 {
   margin-top: 10px;
   border-top: 1px solid grey;
   padding-top: 10px;
+}
+
+.setup-funnel .remove-stage-warning {
+  margin-top: 10px;
+  border: 2px solid var(--spectrum-global-color-static-red-400);
+  padding: 5px 10px 5px 10px;
 }
 
 .setup-funnel .lane {
@@ -1117,14 +1124,33 @@ h3 {
 }
 
 #error-modal > div {
-  line-height: 80px;
-  background-image: url(../public/error-icon.svg);
-  background-position: left center;
-  background-repeat: no-repeat;
-  width: 750px;
+  height: 80px;
+  max-width: 700px;
   margin: auto;
   font-size: 1.3em;
-  padding-left: 80px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+#error-modal .text {
+  flex-grow: 1;
+  padding-left: 10px;
+}
+
+#error-modal .close-button {
+  border: 1px solid white;
+  padding: 2px 15px 2px 15px;
+  display: flex;
+  align-items: center;
+  border-radius: 18px;
+  height: 32px;
+  cursor: pointer;
+}
+
+#error-modal .close-button > div {
+  padding-right: 8px;
 }
 
 #error-modal.show {
@@ -1295,9 +1321,10 @@ h3 {
 .forecast-button > div .icon {
   height: 16px;
   margin-right: 10px;
+  color: var(--spectrum-global-color-gray-400);
 }
 
-.forecast-button > div a {
+.forecast-button > div .text {
   text-decoration: none;
   color: var(--spectrum-global-color-gray-800);
 }

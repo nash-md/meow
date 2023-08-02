@@ -2,7 +2,7 @@ import { Button } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
-import { showModalError, showModalSuccess } from '../../../actions/Actions';
+import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { ANIMALS, LANE_COLOR } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { LaneRequest, LaneType } from '../../../interfaces/Lane';
@@ -41,6 +41,7 @@ export const LanesCanvas = () => {
   const [lanes, setLanes] = useState<LaneListItem[]>([]);
   const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState('');
+  const [warning, setWarning] = useState<string | undefined>();
   const existingLanes = useSelector(selectLanes);
 
   const { client } = useContext(RequestHelperContext);
@@ -106,7 +107,6 @@ export const LanesCanvas = () => {
     }
 
     if (!lanes.some((lane) => lane.type === LaneType.ClosedWon)) {
-      // lane type should be a TS type
       setError(
         'At least one stage must be labeled as closed won. This stage will be used to mark opportunities that are won'
       );
@@ -129,6 +129,10 @@ export const LanesCanvas = () => {
   };
 
   const remove = (index: number) => {
+    setWarning(
+      "You've removed a lane. If you save now, all cards in this lane will be permanently deleted."
+    );
+
     const list = removeLane(lanes, index).map((item, index) => {
       return { ...item, index };
     });
@@ -167,7 +171,12 @@ export const LanesCanvas = () => {
     });
 
     try {
-      await client?.updateLanes(updated);
+      const lanes = await client?.updateLanes(updated);
+
+      store.dispatch({
+        type: ActionType.LANES,
+        payload: [...lanes],
+      });
 
       store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
     } catch (error) {
@@ -212,6 +221,7 @@ export const LanesCanvas = () => {
             Add Stage
           </Button>
         </div>
+        {warning && <div className="remove-stage-warning">{warning}</div>}
       </div>
 
       <div style={{ marginTop: '10px' }}>
