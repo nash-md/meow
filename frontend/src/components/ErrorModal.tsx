@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { hideModal } from '../actions/Actions';
 import { selectModal, selectModalText, store } from '../store/Store';
+import { IconClose } from './IconClose';
+import { IconAlert } from './IconAlert';
 
 export const ErrorModal = () => {
   const modal = useSelector(selectModal);
@@ -25,7 +27,14 @@ export const ErrorModal = () => {
 
   return (
     <div id="error-modal" onClick={() => hide()} className={`${isVisible ? 'show' : ''}`}>
-      <div>{text}</div>
+      <div>
+        <IconAlert />
+        <div className="text">{text}</div>
+        <div className="close-button">
+          <div>Close</div>
+          <IconClose />
+        </div>
+      </div>
     </div>
   );
 };
