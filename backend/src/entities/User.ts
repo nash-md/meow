@@ -19,7 +19,13 @@ export class User {
   animal?: string;
 
   @Column()
+  locale?: string;
+
+  @Column()
   invite?: string | null;
+
+  @Column()
+  authentication?: UserAuthentication | null;
 
   @Column()
   status?: UserStatus;
@@ -68,6 +74,12 @@ export enum UserStatus {
   Disabled = 'disabled',
   Deleted = 'deleted',
   SingleSignOn = 'single-sign-on',
+}
+
+export interface UserAuthentication {
+  local?: {
+    password: string;
+  };
 }
 
 export interface Flag {
