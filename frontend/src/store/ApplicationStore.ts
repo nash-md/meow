@@ -5,7 +5,7 @@ import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListView } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
-import { CurrencyCode } from '../interfaces/Team';
+import { CurrencyCode, Integration } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 
@@ -26,6 +26,7 @@ export interface ApplicationStore {
     team: {
       id: string | undefined;
       currency: CurrencyCode | undefined;
+      integrations: Integration[];
     };
     user: User | undefined;
   };

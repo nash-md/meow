@@ -13,6 +13,7 @@ export const Default: ApplicationStore = {
     team: {
       id: undefined,
       currency: undefined,
+      integrations: [],
     },
     user: undefined,
   },

@@ -5,7 +5,7 @@ import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListView } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
-import { CurrencyCode, Team } from '../interfaces/Team';
+import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 import { ApplicationStore, ListName } from '../store/ApplicationStore';
@@ -52,6 +52,7 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
     team: {
       id: string;
       currency: CurrencyCode;
+      integrations: Integration[];
     };
     board: Board;
   };

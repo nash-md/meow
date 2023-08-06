@@ -1,5 +1,5 @@
 import { EntityTarget, ObjectLiteral } from 'typeorm';
-import { User, UserStatus } from '../entities/User.js';
+import { User, UserAuthentication, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { Card, CardStatus } from '../entities/Card.js';
 import { Team } from '../entities/Team.js';
@@ -20,10 +20,10 @@ function isValidEntityId(id: string): boolean {
 }
 
 async function findOneById<Entity extends ObjectLiteral>(
-  user: User,
+  owner: User | Team,
   target: EntityTarget<Entity>,
   id: string
-) {
+): Promise<Entity> {
   if (!isValidEntityId(id)) {
     throw new EntityNotFoundError();
   }
@@ -34,23 +34,26 @@ async function findOneById<Entity extends ObjectLiteral>(
     throw new EntityNotFoundError();
   }
 
-  if (entity instanceof Team && entity.id?.toString() === user.teamId?.toString()) {
+  const ownerId = owner instanceof User ? owner.teamId : owner.id?.toString();
+
+  if (entity instanceof Team && entity.id?.toString() === ownerId) {
     return entity;
   }
 
-  if (entity.teamId?.toString() === user.teamId?.toString()) {
+  if (entity.teamId?.toString() === ownerId?.toString()) {
     return entity;
   }
+
   throw new EntityNotFoundError();
 }
 
 async function findOneByIdOrNull<Entity extends ObjectLiteral>(
-  user: User,
+  owner: User | Team,
   target: EntityTarget<Entity>,
   id: string
 ) {
   try {
-    const entity = await findOneById(user, target, id);
+    const entity = await findOneById(owner, target, id);
 
     return entity;
   } catch (error) {
@@ -81,9 +84,15 @@ async function findOneByTeam<Entity extends ObjectLiteral>(
   return list;
 }
 
-async function findSchemaByType(id: string, type: SchemaType) {
+async function findTeamById(id: string) {
+  const entity = await datasource.manager.findOneById(Team, new ObjectId(id));
+
+  return entity;
+}
+
+async function findSchemaByType(teamId: string, type: SchemaType) {
   const query = {
-    teamId: { $eq: id!.toString() },
+    teamId: { $eq: teamId!.toString() },
     type: { $eq: type },
   };
 
@@ -189,6 +198,16 @@ async function findEventsByUserId(teamId: string, userId: string, start: Date, e
   return events;
 }
 
+async function findUserByAuthentication(authentication: UserAuthentication) {
+  const query = {
+    authentication: authentication,
+  };
+
+  let user = await datasource.getMongoRepository(User).findOneBy(query);
+
+  return user;
+}
+
 async function findEventByTypeAndDay(teamId: string, laneId: string, type: EventType, date: Date) {
   const d = DateTime.fromJSDate(date).toUTC();
   const startOfDay = d.startOf('day').toJSDate();
@@ -253,6 +272,7 @@ async function persist<Entity extends ObjectLiteral>(target: EntityTarget<Entity
 }
 
 export const EntityHelper = {
+  findTeamById,
   findOneById,
   findByTeam,
   findOneByTeam,
@@ -270,5 +290,6 @@ export const EntityHelper = {
   getLanes,
   findFlagByName,
   findOrCreateFlagByName,
+  findUserByAuthentication,
   persist,
 };

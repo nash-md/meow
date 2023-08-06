@@ -55,6 +55,7 @@ export const application = (state = Default, action: ApplicationAction) => {
           team: {
             id: undefined,
             currency: undefined,
+            integrations: [],
           },
         },
         cards: [],

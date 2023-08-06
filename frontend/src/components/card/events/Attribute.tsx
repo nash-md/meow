@@ -5,6 +5,14 @@ interface AttributeProps {
   event: Event;
 }
 
+const getValueText = (item: any) => {
+  if (item.reference) {
+    return <b>{item.reference.name?.toString()}</b>;
+  }
+
+  return <b>{item.value?.toString()}</b>;
+};
+
 export const Attribute = ({ event }: AttributeProps) => {
   const [list] = useState(event.body);
 
@@ -16,23 +24,21 @@ export const Attribute = ({ event }: AttributeProps) => {
             case 'added':
               return (
                 <span key={index}>
-                  <b> {item.name}</b> was added, value is{' '}
-                  <b>{item.value?.toString()}</b>.
+                  <b> {item.attribute?.name}</b> was added, value is {getValueText(item)}.
                 </span>
               );
 
             case 'updated':
               return (
                 <span key={index}>
-                  <b>{item.name}</b> was changed to{' '}
-                  <b>{item.value?.toString()}</b>.
+                  <b> {item.attribute?.name}</b> was changed to {getValueText(item)}.
                 </span>
               );
 
             case 'removed':
               return (
                 <span key={index}>
-                  <b>{item.name}</b> was removed.
+                  <b>{item.attribute?.name}</b> was removed.
                 </span>
               );
 

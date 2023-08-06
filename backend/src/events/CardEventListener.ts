@@ -1,13 +1,14 @@
 import { EventType } from '../entities/Event.js';
 import { Event } from '../entities/Event.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
-import { SchemaType } from '../entities/Schema.js';
+import { SchemaAttributeType, SchemaType } from '../entities/Schema.js';
 import { RequestParser } from '../helpers/RequestParser.js';
-import { filterAttributeList, getAttributeListDifference } from '../helpers/AttributeHelper.js';
+import { findAttributeById, getAttributeListDifference } from '../helpers/AttributeHelper.js';
 import { CardEventPayload } from '../events/EventStrategy.js';
 import { EventHelper } from '../helpers/EventHelper.js';
 import { User } from '../entities/User.js';
 import { log } from '../worker.js';
+import { Account } from '../entities/Account.js';
 
 export const CardEventListener = {
   async onCardUpdateOrCreate({ user, card, updated }: CardEventPayload) {
@@ -19,6 +20,7 @@ export const CardEventListener = {
     const userId = user.id!.toString();
 
     const schema = await EntityHelper.findSchemaByType(teamId, SchemaType.Card);
+    const team = await EntityHelper.findTeamById(teamId);
 
     /* if just one plain card was provided we assume it is a new card */
     if (!updated) {
@@ -32,10 +34,29 @@ export const CardEventListener = {
     if (updated.attributes) {
       const changes = getAttributeListDifference(card.attributes, updated.attributes);
 
-      const list = filterAttributeList(schema, changes);
+      /* enrich event data */
+      for (const change of changes) {
+        const attribute = findAttributeById(change.attribute.key, schema);
 
-      if (list.length !== 0) {
-        const event = new Event(teamId, cardId, userId, EventType.AttributeChanged, list);
+        if (!attribute) {
+          continue;
+        }
+
+        change.attribute.name = attribute.name;
+
+        if (change.value && attribute.type === SchemaAttributeType.Reference) {
+          const entity = await EntityHelper.findOneById(team!, Account, change.value.toString());
+
+          if (entity) {
+            change.reference = {
+              name: entity.name,
+            };
+          }
+        }
+      }
+
+      if (changes.length !== 0) {
+        const event = new Event(teamId, cardId, userId, EventType.AttributeChanged, changes);
 
         await CardEventListener.persist(user, event);
       }

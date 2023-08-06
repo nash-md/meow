@@ -3,7 +3,7 @@ import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AccountEventPayload } from './EventStrategy.js';
 import { Event } from '../entities/Event.js';
 import { SchemaType } from '../entities/Schema.js';
-import { filterAttributeList, getAttributeListDifference } from '../helpers/AttributeHelper.js';
+import { findAttributeById, getAttributeListDifference } from '../helpers/AttributeHelper.js';
 import { User } from '../entities/User.js';
 import { EventHelper } from '../helpers/EventHelper.js';
 import { log } from '../worker.js';
@@ -29,15 +29,26 @@ export const AccountEventListener = {
     if (updated.attributes) {
       const changes = getAttributeListDifference(account.attributes, updated.attributes);
 
-      const list = filterAttributeList(schema, changes);
+      /* enrich event data */
+      for (const key in changes) {
+        const change = changes[key]!;
 
-      if (list.length !== 0) {
+        const attribute = findAttributeById(change.attribute.key, schema);
+
+        if (!attribute) {
+          continue;
+        }
+
+        change.attribute.name = attribute.name;
+      }
+
+      if (changes.length !== 0) {
         const event = new Event(
           teamId,
           user.id!.toString(),
           userId,
           EventType.AttributeChanged,
-          list
+          changes
         );
 
         await AccountEventListener.persist(user, event);
