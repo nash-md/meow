@@ -9,7 +9,7 @@ export const Trash = () => {
           <div
             id="trash"
             style={{
-              visibility: 'hidden',
+              opacity: '0.3',
             }}
             className={`trash ${snaphot.isDraggingOver ? 'drag-over' : ''}`}
             ref={provided.innerRef}

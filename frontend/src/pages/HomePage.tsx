@@ -104,7 +104,7 @@ export const HomePage = () => {
     const trash = document.getElementById('trash');
 
     if (trash) {
-      trash.style.visibility = 'hidden';
+      trash.style.opacity = '0.3';
     }
 
     console.log(
@@ -151,7 +151,7 @@ export const HomePage = () => {
     const trash = document.getElementById('trash');
 
     if (trash) {
-      trash.style.visibility = 'visible';
+      trash.style.opacity = '1';
     }
   };
 

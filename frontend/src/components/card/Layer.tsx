@@ -1,6 +1,13 @@
 import { Button, Tabs, TabList, Item, TabPanels } from '@adobe/react-spectrum';
 import { useSelector } from 'react-redux';
-import { ActionType, hideLayer, showModalSuccess } from '../../actions/Actions';
+import {
+  ActionType,
+  addCard,
+  hideLayer,
+  updateCardFromServer,
+  showModalSuccess,
+  updateCard,
+} from '../../actions/Actions';
 import {
   selectActiveUsers,
   selectCard,
@@ -12,7 +19,7 @@ import { Form } from './Form';
 import { Events } from './Events';
 import { Card, CardPreview } from '../../interfaces/Card';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
 import { User } from '../../interfaces/User';
@@ -45,10 +52,7 @@ export const Layer = () => {
 
   const update = async (id: Card['id'] | undefined, preview: CardPreview) => {
     if (id) {
-      store.dispatch({
-        type: ActionType.CARD_UPDATE,
-        payload: { ...card!, ...preview },
-      });
+      store.dispatch(updateCard({ ...card!, ...preview }));
 
       // TODO combine both dispatch to one
       store.dispatch(showModalSuccess(Translations.CardUpdatedConfirmation.en));
@@ -60,30 +64,40 @@ export const Layer = () => {
       const updated = await client!.createCard(preview); // TODO refactor
 
       // TODO combine both dispatch to one
-      store.dispatch({
-        type: ActionType.CARD_ADD,
-        payload: { ...updated },
-      });
+      store.dispatch(addCard({ ...updated }));
 
       store.dispatch(showModalSuccess(Translations.CardCreatedConfirmation.en));
     }
   };
 
+  useEffect(() => {
+    const execute = async () => {
+      const updated = await client!.getCard(id!);
+
+      store.dispatch(updateCardFromServer(updated));
+    };
+
+    if (client && id) {
+      execute();
+    }
+  }, [id, client]);
+
   return (
     <div className={`layer ${isMobileLayout ? 'mobile' : 'desktop'}`}>
       <div className="header">
-        {card?.userId && (
-          <div
-            style={{ float: 'left' }}
-            onClick={() => {
-              setIsUserLayerVisible(!isUserLayerVisible);
-            }}
-          >
-            <Avatar id={card?.userId} width={36} />
-          </div>
-        )}
+        <div>
+          {card?.userId && (
+            <Avatar
+              id={card?.userId}
+              width={36}
+              onClick={() => {
+                setIsUserLayerVisible(!isUserLayerVisible);
+              }}
+            />
+          )}
+        </div>
 
-        <div style={{ float: 'right', marginTop: '4px' }}>
+        <div>
           <Button variant="primary" onPress={() => hideCardDetail()}>
             Close
           </Button>
@@ -104,9 +118,10 @@ export const Layer = () => {
                     </td>
                     <td>
                       <Button variant="primary" onPress={() => assign(user.id)}>
-                        assign
+                        Assign
                       </Button>
                     </td>
+                    <td></td>
                   </tr>
                 );
               })}
@@ -118,7 +133,7 @@ export const Layer = () => {
         <Tabs height="100%">
           {(id && (
             <TabList>
-              <Item key="deal">
+              <Item key="opportunity">
                 <span className="tab-title">Opportunity</span>
               </Item>
               <Item key="events">
@@ -127,12 +142,14 @@ export const Layer = () => {
             </TabList>
           )) || (
             <TabList>
-              <Item key="deal">Deal</Item>
+              <Item key="opportunity">
+                <span className="tab-title">Opportunity</span>
+              </Item>
             </TabList>
           )}
 
           <TabPanels UNSAFE_style={{ padding: 0, border: 0 }}>
-            <Item key="deal">
+            <Item key="opportunity">
               <Form update={update} id={id} />
             </Item>
             <Item key="events">

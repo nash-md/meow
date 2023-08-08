@@ -137,6 +137,7 @@ h3 {
 
 .page .navigation .item-mobile.logout {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .page .navigation .item-mobile img {
@@ -606,12 +607,50 @@ h3 {
 }
 
 .layer .header {
-  padding: 15px 15px 10px 15px;
+  padding: 15px;
 }
 
-.layer .user-list {
+.layer .header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.layer .header > div:first-child {
+  flex-grow: 1;
+}
+
+.layer .user-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.layer .user-list tr {
   background-color: var(--spectrum-global-color-gray-200);
-  padding: 10px;
+  width: 100%;
+}
+
+.layer .user-list tr:hover {
+  background-color: var(--spectrum-global-color-gray-300);
+}
+
+.layer .user-list td {
+  width: 1%;
+  white-space: nowrap;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.layer .user-list td:first-child {
+  padding-left: 15px;
+}
+
+.layer .user-list td:not(:last-child) {
+  padding-right: 8px;
+}
+
+.layer .user-list td:last-child {
+  width: auto;
 }
 
 .avatar {
@@ -746,20 +785,21 @@ h3 {
 }
 
 .layer .card-events .event-item .date {
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: var(--spectrum-global-color-gray-600);
 }
 
 .layer .card-events .event-item .name {
-  margin-left: 5px;
+  margin-left: 8px;
+  font-size: 0.95em;
 }
 
 .layer .card-events .event-item .body {
   margin: 5px 0 5px 15px;
   min-height: 80px;
-  padding-left: 20px;
+  padding-left: 23px;
   border-left: 2px solid var(--spectrum-global-color-gray-400);
-  font-size: 1em;
+  font-size: 0.9em;
 }
 
 .layer .card-events .event-item .comment {
