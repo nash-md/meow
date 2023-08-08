@@ -35,27 +35,28 @@ export const NavigationMobile = () => {
       {isExpanded && (
         <div className="burger-items">
           <div className="item-mobile">
-            <Link onClick={() => setIsExpanded(!isExpanded)} to="/">
-              <img alt="Deals" src={`/${currency?.toLocaleLowerCase()}-icon.svg`} /> Deals
+            <Link onClick={() => setIsExpanded(!isExpanded)} to="/" title="Opportunities">
+              <img alt="Deals" src={`/${currency?.toLocaleLowerCase()}-icon.svg`} />
+              Opportunities
             </Link>
           </div>
           <div className="item-mobile">
-            <Link onClick={() => setIsExpanded(!isExpanded)} to="/forecast">
+            <Link onClick={() => setIsExpanded(!isExpanded)} to="/forecast" title="Forecast">
               <img alt="Forecast" src="/forecast-icon.svg" /> Forecast
             </Link>
           </div>
           <div className="item-mobile">
-            <Link onClick={() => setIsExpanded(!isExpanded)} to="/accounts">
+            <Link onClick={() => setIsExpanded(!isExpanded)} to="/accounts" title="Accounts">
               <img alt="Accounts" src="/accounts-icon.svg" /> Accounts
             </Link>
           </div>
           <div className="item-mobile">
-            <Link onClick={() => setIsExpanded(!isExpanded)} to="/hire">
+            <Link onClick={() => setIsExpanded(!isExpanded)} to="/hire" title="Hire a Specialist">
               <img alt="Hire a Specialist" src="/paw-icon.svg" /> Users
             </Link>
           </div>
           <div className="item-mobile">
-            <Link onClick={() => setIsExpanded(!isExpanded)} to="/setup">
+            <Link onClick={() => setIsExpanded(!isExpanded)} to="/setup" title="Setup">
               <img alt="Setup" src="/setup-icon.svg" /> Setup
             </Link>
           </div>
@@ -63,7 +64,7 @@ export const NavigationMobile = () => {
           <h4 className="headline">User</h4>
 
           <div className="item-mobile">
-            <Link onClick={() => setIsExpanded(!isExpanded)} to="/user-setup">
+            <Link onClick={() => setIsExpanded(!isExpanded)} to="/user-setup" title="User Setup">
               Settings
             </Link>
           </div>
