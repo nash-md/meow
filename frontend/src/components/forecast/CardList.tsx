@@ -12,6 +12,7 @@ import { toIntervalInDays, toRelativeDate } from '../../helpers/DateHelper';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { Currency } from '../Currency';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
+import { FILTER_BY_NONE } from '../../Constants';
 
 const columns = ['Name', 'Amount', 'Created', 'Closed', 'Deal Duration', 'User'];
 
@@ -67,14 +68,12 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
     const execute = async () => {
       try {
-        const [list] = await Promise.all([
-          client!.fetchForecastList(
-            DateTime.fromISO(start.toString()),
-            DateTime.fromISO(end.toString()),
-            userId,
-            mode
-          ),
-        ]);
+        const list = await client!.fetchForecastList(
+          DateTime.fromISO(start.toString()),
+          DateTime.fromISO(end.toString()),
+          mode,
+          userId === FILTER_BY_NONE.key ? undefined : userId
+        );
         setList(list);
       } catch (error) {
         console.log(error);

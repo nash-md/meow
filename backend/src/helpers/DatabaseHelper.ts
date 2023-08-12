@@ -10,6 +10,7 @@ import { MongoClient } from 'mongodb';
 import { Flag } from '../entities/Flag.js';
 import { Flow } from '../entities/flows/Flow.js';
 import { Board } from '../entities/Board.js';
+import { ForecastEvent } from '../entities/ForecastEvent.js';
 
 let client: MongoClient;
 
@@ -30,7 +31,7 @@ const connect = async (uri: string) => {
     type: 'mongodb',
     url: uri,
     useUnifiedTopology: true,
-    entities: [Team, Board, Lane, Account, User, Card, Event, Schema, Flag, Flow],
+    entities: [Team, Board, Lane, Account, User, Card, Event, ForecastEvent, Schema, Flag, Flow],
   });
 
   await datasource.initialize();

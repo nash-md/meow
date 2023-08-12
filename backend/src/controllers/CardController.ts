@@ -13,6 +13,14 @@ import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { datasource } from '../helpers/DatabaseHelper.js';
 import { EventHelper } from '../helpers/EventHelper.js';
 
+function emitLaneEvent(teamId: string, laneId: string, userId: string) {
+  EventHelper.get().emit('lane', {
+    teamId,
+    laneId,
+    userId,
+  });
+}
+
 function parseCardStatus(value: unknown): CardStatus {
   switch (value) {
     case 'active':
@@ -84,7 +92,11 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       card: updated.toPlain(),
     });
 
-    EventHelper.get().emit('lane', { user: req.jwt.user, laneId: card.laneId });
+    EventHelper.get().emit('lane', {
+      teamId: card.teamId,
+      userId: card.userId,
+      laneId: card.laneId,
+    });
 
     return res.status(201).json(updated);
   } catch (error) {
@@ -122,9 +134,13 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     card.name = req.body.name;
 
-    if (body.userId) {
+    let previousUserId = undefined;
+
+    if (body.userId && card.userId !== body.userId) {
       try {
         user = await EntityHelper.findOneById(req.jwt.user, User, body.userId);
+
+        previousUserId = card.userId;
 
         card.userId = user.id!.toString();
       } catch (error) {
@@ -136,7 +152,11 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       card.attributes = body.attributes;
     }
 
+    let previousAmount = undefined;
+
     if (card.amount !== body.amount) {
+      previousAmount = card.amount;
+
       card.amount = body.amount;
     }
 
@@ -185,11 +205,25 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const updated = await datasource.manager.save(card);
 
+    /* emit events */
+
+    /* if lane has hanged emit events for the previous and current lane */
     if (previousLaneId) {
-      EventHelper.get().emit('lane', { user: req.jwt.user, laneId: previousLaneId });
+      emitLaneEvent(card.teamId, previousLaneId, card.userId);
+      emitLaneEvent(card.teamId, card.laneId, card.userId);
     }
 
-    EventHelper.get().emit('lane', { user: req.jwt.user, laneId: card.laneId });
+    /* if card has a changed amount update the lane and user */
+    if (previousAmount) {
+      emitLaneEvent(card.teamId, card.laneId, card.userId);
+    }
+
+    /* if card assignment has changed update lane and both users */
+    if (previousUserId) {
+      emitLaneEvent(card.teamId, card.laneId, previousUserId);
+      emitLaneEvent(card.teamId, card.laneId, card.userId);
+    }
+
     EventHelper.get().emit('card', { user: req.jwt.user, card: original, updated: card.toPlain() });
 
     return res.json(updated);

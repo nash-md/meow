@@ -335,26 +335,42 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async fetchForecastAchieved(start: DateTime, end: DateTime, userId: string) {
-    let url = this.getUrl(`/api/forecast/achieved`);
-
-    url.search = new URLSearchParams({
-      start: start.toISODate() ?? '',
-      end: end.toISODate() ?? '',
-      userId: userId,
-    }).toString();
+  async getAccountReferences(id: Account['id'], name: string): Promise<Account> {
+    const url = this.getUrl(`/api/accounts/${id}/references/${name}`);
 
     return this.doFetch(url, 'GET');
   }
 
-  async fetchForecastPredicted(start: DateTime, end: DateTime, userId: string) {
-    let url = this.getUrl(`/api/forecast/predicted`);
+  async fetchForecastAchieved(start: DateTime, end: DateTime, userId?: string) {
+    let url = this.getUrl(`/api/forecast/achieved`);
 
-    url.search = new URLSearchParams({
+    const params = new URLSearchParams({
       start: start.toISODate() ?? '',
       end: end.toISODate() ?? '',
-      userId: userId,
-    }).toString();
+    });
+
+    if (userId) {
+      params.set('userId', userId);
+    }
+
+    url.search = params.toString();
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async fetchForecastPredicted(start: DateTime, end: DateTime, userId?: string) {
+    let url = this.getUrl(`/api/forecast/predicted`);
+
+    const params = new URLSearchParams({
+      start: start.toISODate() ?? '',
+      end: end.toISODate() ?? '',
+    });
+
+    if (userId) {
+      params.set('userId', userId);
+    }
+
+    url.search = params.toString();
 
     return this.doFetch(url, 'GET');
   }
@@ -362,17 +378,39 @@ export class RequestHelper {
   async fetchForecastList(
     start: DateTime,
     end: DateTime,
-    userId: string,
-    mode: 'achieved' | 'predicted'
+    mode: 'achieved' | 'predicted',
+    userId?: string
   ) {
     let url = this.getUrl(`/api/forecast/list`);
 
-    url.search = new URLSearchParams({
+    const params = new URLSearchParams({
       start: start.toISODate() ?? '',
       end: end.toISODate() ?? '',
-      userId: userId,
       mode: mode.toString(),
-    }).toString();
+    });
+
+    if (userId) {
+      params.set('userId', userId);
+    }
+
+    url.search = params.toString();
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async fetchLaneTimeSeries(start: DateTime, end: DateTime, userId?: string) {
+    let url = this.getUrl(`/api/forecast/time-series`);
+
+    const params: any = new URLSearchParams({
+      start: start.toISODate() ?? '',
+      end: end.toISODate() ?? '',
+    });
+
+    if (userId) {
+      params.set('userId', userId);
+    }
+
+    url.search = params.toString();
 
     return this.doFetch(url, 'GET');
   }

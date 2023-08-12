@@ -2,7 +2,6 @@ import { useContext, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 import { ActionType } from './actions/Actions';
-
 import './App.css';
 import { ErrorModal } from './components/ErrorModal';
 import { Layout } from './components/Layout';
@@ -15,6 +14,7 @@ import { HomePage } from './pages/HomePage';
 import { SetupPage } from './pages/SetupPage';
 import { UserSetupPage } from './pages/UserSetupPage';
 import { store } from './store/Store';
+import { StatisticPage } from './pages/StatisticPage';
 
 function Application() {
   const { client } = useContext(RequestHelperContext);
@@ -61,11 +61,11 @@ function Application() {
       <Layout>
         <Routes>
           <Route path="/forecast" element={<ForecastPage />}></Route>
+          <Route path="/statistic" element={<StatisticPage />}></Route>
           <Route path="/setup" element={<SetupPage />}></Route>
           <Route path="/user-setup" element={<UserSetupPage />}></Route>
           <Route path="/hire" element={<HirePage />}></Route>
           <Route path="/accounts" element={<AccountsPage />}></Route>
-
           <Route path="*" element={<HomePage />}></Route>
         </Routes>
       </Layout>

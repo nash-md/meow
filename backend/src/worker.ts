@@ -269,6 +269,7 @@ try {
   forecast.route('/achieved').get(ForecastController.achieved);
   forecast.route('/predicted').get(ForecastController.predicted);
   forecast.route('/list').get(ForecastController.list);
+  forecast.route('/time-series').get(ForecastController.series);
 
   app.use('/api/forecast', forecast);
 
@@ -310,7 +311,7 @@ try {
 
   app.use('/public', unprotected);
 } catch (error) {
-  console.log(error);
+  log.error(error);
 }
 
 /* return 404 for all other /api routes */

@@ -11,6 +11,7 @@ import { ObjectId } from 'mongodb';
 import { DateTime } from 'luxon';
 import { Flag } from '../entities/Flag.js';
 import { Flow } from '../entities/flows/Flow.js';
+import { ForecastEvent } from '../entities/ForecastEvent.js';
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
@@ -208,27 +209,28 @@ async function findUserByAuthentication(authentication: UserAuthentication) {
   return user;
 }
 
-async function findEventByTypeAndDay(teamId: string, laneId: string, type: EventType, date: Date) {
+async function findForecastEventByDay(teamId: string, laneId: string, date: Date, userId?: string) {
   const d = DateTime.fromJSDate(date).toUTC();
   const startOfDay = d.startOf('day').toJSDate();
   const endOfDay = d.endOf('day').toJSDate();
 
   const query = {
     teamId: { $eq: teamId },
-    entityId: { $eq: laneId },
-    type: { $eq: type },
+    laneId: { $eq: laneId },
+    type: { $eq: EventType.LaneAmountChanged },
+    ...(userId ? { userId: userId } : { userId: { $exists: false } }),
     createdAt: {
       $gt: startOfDay,
       $lt: endOfDay,
     },
   };
 
-  let event = await datasource.getMongoRepository(Event).findOneBy(query);
+  let event = await datasource.getMongoRepository(ForecastEvent).findOneBy(query);
 
   return event;
 }
 
-async function getTotalAmountByLaneId(teamId: string, laneId: string) {
+async function getTotalAmountByLaneId(teamId: string, laneId: string, userId?: string) {
   const direct = DatabaseHelper.get();
   const collection = direct.collection('Cards');
 
@@ -238,6 +240,7 @@ async function getTotalAmountByLaneId(teamId: string, laneId: string) {
         status: { $ne: CardStatus.Deleted },
         teamId: teamId,
         laneId: laneId,
+        ...(userId ? { userId: userId } : {}),
       },
     },
     {
@@ -285,7 +288,7 @@ export const EntityHelper = {
   findUserByName,
   findFlowByEvent,
   findEventsByUserId,
-  findEventByTypeAndDay,
+  findForecastEventByDay,
   getTotalAmountByLaneId,
   getLanes,
   findFlagByName,

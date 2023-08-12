@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-08-12
+
+- Added trend forecast per user. Users can now view the change over time, this feature is accessible on the forecast page.
+
 ## 2023-07-22
 
 - The Account and Opportunity pages now share the same header layout to provide a consistent user experience. This change simplifies the process of searching for information and adding new accounts or opportunities.

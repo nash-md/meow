@@ -14,10 +14,12 @@ import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { DateTime } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
 import { Currency } from '../components/Currency';
-import { ForecastSpacer } from '../components/card/ForecastSpacer';
+import { Space } from '../components/forecast/Space';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { CardList } from '../components/forecast/CardList';
 import { getErrorMessage } from '../helpers/ErrorHelper';
+import { Link } from 'react-router-dom';
+import { TrendIcon } from '../components/forecast/TrendIcon';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -33,12 +35,8 @@ const min = today(getLocalTimeZone()).subtract({
 
 export const ForecastPage = () => {
   const { client } = useContext(RequestHelperContext);
-  const [start, setStart] = useState<CalendarDate>(
-    startOfMonth(today(getLocalTimeZone()))
-  );
-  const [end, setEnd] = useState<CalendarDate>(
-    endOfMonth(today(getLocalTimeZone()))
-  );
+  const [start, setStart] = useState<CalendarDate>(startOfMonth(today(getLocalTimeZone())));
+  const [end, setEnd] = useState<CalendarDate>(endOfMonth(today(getLocalTimeZone())));
   const [userId, setUserId] = useState(FILTER_BY_NONE.key);
   const [achieved, setAchieved] = useState({ amount: 0, count: 0 });
   const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
@@ -51,21 +49,18 @@ export const ForecastPage = () => {
   };
 
   useEffect(() => {
-    start.toString();
-    end.toString();
-
     const execute = async () => {
       try {
         const [achieved, predicted] = await Promise.all([
           client!.fetchForecastAchieved(
             DateTime.fromISO(start.toString()),
             DateTime.fromISO(end.toString()),
-            userId
+            userId === FILTER_BY_NONE.key ? undefined : userId
           ),
           client!.fetchForecastPredicted(
             DateTime.fromISO(start.toString()),
             DateTime.fromISO(end.toString()),
-            userId
+            userId === FILTER_BY_NONE.key ? undefined : userId
           ),
         ]);
         setAchieved(achieved);
@@ -96,10 +91,7 @@ export const ForecastPage = () => {
                 setUserId(key.toString());
               }}
             >
-              {[
-                { id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name },
-                ...users,
-              ].map((user) => {
+              {[{ id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name }, ...users].map((user) => {
                 return <Item key={user.id}>{user.name}</Item>;
               })}
             </Picker>
@@ -121,6 +113,18 @@ export const ForecastPage = () => {
           </div>
         </div>
         <div className="canvas">
+          <div className="forecast-tab">
+            <Link to="/statistic">
+              <div className="forecast-button">
+                <div>
+                  <div className="icon">
+                    <TrendIcon />
+                  </div>
+                  <div className="text">Sales Pipeline Trend</div>
+                </div>
+              </div>
+            </Link>
+          </div>
           <section className="content-box tile">
             <h3 className="name">Closed Won</h3>
             <div>
@@ -130,18 +134,14 @@ export const ForecastPage = () => {
                     <Currency value={achieved.amount} />{' '}
                   </h4>
                   <span>
-                    {(
-                      (achieved.amount * 100) /
-                      (achieved.amount + predicted.amount)
-                    ).toFixed(2)}
-                    %
+                    {((achieved.amount * 100) / (achieved.amount + predicted.amount)).toFixed(2)}%
                   </span>
                 </div>
 
                 <span>Value</span>
               </div>
 
-              <ForecastSpacer />
+              <Space />
 
               <div className="metric" style={{ width: '320px' }}>
                 <h4>
@@ -150,7 +150,7 @@ export const ForecastPage = () => {
                 <span>Pipeline - not closed yet</span>
               </div>
 
-              <ForecastSpacer />
+              <Space />
 
               <div className="metric">
                 <h4>
@@ -166,14 +166,14 @@ export const ForecastPage = () => {
                 <span>Number of Deals</span>
               </div>
 
-              <ForecastSpacer />
+              <Space />
 
               <div className="metric" style={{ width: '320px' }}>
                 <h4>{predicted.count}</h4>
                 <span>Pipeline - not closed yet - Number of Deals</span>
               </div>
 
-              <ForecastSpacer />
+              <Space />
 
               <div className="metric">
                 <h4>{predicted.count + achieved.count}</h4>

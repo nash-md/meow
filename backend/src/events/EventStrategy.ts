@@ -12,8 +12,9 @@ export interface CardEventPayload {
 }
 
 export interface LaneEventPayload {
-  user: User;
+  teamId: string;
   laneId: string;
+  userId: string;
 }
 
 export interface HistoryEventPayload {

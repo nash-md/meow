@@ -1,39 +1,38 @@
-import { EventType } from '../entities/Event.js';
 import { Lane } from '../entities/Lane.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { LaneEventPayload } from './EventStrategy.js';
-import { EventType as CardEventType, Event } from '../entities/Event.js';
 import { log } from '../worker.js';
+import { ForecastEvent } from '../entities/ForecastEvent.js';
+import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
+const updateForecastEvent = async (teamId: string, laneId: string, userId?: string) => {
+  let event = await EntityHelper.findForecastEventByDay(teamId, laneId, new Date(), userId);
+
+  const amount = await EntityHelper.getTotalAmountByLaneId(teamId, laneId, userId);
+
+  if (event) {
+    event.amount = amount;
+  } else {
+    event = new ForecastEvent(teamId, laneId, amount, userId);
+  }
+  await EntityHelper.persist(ForecastEvent, event);
+};
 
 export const LaneEventListener = {
-  async onLaneUpdate({ laneId, user }: LaneEventPayload) {
-    log.debug(`execute onLaneUpdate for lane ${laneId}`);
+  async onLaneUpdate({ teamId, laneId, userId }: LaneEventPayload) {
+    log.debug(`execute onLaneUpdate for lane ${laneId} - userId: ${userId}`);
 
-    const userId = user.id!.toString();
+    const team = await EntityHelper.findTeamById(teamId);
 
-    const { teamId } = user;
-
-    const lane = await EntityHelper.findOneById(user, Lane, laneId);
-
-    const amount = await EntityHelper.getTotalAmountByLaneId(teamId, laneId);
-
-    let event = await EntityHelper.findEventByTypeAndDay(
-      teamId,
-      laneId,
-      EventType.LaneAmountChanged,
-      new Date()
-    );
-
-    if (event) {
-      event.body = {
-        amount: amount,
-      };
-    } else {
-      event = new Event(lane.teamId, lane.id!.toString(), userId, CardEventType.LaneAmountChanged, {
-        amount: amount,
-      });
+    if (!team) {
+      throw new TeamNotFoundError();
     }
 
-    await EntityHelper.persist(Event, event);
+    const lane = await EntityHelper.findOneById(team, Lane, laneId);
+
+    /* update team */
+    await updateForecastEvent(teamId, laneId);
+
+    /* update user */
+    await updateForecastEvent(teamId, laneId, userId);
   },
 };
