@@ -50,7 +50,7 @@ export const setupAccountWithExampleData = async (
 ): Promise<User> => {
   const team = await datasource.manager.save(new Team(`${name}'s Team`, CurrencyCode.USD));
 
-  const board = await datasource.manager.save(new Board('default', team.id!.toString()));
+  const board = await datasource.manager.save(new Board(team.id!.toString(), team.id!.toString()));
 
   const lanes: Lane[] = [];
 
