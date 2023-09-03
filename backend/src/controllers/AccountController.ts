@@ -46,8 +46,8 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     EventHelper.get().emit('account', {
       user: req.jwt.user,
-      account: account.toPlain(),
-      updated: original,
+      account: original,
+      updated: account.toPlain(),
     });
 
     return res.json(updated);
