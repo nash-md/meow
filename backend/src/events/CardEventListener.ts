@@ -120,6 +120,17 @@ export const CardEventListener = {
 
       await CardEventListener.persist(user, event);
     }
+
+    if (card.name !== updated.name) {
+      const body = {
+        from: card.name,
+        to: updated.name,
+      };
+
+      const event = new Event(teamId, cardId, userId, EventType.NameChanged, body);
+
+      await CardEventListener.persist(user, event);
+    }
   },
 
   async persist(user: User, event: Event) {

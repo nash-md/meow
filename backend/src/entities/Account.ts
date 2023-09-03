@@ -15,6 +15,9 @@ export class Account {
   @Column()
   attributes?: Attribute;
 
+  @Column()
+  references?: Reference[];
+
   @Column({ type: 'timestamp' })
   createdAt?: Date;
 
@@ -56,4 +59,10 @@ export interface PlainAccount {
   attributes?: Attribute;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface Reference {
+  id: ObjectId;
+  entity: string | null;
+  schemaAttributeKey: string;
 }
