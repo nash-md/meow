@@ -73,10 +73,9 @@ export const selectViewColumns = (store: ApplicationStore, name: ListName) =>
   store.ui[name].columns;
 export const selectReferencesTo = (store: ApplicationStore, entity: string) => {
   const list: SchemaReferenceAttribute[] = [];
-
   store.schemas.forEach((schema) => {
     return schema.attributes?.forEach((attribute) => {
-      if (SchemaHelper.isSchemaAttribute(attribute)) {
+      if (SchemaHelper.isReferenceAttribute(attribute) && attribute.entity === entity) {
         list.push({ ...attribute });
       }
     });

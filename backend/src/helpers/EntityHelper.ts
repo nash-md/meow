@@ -64,7 +64,12 @@ async function findOneByIdOrNull<Entity extends ObjectLiteral>(
 
 async function findByTeam<Entity extends ObjectLiteral>(target: EntityTarget<Entity>, team: Team) {
   const query: any = {
-    teamId: { $eq: team.id!.toString() },
+    where: {
+      teamId: { $eq: team.id!.toString() },
+    },
+    order: {
+      name: 'ASC',
+    },
   };
 
   const list = await datasource.manager.getMongoRepository(target).find(query);

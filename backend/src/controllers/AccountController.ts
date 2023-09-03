@@ -44,7 +44,6 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const updated = await datasource.manager.save(account);
 
-    // TODO rename account to original
     EventHelper.get().emit('account', {
       user: req.jwt.user,
       account: original,

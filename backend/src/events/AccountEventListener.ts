@@ -28,7 +28,6 @@ export const AccountEventListener = {
 
     if (updated.attributes) {
       const changes = getAttributeListDifference(account.attributes, updated.attributes);
-
       /* enrich event data */
       for (const key in changes) {
         const change = changes[key]!;
@@ -45,7 +44,7 @@ export const AccountEventListener = {
       if (changes.length !== 0) {
         const event = new Event(
           teamId,
-          user.id!.toString(),
+          account.id.toString(),
           userId,
           EventType.AttributeChanged,
           changes
@@ -53,6 +52,17 @@ export const AccountEventListener = {
 
         await AccountEventListener.persist(user, event);
       }
+    }
+
+    if (account.name !== updated.name) {
+      const body = {
+        from: account.name,
+        to: updated.name,
+      };
+
+      const event = new Event(teamId, account.id.toString(), userId, EventType.NameChanged, body);
+
+      await AccountEventListener.persist(user, event);
     }
   },
 

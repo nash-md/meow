@@ -19,11 +19,11 @@ import { ListViewItem, DataRow } from '../interfaces/ListView';
 import { TableHeader } from '../components/view/table/TableHeader';
 import { TableCanvas } from '../components/view/table/TableCanvas';
 import { ListFilterCanvas } from '../components/view/ListFilterCanvas';
+import { ListSearchCanvas } from '../components/view/ListSearchCanvas';
 import useMobileLayout from '../hooks/useMobileLayout';
 import { Account } from '../interfaces/Account';
 import { Item } from '../components/view/list/Item';
 import { Row } from '../components/view/table/Row';
-import { ListSearchCanvas } from '../components/view/ListSearchCanvas';
 
 const createListViewItemsFromSchema = (schema: Schema | undefined): ListViewItem[] => {
   const list = [
@@ -97,24 +97,25 @@ export const AccountsPage = () => {
     switch (item.column) {
       case 'name':
         return (
-          <td>
+          <td key={item.column}>
             <span onClick={() => openAccount(row.id?.toString())} className="direct-link">
               {row.name}
             </span>
           </td>
         );
       case 'createdAt':
-        return <td>{toRelativeDate(row.createdAt)}</td>;
+        return <td key={item.column}>{toRelativeDate(row.createdAt)}</td>;
       default:
-        return <td>{item.column !== null && row[item.column]}</td>;
+        return <td key={item.column}>{item.column !== null && row[item.column]?.toString()}</td>;
     }
   };
 
   const getListItem = (row: DataRow, item: ListViewItem) => {
+    console.log(row);
     switch (item.column) {
       case 'name':
         return (
-          <div>
+          <div key={item.column}>
             <span onClick={() => openAccount(row.id?.toString())} className="direct-link title">
               {row.name}
             </span>
@@ -122,14 +123,14 @@ export const AccountsPage = () => {
         );
       case 'createdAt':
         return (
-          <div>
+          <div key={item.column}>
             <b>Created:</b> {toRelativeDate(row.createdAt)}
           </div>
         );
       default:
         return item.column !== null && row[item.column] ? (
-          <div>
-            <b>{item.name}:</b> {row[item.column]}
+          <div key={item.column}>
+            <b>{item.name}:</b> {row[item.column]?.toString()}
           </div>
         ) : null;
     }
@@ -156,9 +157,9 @@ export const AccountsPage = () => {
 
         {isMobileLayout ? (
           <div className="mobile-view">
-            {rows.map((row) => {
+            {rows.map((row, index) => {
               return (
-                <Item>
+                <Item key={index}>
                   {columns
                     .filter(({ isHidden }) => isHidden === false)
                     .map((item) => getListItem(row, item))}
@@ -172,7 +173,7 @@ export const AccountsPage = () => {
               <TableHeader name="accounts" sort={setListViewSortBy} view={view} columns={columns} />
               {rows.map((row, index) => {
                 return (
-                  <Row index={index}>
+                  <Row key={index}>
                     {columns
                       .filter(({ isHidden }) => isHidden === false)
                       .map((item) => getCell(row, item))}

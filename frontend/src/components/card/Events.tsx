@@ -13,8 +13,9 @@ import { Attribute } from './events/Attribute';
 import { NextFollowUpAt } from './events/NextFollowUpAt';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import { selectCard, selectUser } from '../../store/Store';
+import { selectCard, selectUsers } from '../../store/Store';
 import { Avatar } from '../Avatar';
+import { Name } from './events/Name';
 
 export interface EventsProps {
   id?: string;
@@ -29,7 +30,7 @@ export const Events = ({ id, entity }: EventsProps) => {
   const [isValid, setIsValid] = useState(false);
 
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
-  const user = useSelector((store: ApplicationStore) => selectUser(store, card?.userId));
+  const users = useSelector(selectUsers);
 
   useEffect(() => {
     const execute = async () => {
@@ -65,6 +66,8 @@ export const Events = ({ id, entity }: EventsProps) => {
     switch (event.type) {
       case EventType.ClosedAtChanged:
         return <ClosedAt event={event} />;
+      case EventType.NameChanged:
+        return <Name event={event} />;
       case EventType.NextFollowUpAtChanged:
         return <NextFollowUpAt event={event} />;
       case EventType.CardMoved:
@@ -74,7 +77,7 @@ export const Events = ({ id, entity }: EventsProps) => {
       case EventType.CommentCreated:
         return <Comment event={event} />;
       case EventType.Created:
-        return <CreatedAt />;
+        return <CreatedAt entity={entity} />;
       case EventType.Assigned:
         return <Assign event={event} />;
       case EventType.AttributeChanged:
@@ -86,7 +89,7 @@ export const Events = ({ id, entity }: EventsProps) => {
 
   return (
     <div className="card-events">
-      {card && (
+      {card ? (
         <div className="statistics">
           <div className="tile">
             <span>Opportunity Age</span>
@@ -101,7 +104,7 @@ export const Events = ({ id, entity }: EventsProps) => {
             <h4>{DateTime.fromISO(card.updatedAt).toRelative()}</h4>
           </div>
         </div>
-      )}
+      ) : null}
 
       <div className="comment-form">
         <TextArea onChange={setComment} width="100%" height="80px"></TextArea>
@@ -114,11 +117,13 @@ export const Events = ({ id, entity }: EventsProps) => {
 
       {list.map((event: any, index: number) => {
         const ago = DateTime.fromISO(event.createdAt).toRelative();
+        const user = users.find((user) => user.id === event.userId);
+
         return (
           <div key={event.id} className="event-item">
             <div className="headline">
               <div>
-                <Avatar id={event.userId} width={30} />
+                <Avatar id={user?.id} width={30} />
                 <div className="name">{user?.name}</div>
               </div>
 
