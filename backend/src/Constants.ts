@@ -2,7 +2,7 @@ import { LaneType } from './entities/Lane.js';
 import { SchemaAttribute, SchemaType } from './entities/Schema.js';
 
 export const SERVICE_NAME = 'meow-backend-service';
-export const MAXIMUM_LENGTH_OF_USER_NAME = 20;
+export const MAXIMUM_LENGTH_OF_USER_NAME = 80;
 export const MINIMUM_LENGTH_OF_USER_NAME = 3;
 export const MAXIMUM_LENGTH_OF_USER_PASSWORD = 40;
 export const MINIMUM_LENGTH_OF_USER_PASSWORD = 3;
