@@ -1,8 +1,8 @@
 interface RowProps {
-  index: number;
+  key: number;
   children: React.ReactNode;
 }
 
-export const Row = ({ children, index }: RowProps) => {
-  return <tr key={index}>{children}</tr>;
+export const Row = ({ children }: RowProps) => {
+  return <tr>{children}</tr>;
 };

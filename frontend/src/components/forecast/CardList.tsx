@@ -156,7 +156,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
     switch (item.column) {
       case 'name':
         return (
-          <td>
+          <td key={item.column}>
             <span onClick={() => openCard(row.id?.toString())} className="direct-link">
               {row.name}
             </span>
@@ -164,14 +164,14 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
         );
       case 'createdAt':
         return (
-          <td>
+          <td key={item.column}>
             <b>
               <Currency value={row.amount ? parseInt(row.amount?.toString()) : 0} />
             </b>
           </td>
         );
       default:
-        return <td>{item.column !== null && row[item.column]}</td>;
+        return <td key={item.column}>{item.column !== null && row[item.column]}</td>;
     }
   };
 
@@ -179,7 +179,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
     switch (item.column) {
       case 'name':
         return (
-          <div>
+          <div key={item.column}>
             <span
               style={{}}
               onClick={() => openCard(row.id?.toString())}
@@ -191,14 +191,14 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
         );
       case 'amount':
         return (
-          <div>
+          <div key={item.column}>
             <b>{item.name}:</b>
             <Currency value={row.amount ? parseInt(row.amount?.toString()) : 0}></Currency>
           </div>
         );
       default:
         return item.column !== null && row[item.column] ? (
-          <div>
+          <div key={item.column}>
             <b>{item.name}:</b> {row[item.column]}
           </div>
         ) : null;
@@ -221,9 +221,9 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
       {isMobileLayout ? (
         <div className="mobile-view">
-          {rows.map((row) => {
+          {rows.map((row, index) => {
             return (
-              <ListItem>
+              <ListItem key={index}>
                 {columns
                   .filter(({ isHidden }) => isHidden === false)
                   .map((item) => getListItem(row, item))}
@@ -238,7 +238,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
             {rows.map((row, index) => {
               return (
-                <Row index={index}>
+                <Row key={index}>
                   {columns
                     .filter(({ isHidden }) => isHidden === false)
                     .map((item) => getCell(row, item))}

@@ -1,5 +1,6 @@
 interface ItemProps {
   children: React.ReactNode;
+  key: number;
 }
 
 export const Item = ({ children }: ItemProps) => {

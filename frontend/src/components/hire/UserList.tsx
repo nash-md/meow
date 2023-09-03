@@ -109,15 +109,15 @@ export const UserList = (props: any) => {
       switch (item.column) {
         case 'name':
           return (
-            <td style={{ width: '200px' }}>
+            <td key={item.column} style={{ width: '200px' }}>
               <b>{row.name}</b>
             </td>
           );
         case 'status':
-          return <td>{row.status}</td>;
+          return <td key={item.column}>{row.status}</td>;
         case 'invite':
           return (
-            <td>
+            <td key={item.column}>
               {row.status === UserStatus.Invited && (
                 <Button
                   variant="primary"
@@ -129,10 +129,10 @@ export const UserList = (props: any) => {
             </td>
           );
         case 'createdAt':
-          return <td>{toRelativeDate(row.createdAt)}</td>;
+          return <td key={item.column}>{toRelativeDate(row.createdAt)}</td>;
         default:
           return (
-            <td style={{ textAlign: 'right' }}>
+            <td key={item.column} style={{ textAlign: 'right' }}>
               {row.id !== id && (
                 <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
                   delete
@@ -152,7 +152,7 @@ export const UserList = (props: any) => {
 
         {rows.map((row, index) => {
           return (
-            <Row index={index}>
+            <Row key={index}>
               {columns
                 .filter(({ isHidden }) => isHidden === false)
                 .map((item) => getCell(row, item))}
