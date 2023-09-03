@@ -1,31 +1,29 @@
 import { Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { ListHeader } from '../list/ListHeader';
+import { TableHeader } from '../view/table/TableHeader';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { useSelector } from 'react-redux';
-import { selectUsers, selectView, store } from '../../store/Store';
+import { selectUsers, selectView, selectViewColumns, store } from '../../store/Store';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { CalendarDate } from '@internationalized/date';
 import { DateTime } from 'luxon';
-import { ActionType, setListView, showCardLayer, showModalError } from '../../actions/Actions';
+import {
+  ActionType,
+  setListViewColumn,
+  setListViewSortBy,
+  showCardLayer,
+  showModalError,
+} from '../../actions/Actions';
 import { toIntervalInDays, toRelativeDate } from '../../helpers/DateHelper';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { Currency } from '../Currency';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
 import { FILTER_BY_NONE } from '../../Constants';
-
-const columns = ['Name', 'Amount', 'Created', 'Closed', 'Deal Duration', 'User'];
-
-interface Row {
-  id: string;
-  Name: string;
-  Amount: number;
-  Created: string | null;
-  Closed: string | null;
-  'Deal Duration': string | undefined;
-  User: string | undefined;
-  [key: string]: string | number | null | undefined;
-}
+import { DataRow, ListViewItem } from '../../interfaces/ListView';
+import { Item as ListItem } from '../../components/view/list/Item';
+import { Row } from '../view/table/Row';
+import { TableCanvas } from '../view/table/TableCanvas';
+import useMobileLayout from '../../hooks/useMobileLayout';
 
 interface CardListProps {
   userId: string;
@@ -33,11 +31,48 @@ interface CardListProps {
   end: CalendarDate;
 }
 
+const createListViewItems = (): ListViewItem[] => {
+  return [
+    {
+      name: 'Name',
+      column: 'name',
+      isHidden: false,
+    },
+    {
+      name: 'Amount',
+      column: 'amount',
+      isHidden: false,
+    },
+    {
+      name: 'Created',
+      column: 'created',
+      isHidden: false,
+    },
+    {
+      name: 'Closed',
+      column: 'closed',
+      isHidden: false,
+    },
+    {
+      name: 'Deal Duration',
+      column: 'deal-duration',
+      isHidden: false,
+    },
+    {
+      name: 'User',
+      column: 'user',
+      isHidden: false,
+    },
+  ];
+};
+
 export const CardList = ({ userId, start, end }: CardListProps) => {
   const { client } = useContext(RequestHelperContext);
   const users = useSelector(selectUsers);
   const [mode, setMode] = useState<'achieved' | 'predicted'>('achieved');
   const [list, setList] = useState<Array<any>>([]); // TODO remove any
+  const columns = useSelector((store: ApplicationStore) => selectViewColumns(store, 'forecast'));
+  const isMobileLayout = useMobileLayout();
 
   const view = useSelector(
     (store: ApplicationStore) => selectView(store, 'forecast') // TODO use enum
@@ -46,6 +81,12 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
   const openCard = (id?: string) => {
     store.dispatch(showCardLayer(id));
   };
+
+  useEffect(() => {
+    if (columns.length === 0) {
+      store.dispatch(setListViewColumn('forecast', createListViewItems()));
+    }
+  }, []);
 
   useEffect(() => {
     const execute = async () => {
@@ -89,66 +130,124 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
     }
   }, [client, start, end, userId, mode]);
 
+  const toDataRows = (list: any[]) => {
+    return list.map((card) => {
+      const user = users.find((user) => user.id === card.userId);
+
+      const row: DataRow = {
+        id: card.id,
+        name: card.name,
+        amount: card.amount,
+        created: toRelativeDate(card.createdAt),
+        closed: toRelativeDate(card.closedAt),
+        ['deal-duration']: toIntervalInDays(card.createdAt, card.closedAt),
+        user: user?.name,
+      };
+
+      return row;
+    });
+  };
+
   const rows = useMemo(() => {
-    const column = view.column ?? columns[0]!;
-
-    return list
-      .map((card: any) => {
-        const user = users.find((user) => user.id === card.userId);
-
-        const row: Row = {
-          id: card.id,
-          Name: card.name,
-          Amount: card.amount,
-          Created: toRelativeDate(card.createdAt),
-          Closed: toRelativeDate(card.closedAt),
-          ['Deal Duration']: toIntervalInDays(card.createdAt, card.closedAt),
-          User: user?.name,
-        };
-
-        return row;
-      })
-      .sort((a, b) => ListViewHelper.orderBy(view.direction, a[column], b[column]));
+    return ListViewHelper.filterAndOrder(toDataRows(list), columns, view);
   }, [view, list]);
 
+  const getCell = (row: DataRow, item: ListViewItem) => {
+    switch (item.column) {
+      case 'name':
+        return (
+          <td>
+            <span onClick={() => openCard(row.id?.toString())} className="direct-link">
+              {row.name}
+            </span>
+          </td>
+        );
+      case 'createdAt':
+        return (
+          <td>
+            <b>
+              <Currency value={row.amount ? parseInt(row.amount?.toString()) : 0} />
+            </b>
+          </td>
+        );
+      default:
+        return <td>{item.column !== null && row[item.column]}</td>;
+    }
+  };
+
+  const getListItem = (row: DataRow, item: ListViewItem) => {
+    switch (item.column) {
+      case 'name':
+        return (
+          <div>
+            <span
+              style={{}}
+              onClick={() => openCard(row.id?.toString())}
+              className="direct-link title"
+            >
+              {row.name}
+            </span>
+          </div>
+        );
+      case 'amount':
+        return (
+          <div>
+            <b>{item.name}:</b>
+            <Currency value={row.amount ? parseInt(row.amount?.toString()) : 0}></Currency>
+          </div>
+        );
+      default:
+        return item.column !== null && row[item.column] ? (
+          <div>
+            <b>{item.name}:</b> {row[item.column]}
+          </div>
+        ) : null;
+    }
+  };
+
   return (
-    <section className="content-box tile" style={{ overflow: 'auto' }}>
-      <Picker
-        defaultSelectedKey={mode}
-        onSelectionChange={(key) => {
-          setMode(key.toString() as 'achieved' | 'predicted');
-        }}
-      >
-        <Item key="achieved">Closed Won</Item>
-        <Item key="predicted">All Open</Item>
-      </Picker>
+    <>
+      <section className="content-box" style={{ overflow: 'auto' }}>
+        <Picker
+          defaultSelectedKey={mode}
+          onSelectionChange={(key) => {
+            setMode(key.toString() as 'achieved' | 'predicted');
+          }}
+        >
+          <Item key="achieved">Closed Won</Item>
+          <Item key="predicted">All Open</Item>
+        </Picker>
+      </section>
 
-      <table className="list" style={{ width: '100%' }}>
-        <tbody>
-          <ListHeader name="forecast" sort={setListView} view={view} columns={columns} />
-
-          {rows.map((row, index) => {
+      {isMobileLayout ? (
+        <div className="mobile-view">
+          {rows.map((row) => {
             return (
-              <tr key={index}>
-                <td>
-                  <span onClick={() => openCard(row.id)} className="direct-link">
-                    {row.Name}
-                  </span>
-                </td>
-                <td>
-                  <b>
-                    <Currency key={index} value={row.Amount} />
-                  </b>
-                </td>
-                <td>{row.Created}</td>
-                <td>{row.Closed}</td>
-                <td>{row['Deal Duration']}</td>
-                <td>{row.User}</td>
-              </tr>
+              <ListItem>
+                {columns
+                  .filter(({ isHidden }) => isHidden === false)
+                  .map((item) => getListItem(row, item))}
+              </ListItem>
             );
           })}
-        </tbody>
-      </table>
-    </section>
+        </div>
+      ) : (
+        <div className="content-box" style={{ overflow: 'auto' }}>
+          <TableCanvas>
+            <TableHeader name="forecast" sort={setListViewSortBy} view={view} columns={columns} />
+
+            {rows.map((row, index) => {
+              return (
+                <Row index={index}>
+                  {columns
+                    .filter(({ isHidden }) => isHidden === false)
+                    .map((item) => getCell(row, item))}
+                </Row>
+              );
+            })}
+          </TableCanvas>
+        </div>
+      )}
+    </>
   );
 };

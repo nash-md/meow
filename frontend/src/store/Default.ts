@@ -32,19 +32,28 @@ export const Default: ApplicationStore = {
       userId: '',
     },
     accounts: {
-      direction: 'desc',
-      column: undefined,
-      text: undefined,
+      sortBy: {
+        direction: 'desc',
+        column: undefined,
+      },
+      filterBy: {},
+      columns: [],
     },
     users: {
-      direction: 'desc',
-      column: undefined,
-      text: undefined,
+      sortBy: {
+        direction: 'desc',
+        column: undefined,
+      },
+      filterBy: {},
+      columns: [],
     },
     forecast: {
-      direction: 'desc',
-      column: undefined,
-      text: undefined,
+      sortBy: {
+        direction: 'desc',
+        column: undefined,
+      },
+      filterBy: {},
+      columns: [],
     },
   },
 };

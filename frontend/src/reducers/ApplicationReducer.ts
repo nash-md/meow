@@ -4,7 +4,7 @@ import { isValidId } from '../helpers/Helper';
 import { Account } from '../interfaces/Account';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
-import { ListView } from '../interfaces/ListView';
+import { ListViewSortDirection } from '../interfaces/ListView';
 import { User } from '../interfaces/User';
 import { InterfaceState } from '../store/ApplicationStore';
 import { Default } from '../store/Default';
@@ -74,19 +74,28 @@ export const application = (state = Default, action: ApplicationAction) => {
             mode: [],
           },
           accounts: {
-            direction: <ListView['direction']>'desc',
-            column: undefined,
-            text: undefined,
+            sortBy: {
+              direction: <ListViewSortDirection>'desc',
+              column: undefined,
+            },
+            filterBy: {},
+            columns: [],
           },
           users: {
-            direction: <ListView['direction']>'desc',
-            column: undefined,
-            text: undefined,
+            sortBy: {
+              direction: <ListViewSortDirection>'desc',
+              column: undefined,
+            },
+            filterBy: {},
+            columns: [],
           },
           forecast: {
-            direction: <ListView['direction']>'desc',
-            column: undefined,
-            text: undefined,
+            sortBy: {
+              direction: <ListViewSortDirection>'desc',
+              column: undefined,
+            },
+            filterBy: {},
+            columns: [],
           },
         },
       };
@@ -345,12 +354,39 @@ export const application = (state = Default, action: ApplicationAction) => {
         },
       };
 
-    case ActionType.LIST_VIEW:
+    case ActionType.LIST_VIEW_SORT_BY:
       return {
         ...state,
         ui: {
           ...state.ui,
-          [action.payload.name]: { ...action.payload.view },
+          [action.payload.name]: {
+            ...state.ui[action.payload.name],
+            sortBy: { column: action.payload.column, direction: action.payload.direction },
+          },
+        },
+      };
+
+    case ActionType.LIST_VIEW_FILTER_BY:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          [action.payload.name]: {
+            ...state.ui[action.payload.name],
+            filterBy: { text: action.payload.text },
+          },
+        },
+      };
+
+    case ActionType.LIST_VIEW_COLUMNS:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          [action.payload.name]: {
+            ...state.ui[action.payload.name],
+            columns: [...action.payload.columns],
+          },
         },
       };
 

@@ -1,51 +1,89 @@
 import { Button } from '@adobe/react-spectrum';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { ActionType, setListView } from '../../actions/Actions';
+import { ActionType, setListViewColumn, setListViewSortBy } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { UserStatus } from '../../interfaces/User';
-import { selectUserId, selectUsers, selectView, store } from '../../store/Store';
+import { User, UserStatus } from '../../interfaces/User';
+import { selectUserId, selectUsers, selectView, selectViewColumns, store } from '../../store/Store';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
-import { ListHeader } from '../list/ListHeader';
+import { TableHeader } from '../view/table/TableHeader';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { toRelativeDate } from '../../helpers/DateHelper';
+import { DataRow, ListViewItem } from '../../interfaces/ListView';
+import { TableCanvas } from '../view/table/TableCanvas';
+import { Row } from '../view/table/Row';
+
+const createListViewItems = (): ListViewItem[] => {
+  return [
+    {
+      name: 'Name',
+      column: 'name',
+      isHidden: false,
+    },
+    {
+      name: 'Status',
+      column: 'status',
+      isHidden: false,
+    },
+    {
+      name: 'Invite',
+      column: 'invite',
+      isHidden: false,
+    },
+    {
+      name: 'Created At',
+      column: 'createdAt',
+      isHidden: false,
+    },
+    {
+      name: null,
+      column: null,
+      isHidden: false,
+    },
+  ];
+};
 
 export const UserList = (props: any) => {
   const { client } = useContext(RequestHelperContext);
   const id = useSelector(selectUserId);
   const users = useSelector(selectUsers);
   const view = useSelector((store: ApplicationStore) => selectView(store, 'users'));
-
-  const columns = ['Name', 'Status', 'Invite', 'CreatedAt', null];
+  const columns = useSelector((store: ApplicationStore) => selectViewColumns(store, 'users'));
 
   interface Row {
     id: string;
-    Name: string;
-    Status: UserStatus;
-    Invite: string | undefined;
-    CreatedAt: string | undefined;
-    [key: string]: string | UserStatus | undefined;
+    name: string;
+    status: UserStatus;
+    invite: string | undefined;
+    createdAt: string | undefined;
+    [key: string]: string | number | null | boolean | undefined;
   }
 
+  useEffect(() => {
+    if (columns.length === 0) {
+      store.dispatch(setListViewColumn('users', createListViewItems()));
+    }
+  }, []);
+
+  const toDataRows = (list: User[]) => {
+    return list.map((user) => {
+      const row: DataRow = {
+        id: user.id,
+        name: user.name,
+        status: user.status,
+        invite: user.invite,
+        createdAt: user.createdAt,
+      };
+
+      return row;
+    });
+  };
+
   const rows = useMemo(() => {
-    let list = [...users.filter((user) => user.status !== UserStatus.Deleted)];
+    const list = toDataRows(users);
 
-    const column = view.column ?? (columns[0] as string);
-
-    return list
-      .map((user) => {
-        const row: Row = {
-          id: user.id,
-          Name: user.name,
-          Status: user.status,
-          Invite: user.invite,
-          CreatedAt: user.createdAt,
-        };
-
-        return row;
-      })
-      .sort((a, b) => ListViewHelper.orderBy(view.direction, a[column], b[column]));
-  }, [view, users]);
+    return ListViewHelper.filterAndOrder(list, columns, view);
+  }, [view, users, columns]);
 
   const deleteUser = async (id: string) => {
     const user = users.find((user) => user.id === id)!;
@@ -66,44 +104,62 @@ export const UserList = (props: any) => {
     }
   };
 
+  const getCell = (row: DataRow, item: ListViewItem) => {
+    {
+      switch (item.column) {
+        case 'name':
+          return (
+            <td style={{ width: '200px' }}>
+              <b>{row.name}</b>
+            </td>
+          );
+        case 'status':
+          return <td>{row.status}</td>;
+        case 'invite':
+          return (
+            <td>
+              {row.status === UserStatus.Invited && (
+                <Button
+                  variant="primary"
+                  onPress={() => props.copyToClipboard(props.createInviteUrl(row.invite))}
+                >
+                  Copy Invite
+                </Button>
+              )}
+            </td>
+          );
+        case 'createdAt':
+          return <td>{toRelativeDate(row.createdAt)}</td>;
+        default:
+          return (
+            <td style={{ textAlign: 'right' }}>
+              {row.id !== id && (
+                <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
+                  delete
+                </Button>
+              )}
+            </td>
+          );
+      }
+    }
+  };
+
   return (
     <div className="content-box">
       <h2>Users</h2>
-      <table className="list" style={{ width: '100%' }}>
-        <tbody>
-          <ListHeader name="users" sort={setListView} columns={columns} view={view} />
+      <TableCanvas>
+        <TableHeader name="users" sort={setListViewSortBy} columns={columns} view={view} />
 
-          {rows.map((row, index) => {
-            return (
-              <tr key={index}>
-                <td style={{ width: '200px' }}>
-                  <b>{row.Name}</b>
-                </td>
-                <td>{row.Status}</td>
-                <td>
-                  {row.Status === UserStatus.Invited && (
-                    <Button
-                      variant="primary"
-                      onPress={() => props.copyToClipboard(props.createInviteUrl(row.Invite))}
-                    >
-                      Copy Invite
-                    </Button>
-                  )}
-                </td>
-                <td>{toRelativeDate(row.CreatedAt)}</td>
-
-                <td style={{ textAlign: 'right' }}>
-                  {row.id !== id && (
-                    <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
-                      delete
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+        {rows.map((row, index) => {
+          return (
+            <Row index={index}>
+              {columns
+                .filter(({ isHidden }) => isHidden === false)
+                .map((item) => getCell(row, item))}
+            </Row>
+          );
+        })}
+      </TableCanvas>
     </div>
   );
 };

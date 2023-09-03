@@ -3,7 +3,7 @@ import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
-import { ListView } from '../interfaces/ListView';
+import { ListViewItem, ListViewSortDirection } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
@@ -34,7 +34,9 @@ export enum ActionType {
   USER_INTERFACE_STATE = 'USER_INTERFACE_STATE',
   USER_INTERFACE_MODAL = 'USER_INTERFACE_MODAL',
   FILTER_UPDATE = 'FILTER_UPDATE',
-  LIST_VIEW = 'LIST_VIEW',
+  LIST_VIEW_SORT_BY = 'LIST_VIEW_SORT_BY',
+  LIST_VIEW_FILTER_BY = 'LIST_VIEW_FILTER_BY',
+  LIST_VIEW_COLUMNS = 'LIST_VIEW_COLUMNS',
 }
 
 export interface Action<T extends ActionType> {
@@ -153,10 +155,25 @@ export interface ApplicationFilterAction extends Action<ActionType.FILTER_UPDATE
   };
 }
 
-export interface ApplicationListViewAction extends Action<ActionType.LIST_VIEW> {
+export interface ApplicationListViewSortByAction extends Action<ActionType.LIST_VIEW_SORT_BY> {
   payload: {
     name: ListName;
-    view: ListView;
+    column: ListViewItem['column'];
+    direction: ListViewSortDirection;
+  };
+}
+
+export interface ApplicationListViewFilterByAction extends Action<ActionType.LIST_VIEW_FILTER_BY> {
+  payload: {
+    name: ListName;
+    text?: string;
+  };
+}
+
+export interface ApplicationListViewColumnAction extends Action<ActionType.LIST_VIEW_COLUMNS> {
+  payload: {
+    name: ListName;
+    columns: ListViewItem[];
   };
 }
 
@@ -184,7 +201,9 @@ export type ApplicationAction =
   | ApplicationUserInterfaceStateAction
   | ApplicationUserInterfaceModalAction
   | ApplicationFilterAction
-  | ApplicationListViewAction;
+  | ApplicationListViewSortByAction
+  | ApplicationListViewFilterByAction
+  | ApplicationListViewColumnAction;
 
 export function showModalSuccess(text?: string) {
   return {
@@ -235,14 +254,39 @@ export function updateFilter(filter: Set<FilterMode>, userId: string, text?: str
   } as ApplicationFilterAction;
 }
 
-export function setListView(name: ListName, view: ListView) {
+export function setListViewSortBy(
+  name: ListName,
+  column: ListViewItem['column'],
+  direction: ListViewSortDirection
+) {
   return {
-    type: ActionType.LIST_VIEW,
+    type: ActionType.LIST_VIEW_SORT_BY,
     payload: {
-      view,
       name,
+      column,
+      direction,
     },
-  } as ApplicationListViewAction;
+  } as ApplicationListViewSortByAction;
+}
+
+export function setListViewFilterBy(name: ListName, text: string) {
+  return {
+    type: ActionType.LIST_VIEW_FILTER_BY,
+    payload: {
+      name,
+      text,
+    },
+  } as ApplicationListViewFilterByAction;
+}
+
+export function setListViewColumn(name: ListName, columns: ListViewItem[]) {
+  return {
+    type: ActionType.LIST_VIEW_COLUMNS,
+    payload: {
+      name,
+      columns,
+    },
+  } as ApplicationListViewColumnAction;
 }
 
 export const showAccountLayer = (id?: string): ApplicationUserInterfaceStateAction => {

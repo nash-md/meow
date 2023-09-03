@@ -1,102 +1,145 @@
 import { Button } from '@adobe/react-spectrum';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { setListView, showAccountLayer } from '../actions/Actions';
+import { setListViewColumn, setListViewSortBy, showAccountLayer } from '../actions/Actions';
 import { Layer as AccountLayer } from '../components/account/Layer';
 import {
   selectAccounts,
   selectInterfaceState,
   selectSchemaByType,
   selectView,
+  selectViewColumns,
   store,
 } from '../store/Store';
 import { ListViewHelper } from '../helpers/ListViewHelper';
 import { ApplicationStore } from '../store/ApplicationStore';
-import { SchemaType } from '../interfaces/Schema';
-import { ListHeader } from '../components/list/ListHeader';
+import { Schema, SchemaType } from '../interfaces/Schema';
 import { toRelativeDate } from '../helpers/DateHelper';
+import { ListViewItem, DataRow } from '../interfaces/ListView';
+import { TableHeader } from '../components/view/table/TableHeader';
+import { TableCanvas } from '../components/view/table/TableCanvas';
+import { ListFilterCanvas } from '../components/view/ListFilterCanvas';
+import useMobileLayout from '../hooks/useMobileLayout';
+import { Account } from '../interfaces/Account';
+import { Item } from '../components/view/list/Item';
+import { Row } from '../components/view/table/Row';
+import { ListSearchCanvas } from '../components/view/ListSearchCanvas';
+
+const createListViewItemsFromSchema = (schema: Schema | undefined): ListViewItem[] => {
+  const list = [
+    {
+      name: 'Name',
+      column: 'name',
+      isHidden: false,
+    },
+  ];
+
+  schema?.attributes.map((attribute) => {
+    list.push({
+      name: attribute.name,
+      column: attribute.key,
+      isHidden: false,
+    });
+  });
+
+  list.push({
+    name: 'Created At',
+    column: 'createdAt',
+    isHidden: false,
+  });
+
+  return list;
+};
 
 export const AccountsPage = () => {
   const state = useSelector(selectInterfaceState);
   const accounts = useSelector(selectAccounts);
-  const [search, setSearch] = useState('');
   const view = useSelector((store: ApplicationStore) => selectView(store, 'accounts'));
-
-  const [attributes, setAttributes] = useState<Array<string>>([]);
+  const columns = useSelector((store: ApplicationStore) => selectViewColumns(store, 'accounts'));
+  const isMobileLayout = useMobileLayout();
 
   const schema = useSelector((store: ApplicationStore) =>
     selectSchemaByType(store, SchemaType.Account)
   );
 
-  const columns = attributes ? ['Name', ...attributes, 'CreatedAt'] : ['Name', 'CreatedAt'];
-
-  interface Row {
-    id: string;
-    Name: string;
-    CreatedAt: string | null;
-    [key: string]: string | number | null | boolean | undefined;
-  }
+  useEffect(() => {
+    if (schema && columns.length === 0) {
+      store.dispatch(setListViewColumn('accounts', createListViewItemsFromSchema(schema)));
+    }
+  }, [schema]);
 
   const openAccount = (id?: string) => {
     store.dispatch(showAccountLayer(id));
   };
 
-  useEffect(() => {
-    store.dispatch(
-      setListView('accounts', {
-        ...view,
-        text: search,
-      })
-    );
-  }, [search]);
+  const toDataRows = (list: Account[]) => {
+    return list.map((account) => {
+      const row: DataRow = {
+        id: account.id,
+        name: account.name,
+        createdAt: account.createdAt,
+      };
 
-  useEffect(() => {
-    if (schema) {
-      setAttributes(schema.attributes.map((attribute) => attribute.name));
-    }
-  }, [schema]);
+      schema?.attributes.map(({ key }) => {
+        row[key] = account.attributes?.[key];
+      });
+      return row;
+    });
+  };
 
   const rows = useMemo(() => {
-    let list = [];
+    const list = toDataRows(accounts);
 
-    if (view.text) {
-      const regex = new RegExp(view.text, 'i');
+    return ListViewHelper.filterAndOrder(list, columns, view);
+  }, [schema, view, accounts, columns]);
 
-      list = accounts.filter((item) => regex.test(item.name));
-    } else {
-      list = [...accounts];
+  const getCell = (row: DataRow, item: ListViewItem) => {
+    switch (item.column) {
+      case 'name':
+        return (
+          <td>
+            <span onClick={() => openAccount(row.id?.toString())} className="direct-link">
+              {row.name}
+            </span>
+          </td>
+        );
+      case 'createdAt':
+        return <td>{toRelativeDate(row.createdAt)}</td>;
+      default:
+        return <td>{item.column !== null && row[item.column]}</td>;
     }
+  };
 
-    const column = view.column ?? columns[0]!;
-
-    return list
-      .map((account) => {
-        const row: Row = {
-          id: account.id,
-          Name: account.name,
-          CreatedAt: account.createdAt,
-        };
-
-        schema?.attributes.map(({ name, key }) => {
-          row[name] = account.attributes?.[key];
-        });
-
-        return row;
-      })
-      .sort((a, b) => ListViewHelper.orderBy(view.direction, a[column], b[column]));
-  }, [schema, view, accounts]);
-
-  function getTableData(key: string, value: string | number | null | boolean | undefined) {
-    if (attributes.includes(key)) {
-      return <td key={key}>{value?.toString()}</td>;
+  const getListItem = (row: DataRow, item: ListViewItem) => {
+    switch (item.column) {
+      case 'name':
+        return (
+          <div>
+            <span onClick={() => openAccount(row.id?.toString())} className="direct-link title">
+              {row.name}
+            </span>
+          </div>
+        );
+      case 'createdAt':
+        return (
+          <div>
+            <b>Created:</b> {toRelativeDate(row.createdAt)}
+          </div>
+        );
+      default:
+        return item.column !== null && row[item.column] ? (
+          <div>
+            <b>{item.name}:</b> {row[item.column]}
+          </div>
+        ) : null;
     }
-  }
+  };
 
   return (
     <>
       {state === 'account-detail' && <AccountLayer />}
       <div className="canvas">
-        <div className="account-search-header">
+        <div className="list-view-header">
           <div>
             <h2>Accounts {rows.length}</h2>
             <div style={{ paddingLeft: '10px' }}>
@@ -105,43 +148,40 @@ export const AccountsPage = () => {
               </Button>
             </div>
           </div>
-
-          <div className="input">
-            <input
-              onChange={(event) => setSearch(event.target.value)}
-              value={search}
-              aria-label="Account Name"
-              placeholder="Search by Name"
-              type="text"
-            />
+          <div className="toolbar">
+            <ListSearchCanvas name="accounts" />
+            <ListFilterCanvas name="accounts" columns={columns} />
           </div>
         </div>
 
-        <div className="content-box tile" style={{ overflow: 'auto' }}>
-          <table className="list" style={{ width: '100%' }}>
-            <tbody>
-              <ListHeader name="accounts" sort={setListView} view={view} columns={columns} />
-
-              {rows.map((row) => {
+        {isMobileLayout ? (
+          <div className="mobile-view">
+            {rows.map((row) => {
+              return (
+                <Item>
+                  {columns
+                    .filter(({ isHidden }) => isHidden === false)
+                    .map((item) => getListItem(row, item))}
+                </Item>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="content-box" style={{ overflow: 'auto' }}>
+            <TableCanvas>
+              <TableHeader name="accounts" sort={setListViewSortBy} view={view} columns={columns} />
+              {rows.map((row, index) => {
                 return (
-                  <tr key={row.id}>
-                    <td>
-                      <span onClick={() => openAccount(row.id?.toString())} className="direct-link">
-                        {row.Name}
-                      </span>
-                    </td>
-
-                    {Object.entries(row).map(([key, value]) => {
-                      return getTableData(key, value);
-                    })}
-
-                    <td>{toRelativeDate(row.CreatedAt)}</td>
-                  </tr>
+                  <Row index={index}>
+                    {columns
+                      .filter(({ isHidden }) => isHidden === false)
+                      .map((item) => getCell(row, item))}
+                  </Row>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
+            </TableCanvas>
+          </div>
+        )}
       </div>
     </>
   );

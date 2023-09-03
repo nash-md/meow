@@ -45,6 +45,8 @@ export const selectLane = (store: ApplicationStore, id?: string) => {
 export const selectSchemas = (store: ApplicationStore) => store.schemas;
 export const selectSchemaByType = (store: ApplicationStore, type: SchemaType) =>
   store.schemas.find((schema) => schema.type === type);
+export const selectSchemaAttributeById = (store: ApplicationStore, id: string) =>
+  store.schemas.find((schema) => schema.id === id);
 export const selectName = (store: ApplicationStore) => store.session.user?.name;
 export const selectUserId = (store: ApplicationStore) => store.session.user?.id;
 export const selectAnimal = (store: ApplicationStore) => store.session.user?.animal;
@@ -67,7 +69,8 @@ export const selectFilters = (store: ApplicationStore) => {
 export const selectAccountListView = (store: ApplicationStore) => store.ui.accounts;
 export const selectUserListView = (store: ApplicationStore) => store.ui.users;
 export const selectView = (store: ApplicationStore, name: ListName) => store.ui[name];
-
+export const selectViewColumns = (store: ApplicationStore, name: ListName) =>
+  store.ui[name].columns;
 export const selectReferencesTo = (store: ApplicationStore, entity: string) => {
   const list: SchemaReferenceAttribute[] = [];
 
@@ -81,3 +84,6 @@ export const selectReferencesTo = (store: ApplicationStore, entity: string) => {
 
   return list;
 };
+
+export const selectIntegrationByKey = (store: ApplicationStore, key: string) =>
+  store.session.team.integrations.some((integration) => integration.key === key);

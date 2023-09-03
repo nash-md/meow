@@ -76,7 +76,7 @@ h3 {
   flex-direction: row;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .page {
     flex-direction: column;
   }
@@ -240,44 +240,59 @@ h3 {
   margin-bottom: 20px;
 }
 
-.page .main .canvas .content-box .list {
+.page .main .canvas .mobile-view .item {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--spectrum-global-color-gray-200);
+}
+
+.page .main .canvas .mobile-view .item .title {
+  font-size: 1.2em;
+}
+
+.page .main .canvas .mobile-view .item > div {
+  line-height: 1.6em;
+}
+
+.page .main .canvas .content-box .desktop-view {
   margin-top: 10px;
   border-collapse: collapse;
 }
 
-.page .main .canvas .content-box .list tr:first-child {
+.page .main .canvas .content-box .desktop-view tr:first-child {
   background-color: var(--spectrum-global-color-gray-300);
   font-weight: bold;
   color: var(--spectrum-global-color-gray-500);
   cursor: pointer;
 }
 
-.page .main .canvas .content-box .list td {
+.page .main .canvas .content-box .desktop-view td {
   padding: 6px 40px 6px 6px;
   font-size: 1rem;
   color: var(--spectrum-global-color-gray-600);
 }
 
-.page .main .canvas .content-box .list tr .header {
+.page .main .canvas .content-box .desktop-view tr .header {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.page .main .canvas .content-box .list tr .header > div:first-child {
+.page .main .canvas .content-box .desktop-view tr .header > div:first-child {
   padding-right: 5px;
+  white-space: nowrap;
 }
 
-.page .main .canvas .content-box .list tr .header > div svg {
+.page .main .canvas .content-box .desktop-view tr .header > div svg {
   padding-left: 5px;
   display: block;
 }
 
-.page .main .canvas .content-box .list td.header:hover {
+.page .main .canvas .content-box .desktop-view td.header:hover {
   color: var(--spectrum-global-color-gray-600);
 }
 
-.page .main .canvas .content-box .list td {
+.page .main .canvas .content-box .desktop-view td {
   font-size: 1rem;
   padding: 6px;
 }
@@ -404,7 +419,7 @@ h3 {
   align-content: center;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .board .title .filters-canvas {
     flex-direction: column;
     align-items: start;
@@ -415,7 +430,7 @@ h3 {
   flex-grow: 1;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .board .title .filters-canvas > div:nth-child(1) {
     width: 100%;
     padding-bottom: 10px;
@@ -620,14 +635,8 @@ h3 {
   flex-grow: 1;
 }
 
-.layer .user-list table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
 .layer .user-list tr {
   background-color: var(--spectrum-global-color-gray-200);
-  width: 100%;
 }
 
 .layer .user-list tr:hover {
@@ -890,8 +899,25 @@ h3 {
 .forecast .filter {
   padding: 20px;
   background-color: var(--spectrum-global-color-gray-200);
-  text-align: right;
   display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .forecast .filter {
+    flex-direction: row;
+    text-align: right;
+  }
+}
+
+.forecast .filter > div {
+  margin-top: 5px;
+}
+
+@media (min-width: 768px) {
+  .forecast .filter > div:nth-child(2) {
+    margin-top: 0px;
+  }
 }
 
 .forecast .filter > div:nth-child(2) {
@@ -1197,18 +1223,18 @@ h3 {
   transform: translateY(-80px); /* Move the div up 100px */
 }
 
-.account-search-header {
+.list-view-header {
   padding-bottom: 10px;
 }
 
-.account-search-header > div:first-child {
+.list-view-header > div:first-child {
   display: flex;
   flex-direction: row;
   padding-bottom: 30px;
   align-items: center;
 }
 
-.account-search-header input[type='text'] {
+.list-view-header input[type='text'] {
   background-color: var(--spectrum-global-color-gray-200);
   border: none;
   padding: 5px 8px 5px 8px;
@@ -1221,6 +1247,32 @@ h3 {
   font-size: 1.2em;
   line-height: 1.5;
   font-weight: 500;
+}
+
+.list-view-header .toolbar {
+  display: flex;
+  flex-direction: row;
+}
+
+.list-view-header .toolbar .search-by-name {
+  flex-grow: 1;
+}
+
+.list-view-header .toolbar .filter-canvas .toggle {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.list-view-header .toolbar .filter-canvas .column {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.list-view-header .toolbar .filter-canvas .column .name {
+  flex-grow: 1;
+  padding-left: 8px;
 }
 
 .create-user-form {

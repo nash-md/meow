@@ -51,6 +51,10 @@ export const Translations = {
     en: 'Account created...',
   },
 
+  AccountUpdatedConfirmation: {
+    en: 'Account updated...',
+  },
+
   OpportunityAmount: {
     en: 'Amount',
   },

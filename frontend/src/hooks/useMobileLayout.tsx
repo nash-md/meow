@@ -7,11 +7,11 @@ interface CustomWindow extends Window {
 declare let window: CustomWindow;
 
 const useMobileLayout = (): boolean => {
-  const [isMobileLayout, setIsMobileLayout] = useState(window.innerWidth <= 600);
+  const [isMobileLayout, setIsMobileLayout] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     const checkLayout = () => {
-      setIsMobileLayout(window.innerWidth <= 600);
+      setIsMobileLayout(window.innerWidth <= 768);
     };
 
     window.addEventListener('resize', checkLayout);

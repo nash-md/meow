@@ -1,8 +1,8 @@
-import { ListView } from '../interfaces/ListView';
+import { DataRow, ListView, ListViewItem, ListViewSortDirection } from '../interfaces/ListView';
 import { isNullOrUndefined, isNumber, isString } from './Helper';
 
 export const ListViewHelper = {
-  orderBy(direction: ListView['direction'], a?: unknown, b?: unknown): number {
+  orderBy(direction: ListViewSortDirection, a?: unknown, b?: unknown): number {
     if (isNullOrUndefined(a) && isNullOrUndefined(b)) {
       return 0;
     }
@@ -26,5 +26,29 @@ export const ListViewHelper = {
     }
 
     return 0;
+  },
+
+  filterAndOrder(rows: DataRow[], columns: ListViewItem[], view: ListView) {
+    if (!columns[0]) {
+      return [];
+    }
+
+    if (columns[0].column === null) {
+      throw new Error('Invalid column, property name is null');
+    }
+
+    let list = [];
+
+    if (view.filterBy.text) {
+      const regex = new RegExp(view.filterBy.text, 'i');
+
+      list = rows.filter((row) => regex.test(row.name));
+    } else {
+      list = [...rows];
+    }
+
+    const column = view.sortBy.column ?? columns[0].column;
+
+    return list.sort((a, b) => ListViewHelper.orderBy(view.sortBy.direction, a[column], b[column]));
   },
 };
