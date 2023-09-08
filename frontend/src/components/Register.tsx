@@ -6,6 +6,7 @@ import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
 import { store } from '../store/Store';
 import { PasswordStrength } from './register/PasswordStrength';
 import { getErrorMessage } from '../helpers/ErrorHelper';
+import { UserHelper } from '../helpers/UserHelper';
 
 export const Register = () => {
   const { setClient } = useContext(RequestHelperContext);
@@ -18,7 +19,7 @@ export const Register = () => {
 
   useEffect(() => {
     setError('');
-    setIsValid(name.length >= 3 && password.length >= 3);
+    setIsValid(UserHelper.isValidNameAndPassword(name, password));
   }, [name, password]);
 
   const authenticate = async () => {
@@ -54,7 +55,7 @@ export const Register = () => {
             isDisabled={isLoading}
             value={name}
             onChange={setName}
-            width={180}
+            width="100%"
           />
         </div>
 
@@ -63,7 +64,7 @@ export const Register = () => {
             type="password"
             label="Password"
             onChange={setPassword}
-            width={200}
+            width="100%"
             isDisabled={isLoading}
           />
 
@@ -74,6 +75,7 @@ export const Register = () => {
             Register
           </Button>
         </div>
+        <div className="spinner-canvas">{!isLoading ? <div className="spinner"></div> : null}</div>
       </div>
 
       {error}

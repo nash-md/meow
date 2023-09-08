@@ -4,7 +4,7 @@ import { ActionType } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { store } from '../../store/Store';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
-import { RESERVED_USERS } from '../../Constants';
+import { UserHelper } from '../../helpers/UserHelper';
 
 export const Form = (props: any) => {
   const { client } = useContext(RequestHelperContext);
@@ -14,9 +14,7 @@ export const Form = (props: any) => {
   const [invite, setInvite] = useState<string>('');
 
   let isValidForm = useMemo(() => {
-    setError('');
-
-    if (name && !RESERVED_USERS.includes(name)) {
+    if (UserHelper.isValidName(name)) {
       setInvite('');
 
       return true;

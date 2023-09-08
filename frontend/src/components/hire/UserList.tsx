@@ -50,15 +50,6 @@ export const UserList = (props: any) => {
   const view = useSelector((store: ApplicationStore) => selectView(store, 'users'));
   const columns = useSelector((store: ApplicationStore) => selectViewColumns(store, 'users'));
 
-  interface Row {
-    id: string;
-    name: string;
-    status: UserStatus;
-    invite: string | undefined;
-    createdAt: string | undefined;
-    [key: string]: string | number | null | boolean | undefined;
-  }
-
   useEffect(() => {
     if (columns.length === 0) {
       store.dispatch(setListViewColumn('users', createListViewItems()));
@@ -109,15 +100,15 @@ export const UserList = (props: any) => {
       switch (item.column) {
         case 'name':
           return (
-            <td key={item.column} style={{ width: '200px' }}>
+            <td style={{ width: '200px' }}>
               <b>{row.name}</b>
             </td>
           );
         case 'status':
-          return <td key={item.column}>{row.status}</td>;
+          return <td>{row.status}</td>;
         case 'invite':
           return (
-            <td key={item.column}>
+            <td>
               {row.status === UserStatus.Invited && (
                 <Button
                   variant="primary"
@@ -129,11 +120,11 @@ export const UserList = (props: any) => {
             </td>
           );
         case 'createdAt':
-          return <td key={item.column}>{toRelativeDate(row.createdAt)}</td>;
+          return <td>{toRelativeDate(row.createdAt)}</td>;
         default:
           return (
-            <td key={item.column} style={{ textAlign: 'right' }}>
-              {row.id !== id && (
+            <td style={{ textAlign: 'right' }}>
+              {row.id !== id && row.status !== UserStatus.Deleted && (
                 <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
                   delete
                 </Button>

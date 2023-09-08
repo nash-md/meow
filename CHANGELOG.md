@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-09-08
+
+- Consolidated frontend validation for username and password during registration and user addition after sign-up.
+
+## 2023-09-04
+
+- Creating an account or opportunity will create a dedicated event type.
+- Entity references are stored on the data model and are shown on the account tab-
+
 ## 2023-08-12
 
 - Added trend forecast per user. Users can now view the change over time, this feature is accessible on the forecast page.

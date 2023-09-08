@@ -10,6 +10,12 @@ export const USER_COLORS = [
   '#5FEFCB',
   '#D06FD1',
 ];
+
+export const MAXIMUM_LENGTH_OF_USER_NAME = 80;
+export const MINIMUM_LENGTH_OF_USER_NAME = 3;
+export const MAXIMUM_LENGTH_OF_USER_PASSWORD = 40;
+export const MINIMUM_LENGTH_OF_USER_PASSWORD = 3;
+
 export const FILTER_BY_NONE = { name: 'Everyone', key: 'all' };
 export enum LANE_COLOR {
   DEFAULT = 'white',
