@@ -53,6 +53,7 @@ export class User {
 
   toJSON() {
     delete this.password;
+    delete this.authentication;
     return this;
   }
 
