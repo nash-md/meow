@@ -1,39 +1,28 @@
-import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
+import { Entity } from '../helpers/EntityDecorator.js';
+import { ExistingEntity, NewEntity } from './BaseEntity.js';
+import { ObjectId } from 'mongodb';
 
 @Entity({ name: 'Teams' })
-export class Team {
-  @ObjectIdColumn()
-  id: ObjectId | undefined;
-
-  @Column()
+export class Team implements ExistingEntity {
+  _id: ObjectId;
   name: string;
-
-  @Column()
   currency: CurrencyCode;
-
-  @Column()
   integrations?: Integration[];
+  createdAt: Date;
+  updatedAt: Date;
 
-  @Column({ type: 'timestamp' })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp' })
-  updatedAt?: Date;
-
-  constructor(name: string, currency: CurrencyCode) {
+  constructor(
+    _id: ObjectId,
+    name: string,
+    currency: CurrencyCode,
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    this._id = _id;
     this.name = name;
     this.currency = currency;
-  }
-
-  @BeforeInsert()
-  insertCreated() {
-    this.updatedAt = new Date();
-    this.createdAt = new Date();
-  }
-
-  @BeforeUpdate()
-  insertUpdated() {
-    this.updatedAt = new Date();
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   toJSON() {
@@ -59,6 +48,21 @@ export class Team {
     return this.integrations?.find(
       (integration) => integration.key === key // TODO add enum
     );
+  }
+}
+
+@Entity({ name: 'Teams' })
+export class NewTeam implements NewEntity {
+  name: string;
+  currency: CurrencyCode;
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(name: string, currency: CurrencyCode) {
+    this.name = name;
+    this.currency = currency;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 }
 

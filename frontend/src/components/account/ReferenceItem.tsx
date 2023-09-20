@@ -15,7 +15,7 @@ export const ReferenceItem = ({ reference }: ReferenceItemProps) => {
 
   useEffect(() => {
     const execute = async () => {
-      const card = await client!.getCard(reference.id);
+      const card = await client!.getCard(reference._id);
 
       selectCard(card);
     };

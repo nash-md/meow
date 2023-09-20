@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { ApplicationError } from './ApplicationError.js';
 
-export class UserNotFoundError extends ApplicationError {
+export class CreateEntityError extends ApplicationError {
   constructor(description?: string) {
-    super(UserNotFoundError.name, StatusCodes.NOT_FOUND, description);
+    super(CreateEntityError.name, StatusCodes.INTERNAL_SERVER_ERROR, description);
   }
 }

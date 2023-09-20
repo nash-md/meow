@@ -2,6 +2,7 @@ import { ActionType, ApplicationAction } from '../actions/Actions';
 import { BoardHelper } from '../helpers/BoardHelper';
 import { isValidId } from '../helpers/Helper';
 import { Account } from '../interfaces/Account';
+import { ApplicationState } from '../interfaces/ApplicationState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListViewSortDirection } from '../interfaces/ListView';
@@ -20,12 +21,25 @@ export const application = (state = Default, action: ApplicationAction) => {
         },
         browser: {
           ...state.browser,
-          isPageLoaded: true,
+        },
+        application: {
+          state: <ApplicationState>'uninitialized',
         },
         ui: {
           ...state.ui,
           modal: action.payload.modal,
           text: action.payload.text,
+        },
+      };
+
+    case ActionType.PAGE_LOAD_VALIDATE_TOKEN:
+      return {
+        ...state,
+        session: {
+          ...state.session,
+        },
+        application: {
+          state: <ApplicationState>'validating',
         },
       };
 
@@ -42,6 +56,9 @@ export const application = (state = Default, action: ApplicationAction) => {
             ...action.payload.team,
           },
         },
+        application: {
+          state: <ApplicationState>'authenticated',
+        },
         board: { ...action.payload.board },
       };
 
@@ -53,10 +70,13 @@ export const application = (state = Default, action: ApplicationAction) => {
           alerts: 0,
           user: undefined,
           team: {
-            id: undefined,
+            _id: undefined,
             currency: undefined,
             integrations: [],
           },
+        },
+        application: {
+          state: <ApplicationState>'logout',
         },
         cards: [],
         lanes: [],
@@ -65,7 +85,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         schemas: [],
         ui: {
           state: <InterfaceState>'default',
-          id: undefined,
+          _id: undefined,
           modal: undefined,
           text: undefined,
           filters: {
@@ -120,7 +140,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         },
         users: [
           ...state.users.map((item: User) => {
-            if (item.id === action.payload.id) {
+            if (item._id === action.payload._id) {
               return { ...action.payload };
             } else {
               return { ...item };
@@ -130,7 +150,8 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.CARDS:
-      // check if cards were found that are not on the board
+      state.board = BoardHelper.cleanUp(action.payload, state.board);
+
       action.payload.map((card) => {
         if (!BoardHelper.isOnBoard(card, state.board) && isValidId(card.laneId)) {
           BoardHelper.add(card, state.board);
@@ -138,7 +159,6 @@ export const application = (state = Default, action: ApplicationAction) => {
 
         if (!BoardHelper.isInCorrectLane(card, state.board)) {
           const position = BoardHelper.getPosition(card, state.board);
-
           if (position) {
             BoardHelper.move(card, state.board[position.laneId], state.board[card.laneId]);
           }
@@ -155,9 +175,9 @@ export const application = (state = Default, action: ApplicationAction) => {
 
     case ActionType.CARD_ADD:
       if (state.board[action.payload.laneId]) {
-        state.board[action.payload.laneId].push(action.payload.id);
+        state.board[action.payload.laneId].push(action.payload._id);
       } else {
-        state.board[action.payload.laneId] = [action.payload.id];
+        state.board[action.payload.laneId] = [action.payload._id];
       }
 
       return {
@@ -201,7 +221,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ...state,
         cards: [
           ...state.cards.map((item: Card) => {
-            if (item.id === action.payload.id) {
+            if (item._id === action.payload._id) {
               return { ...action.payload };
             } else {
               return { ...item };
@@ -214,7 +234,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ...state,
         cards: [
           ...state.cards.map((item: Card) => {
-            if (item.id === action.payload.id) {
+            if (item._id === action.payload._id) {
               return { ...action.payload };
             } else {
               return { ...item };
@@ -224,19 +244,19 @@ export const application = (state = Default, action: ApplicationAction) => {
       };
 
     case ActionType.CARD_DELETE:
-      state.board[action.payload.laneId] = BoardHelper.remove(action.payload, state.board);
+      const board = BoardHelper.remove(action.payload, state.board);
 
       return {
         ...state,
         cards: [
           ...state.cards.filter((item: Card) => {
-            if (item.id !== action.payload.id) {
+            if (item._id !== action.payload._id) {
               return { ...item };
             }
           }),
         ],
         board: {
-          ...state.board,
+          ...board,
         },
       };
 
@@ -251,7 +271,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ...state,
         accounts: [
           ...state.accounts.map((item: Account) => {
-            if (item.id === action.payload.id) {
+            if (item._id === action.payload._id) {
               return { ...action.payload };
             } else {
               return { ...item };
@@ -268,7 +288,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ui: {
           ...state.ui,
           state: Default.ui.state,
-          id: undefined,
+          _id: undefined,
           modal: undefined,
           text: undefined,
         },
@@ -305,7 +325,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ...state,
         lanes: [
           ...state.lanes.map((item: Lane) => {
-            if (item.id === action.payload.id) {
+            if (item._id === action.payload._id) {
               return { ...action.payload };
             } else {
               return { ...item };
@@ -325,7 +345,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         ui: {
           ...state.ui,
           state: action.payload.state,
-          id: action.payload.id,
+          _id: action.payload._id,
           modal: state.ui.modal,
           text: undefined,
         },

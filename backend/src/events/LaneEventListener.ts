@@ -2,37 +2,41 @@ import { Lane } from '../entities/Lane.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { LaneEventPayload } from './EventStrategy.js';
 import { log } from '../worker.js';
-import { ForecastEvent } from '../entities/ForecastEvent.js';
-import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
-const updateForecastEvent = async (teamId: string, laneId: string, userId?: string) => {
-  let event = await EntityHelper.findForecastEventByDay(teamId, laneId, new Date(), userId);
+import { NewForecastEvent } from '../entities/ForecastEvent.js';
+import { Team } from '../entities/Team.js';
+import { ObjectId } from 'mongodb';
+import { User } from '../entities/User.js';
+
+const updateForecastEvent = async (teamId: ObjectId, laneId: ObjectId, userId?: ObjectId) => {
+  let event = await EntityHelper.findForecastEventByDay(teamId, laneId, new Date(), laneId);
 
   const amount = await EntityHelper.getTotalAmountByLaneId(teamId, laneId, userId);
 
   if (event) {
     event.amount = amount;
+
+    await EntityHelper.update(event);
   } else {
-    event = new ForecastEvent(teamId, laneId, amount, userId);
+    const lane = await EntityHelper.findOneByIdOrFail(Lane, laneId);
+
+    let user: User | null = null;
+
+    if (userId) {
+      user = await EntityHelper.findOneBy(User, userId);
+    }
+    await EntityHelper.create(new NewForecastEvent(lane, amount, user ?? undefined));
   }
-  await EntityHelper.persist(ForecastEvent, event);
 };
 
 export const LaneEventListener = {
   async onLaneUpdate({ teamId, laneId, userId }: LaneEventPayload) {
     log.debug(`execute onLaneUpdate for lane ${laneId} - userId: ${userId}`);
 
-    const team = await EntityHelper.findTeamById(teamId);
-
-    if (!team) {
-      throw new TeamNotFoundError();
-    }
-
-    const lane = await EntityHelper.findOneById(team, Lane, laneId);
+    const team = await EntityHelper.findOneByIdOrFail(Team, teamId);
 
     /* update team */
-    await updateForecastEvent(teamId, laneId);
-
+    await updateForecastEvent(team._id!, laneId);
     /* update user */
-    await updateForecastEvent(teamId, laneId, userId);
+    await updateForecastEvent(team._id!, laneId, userId);
   },
 };

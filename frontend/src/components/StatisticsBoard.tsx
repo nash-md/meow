@@ -34,14 +34,14 @@ export const StatisticsBoard = ({ lanes }: BoardProps) => {
   return (
     <>
       {lanes
-        .filter((lane) => lane.id !== 'trash')
+        .filter((lane) => lane._id !== 'trash')
         .map((lane) => {
           return (
             <StatisticLane
               statistics={statistics}
-              key={lane.id}
+              key={lane._id}
               lane={lane}
-              numberOfLanes={lanes.filter((lane) => lane.id !== 'trash').length}
+              numberOfLanes={lanes.filter((lane) => lane._id !== 'trash').length}
             />
           );
         })}

@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
-import { Event } from '../../../interfaces/Event';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectUser } from '../../../store/Store';
+import { CardEvent } from '../../../interfaces/CardEvent';
 
 interface AssignProps {
-  event: Event;
+  event: CardEvent;
 }
 
 export const Assign = ({ event }: AssignProps) => {

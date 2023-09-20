@@ -59,7 +59,7 @@ export const UserList = (props: any) => {
   const toDataRows = (list: User[]) => {
     return list.map((user) => {
       const row: DataRow = {
-        id: user.id,
+        id: user._id,
         name: user.name,
         status: user.status,
         invite: user.invite,
@@ -77,7 +77,7 @@ export const UserList = (props: any) => {
   }, [view, users, columns]);
 
   const deleteUser = async (id: string) => {
-    const user = users.find((user) => user.id === id)!;
+    const user = users.find((user) => user._id === id)!;
 
     user.status = UserStatus.Deleted;
 
@@ -100,15 +100,15 @@ export const UserList = (props: any) => {
       switch (item.column) {
         case 'name':
           return (
-            <td style={{ width: '200px' }}>
+            <td key={item.column} style={{ width: '200px' }}>
               <b>{row.name}</b>
             </td>
           );
         case 'status':
-          return <td>{row.status}</td>;
+          return <td key={item.column}>{row.status}</td>;
         case 'invite':
           return (
-            <td>
+            <td key={item.column}>
               {row.status === UserStatus.Invited && (
                 <Button
                   variant="primary"
@@ -120,10 +120,10 @@ export const UserList = (props: any) => {
             </td>
           );
         case 'createdAt':
-          return <td>{toRelativeDate(row.createdAt)}</td>;
+          return <td key={item.column}>{toRelativeDate(row.createdAt)}</td>;
         default:
           return (
-            <td style={{ textAlign: 'right' }}>
+            <td key={item.column} style={{ textAlign: 'right' }}>
               {row.id !== id && row.status !== UserStatus.Deleted && (
                 <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
                   delete

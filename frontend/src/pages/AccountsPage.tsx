@@ -75,7 +75,7 @@ export const AccountsPage = () => {
   const toDataRows = (list: Account[]) => {
     return list.map((account) => {
       const row: DataRow = {
-        id: account.id,
+        id: account._id,
         name: account.name,
         createdAt: account.createdAt,
       };
@@ -97,21 +97,20 @@ export const AccountsPage = () => {
     switch (item.column) {
       case 'name':
         return (
-          <td key={item.column}>
+          <td>
             <span onClick={() => openAccount(row.id?.toString())} className="direct-link">
               {row.name}
             </span>
           </td>
         );
       case 'createdAt':
-        return <td key={item.column}>{toRelativeDate(row.createdAt)}</td>;
+        return <td>{toRelativeDate(row.createdAt)}</td>;
       default:
-        return <td key={item.column}>{item.column !== null && row[item.column]?.toString()}</td>;
+        return <td>{item.column !== null && row[item.column]?.toString()}</td>;
     }
   };
 
   const getListItem = (row: DataRow, item: ListViewItem) => {
-    console.log(row);
     switch (item.column) {
       case 'name':
         return (
@@ -130,7 +129,7 @@ export const AccountsPage = () => {
       default:
         return item.column !== null && row[item.column] ? (
           <div key={item.column}>
-            <b>{item.name}:</b> {row[item.column]?.toString()}
+            <b>{item.name}:</b> {row[item.column]}
           </div>
         ) : null;
     }

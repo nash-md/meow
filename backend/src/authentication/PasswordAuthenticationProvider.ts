@@ -8,11 +8,11 @@ export interface PasswordUserAuthentication {
 
 export class PasswordAuthenticationProvider {
   authenticate = async (user: User, plain: string): Promise<boolean> => {
-    if (!user.password) {
+    if (!user.authentication?.local) {
       throw new UserInvalidError();
     }
 
-    return await compare(plain, user.password);
+    return await compare(plain, user.authentication.local.password);
   };
 
   create = async (password: string): Promise<string> => {

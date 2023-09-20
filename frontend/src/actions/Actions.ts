@@ -3,7 +3,7 @@ import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
-import { ListViewItem, ListViewSortDirection } from '../interfaces/ListView';
+import { ListView, ListViewItem, ListViewSortDirection } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
@@ -12,6 +12,7 @@ import { ApplicationStore, ListName } from '../store/ApplicationStore';
 
 export enum ActionType {
   PAGE_LOAD = 'PAGE_LOAD',
+  PAGE_LOAD_VALIDATE_TOKEN = 'PAGE_LOAD_VALIDATE_TOKEN',
   LOGIN = 'LOGIN',
   LOGOUT = 'LOGOUT',
   USERS = 'USERS',
@@ -43,6 +44,9 @@ export interface Action<T extends ActionType> {
   type: T;
 }
 
+export interface ApplicationPageLoadValidateTokenAction
+  extends Action<ActionType.PAGE_LOAD_VALIDATE_TOKEN> {}
+
 export interface ApplicationPageLoadAction extends Action<ActionType.PAGE_LOAD> {
   payload: { modal?: 'error'; text?: string; token?: string };
 }
@@ -52,7 +56,7 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
     token: string;
     user: User;
     team: {
-      id: string;
+      _id: string;
       currency: CurrencyCode;
       integrations: Integration[];
     };
@@ -92,11 +96,15 @@ export interface ApplicationCardUpdateOnServerAction
 }
 
 export interface ApplicationCardLaneAction extends Action<ActionType.CARD_MOVE> {
-  payload: { card: Card; from: Lane['id']; to: Lane['id']; index: number };
+  payload: { card: Card; from: Lane['_id']; to: Lane['_id']; index: number };
 }
 
 export interface ApplicationCardDeleteAction extends Action<ActionType.CARD_DELETE> {
   payload: Card;
+}
+
+export interface ApplicationCardListAction extends Action<ActionType.CARDS> {
+  payload: Card[];
 }
 
 export interface ApplicationAccountAddAction extends Action<ActionType.ACCOUNT_ADD> {
@@ -135,7 +143,7 @@ export interface ApplicationUserInterfaceStateAction
   extends Action<ActionType.USER_INTERFACE_STATE> {
   payload: {
     state: ApplicationStore['ui']['state'];
-    id: undefined | Card['id'] | Account['id'] | Lane['id'];
+    _id: undefined | Card['_id'] | Account['_id'] | Lane['_id'];
   };
 }
 
@@ -179,6 +187,7 @@ export interface ApplicationListViewColumnAction extends Action<ActionType.LIST_
 
 export type ApplicationAction =
   | ApplicationPageLoadAction
+  | ApplicationPageLoadValidateTokenAction
   | ApplicationLoginAction
   | ApplicationLogoutAction
   | ApplicationUsersAction
@@ -186,6 +195,7 @@ export type ApplicationAction =
   | ApplicationUserUpdateAction
   | ApplicationCardsAction
   | ApplicationCardAddAction
+  | ApplicationCardListAction
   | ApplicationCardUpdateAction
   | ApplicationCardUpdateOnServerAction
   | ApplicationCardLaneAction
@@ -231,6 +241,12 @@ export function pageLoad(token?: string) {
     type: ActionType.PAGE_LOAD,
     payload: { token },
   } as ApplicationPageLoadAction;
+}
+
+export function pageLoadValidateToken() {
+  return {
+    type: ActionType.PAGE_LOAD_VALIDATE_TOKEN,
+  } as ApplicationPageLoadValidateTokenAction;
 }
 
 export function login(token: string, user: User, team: Team, board: Board) {
@@ -292,28 +308,28 @@ export function setListViewColumn(name: ListName, columns: ListViewItem[]) {
 export const showAccountLayer = (id?: string): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
-    payload: { state: 'account-detail', id: id },
+    payload: { state: 'account-detail', _id: id },
   };
 };
 
 export const showCardLayer = (id?: string): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
-    payload: { state: 'card-detail', id: id },
+    payload: { state: 'card-detail', _id: id },
   };
 };
 
 export const showLaneLayer = (id?: string): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
-    payload: { state: 'lane-detail', id: id },
+    payload: { state: 'lane-detail', _id: id },
   };
 };
 
 export const hideLayer = (): ApplicationUserInterfaceStateAction => {
   return {
     type: ActionType.USER_INTERFACE_STATE,
-    payload: { state: 'default', id: undefined },
+    payload: { state: 'default', _id: undefined },
   };
 };
 
@@ -328,6 +344,13 @@ export const updateCard = (card: Card): ApplicationCardUpdateAction => {
   return {
     type: ActionType.CARD_UPDATE,
     payload: card,
+  };
+};
+
+export const updateCards = (cards: Card[]): ApplicationCardListAction => {
+  return {
+    type: ActionType.CARDS,
+    payload: cards,
   };
 };
 

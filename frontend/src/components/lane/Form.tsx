@@ -8,7 +8,7 @@ import { ApplicationStore } from '../../store/ApplicationStore';
 import { selectLane, store } from '../../store/Store';
 
 export interface FormProps {
-  id: Lane['id'] | undefined;
+  id: Lane['_id'] | undefined;
 }
 
 export const Form = ({ id }: FormProps) => {
@@ -48,10 +48,7 @@ export const Form = ({ id }: FormProps) => {
         />
 
         <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-          <Checkbox
-            isSelected={!inForecast}
-            onChange={(value) => setInForecast(!value)}
-          >
+          <Checkbox isSelected={!inForecast} onChange={(value) => setInForecast(!value)}>
             Exclude from Forecast
           </Checkbox>
         </div>

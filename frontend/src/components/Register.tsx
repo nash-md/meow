@@ -22,7 +22,7 @@ export const Register = () => {
     setIsValid(UserHelper.isValidNameAndPassword(name, password));
   }, [name, password]);
 
-  const authenticate = async () => {
+  const register = async () => {
     try {
       setIsLoading(true);
 
@@ -71,11 +71,11 @@ export const Register = () => {
           <PasswordStrength password={password} />
         </div>
         <div style={{ marginTop: '25px' }}>
-          <Button onPress={authenticate} isDisabled={isLoading || !isValid} variant="cta">
+          <Button onPress={register} isDisabled={isLoading || !isValid} variant="cta">
             Register
           </Button>
         </div>
-        <div className="spinner-canvas">{!isLoading ? <div className="spinner"></div> : null}</div>
+        <div className="spinner-canvas">{isLoading ? <div className="spinner"></div> : null}</div>
       </div>
 
       {error}

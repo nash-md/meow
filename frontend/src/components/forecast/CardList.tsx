@@ -132,7 +132,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
   const toDataRows = (list: any[]) => {
     return list.map((card) => {
-      const user = users.find((user) => user.id === card.userId);
+      const user = users.find((user) => user._id === card.userId);
 
       const row: DataRow = {
         id: card.id,

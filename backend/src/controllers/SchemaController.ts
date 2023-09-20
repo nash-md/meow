@@ -1,9 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { Schema, SchemaType } from '../entities/Schema.js';
+import { NewSchema, Schema, SchemaType } from '../entities/Schema.js';
 import { InvalidSchemaPropertyError } from '../errors/InvalidSchemaPropertyError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
 import { InvalidRequestQueryParameterError } from '../errors/InvalidRequestQueryParameterError.js';
 
 function parseSchemaType(value: unknown): SchemaType {
@@ -39,8 +38,6 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     } else {
       return res.json(schemas);
     }
-
-    return res.json(schemas);
   } catch (error) {
     return next(error);
   }
@@ -49,20 +46,19 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
 const create = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const query = {
-      where: {
-        type: { $eq: req.body.type },
-        teamId: { $eq: req.jwt.team.id!.toString() },
-      },
+      type: { $eq: req.body.type.toString() },
+      teamId: { $eq: req.jwt.team._id },
     };
 
-    const schema = await datasource.getMongoRepository(Schema).findOneBy(query);
+    const schema = await EntityHelper.findOneBy(Schema, query);
 
     if (schema) {
-      await datasource.manager.delete(Schema, schema.id);
+      await EntityHelper.remove(Schema, schema);
     }
 
-    const updated = await datasource.manager.save(
-      new Schema(req.jwt.team.id?.toString()!, parseSchemaType(req.body.type), req.body.schema)
+    const updated = await EntityHelper.create(
+      new NewSchema(req.jwt.team, parseSchemaType(req.body.type), req.body.schema),
+      Schema
     );
 
     return res.status(201).json(updated);

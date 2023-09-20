@@ -1,195 +1,228 @@
-import { EntityTarget, ObjectLiteral } from 'typeorm';
+import 'reflect-metadata';
 import { User, UserAuthentication, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { Card, CardStatus } from '../entities/Card.js';
 import { Team } from '../entities/Team.js';
 import { Schema, SchemaType } from '../entities/Schema.js';
-import { Event, EventType } from '../entities/Event.js';
+import { EventType } from '../entities/EventType.js';
 import { Lane } from '../entities/Lane.js';
-import { DatabaseHelper, datasource } from './DatabaseHelper.js';
-import { ObjectId } from 'mongodb';
+import { DatabaseHelper } from './DatabaseHelper.js';
+import { Filter, ObjectId, Sort } from 'mongodb';
 import { DateTime } from 'luxon';
-import { Flag } from '../entities/Flag.js';
-import { Flow } from '../entities/flows/Flow.js';
 import { ForecastEvent } from '../entities/ForecastEvent.js';
+import { getEntityMetadata } from './EntityDecorator.js';
+import { CreateEntityError } from '../errors/CreateEntityError.js';
+import { ExistingEntity, NewEntity } from '../entities/BaseEntity.js';
+import { CardEvent } from '../entities/CardEvent.js';
+import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterError.js';
+
+type EntityConstructor<T> = new (...args: any[]) => T;
+
+function getCollectionForEntity<T>(constructor: EntityConstructor<T> | Function) {
+  const metadata = getEntityMetadata(constructor);
+  return DatabaseHelper.getCollection(metadata.name);
+}
 
 function isValidEntityId(id: string): boolean {
   // A valid ObjectId is a 24-character hex string
   const regex = /^[0-9a-fA-F]{24}$/;
 
-  return regex.test(id);
+  return regex.test(id) && ObjectId.isValid(id);
 }
 
-async function findOneById<Entity extends ObjectLiteral>(
-  owner: User | Team,
-  target: EntityTarget<Entity>,
-  id: string
-): Promise<Entity> {
+function convertStringToObjectId(id: string): ObjectId {
+  if (typeof id !== 'string') {
+    throw new InvalidRequestParameterError('_id is not type string');
+  }
+
   if (!isValidEntityId(id)) {
-    throw new EntityNotFoundError();
+    throw new InvalidRequestParameterError('_id is not a valid ObjectId');
   }
 
-  const entity = await datasource.manager.findOneById(target, new ObjectId(id));
-
-  if (!entity) {
-    throw new EntityNotFoundError();
-  }
-
-  const ownerId = owner instanceof User ? owner.teamId : owner.id?.toString();
-
-  if (entity instanceof Team && entity.id?.toString() === ownerId) {
-    return entity;
-  }
-
-  if (entity.teamId?.toString() === ownerId?.toString()) {
-    return entity;
-  }
-
-  throw new EntityNotFoundError();
+  return new ObjectId(id);
 }
 
-async function findOneByIdOrNull<Entity extends ObjectLiteral>(
-  owner: User | Team,
-  target: EntityTarget<Entity>,
-  id: string
-) {
-  try {
-    const entity = await findOneById(owner, target, id);
+function isEntityOwnedBy(entity: ExistingEntity, owner: User | Team): boolean {
+  if (
+    entity instanceof Team &&
+    owner instanceof User &&
+    entity._id!.toString() === owner.teamId.toString()
+  ) {
+    return true;
+  }
+
+  if (owner instanceof User && entity.teamId.toString() === owner.teamId.toString()) {
+    return true;
+  }
+
+  return false;
+}
+
+async function findOneByIdOrFail<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
+  id: ObjectId | string
+): Promise<T> {
+  const collection = getCollectionForEntity(entityClass);
+
+  if (typeof id === 'string') {
+    id = convertStringToObjectId(id);
+  }
+
+  const document = await collection.findOne({ _id: id });
+
+  if (!document) {
+    throw new EntityNotFoundError();
+  }
+
+  return Object.assign(new entityClass(), document);
+}
+
+async function findOneById<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
+  id: ObjectId | string
+): Promise<T | null> {
+  const collection = getCollectionForEntity(entityClass);
+
+  if (typeof id === 'string') {
+    id = convertStringToObjectId(id);
+  }
+
+  const document = await collection.findOne({ _id: id });
+
+  if (!document) {
+    return null;
+  }
+
+  return Object.assign(new entityClass(), document);
+}
+
+async function findOneBy<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
+  query: Filter<T>
+): Promise<T | null> {
+  const collection = getCollectionForEntity(entityClass);
+
+  const document = await collection.findOne(query);
+
+  if (document) {
+    const entity = Object.assign(new entityClass(), document);
 
     return entity;
-  } catch (error) {
+  } else {
     return null;
   }
 }
 
-async function findByTeam<Entity extends ObjectLiteral>(target: EntityTarget<Entity>, team: Team) {
+async function findBy<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
+  query: Filter<T>,
+  sort?: Sort
+): Promise<T[]> {
+  const collection = getCollectionForEntity(entityClass);
+
+  let cursor;
+
+  if (sort) {
+    cursor = await collection.find(query).sort(sort);
+  } else {
+    cursor = await collection.find(query);
+  }
+
+  const documents = await cursor.toArray();
+
+  if (documents && documents.length > 0) {
+    const entitys = documents.map((doc) => Object.assign(new entityClass(), doc));
+    return entitys;
+  } else {
+    return [];
+  }
+}
+
+async function findByTeam<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
+  team: Team
+): Promise<T[]> {
   const query: any = {
-    where: {
-      teamId: { $eq: team.id!.toString() },
-    },
-    order: {
-      name: 'ASC',
-    },
+    teamId: team._id,
   };
 
-  const list = await datasource.manager.getMongoRepository(target).find(query);
+  const sort: any = {
+    name: 1,
+  };
+
+  const list = await findBy(entityClass, query, sort);
 
   return list;
 }
 
-async function findOneByTeam<Entity extends ObjectLiteral>(
-  target: EntityTarget<Entity>,
+async function findOneByTeam<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
   team: Team
 ) {
   const query: any = {
-    teamId: { $eq: team.id!.toString() },
+    teamId: { $eq: team._id! },
   };
 
-  const list = await datasource.manager.getMongoRepository(target).findOne(query);
+  const list = findOneBy(entityClass, query);
 
   return list;
 }
 
-async function findTeamById(id: string) {
-  const entity = await datasource.manager.findOneById(Team, new ObjectId(id));
-
-  return entity;
-}
-
-async function findSchemaByType(teamId: string, type: SchemaType) {
+async function findSchemaByType(teamId: ObjectId, type: SchemaType) {
   const query = {
-    teamId: { $eq: teamId!.toString() },
+    teamId: { $eq: teamId },
     type: { $eq: type },
   };
 
-  const list = await datasource.getMongoRepository(Schema).findOneBy(query);
+  const schema = await findOneBy(Schema, query);
 
-  return list;
+  return schema;
 }
 
 async function findCardsByTeam(team: Team) {
   const query = {
-    where: {
-      teamId: { $eq: team.id!.toString() },
-      $or: [{ status: { $exists: false } }, { status: { $ne: CardStatus.Deleted } }],
-    },
+    teamId: { $eq: team._id! },
+    $or: [{ status: { $exists: false } }, { status: { $ne: CardStatus.Deleted } }],
   };
 
-  const list = await datasource.manager.getMongoRepository(Card).find(query);
+  const list = await findBy(Card, query);
 
   return list;
 }
 
 async function findUserByInvite(invite: string) {
   const query = {
-    where: {
-      invite: { $eq: invite },
-      status: { $eq: UserStatus.Invited },
-    },
+    invite: { $eq: invite },
+    status: { $eq: UserStatus.Invited },
   };
 
-  const user = await datasource.manager.getMongoRepository(User).findOne(query);
-
+  const user = await findOneBy(User, query);
   return user;
 }
 
-async function findCardByName(teamId: string, name: string) {
+async function findCardByName(teamId: ObjectId, name: string) {
   const query = {
     name: new RegExp(name, 'i'),
     teamId: { $eq: teamId },
   };
 
-  let user = await datasource.manager.getMongoRepository(Card).findOneBy(query);
+  let user = await findOneBy(Card, query);
 
   return user;
 }
 
-async function findFlagByName(teamId: string, name: string) {
-  const query = {
-    name: { $eq: name },
-    teamId: { $eq: teamId },
-  };
-
-  let flag = await datasource.manager.getMongoRepository(Flag).findOneBy(query);
-
-  return flag;
-}
-
-async function findOrCreateFlagByName(teamId: string, name: string) {
-  const query = {
-    name: { $eq: name },
-    teamId: { $eq: teamId },
-  };
-
-  let flag = await datasource.manager.getMongoRepository(Flag).findOneBy(query);
-
-  return flag ? flag : new Flag(teamId, name);
-}
-
-async function findUserByName(teamId: string, name: string) {
+async function findUserByName(teamId: ObjectId, name: string) {
   const query = {
     name: new RegExp(name, 'i'),
     teamId: { $eq: teamId },
   };
 
-  let user = await datasource.manager.getMongoRepository(User).findOneBy(query);
+  let user = await findOneBy(User, query);
 
   return user;
 }
 
-async function findFlowByEvent(teamId: string, type: EventType, value: string) {
-  const query = {
-    teamId: { $eq: teamId },
-    trigger: { $eq: type },
-    value: { $eq: value },
-  };
-
-  let flow = await datasource.getMongoRepository(Flow).findOneBy(query);
-
-  return flow;
-}
-
-async function findEventsByUserId(teamId: string, userId: string, start: Date, end: Date) {
+async function findEventsByUserId(teamId: ObjectId, userId: ObjectId, start: Date, end: Date) {
   const query = {
     userId: { $eq: userId },
     teamId: { $eq: teamId },
@@ -199,7 +232,7 @@ async function findEventsByUserId(teamId: string, userId: string, start: Date, e
     },
   };
 
-  let events = await datasource.getMongoRepository(Event).find(query);
+  let events = await findBy(CardEvent, query);
 
   return events;
 }
@@ -209,12 +242,17 @@ async function findUserByAuthentication(authentication: UserAuthentication) {
     authentication: authentication,
   };
 
-  let user = await datasource.getMongoRepository(User).findOneBy(query);
+  let user = findOneBy(User, query);
 
   return user;
 }
 
-async function findForecastEventByDay(teamId: string, laneId: string, date: Date, userId?: string) {
+async function findForecastEventByDay(
+  teamId: ObjectId,
+  laneId: ObjectId,
+  date: Date,
+  userId?: ObjectId
+) {
   const d = DateTime.fromJSDate(date).toUTC();
   const startOfDay = d.startOf('day').toJSDate();
   const endOfDay = d.endOf('day').toJSDate();
@@ -230,14 +268,13 @@ async function findForecastEventByDay(teamId: string, laneId: string, date: Date
     },
   };
 
-  let event = await datasource.getMongoRepository(ForecastEvent).findOneBy(query);
+  let event = await findOneBy(ForecastEvent, query);
 
   return event;
 }
 
-async function getTotalAmountByLaneId(teamId: string, laneId: string, userId?: string) {
-  const direct = DatabaseHelper.get();
-  const collection = direct.collection('Cards');
+async function getTotalAmountByLaneId(teamId: ObjectId, laneId: ObjectId, userId?: ObjectId) {
+  const collection = DatabaseHelper.getCollection('Cards');
 
   const pipeline = [
     {
@@ -256,48 +293,87 @@ async function getTotalAmountByLaneId(teamId: string, laneId: string, userId?: s
     },
   ];
 
-  const cursor = await collection.aggregate(pipeline);
+  const cursor = collection.aggregate(pipeline);
 
   const result = await cursor.toArray();
 
   return result && result[0] ? result[0].total : 0;
 }
 
-async function getLanes(teamId: string) {
+async function getLanes(teamId: ObjectId) {
   const query = {
     teamId: { $eq: teamId },
   };
 
-  let lanes = await datasource.getMongoRepository(Lane).find(query);
+  let lanes = await findBy(Lane, query);
 
   return lanes;
 }
 
-async function persist<Entity extends ObjectLiteral>(target: EntityTarget<Entity>, entity: Entity) {
-  const updated = await datasource.manager.getMongoRepository(target).save(entity);
+async function update<T extends ExistingEntity>(entity: T) {
+  const collection = getCollectionForEntity(entity.constructor);
 
-  return updated;
+  entity.updatedAt = new Date();
+
+  await collection.updateOne({ _id: entity._id }, { $set: entity }, { upsert: true });
+
+  return entity;
+}
+
+async function create<T extends NewEntity>(entity: T): Promise<void>;
+async function create<T extends NewEntity, U extends ExistingEntity>(
+  newEntity: T,
+  entity: EntityConstructor<U>
+): Promise<U>;
+
+async function create<T extends NewEntity, U extends ExistingEntity>(
+  newEntity: T,
+  entity?: EntityConstructor<U>
+): Promise<void | U> {
+  const collection = getCollectionForEntity(newEntity.constructor);
+
+  const document = await collection.insertOne(newEntity);
+
+  if (!document || !document.insertedId) {
+    throw new CreateEntityError();
+  }
+
+  if (entity) {
+    return Object.assign(new entity(), { ...newEntity, _id: document.insertedId });
+  }
+}
+
+async function remove<T extends ExistingEntity>(
+  entityClass: EntityConstructor<T>,
+  entity: T
+): Promise<boolean> {
+  const collection = getCollectionForEntity(entityClass);
+
+  const result = await collection.deleteOne({ _id: entity._id });
+
+  return result.deletedCount === 1;
 }
 
 export const EntityHelper = {
-  findTeamById,
   findOneById,
+  findOneByIdOrFail,
+  isEntityOwnedBy,
+  findOneBy,
+  findBy,
   findByTeam,
   findOneByTeam,
   findCardsByTeam,
-  findOneByIdOrNull,
   findSchemaByType,
   findUserByInvite,
   isValidEntityId,
   findCardByName,
   findUserByName,
-  findFlowByEvent,
   findEventsByUserId,
   findForecastEventByDay,
   getTotalAmountByLaneId,
   getLanes,
-  findFlagByName,
-  findOrCreateFlagByName,
   findUserByAuthentication,
-  persist,
+  create,
+  update,
+  remove,
 };

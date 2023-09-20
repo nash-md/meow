@@ -1,14 +1,14 @@
 import { Response, NextFunction } from 'express';
 import { PasswordAuthenticationProvider } from '../authentication/PasswordAuthenticationProvider.js';
-import { User, UserStatus } from '../entities/User.js';
+import { NewUser, User, UserAuthentication, UserStatus } from '../entities/User.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
-import { InvalidUrlError } from '../errors/InvalidUrlError.js';
 import { InvalidUserPropertyError } from '../errors/InvalidUserPropertyError.js';
 import { UserInvalidError } from '../errors/UserInvalidError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
-import { isValidName } from './RegisterControllerValidator.js';
+import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { validateAndFetchUser } from '../helpers/EntityFetchHelper.js';
 
 function parseUserStatus(value: unknown): UserStatus {
   switch (value) {
@@ -34,12 +34,7 @@ function generateInviteCode(length: number): string {
   }
   return code;
 }
-
-const list = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const users = await EntityHelper.findByTeam(User, req.jwt.team);
 
@@ -49,44 +44,32 @@ const list = async (
   }
 };
 
-const update = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (!req.params.id) {
-      throw new InvalidUrlError();
-    }
-
-    const user = await EntityHelper.findOneById(
-      req.jwt.user,
-      User,
-      req.params.id
-    );
+    const user = await validateAndFetchUser(req.params.id, req.jwt.user);
 
     if (req.body.animal) {
-      user.animal = req.body.animal;
+      user.animal = req.body.animal.toString();
     }
 
     if (req.body.color) {
-      user.color = req.body.color;
+      user.color = req.body.color.toString();
     }
 
     if (req.body.status) {
-      if (user.id === req.jwt.user.id) {
+      if (user._id === req.jwt.user._id) {
         throw new InvalidRequestBodyError();
       }
 
       user.status = parseUserStatus(req.body.status);
 
       if (user.status === UserStatus.Deleted) {
-        user.password = null;
+        user.authentication = null;
         user.invite = null;
       }
     }
 
-    const updated = await datasource.manager.save(user);
+    const updated = await EntityHelper.update(user);
 
     return res.json(updated);
   } catch (error) {
@@ -94,25 +77,13 @@ const update = async (
   }
 };
 
-const board = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const board = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (!req.params.id) {
-      throw new InvalidUrlError();
-    }
-
-    const user = await EntityHelper.findOneById(
-      req.jwt.user,
-      User,
-      req.params.id
-    );
+    const user = await validateAndFetchUser(req.params.id, req.jwt.user);
 
     user.board = req.body;
 
-    await datasource.manager.save(user);
+    await EntityHelper.update(user);
 
     return res.json({ done: true });
   } catch (error) {
@@ -120,65 +91,65 @@ const board = async (
   }
 };
 
-const create = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const create = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     await isValidName(req.body.name);
 
-    const user = new User(
-      req.jwt.team.id!.toString(),
-      req.body.name,
-      UserStatus.Invited
-    );
+    const user = new NewUser(req.jwt.team, req.body.name, UserStatus.Invited);
 
     user.invite = generateInviteCode(8);
 
-    const updated = await datasource.manager.save(user);
+    const updated = await EntityHelper.create(user, User);
 
-    return res.json(updated);
+    res.status(201).json(updated);
   } catch (error) {
     return next(error);
   }
 };
 
-const password = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const flags = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const user = await validateAndFetchUser(req.params.id, req.jwt.user);
+
+  /* for now you can only request flags for your own users */
+  if (req.jwt.user._id.toString() !== user._id.toString()) {
+    throw new EntityNotFoundError();
+  }
+
+  return res.json(user.flags);
+};
+
+const password = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (!req.params.id) {
-      throw new InvalidUrlError();
-    }
+    const user = await validateAndFetchUser(req.params.id, req.jwt.user);
 
-    const user = await EntityHelper.findOneById(
-      req.jwt.user,
-      User,
-      req.params.id
-    );
-
-    if (user.id?.toString() !== req.jwt.user.id?.toString()) {
-      throw new UserInvalidError();
-    }
-
-    const isValidPassword =
-      await new PasswordAuthenticationProvider().authenticate(
-        user,
-        req.body.existing
-      );
-
-    if (!isValidPassword) {
+    if (!user.authentication?.local) {
       return res.status(401).end();
     }
 
-    user.password = await new PasswordAuthenticationProvider().create(
-      req.body.updated
+    if (user._id.toString() !== req.jwt.user._id.toString()) {
+      throw new UserInvalidError();
+    }
+
+    const isValidExistingPassword = await new PasswordAuthenticationProvider().authenticate(
+      user,
+      req.body.existing
     );
 
-    const updated = await datasource.manager.save(user);
+    if (!isValidExistingPassword) {
+      return res.status(401).end();
+    }
+
+    await isValidPassword(req.body.updated);
+
+    const authentication: UserAuthentication = {
+      local: {
+        password: await new PasswordAuthenticationProvider().create(req.body.updated),
+      },
+    };
+
+    user.authentication = authentication;
+
+    const updated = await EntityHelper.update(user);
 
     return res.json(updated);
   } catch (error) {
@@ -189,6 +160,7 @@ const password = async (
 export const UserController = {
   list,
   create,
+  flags,
   update,
   board,
   password,

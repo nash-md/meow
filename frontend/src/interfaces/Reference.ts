@@ -1,5 +1,5 @@
 export interface Reference {
-  id: string;
+  _id: string;
   entity: string | null;
   key: string;
 }

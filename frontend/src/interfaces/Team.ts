@@ -1,9 +1,9 @@
 import { id } from './Card';
 
 export interface Team {
-  readonly id: id;
+  readonly _id: id;
   currency: CurrencyCode;
-  integrations?: Integration[];
+  integrations: Integration[];
 }
 
 export interface Integration {

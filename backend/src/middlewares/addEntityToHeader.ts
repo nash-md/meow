@@ -2,12 +2,10 @@ import { Response, NextFunction } from 'express';
 import { Team } from '../entities/Team.js';
 import { User } from '../entities/User.js';
 import { InvalidHeaderError } from '../errors/InvalidHeaderError.js';
-import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
-import { UserNotFoundError } from '../errors/UserNotFoundError.js';
 
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
-import { ObjectId } from 'mongodb';
+import { EntityHelper } from '../helpers/EntityHelper.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 
 export const addEntityToHeader = async (
   request: AuthenticatedRequest,
@@ -17,30 +15,19 @@ export const addEntityToHeader = async (
   try {
     const { teamId, userId } = request.headers;
 
-    if (typeof teamId !== 'string') {
+    if (typeof teamId !== 'string' || typeof userId !== 'string') {
       return next(new InvalidHeaderError());
     }
 
-    const team = await datasource.manager.findOneById(
-      Team,
-      new ObjectId(teamId)
-    );
+    const team = await EntityHelper.findOneById(Team, teamId);
+    const user = await EntityHelper.findOneById(User, userId);
 
     if (!team) {
-      return next(new TeamNotFoundError());
+      return next(new EntityNotFoundError()); // TODO add constructor
     }
-
-    if (typeof userId !== 'string') {
-      return next(new InvalidHeaderError());
-    }
-
-    const user = await datasource.manager.findOneById(
-      User,
-      new ObjectId(userId)
-    );
 
     if (!user) {
-      return next(new UserNotFoundError());
+      return next(new EntityNotFoundError());
     }
 
     request.jwt = {

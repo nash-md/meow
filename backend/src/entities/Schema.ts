@@ -1,39 +1,47 @@
-import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
+import { Entity } from '../helpers/EntityDecorator.js';
+import { ExistingEntity, NewEntity } from './BaseEntity.js';
+import { ObjectId } from 'mongodb';
+import { Team } from './Team.js';
 
 @Entity({ name: 'Schemas' })
-export class Schema {
-  @ObjectIdColumn()
-  id: ObjectId | undefined;
-
-  @Column()
-  teamId: string;
-
-  @Column()
+export class Schema implements ExistingEntity {
+  _id: ObjectId;
+  teamId: ObjectId;
   type: SchemaType;
-
-  @Column({ type: 'json' })
   attributes: SchemaAttribute[];
+  createdAt: Date;
+  updatedAt: Date;
 
-  @Column({ type: 'timestamp' })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp' })
-  updatedAt?: Date;
-
-  constructor(teamId: string, type: SchemaType, attributes: SchemaAttribute[]) {
+  constructor(
+    _id: ObjectId,
+    teamId: ObjectId,
+    type: SchemaType,
+    attributes: SchemaAttribute[],
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    this._id = _id;
     this.teamId = teamId;
     this.type = type;
     this.attributes = attributes;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
+}
 
-  @BeforeInsert()
-  insertCreated() {
-    this.updatedAt = new Date();
+@Entity({ name: 'Schemas' })
+export class NewSchema implements NewEntity {
+  teamId: ObjectId;
+  type: SchemaType;
+  attributes: SchemaAttribute[];
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(team: Team, type: SchemaType, attributes: SchemaAttribute[]) {
+    this.teamId = team._id;
+    this.type = type;
+    this.attributes = attributes;
     this.createdAt = new Date();
-  }
-
-  @BeforeUpdate()
-  insertUpdated() {
     this.updatedAt = new Date();
   }
 }

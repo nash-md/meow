@@ -4,14 +4,15 @@ import { CardEventPayload } from './EventStrategy.js';
 import { log } from '../worker.js';
 import { SchemaHelper } from '../helpers/SchemaHelper.js';
 import { EntityReferenceHelper } from '../helpers/EntityReferenceHelper.js';
+import { ObjectId } from 'mongodb';
 
 export const CardReferenceListener = {
   async onCardUpdateOrCreate({ user, card, updated }: CardEventPayload) {
-    log.debug(`execute onCardUpdateOrCreate for card ${card.id}`);
+    log.debug(`execute onCardUpdateOrCreate for card ${card._id}`);
 
     let { teamId } = user;
 
-    const cardId = card.id!.toString();
+    const cardId = new ObjectId(card._id);
 
     const schema = await EntityHelper.findSchemaByType(teamId, SchemaType.Card);
 

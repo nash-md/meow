@@ -5,7 +5,7 @@ import { ResponseParseError } from '../errors/ResponseParseError';
 import { TokenUndefinedError } from '../errors/TokenUndefinedError';
 import { Account, AccountPreview } from '../interfaces/Account';
 import { Card, CardPreview } from '../interfaces/Card';
-import { EventType } from '../interfaces/Event';
+import { EventType } from '../interfaces/EventType';
 import { Lane, LaneRequest } from '../interfaces/Lane';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
@@ -145,14 +145,14 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async getCard(id: Card['id']): Promise<Card> {
+  async getCard(id: Card['_id']): Promise<Card> {
     const url = this.getUrl(`/api/cards/${id}`);
 
     return this.doFetch(url, 'GET');
   }
 
   async updateCard(card: Card) {
-    let url = this.getUrl(`/api/cards/${card.id}`);
+    let url = this.getUrl(`/api/cards/${card._id}`);
 
     return this.doFetch(url, 'POST', {
       laneId: card.laneId,
@@ -193,20 +193,34 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', card);
   }
 
-  async createEvent(id: string, entity: 'card' | 'account', text: string) {
-    const url = this.getUrl(`/api/events/${id}`);
+  async getAccountEvents(id: string) {
+    const url = this.getUrl(`/api/accounts/${id}/events`);
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async createAccountEvent(id: string, text: string) {
+    const url = this.getUrl(`/api/accounts/${id}/events`);
 
     return this.doFetch(url, 'POST', {
       type: EventType.CommentCreated,
       text: text,
-      entity: entity,
     });
   }
 
-  async getEvents(id: string) {
-    const url = this.getUrl(`/api/events/${id}`);
+  async getCardEvents(id: string) {
+    const url = this.getUrl(`/api/cards/${id}/events`);
 
     return this.doFetch(url, 'GET');
+  }
+
+  async createCardEvent(id: string, text: string) {
+    const url = this.getUrl(`/api/cards/${id}/events`);
+
+    return this.doFetch(url, 'POST', {
+      type: EventType.CommentCreated,
+      text: text,
+    });
   }
 
   async getLanes() {
@@ -231,16 +245,8 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async addSlackWithAuthenticationCode(code: string) {
-    let url = this.getUrl(`/api/slack/complete-setup`);
-
-    return this.doFetch(url, 'POST', {
-      code: code,
-    });
-  }
-
   async updateLane(lane: Lane) {
-    let url = this.getUrl(`/api/lanes/${lane.id}`);
+    let url = this.getUrl(`/api/lanes/${lane._id}`);
 
     return this.doFetch(url, 'POST', {
       name: lane.name,
@@ -255,19 +261,19 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', lanes);
   }
 
-  async updateTeam(id: Team['id'], currency: CurrencyCode) {
+  async updateTeam(id: Team['_id'], currency: CurrencyCode) {
     let url = this.getUrl(`/api/teams/${id}`);
 
     return this.doFetch(url, 'POST', { currency: currency });
   }
 
-  async updateIntegration(id: Team['id'], integration: Integration) {
+  async updateIntegration(id: Team['_id'], integration: Integration) {
     let url = this.getUrl(`/api/teams/${id}/integrations`);
 
     return this.doFetch(url, 'POST', integration);
   }
 
-  async getTeam(id: Team['id']): Promise<Team> {
+  async getTeam(id: Team['_id']): Promise<Team> {
     let url = this.getUrl(`/api/teams/${id}`);
 
     return this.doFetch(url, 'GET');
@@ -286,7 +292,7 @@ export class RequestHelper {
   }
 
   async updateUser(user: User) {
-    let url = this.getUrl(`/api/users/${user.id}`);
+    let url = this.getUrl(`/api/users/${user._id}`);
 
     return this.doFetch(url, 'POST', {
       animal: user.animal,
@@ -314,8 +320,8 @@ export class RequestHelper {
     return this.doFetch(url, 'POST', account);
   }
 
-  async updateAccount({ id, name, attributes }: Account): Promise<Account> {
-    let url = this.getUrl(`/api/accounts/${id}`);
+  async updateAccount({ _id, name, attributes }: Account): Promise<Account> {
+    let url = this.getUrl(`/api/accounts/${_id}`);
 
     return this.doFetch(url, 'POST', {
       name,
@@ -329,13 +335,13 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async getAccount(id: Account['id']): Promise<Account> {
+  async getAccount(id: Account['_id']): Promise<Account> {
     const url = this.getUrl(`/api/accounts/${id}`);
 
     return this.doFetch(url, 'GET');
   }
 
-  async getAccountReferences(id: Account['id'], name: string): Promise<Account> {
+  async getAccountReferences(id: Account['_id'], name: string): Promise<Account> {
     const url = this.getUrl(`/api/accounts/${id}/references/${name}`);
 
     return this.doFetch(url, 'GET');

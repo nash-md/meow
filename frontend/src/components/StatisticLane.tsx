@@ -30,7 +30,7 @@ const toDays = (hours: number | undefined) => {
 };
 
 const getTitle = (cards: Card[], lane: LaneInterface) => {
-  const count = cards.filter((card) => card.laneId === lane.id).length;
+  const count = cards.filter((card) => card.laneId === lane._id).length;
 
   return count === 1
     ? `${count} ${Translations.BoardTitle.en}`
@@ -42,9 +42,9 @@ const getStatisticsByLane = (statistics: BoardStatistics | undefined, lane: Lane
     return;
   }
 
-  const active = statistics.active.find((l) => l.id === lane.id);
-  const won = statistics.won.find((l) => l.id === lane.id);
-  const lost = statistics.lost.find((l) => l.id === lane.id);
+  const active = statistics.active.find((l) => l._id === lane._id);
+  const won = statistics.won.find((l) => l.id === lane._id);
+  const lost = statistics.lost.find((l) => l.id === lane._id);
 
   return { active, won, lost };
 };
@@ -70,7 +70,7 @@ export const StatisticLane = ({ lane, numberOfLanes, statistics }: StatisticLane
 
     setAmount(
       cards
-        .filter((card) => card.laneId === lane.id)
+        .filter((card) => card.laneId === lane._id)
         .reduce((acc, card) => {
           return card.amount ? acc + card.amount : acc;
         }, 0)
@@ -85,7 +85,7 @@ export const StatisticLane = ({ lane, numberOfLanes, statistics }: StatisticLane
     <div className="lane" style={{ width: `${100 / numberOfLanes}%` }}>
       <div
         className={`title ${getLaneColorClassName(lane.color)}`}
-        onClick={() => openLane(lane.id)}
+        onClick={() => openLane(lane._id)}
       >
         <div style={{ flexGrow: 1 }}>{lane.name}</div>
         {lane.inForecast === false && (

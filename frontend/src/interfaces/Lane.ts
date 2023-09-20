@@ -1,5 +1,5 @@
 export interface Lane {
-  id: string;
+  _id: string;
   name: string;
   index: number;
   inForecast: boolean;
@@ -8,7 +8,7 @@ export interface Lane {
 }
 
 export interface LaneRequest {
-  id: string | undefined;
+  _id: string | undefined;
   name: string;
   index: number;
   inForecast: boolean;
@@ -17,7 +17,7 @@ export interface LaneRequest {
 }
 
 export interface LaneStatistic {
-  id: string;
+  _id: string;
   timeInLaneAvg: number;
   timeSinceCreationAvg: number;
   cycleTimeAvg: number;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@adobe/react-spectrum';
+import { Button, Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -7,21 +7,31 @@ import {
   selectFilters,
   selectInterfaceState,
   selectLanes,
+  selectActiveUsers,
   store,
 } from '../store/Store';
-import { ActionType, showCardLayer, updateFilter } from '../actions/Actions';
+import {
+  ActionType,
+  showCardLayer,
+  showModalError,
+  updateCards,
+  updateFilter,
+} from '../actions/Actions';
 import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Trash } from '../components/Trash';
 import { Layer as LaneLayer } from '../components/lane/Layer';
-import { Lane } from '../interfaces/Lane';
 import { Currency } from '../components/Currency';
 import { Board } from '../components/Board';
 import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
 import { useNavigate } from 'react-router-dom';
 import { StatisticsBoard } from '../components/StatisticsBoard';
+import { FILTER_BY_NONE } from '../Constants';
+import { CardHelper } from '../helpers/CardHelper';
+import useMobileLayout from '../hooks/useMobileLayout';
+import { getErrorMessage } from '../helpers/ErrorHelper';
 
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
@@ -32,13 +42,16 @@ export const enum FilterMode {
 export const HomePage = () => {
   const cards = useSelector(selectCards);
   const lanes = useSelector(selectLanes);
+  const users = useSelector(selectActiveUsers);
   const state = useSelector(selectInterfaceState);
   const filters = useSelector(selectFilters);
 
   const [mode, setMode] = useState<'board' | 'statistics'>('board');
   const [text, setText] = useState<string>('');
+  const [userId, setUserId] = useState(FILTER_BY_NONE.key);
 
   const { client } = useContext(RequestHelperContext);
+  const isMobileLayout = useMobileLayout();
 
   const navigate = useNavigate();
 
@@ -50,21 +63,24 @@ export const HomePage = () => {
       updated.add(key);
     }
 
-    store.dispatch(updateFilter(updated, text));
+    store.dispatch(updateFilter(updated, userId, text));
   };
 
   useEffect(() => {
-    store.dispatch(updateFilter(new Set(filters.mode), text));
-  }, [text]);
+    store.dispatch(updateFilter(new Set(filters.mode), userId, text));
+  }, [text, userId]);
 
   useEffect(() => {
     const execute = async () => {
-      let cards = await client!.getCards();
+      try {
+        let cards = await client!.getCards();
 
-      store.dispatch({
-        type: ActionType.CARDS,
-        payload: [...cards],
-      });
+        store.dispatch(updateCards([...cards]));
+      } catch (error) {
+        console.error(error);
+
+        store.dispatch(showModalError(await getErrorMessage(error)));
+      }
     };
 
     if (client) {
@@ -87,18 +103,19 @@ export const HomePage = () => {
   };
 
   useEffect(() => {
-    setAmount(
-      cards.reduce((acc, card) => {
-        const lane = lanes.find((lane: Lane) => lane.id === card.laneId);
+    if (!lanes || !cards) {
+      setAmount(0);
+      return;
+    }
 
-        if (lane && lane.inForecast === true) {
-          return card.amount ? acc + card.amount : acc;
-        } else {
-          return acc;
-        }
+    const lanesWithForecast = lanes.filter((lane) => lane.inForecast === true);
+
+    setAmount(
+      CardHelper.filterAll(lanesWithForecast, cards, filters).reduce((acc, card) => {
+        return card.amount ? acc + card.amount : acc;
       }, 0)
     );
-  }, [cards]);
+  }, [cards, lanes, filters]);
 
   const onDragEnd = async (result: DropResult) => {
     const trash = document.getElementById('trash');
@@ -123,7 +140,7 @@ export const HomePage = () => {
       return;
     }
 
-    const card = cards.find((card) => card.id === result.draggableId);
+    const card = cards.find((card) => card._id === result.draggableId);
 
     if (card) {
       if (result.destination.droppableId === 'trash') {
@@ -206,6 +223,7 @@ export const HomePage = () => {
               <input
                 onChange={(event) => setText(event.target.value)}
                 placeholder="Search by name or stage"
+                aria-label="Name or Stage"
                 type="text"
               />
             </div>
@@ -221,14 +239,28 @@ export const HomePage = () => {
               >
                 Recently Updated
               </button>
-              <button
-                className={`filter ${
-                  filters.mode.has(FilterMode.OwnedByMe) ? 'owned-by-me-active' : 'owned-by-me'
-                }`}
-                onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
+              <Picker
+                UNSAFE_style={{ display: 'inline-block' }}
+                defaultSelectedKey={userId}
+                onSelectionChange={(key) => {
+                  setUserId(key.toString());
+                }}
               >
-                Only My Opportunities
-              </button>
+                {[{ _id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name }, ...users].map((user) => {
+                  return <Item key={user._id}>{user.name}</Item>;
+                })}
+              </Picker>
+              &nbsp;
+              {false && (
+                <button
+                  className={`filter ${
+                    filters.mode.has(FilterMode.OwnedByMe) ? 'owned-by-me-active' : 'owned-by-me'
+                  }`}
+                  onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
+                >
+                  Only My Opportunities
+                </button>
+              )}
               <button
                 className={`filter ${
                   filters.mode.has(FilterMode.RequireUpdate)
@@ -243,9 +275,11 @@ export const HomePage = () => {
           </div>
         </div>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-          <div className="trash-canvas">
-            <Trash />
-          </div>
+          {!isMobileLayout && (
+            <div className="trash-canvas">
+              <Trash />
+            </div>
+          )}
 
           <div className="lanes">
             {mode === 'board' && <Board lanes={lanes} />}

@@ -2,7 +2,6 @@ import jsonwebtoken from 'jsonwebtoken';
 const { sign, verify } = jsonwebtoken;
 
 import { User } from '../entities/User.js';
-import { UserInvalidError } from '../errors/UserInvalidError.js';
 import { log } from '../worker.js';
 
 export interface TokenPayload {
@@ -13,14 +12,10 @@ export interface TokenPayload {
 }
 
 const createJwt = (user: User, ttl: number): string => {
-  if (!user.id) {
-    throw new UserInvalidError('user.id is undefined');
-  }
-
   const payload: TokenPayload = {
     iat: Date.now() / 1000,
     exp: Math.floor(Date.now() / 1000) + ttl,
-    userId: user.id.toString(),
+    userId: user._id.toString(),
     teamId: user.teamId.toString(),
   };
 

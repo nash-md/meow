@@ -1,63 +1,76 @@
-import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
+import { ObjectId } from 'mongodb';
+import { Entity } from '../helpers/EntityDecorator.js';
+import { ExistingEntity, NewEntity } from './BaseEntity.js';
+import { Board } from './Board.js';
+import { Team } from './Team.js';
 
 @Entity({ name: 'Lanes' })
-export class Lane {
-  @ObjectIdColumn()
-  id: ObjectId | undefined;
-
-  @Column()
-  teamId: string;
-
-  @Column()
-  boardId: string;
-
-  @Column()
+export class Lane implements ExistingEntity {
+  _id: ObjectId;
+  teamId: ObjectId;
+  boardId: ObjectId;
   name: string;
-
-  @Column()
   index: number;
-
-  @Column()
   inForecast: boolean;
-
-  @Column()
   tags: Tags;
-
-  @Column()
   color?: string;
-
-  @Column({ type: 'timestamp' })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp' })
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 
   constructor(
-    teamId: string,
-    boardId: string,
+    _id: ObjectId,
+    teamId: ObjectId,
+    boardId: ObjectId,
     name: string,
     index: number,
     tags: Tags,
     inForecast: boolean,
+    createdAt: Date,
+    updatedAt: Date,
     color?: string
   ) {
+    this._id = _id;
     this.teamId = teamId;
     this.boardId = boardId;
     this.name = name;
     this.index = index;
     this.tags = tags;
     this.inForecast = inForecast;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
     this.color = color;
   }
+}
 
-  @BeforeInsert()
-  insertCreated() {
-    this.updatedAt = new Date();
+@Entity({ name: 'Lanes' })
+export class NewLane implements NewEntity {
+  teamId: ObjectId;
+  boardId: ObjectId;
+  name: string;
+  index: number;
+  inForecast: boolean;
+  tags: Tags;
+  color: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(
+    team: Team,
+    board: Board,
+    name: string,
+    index: number,
+    color: string = '',
+    inForecast: boolean = false,
+    tags: Tags = {}
+  ) {
+    this.teamId = team._id;
+    this.boardId = board._id;
+    this.name = name;
+    this.index = index;
+    this.color = color;
+    this.inForecast = inForecast;
+    this.tags = tags;
     this.createdAt = new Date();
-  }
-
-  @BeforeUpdate()
-  insertUpdated() {
     this.updatedAt = new Date();
   }
 }
@@ -73,7 +86,7 @@ export enum LaneType {
 }
 
 export interface LaneRequest {
-  id: string | undefined;
+  _id: string | undefined;
   name: string;
   index: number;
   inForecast: boolean;

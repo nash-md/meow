@@ -1,8 +1,8 @@
-import { Event } from '../../../interfaces/Event';
+import { CardEvent } from '../../../interfaces/CardEvent';
 import { Currency } from '../../Currency';
 
 interface AmountProps {
-  event: Event;
+  event: CardEvent;
 }
 
 export const Amount = ({ event }: AmountProps) => {

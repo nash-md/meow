@@ -26,7 +26,7 @@ const getBannerColorClassName = (color: string | undefined) => {
 
 export interface FormProps {
   id: string | undefined;
-  update: (id: Card['id'] | undefined, card: CardPreview) => void;
+  update: (id: Card['_id'] | undefined, card: CardPreview) => void;
 }
 
 // TODO rename component

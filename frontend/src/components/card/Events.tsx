@@ -4,7 +4,7 @@ import { Lane } from './events/Lane';
 import { Comment } from './events/Comment';
 import { Button, TextArea } from '@adobe/react-spectrum';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { Event, EventType } from '../../interfaces/Event';
+import { EventType } from '../../interfaces/EventType';
 import { CreatedAt } from './events/CreatedAt';
 import { Amount } from './events/Amount';
 import { ClosedAt } from './events/ClosedAt';
@@ -16,6 +16,8 @@ import { ApplicationStore } from '../../store/ApplicationStore';
 import { selectCard, selectUsers } from '../../store/Store';
 import { Avatar } from '../Avatar';
 import { Name } from './events/Name';
+import { NextFollowUpAtWarning } from './events/NextFollowUpAtWarning';
+import { CardEvent } from '../../interfaces/CardEvent';
 
 export interface EventsProps {
   id?: string;
@@ -34,7 +36,7 @@ export const Events = ({ id, entity }: EventsProps) => {
 
   useEffect(() => {
     const execute = async () => {
-      let payload = await client!.getEvents(id!);
+      let payload = await client!.getCardEvents(id!);
 
       setList(payload);
     };
@@ -53,16 +55,15 @@ export const Events = ({ id, entity }: EventsProps) => {
       return;
     }
 
-    await client!.createEvent(id, entity, comment);
-
+    await client!.createCardEvent(id, comment);
     setComment('');
 
-    let payload = await client!.getEvents(id);
+    let payload = await client!.getCardEvents(id);
 
     setList(payload);
   };
 
-  const getTitle = (event: Event) => {
+  const getTitle = (event: CardEvent) => {
     switch (event.type) {
       case EventType.ClosedAtChanged:
         return <ClosedAt event={event} />;
@@ -70,6 +71,8 @@ export const Events = ({ id, entity }: EventsProps) => {
         return <Name event={event} />;
       case EventType.NextFollowUpAtChanged:
         return <NextFollowUpAt event={event} />;
+      case EventType.NextFollowUpAtWarning:
+        return <NextFollowUpAtWarning event={event} />;
       case EventType.CardMoved:
         return <Lane event={event} />;
       case EventType.AmountChanged:
@@ -77,7 +80,7 @@ export const Events = ({ id, entity }: EventsProps) => {
       case EventType.CommentCreated:
         return <Comment event={event} />;
       case EventType.Created:
-        return <CreatedAt entity={entity} />;
+        return <CreatedAt />;
       case EventType.Assigned:
         return <Assign event={event} />;
       case EventType.AttributeChanged:
@@ -92,7 +95,7 @@ export const Events = ({ id, entity }: EventsProps) => {
       {card ? (
         <div className="statistics">
           <div className="tile">
-            <span>Opportunity Age</span>
+            <span>Opportunity Created</span>
             <h4>{DateTime.fromISO(card.createdAt!).toRelative()}</h4>
           </div>
           <div className="tile">
@@ -107,7 +110,7 @@ export const Events = ({ id, entity }: EventsProps) => {
       ) : null}
 
       <div className="comment-form">
-        <TextArea onChange={setComment} width="100%" height="80px"></TextArea>
+        <TextArea value={comment} onChange={setComment} width="100%" height="80px"></TextArea>
         <div className="submit">
           <Button isDisabled={!isValid} variant="primary" onPress={save}>
             Save
@@ -115,21 +118,24 @@ export const Events = ({ id, entity }: EventsProps) => {
         </div>
       </div>
 
-      {list.map((event: any, index: number) => {
-        const ago = DateTime.fromISO(event.createdAt).toRelative();
-        const user = users.find((user) => user.id === event.userId);
+      {list.map((event: CardEvent, index: number) => {
+        const ago = DateTime.fromISO(event.createdAt.toString()).toRelative();
+        const user = users.find((user) => user._id === event.userId);
+
+        if (event.type === EventType.NextFollowUpAtWarning) {
+          return <div className="warning">{getTitle(event)}</div>;
+        }
 
         return (
-          <div key={event.id} className="event-item">
+          <div key={event._id} className="event-item">
             <div className="headline">
               <div>
-                <Avatar id={user?.id} width={30} />
+                <Avatar id={user?._id} width={30} />
                 <div className="name">{user?.name}</div>
               </div>
 
               <div className="date">{ago}</div>
             </div>
-
             {getTitle(event)}
           </div>
         );

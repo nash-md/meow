@@ -3,47 +3,64 @@ import { Board } from '../interfaces/Board';
 
 function move(
   card: Card,
-  from: Card['id'][],
-  to: Card['id'][] | undefined,
+  sourceLane: Card['_id'][],
+  targetLane: Card['_id'][] | undefined,
   index?: number
-): [Card['id'][], Card['id'][]] {
-  const indexFrom = from.indexOf(card.id);
+): [Card['_id'][], Card['_id'][]] {
+  const indexOnSourceLane = sourceLane.indexOf(card._id);
 
-  if (indexFrom === -1) {
-    throw new Error(`card with id ${card.id} not found in from array`);
+  if (indexOnSourceLane === -1) {
+    throw new Error(`card with id ${card._id} not found in sourceLane array`);
   }
 
-  const [removedCardId] = from.splice(indexFrom, 1);
+  const [removedCardId] = sourceLane.splice(indexOnSourceLane, 1);
 
-  if (to) {
-    to.splice(index !== undefined ? index : to.length, 0, removedCardId);
+  if (targetLane) {
+    targetLane.splice(index !== undefined ? index : targetLane.length, 0, removedCardId);
   } else {
-    to = [card.id];
+    targetLane = [card._id];
   }
 
-  return [from, to];
+  return [sourceLane, targetLane];
 }
 
-function remove(card: Card, board: Board) {
+function remove(card: Card, board: Board): Board {
   const position = getPosition(card, board);
 
   if (!position) {
-    throw new Error(`card with id ${card.id} not found in from array`);
+    throw new Error(`card with id ${card._id} not found in board array`);
   }
 
-  return board[position.laneId].splice(position.index);
+  const updated = { ...board };
+
+  updated[position.laneId].splice(position.index, 1);
+
+  return updated;
 }
 
-function add(card: Card, board: Board) {
+/* remove ids from board in case they are not existing in cards array */
+function cleanUp(cards: Card[], board: Board): Board {
+  const list = cards.map((card) => card._id);
+
+  const updated: Board = {};
+
+  for (const laneId in board) {
+    updated[laneId] = board[laneId].filter((id) => list.includes(id));
+  }
+
+  return updated;
+}
+
+function add(card: Card, board: Board): void {
   if (board[card.laneId]) {
-    board[card.laneId].push(card.id);
+    board[card.laneId].push(card._id);
   } else {
-    board[card.laneId] = [card.id];
+    board[card.laneId] = [card._id];
   }
 }
 
 function isOnBoard(card: Card, board: Board | undefined): boolean {
-  return board ? Object.values(board).some((lane) => lane.includes(card.id)) : false;
+  return board ? Object.values(board).some((lane) => lane.includes(card._id)) : false;
 }
 
 function isInCorrectLane(card: Card, board: Board | undefined): boolean {
@@ -53,7 +70,7 @@ function isInCorrectLane(card: Card, board: Board | undefined): boolean {
 
   return (
     Object.entries(board).every(
-      ([laneId, lane]) => !lane.includes(card.id) || laneId === card.laneId
+      ([laneId, lane]) => !lane.includes(card._id) || laneId === card.laneId
     ) || false
   );
 }
@@ -63,7 +80,7 @@ function getPosition(
   board: Board | undefined
 ): { laneId: string; index: number } | undefined {
   for (const laneId in board) {
-    const index = board[laneId].indexOf(card.id);
+    const index = board[laneId].indexOf(card._id);
 
     if (index !== -1) {
       return { laneId: laneId, index: index };
@@ -75,6 +92,7 @@ export const BoardHelper = {
   add,
   move,
   remove,
+  cleanUp,
   isOnBoard,
   isInCorrectLane,
   getPosition,

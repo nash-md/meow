@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Event } from '../../../interfaces/Event';
+import { CardEvent } from '../../../interfaces/CardEvent';
 
 interface AttributeProps {
-  event: Event;
+  event: CardEvent;
 }
 
 const getValueText = (item: any) => {

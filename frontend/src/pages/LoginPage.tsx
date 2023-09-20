@@ -1,51 +1,28 @@
-import { TabList, Item, TabPanels, Tabs } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { CursorHeadline } from '../components/CursorHeadline';
 import { ErrorModal } from '../components/ErrorModal';
-import { Login } from '../components/Login';
-import { Register } from '../components/Register';
 import { RegisterWithInvite } from '../components/RegisterWithInvite';
 import ScreenResolutionWarning from '../ScreenResolutionWarning';
+import { RegisterOrLogin } from '../components/RegisterOrLogin';
 
 export default function LoginPage() {
-  const [invite, setInvite] = useState<string>('');
+  const [invite, setInvite] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const inviteParam = params.get('invite');
-    if (inviteParam) {
-      setInvite(inviteParam);
-    }
+
+    params.get('invite') !== null && setInvite(params.get('invite'));
+    params.get('token') !== null && setToken(params.get('token'));
   }, []);
 
   return (
     <>
       <div className="welcome-page">
         <div style={{ marginBottom: '10px' }}>
-          <CursorHeadline
-            text={['Hello!', 'Hallo!', 'Hej!', 'こんにち', 'Hola!']}
-          />
+          <CursorHeadline text={['Hello!', 'Hallo!', 'Hej!', 'こんにち', 'Hola!']} />
         </div>
-        {!invite ? (
-          <form>
-            <Tabs>
-              <TabList>
-                <Item key="login">Login</Item>
-                <Item key="register">Register</Item>
-              </TabList>
-              <TabPanels>
-                <Item key="login">
-                  <Login />
-                </Item>
-                <Item key="register">
-                  <Register />
-                </Item>
-              </TabPanels>
-            </Tabs>
-          </form>
-        ) : (
-          <RegisterWithInvite invite={invite} />
-        )}
+        {invite ? <RegisterWithInvite invite={invite} /> : <RegisterOrLogin token={token} />}
         <ScreenResolutionWarning message="This application is built for desktops, small screens are not supported." />
       </div>
       <ErrorModal />

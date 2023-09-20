@@ -4,6 +4,7 @@ export const LanesResponseSchema = {
     type: 'object',
     properties: {
       teamId: { type: 'string' },
+      boardId: { type: 'string' },
       name: { type: 'string' },
       index: { type: 'integer' },
       tags: {
@@ -15,17 +16,18 @@ export const LanesResponseSchema = {
       },
       inForecast: { type: 'boolean' },
       color: { anyOf: [{ type: 'string' }, { type: 'null' }] },
-      id: { type: 'string' },
+      _id: { type: 'string' },
       createdAt: { type: 'string' },
       updatedAt: { type: 'string' },
     },
     required: [
       'teamId',
+      'boardId',
       'name',
       'index',
       'tags',
       'inForecast',
-      'id',
+      '_id',
       'createdAt',
       'updatedAt',
     ],

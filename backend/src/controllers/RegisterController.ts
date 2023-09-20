@@ -8,19 +8,18 @@ import {
   DefaultCards,
   DefaultAccounts,
 } from '../Constants.js';
-import { Card } from '../entities/Card.js';
-import { Lane } from '../entities/Lane.js';
-import { Schema } from '../entities/Schema.js';
-import { Account } from '../entities/Account.js';
-import { CurrencyCode, Team } from '../entities/Team.js';
-import { User, UserAuthentication, UserStatus } from '../entities/User.js';
+import { Card, NewCard } from '../entities/Card.js';
+import { Lane, NewLane } from '../entities/Lane.js';
+import { NewSchema } from '../entities/Schema.js';
+import { NewAccount } from '../entities/Account.js';
+import { CurrencyCode, NewTeam, Team } from '../entities/Team.js';
+import { NewUser, User, UserAuthentication, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
-import { Board } from '../entities/Board.js';
+import { Board, NewBoard } from '../entities/Board.js';
 import { EventHelper } from '../helpers/EventHelper.js';
 import { log } from '../worker.js';
 
@@ -31,65 +30,38 @@ export const setupUserWithInvite = async (invite: string, authentication: UserAu
     throw new EntityNotFoundError();
   }
 
-  /* TODO, for now keep it backwards compatible */
-  if (authentication.local) {
-    user.password = authentication.local.password;
-  }
-
   user.authentication = authentication;
 
   user.invite = null;
   user.status = UserStatus.Enabled;
 
-  return await datasource.manager.save(user);
+  return await EntityHelper.update(user);
 };
 
 export const setupAccountWithExampleData = async (
   name: string,
   authentication: UserAuthentication
 ): Promise<User> => {
-  const team = await datasource.manager.save(new Team(`${name}'s Team`, CurrencyCode.USD));
-
-  const board = await datasource.manager.save(new Board(team.id!.toString(), 'default'));
+  const team = await EntityHelper.create(new NewTeam(`${name}'s Team`, CurrencyCode.USD), Team);
+  const board = await EntityHelper.create(new NewBoard(team, 'default'), Board);
 
   const lanes: Lane[] = [];
 
   for (const [index, item] of DefaultLanes.entries()) {
-    const lane = await datasource.manager.save(
-      new Lane(
-        team.id!.toString(),
-        board.id!.toString(),
-        item.name,
-        index,
-        item.tags,
-        item.inForecast,
-        item.color
-      )
+    const lane = await EntityHelper.create(
+      new NewLane(team, board, item.name, index, item.color, item.inForecast, item.tags),
+      Lane
     );
 
-    lanes.push(lane);
+    lanes.push(lane!);
   }
 
-  datasource.manager.save(
-    Schema,
-    new Schema(team.id!.toString(), DefaultCardSchema.type, DefaultCardSchema.schema)
+  await EntityHelper.create(new NewSchema(team, DefaultCardSchema.type, DefaultCardSchema.schema));
+  await EntityHelper.create(
+    new NewSchema(team, DefaultAccountSchema.type, DefaultAccountSchema.schema)
   );
 
-  datasource.manager.save(
-    Schema,
-    new Schema(team.id!.toString(), DefaultAccountSchema.type, DefaultAccountSchema.schema)
-  );
-
-  let user = new User(team.id!.toString(), name, UserStatus.Enabled);
-
-  /* TODO, for now keep it backwards compatible */
-  if (authentication.local) {
-    user.password = authentication.local.password;
-  }
-
-  user.authentication = authentication;
-
-  user = await datasource.manager.save(user);
+  const user = await EntityHelper.create(new NewUser(team, name, UserStatus.Enabled), User);
 
   await Promise.all(
     DefaultCards.map(async (item, index) => {
@@ -103,30 +75,28 @@ export const setupAccountWithExampleData = async (
         .plus({ days: 7 })
         .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
-      const card = new Card(
-        team.id!.toString(),
-        user.id!.toString(),
-        lanes[laneIndex]!.id!.toString(),
-        item.name,
-        item.amount,
-        oneWeekFromNow.toJSDate()
-      );
+      const card = new NewCard(user, lanes[laneIndex]!, item.name, item.amount);
 
+      card.closedAt = oneWeekFromNow.toJSDate();
       card.nextFollowUpAt = tomorrow.toJSDate();
 
-      await datasource.manager.save(card);
+      const updated = await EntityHelper.create(card, Card);
 
-      EventHelper.get().emit('card', { user: user, card: card.toPlain() });
+      EventHelper.get().emit('card', { user: user, card: updated!.toPlain() });
     })
   );
 
   await Promise.all(
     DefaultAccounts.map(async (item, index) => {
-      await datasource.manager.save(new Account(team.id!.toString()!, item.name));
+      await EntityHelper.create(new NewAccount(team, item.name));
     })
   );
 
-  return user;
+  user.authentication = authentication;
+
+  const updated = await EntityHelper.update(user);
+
+  return updated;
 };
 
 const invite = async (req: Request, res: Response, next: NextFunction) => {
@@ -178,7 +148,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     await setupAccountWithExampleData(name, authentication);
 
-    res.json({ welcome: true });
+    res.status(201).json({ welcome: true });
   } catch (error) {
     next(error);
   }

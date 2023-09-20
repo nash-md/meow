@@ -1,59 +1,62 @@
-import { Entity, ObjectId, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column } from 'typeorm';
 import { Attribute } from './Attribute.js';
+import { Entity } from '../helpers/EntityDecorator.js';
+import { ExistingEntity, NewEntity } from './BaseEntity.js';
+import { ObjectId } from 'mongodb';
+import { Team } from './Team.js';
 
 @Entity({ name: 'Accounts' })
-export class Account {
-  @ObjectIdColumn()
-  id: ObjectId | undefined;
-
-  @Column()
-  teamId: string;
-
-  @Column()
+export class Account implements ExistingEntity {
+  _id: ObjectId;
+  teamId: ObjectId;
   name: string;
-
-  @Column()
   attributes?: Attribute;
-
-  @Column()
   references?: Reference[];
+  createdAt: Date;
+  updatedAt: Date;
 
-  @Column({ type: 'timestamp' })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp' })
-  updatedAt?: Date;
-
-  constructor(teamId: string, name: string) {
+  constructor(_id: ObjectId, teamId: ObjectId, name: string, createdAt: Date, updatedAt: Date) {
+    this._id = _id;
     this.teamId = teamId;
     this.name = name;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   toPlain(): PlainAccount {
     return {
-      id: this.id!,
-      teamId: this.teamId,
+      _id: this._id.toString(),
+      teamId: this.teamId.toString(),
       name: this.name,
       attributes: this.attributes,
       createdAt: this.createdAt!,
       updatedAt: this.updatedAt!,
     };
   }
+}
 
-  @BeforeInsert()
-  insertCreated() {
-    this.updatedAt = new Date();
+@Entity({ name: 'Accounts' })
+export class NewAccount implements NewEntity {
+  /* static _collection = 'Events'; */
+
+  teamId: ObjectId;
+  name: string;
+  attributes?: Attribute;
+  references?: Reference[];
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(team: Team, name: string, attributes: Attribute = {}, references?: Reference[]) {
+    this.teamId = team._id;
+    this.name = name;
+    this.attributes = attributes;
+    this.references = references;
     this.createdAt = new Date();
-  }
-
-  @BeforeUpdate()
-  insertUpdated() {
     this.updatedAt = new Date();
   }
 }
 
 export interface PlainAccount {
-  id: ObjectId;
+  _id: string;
   teamId: string;
   name: string;
   attributes?: Attribute;
@@ -62,7 +65,7 @@ export interface PlainAccount {
 }
 
 export interface Reference {
-  id: ObjectId;
+  _id: ObjectId;
   entity: string | null;
   schemaAttributeKey: string;
 }

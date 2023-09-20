@@ -10,16 +10,8 @@ export const CardResponseSchema = {
     attributes: { type: 'array' },
     updatedAt: { type: 'string' },
     createdAt: { type: 'string' },
-    id: { type: 'string' },
+    _id: { type: 'string' },
   },
-  required: [
-    'teamId',
-    'user',
-    'laneId',
-    'name',
-    'updatedAt',
-    'createdAt',
-    'id',
-  ],
+  required: ['teamId', 'user', 'laneId', 'name', 'updatedAt', 'createdAt', '_id'],
   additionalProperties: false,
 };

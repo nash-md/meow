@@ -23,7 +23,7 @@ cardDeleteListener.startListening({
         status: CardStatus.Deleted,
       }); // TODO update with one API call
 
-      await client.updateBoard(state.session.user!.id, state.board);
+      await client.updateBoard(state.session.user!._id, state.board);
     } catch (error) {
       console.error(error);
       const message = await getErrorMessage(error);

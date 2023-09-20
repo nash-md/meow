@@ -1,7 +1,9 @@
 import { PlainCard } from '../entities/Card.js';
 import { PlainAccount } from '../entities/Account.js';
 import { User } from '../entities/User.js';
-import { Event } from '../entities/Event.js';
+import { CardEvent } from '../entities/CardEvent.js';
+import { AccountEvent } from '../entities/AccountEvent.js';
+import { ObjectId } from 'mongodb';
 
 export type EventType = 'account' | 'lane' | 'card' | 'event';
 
@@ -12,15 +14,15 @@ export interface CardEventPayload {
 }
 
 export interface LaneEventPayload {
-  teamId: string;
-  laneId: string;
-  userId: string;
+  teamId: ObjectId;
+  laneId: ObjectId;
+  userId: ObjectId;
 }
 
 export interface HistoryEventPayload {
   // TODO fix naming
   user: User;
-  event: Event;
+  event: AccountEvent | CardEvent;
 }
 
 export interface AccountEventPayload {

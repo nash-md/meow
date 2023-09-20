@@ -1,30 +1,27 @@
-import { EventType } from '../entities/Event.js';
+import { EventType } from '../entities/EventType.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AccountEventPayload } from './EventStrategy.js';
-import { Event } from '../entities/Event.js';
 import { SchemaType } from '../entities/Schema.js';
 import { findAttributeById, getAttributeListDifference } from '../helpers/AttributeHelper.js';
-import { User } from '../entities/User.js';
-import { EventHelper } from '../helpers/EventHelper.js';
 import { log } from '../worker.js';
+import { NewAccountEvent } from '../entities/AccountEvent.js';
+import { Account } from '../entities/Account.js';
 
 export const AccountEventListener = {
   async onAccountUpdate({ user, account, updated }: AccountEventPayload) {
-    log.debug(`execute onAccountUpdate for account ${account.id}`);
-
-    const userId = user.id!.toString();
+    log.debug(`execute onAccountUpdate for account ${account._id}`);
 
     const { teamId } = user;
 
-    if (!updated) {
-      const event = new Event(teamId, account.id.toString(), userId, EventType.Created);
+    const entity = await EntityHelper.findOneByIdOrFail(Account, account._id);
 
-      await AccountEventListener.persist(user, event);
+    if (!updated) {
+      await EntityHelper.create(new NewAccountEvent(entity, user, EventType.Created));
 
       return;
     }
 
-    const schema = await EntityHelper.findSchemaByType(account.teamId, SchemaType.Account);
+    const schema = await EntityHelper.findSchemaByType(teamId, SchemaType.Account);
 
     if (updated.attributes) {
       const changes = getAttributeListDifference(account.attributes, updated.attributes);
@@ -42,15 +39,9 @@ export const AccountEventListener = {
       }
 
       if (changes.length !== 0) {
-        const event = new Event(
-          teamId,
-          account.id.toString(),
-          userId,
-          EventType.AttributeChanged,
-          changes
+        await EntityHelper.create(
+          new NewAccountEvent(entity, user, EventType.AttributeChanged, changes)
         );
-
-        await AccountEventListener.persist(user, event);
       }
     }
 
@@ -60,15 +51,7 @@ export const AccountEventListener = {
         to: updated.name,
       };
 
-      const event = new Event(teamId, account.id.toString(), userId, EventType.NameChanged, body);
-
-      await AccountEventListener.persist(user, event);
+      await EntityHelper.create(new NewAccountEvent(entity, user, EventType.NameChanged, body));
     }
-  },
-
-  async persist(user: User, event: Event) {
-    await EntityHelper.persist(Event, event);
-
-    EventHelper.get().emit('event', { user: user, event });
   },
 };

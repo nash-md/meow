@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { CardStatus } from '../entities/Card.js';
-import { EventType } from '../entities/Event.js';
+import { EventType } from '../entities/EventType.js';
 import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
@@ -41,7 +41,7 @@ const getActiveStatisticsByLanes = async (
     $match: {
       teamId: { $eq: teamId },
       status: { $ne: CardStatus.Deleted },
-      laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
+      laneId: { $in: lanes.map((lane) => lane._id?.toString()) },
     },
   };
 
@@ -137,7 +137,7 @@ const getMovementStatisticsByLanes = async (
 
   const matchLatestLaneMove = {
     $match: {
-      'latest.body.to': { $in: lanes.map((lane) => lane.id!.toString()) },
+      'latest.body.to': { $in: lanes.map((lane) => lane._id!.toString()) },
     },
   };
 
@@ -243,8 +243,8 @@ const getMovementStatisticsByLanes = async (
 
 const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const teamId = req.jwt.team.id!.toString();
-    const userId = req.jwt.user.id?.toString();
+    const teamId = req.jwt.team._id!.toString();
+    const userId = req.jwt.user._id?.toString();
 
     const lanes = await EntityHelper.findByTeam(Lane, req.jwt.team);
 

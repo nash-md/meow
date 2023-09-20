@@ -6,7 +6,7 @@ import {
 import { User } from '../entities/User.js';
 import { InvalidUserPropertyError } from '../errors/InvalidUserPropertyError.js';
 import { UserAlreadyExistsError } from '../errors/UserAlreadyExistsError.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 
 export const isValidPassword = async (password: string) => {
   if (password.length < MINIMUM_LENGTH_OF_USER_PASSWORD) {
@@ -34,14 +34,13 @@ export const isValidName = async (name: unknown) => {
   }
 
   const query = {
-    where: {
-      name: { $regex: RegExp(`^${name}$`, 'i') },
-    },
+    name: { $regex: RegExp(`^${name}$`, 'i') },
+    'authentication.local': { $exists: true },
   };
 
-  const users = await datasource.getMongoRepository(User).findAndCount(query);
+  const users = await EntityHelper.findOneBy(User, query);
 
-  if (users[1] > 0) {
+  if (users) {
     throw new UserAlreadyExistsError();
   }
 };

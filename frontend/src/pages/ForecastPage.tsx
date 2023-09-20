@@ -91,8 +91,8 @@ export const ForecastPage = () => {
                 setUserId(key.toString());
               }}
             >
-              {[{ id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name }, ...users].map((user) => {
-                return <Item key={user.id}>{user.name}</Item>;
+              {[{ _id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name }, ...users].map((user) => {
+                return <Item key={user._id}>{user.name}</Item>;
               })}
             </Picker>
           </div>

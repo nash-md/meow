@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { Attribute } from '../entities/Attribute.js';
 import {
   SchemaAttribute,
@@ -30,7 +31,7 @@ const getCreatedReference = (
   original: Attribute = {}
 ) => {
   return updated.hasOwnProperty(reference.key) && !original.hasOwnProperty(reference.key)
-    ? (updated[reference.key] as string)
+    ? new ObjectId(updated[reference.key]!)
     : null;
 };
 
@@ -40,7 +41,7 @@ const getDeletedReference = (
   original: Attribute = {}
 ) => {
   return original.hasOwnProperty(reference.key) && !updated.hasOwnProperty(reference.key)
-    ? (original[reference.key] as string)
+    ? new ObjectId(original[reference.key]!)
     : null;
 };
 
@@ -52,7 +53,10 @@ const getChangedReference = (
   return updated.hasOwnProperty(reference.key) &&
     original.hasOwnProperty(reference.key) &&
     updated[reference.key] !== original[reference.key]
-    ? { updatedId: updated[reference.key] as string, originalId: original[reference.key] as string }
+    ? {
+        updatedId: new ObjectId(updated[reference.key]!),
+        originalId: new ObjectId(original[reference.key]!),
+      }
     : null;
 };
 

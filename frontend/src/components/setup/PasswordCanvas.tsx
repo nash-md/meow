@@ -8,6 +8,7 @@ import { Translations } from '../../Translations';
 
 export const PasswordCanvas = () => {
   const id = useSelector(selectUserId);
+
   const { client } = useContext(RequestHelperContext);
 
   const [existing, setExisting] = useState<string>('');

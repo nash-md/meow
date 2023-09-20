@@ -1,7 +1,7 @@
 export const UserResponseSchema = {
   type: 'object',
   properties: {
-    id: {
+    _id: {
       type: 'string',
     },
     teamId: {
@@ -15,6 +15,9 @@ export const UserResponseSchema = {
     },
     invite: {
       type: ['string', 'null'],
+    },
+    authentication: {
+      type: ['string'],
     },
     status: {
       type: 'string',
@@ -36,7 +39,7 @@ export const UserResponseSchema = {
       type: 'string',
     },
   },
-  required: ['id', 'teamId', 'name', 'status'],
+  required: ['_id', 'teamId', 'name', 'status', 'authentication'],
 
   additionalProperties: false,
 };

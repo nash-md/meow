@@ -3,7 +3,7 @@ import { id } from './Card';
 import { Reference } from './Reference';
 
 export interface Account {
-  readonly id: id;
+  readonly _id: id;
   name: string;
   attributes: Attribute | undefined;
   references?: Reference[];

@@ -4,7 +4,7 @@ export const UsersResponseSchema = {
   items: {
     type: 'object',
     properties: {
-      id: {
+      _id: {
         type: 'string',
       },
       teamId: {
@@ -17,6 +17,9 @@ export const UsersResponseSchema = {
         type: 'string',
       },
       invite: {
+        type: ['string', 'null'],
+      },
+      authentication: {
         type: ['string', 'null'],
       },
       status: {

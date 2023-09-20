@@ -9,8 +9,8 @@ import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { Attribute } from '../../interfaces/Attribute';
 
 export interface FormProps {
-  id: Account['id'] | undefined;
-  update: (id: Account['id'] | undefined, account: AccountPreview) => void;
+  id: Account['_id'] | undefined;
+  update: (id: Account['_id'] | undefined, account: AccountPreview) => void;
 }
 
 // TODO rename component

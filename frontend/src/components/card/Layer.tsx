@@ -39,7 +39,7 @@ export const Layer = () => {
     store.dispatch(hideLayer());
   };
 
-  const assign = async (id: User['id']) => {
+  const assign = async (id: User['_id']) => {
     console.log(`assign card to user ${id}`);
 
     store.dispatch({
@@ -50,7 +50,7 @@ export const Layer = () => {
     setIsUserLayerVisible(false);
   };
 
-  const update = async (id: Card['id'] | undefined, preview: CardPreview) => {
+  const update = async (id: Card['_id'] | undefined, preview: CardPreview) => {
     if (id) {
       store.dispatch(updateCard({ ...card!, ...preview }));
 
@@ -58,7 +58,7 @@ export const Layer = () => {
       store.dispatch(showModalSuccess(Translations.CardUpdatedConfirmation.en));
     } else {
       if (!preview.laneId) {
-        preview.laneId = lanes[0].id;
+        preview.laneId = lanes[0]._id;
       }
 
       const updated = await client!.createCard(preview); // TODO refactor
@@ -105,19 +105,19 @@ export const Layer = () => {
       </div>
       {isUserLayerVisible && (
         <div className="user-list">
-          <table>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <tbody>
               {users.map((user: User) => {
                 return (
-                  <tr key={user.id}>
+                  <tr key={user._id} style={{ width: '100%' }}>
                     <td>
-                      <Avatar width={36} id={user.id} />
+                      <Avatar width={36} id={user._id} />
                     </td>
                     <td>
                       <b>{user.name}</b>
                     </td>
                     <td>
-                      <Button variant="primary" onPress={() => assign(user.id)}>
+                      <Button variant="primary" onPress={() => assign(user._id)}>
                         Assign
                       </Button>
                     </td>

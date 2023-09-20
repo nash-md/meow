@@ -1,19 +1,9 @@
 import { Button, Item, Picker } from '@adobe/react-spectrum';
 import { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  ActionType,
-  showModalError,
-  showModalSuccess,
-} from '../../../actions/Actions';
+import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import {
-  selectAnimal,
-  selectColor,
-  selectUserId,
-  selectUsers,
-  store,
-} from '../../../store/Store';
+import { selectAnimal, selectColor, selectUserId, selectUsers, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { USER_COLORS } from '../../../Constants';
 import { ColorCircleSelected } from './ColorCircleSelected';
@@ -26,13 +16,11 @@ export const FormCanvas = () => {
   const animalDefault = useSelector(selectAnimal);
   const colorDefault = useSelector(selectColor);
 
-  const [avatarColor, setAvatarColor] = useState<string | undefined>(
-    colorDefault
-  );
+  const [avatarColor, setAvatarColor] = useState<string | undefined>(colorDefault);
   const [animal, setAnimal] = useState(animalDefault);
 
   const save = async () => {
-    const user = users.find((user) => user.id === userId)!;
+    const user = users.find((user) => user._id === userId)!;
 
     if (!user) {
       return;
@@ -49,9 +37,7 @@ export const FormCanvas = () => {
         payload: updated,
       });
 
-      store.dispatch(
-        showModalSuccess(Translations.SetupChangedConfirmation.en)
-      );
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
     } catch (error) {
       console.error(error);
 
@@ -62,9 +48,7 @@ export const FormCanvas = () => {
   return (
     <div className="content-box">
       <h2>If You Were An Animal What Would You Be?</h2>
-      <span
-        style={{ fontSize: '0.8em', display: 'block', marginBottom: '10px' }}
-      >
+      <span style={{ fontSize: '0.8em', display: 'block', marginBottom: '10px' }}>
         This information will definitely be shared with your coworkers
       </span>
 
@@ -95,11 +79,7 @@ export const FormCanvas = () => {
       <div style={{ paddingTop: '10px', display: 'flex' }}>
         {USER_COLORS.map((color) => {
           return avatarColor === color ? (
-            <ColorCircleSelected
-              key={color}
-              color={color}
-              setColor={setAvatarColor}
-            />
+            <ColorCircleSelected key={color} color={color} setColor={setAvatarColor} />
           ) : (
             <ColorCircle key={color} color={color} setColor={setAvatarColor} />
           );

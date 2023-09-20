@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-09-20
+
+- Removed TypeORM from the project. The project's dependence on MongoDB has increased in recent months. This is due to certain features that could not be implemented without a direct database connection. As a result, the initial idea of keeping the project database-agnostic using an ORM is no longer feasible.
+- Introduced a page state to better identify the React application initiation flow
+
 ## 2023-09-08
 
 - Consolidated frontend validation for username and password during registration and user addition after sign-up.

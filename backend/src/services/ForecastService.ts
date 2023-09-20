@@ -1,21 +1,16 @@
-import { DataSource } from 'typeorm';
 import { CardStatus } from '../entities/Card.js';
 import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
+import { ObjectId } from 'mongodb';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 
 export class ForecastService {
-  datasource: DataSource;
-
-  constructor(datasource: DataSource) {
-    this.datasource = datasource;
-  }
-
   async getByLaneType(
     type: LaneType,
-    teamId: string,
+    teamId: ObjectId,
     start: Date,
     end: Date,
-    userId?: string
+    userId?: ObjectId
   ): Promise<{ amount: number; count: number }> {
     const direct = DatabaseHelper.get();
     const collection = direct.collection('Cards');
@@ -31,13 +26,12 @@ export class ForecastService {
       query.inForecast = true;
     }
 
-    const lanes = await this.datasource.getMongoRepository(Lane).find(query);
-
+    const lanes = await EntityHelper.findBy(Lane, query);
     const match: any = {
       $match: {
         teamId: { $eq: teamId },
         status: { $ne: CardStatus.Deleted },
-        laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
+        laneId: { $in: lanes.map((lane) => lane._id) },
         closedAt: {
           $gt: start,
           $lt: end,

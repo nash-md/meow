@@ -10,7 +10,7 @@ const getOptions = (accounts: Account[]) => {
   list.push(<Item key="">none</Item>);
 
   accounts?.map((account) => {
-    list.push(<Item key={account.id}>{account.name}</Item>);
+    list.push(<Item key={account._id}>{account.name}</Item>);
   });
 
   return list;

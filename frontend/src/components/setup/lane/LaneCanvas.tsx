@@ -54,7 +54,7 @@ export const LanesCanvas = () => {
         index: index,
         inForecast: lane.inForecast,
         color: lane.color,
-        externalId: lane.id,
+        externalId: lane._id,
         type: (lane.tags?.type?.toString() as LaneType) ?? undefined,
       };
     });
@@ -155,7 +155,7 @@ export const LanesCanvas = () => {
   const save = async () => {
     const updated: LaneRequest[] = lanes.map((lane) => {
       const payload: LaneRequest = {
-        id: lane.externalId,
+        _id: lane.externalId,
         name: lane.name,
         index: lane.index,
         inForecast: lane.inForecast,

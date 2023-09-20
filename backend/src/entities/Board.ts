@@ -1,35 +1,36 @@
-import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
+import { Entity } from '../helpers/EntityDecorator.js';
+import { ExistingEntity, NewEntity } from './BaseEntity.js';
+import { ObjectId } from 'mongodb';
+import { Team } from './Team.js';
 
 @Entity({ name: 'Boards' })
-export class Board {
-  @ObjectIdColumn()
-  id: ObjectId | undefined;
-
-  @Column()
-  teamId: string;
-
-  @Column()
+export class Board implements ExistingEntity {
+  _id: ObjectId;
+  teamId: ObjectId;
   name: string;
+  createdAt: Date;
+  updatedAt: Date;
 
-  @Column({ type: 'timestamp' })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp' })
-  updatedAt?: Date;
-
-  constructor(teamId: string, name: string) {
+  constructor(_id: ObjectId, teamId: ObjectId, name: string, createdAt: Date, updatedAt: Date) {
+    this._id = _id;
     this.teamId = teamId;
     this.name = name;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
+}
 
-  @BeforeInsert()
-  insertCreated() {
-    this.updatedAt = new Date();
+@Entity({ name: 'Boards' })
+export class NewBoard implements NewEntity {
+  teamId: ObjectId;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(team: Team, name: string) {
+    this.teamId = team._id!;
+    this.name = name;
     this.createdAt = new Date();
-  }
-
-  @BeforeUpdate()
-  insertUpdated() {
     this.updatedAt = new Date();
   }
 }

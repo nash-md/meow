@@ -1,5 +1,5 @@
 export interface Schema {
-  id?: string;
+  _id?: string;
   type: SchemaType;
   attributes: SchemaAttribute[];
   createdAt?: string;

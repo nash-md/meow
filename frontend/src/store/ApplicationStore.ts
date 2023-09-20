@@ -1,4 +1,5 @@
 import { Account } from '../interfaces/Account';
+import { ApplicationState } from '../interfaces/ApplicationState';
 import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
@@ -24,7 +25,7 @@ export interface ApplicationStore {
     token: string | undefined;
     alerts: number;
     team: {
-      id: string | undefined;
+      _id: string | undefined;
       currency: CurrencyCode | undefined;
       integrations: Integration[];
     };
@@ -32,11 +33,13 @@ export interface ApplicationStore {
   };
   browser: {
     state: BrowserState;
-    isPageLoaded: boolean;
+  };
+  application: {
+    state: ApplicationState;
   };
   ui: {
     state: InterfaceState;
-    id: undefined | Card['id'] | Lane['id'] | Account['id'];
+    _id: undefined | Card['_id'] | Lane['_id'] | Account['_id'];
     modal: 'success' | 'error' | undefined;
     text: string | undefined;
     filters: {

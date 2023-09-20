@@ -5,7 +5,7 @@ import Application from './Application';
 import LoginPage from './pages/LoginPage';
 import {
   selectBrowserState,
-  selectIsPageLoaded,
+  selectApplicationState,
   selectToken,
   selectUserId,
   store,
@@ -16,7 +16,13 @@ import {
   readContextFromLocalStorage,
   writeContextToLocalStorage,
 } from './helpers/LocalStorageHelper';
-import { ActionType, login, pageLoad, pageLoadWithError } from './actions/Actions';
+import {
+  ActionType,
+  login,
+  pageLoad,
+  pageLoadValidateToken,
+  pageLoadWithError,
+} from './actions/Actions';
 import { RequestHelperContext } from './context/RequestHelperContextProvider';
 import { YouAreOffline } from './components/YouAreOffline';
 import { RequestTimeoutError } from './errors/RequestTimeoutError';
@@ -25,7 +31,7 @@ import { RequestHelperUrlError } from './errors/RequestHelperUrlError';
 
 export const SessionOrNot = () => {
   const { setClient } = useContext(RequestHelperContext);
-  const isPageLoaded = useSelector(selectIsPageLoaded);
+  const applicationState = useSelector(selectApplicationState);
   const token = useSelector(selectToken);
   const userId = useSelector(selectUserId);
   const state = useSelector(selectBrowserState);
@@ -40,9 +46,11 @@ export const SessionOrNot = () => {
           return;
         }
 
-        console.log(`found token ${context.token.substring(0, 25)}...`);
+        console.debug(`found token ${context.token.substring(0, 10)}...`);
 
         const client = new RequestHelper(getBaseUrl());
+
+        store.dispatch(pageLoadValidateToken());
 
         const code = await client.isValidToken(context.token);
 
@@ -87,14 +95,14 @@ export const SessionOrNot = () => {
   }, []);
 
   useEffect(() => {
-    if (!isPageLoaded) {
+    if (applicationState === 'uninitialized') {
       return;
     }
 
     writeContextToLocalStorage({
       token: token,
     });
-  }, [token, isPageLoaded]);
+  }, [token, applicationState]);
 
   const browserState = useBrowserState();
 
@@ -110,7 +118,7 @@ export const SessionOrNot = () => {
   }, [browserState]);
 
   const getPage = (userId: string | undefined) => {
-    return !userId ? <LoginPage /> : <Application />;
+    return userId ? <Application /> : <LoginPage />;
   };
   return (
     <>

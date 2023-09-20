@@ -39,7 +39,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
   };
 
   return (
-    <Draggable draggableId={card.id} index={index}>
+    <Draggable draggableId={card._id} index={index}>
       {(provided, snaphot) => {
         return (
           <div
@@ -54,7 +54,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
             <div
               className={`content ${snaphot.isDragging ? 'is-dragging' : ''}`}
               onClick={() => {
-                openCard(card.id);
+                openCard(card._id);
               }}
             >
               <div style={{ marginBottom: '4px' }}>

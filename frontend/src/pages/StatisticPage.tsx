@@ -69,7 +69,7 @@ const createSeriesByLane = (dates: Array<string>, lane: Lane, series: TimeSeries
     const entry = series.find((item) => item.date === dates[index]);
 
     if (isValidTimeSeries(entry)) {
-      const laneEntry = entry.lanes.find((item) => item.laneId === lane.id);
+      const laneEntry = entry.lanes.find((item) => item.laneId === lane._id);
 
       previousValue = laneEntry ? laneEntry.amount : previousValue;
     }
@@ -145,7 +145,7 @@ export const StatisticPage = () => {
           const series = createSeriesByLane(dates, lane, payload);
 
           series.map((entry, index) => {
-            data[index][lane.id] = entry.value;
+            data[index][lane._id] = entry.value;
           });
         });
 
@@ -180,7 +180,7 @@ export const StatisticPage = () => {
     }
 
     const list = lanesWithSelection.map((l) => {
-      if (laneId === l.id) {
+      if (laneId === l._id) {
         return { ...l, isSelected: isSelected };
       } else {
         return { ...l };
@@ -196,7 +196,7 @@ export const StatisticPage = () => {
 
       series.map((entry, index) => {
         if (lane.isSelected) {
-          data[index][lane.id] = entry.value;
+          data[index][lane._id] = entry.value;
         }
       });
     });
@@ -217,8 +217,8 @@ export const StatisticPage = () => {
                 setUserId(key.toString());
               }}
             >
-              {[{ id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name }, ...users].map((user) => {
-                return <Item key={user.id}>{user.name}</Item>;
+              {[{ _id: FILTER_BY_NONE.key, name: FILTER_BY_NONE.name }, ...users].map((user) => {
+                return <Item key={user._id}>{user.name}</Item>;
               })}
             </Picker>
           </div>
@@ -264,7 +264,7 @@ export const StatisticPage = () => {
             {lanesWithSelection.map((lane: LaneWithSelection, index: number) => {
               return (
                 <div
-                  key={lane.id}
+                  key={lane._id}
                   style={{
                     border: `2px solid ${colors[index]}`,
                     marginRight: '10px',
@@ -273,9 +273,9 @@ export const StatisticPage = () => {
                   }}
                 >
                   <Checkbox
-                    key={lane.id}
+                    key={lane._id}
                     isSelected={lane.isSelected}
-                    onChange={(value) => toggleIsSelected(value, lane.id)}
+                    onChange={(value) => toggleIsSelected(value, lane._id)}
                   >
                     {lane.name}
                   </Checkbox>

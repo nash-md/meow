@@ -7,12 +7,13 @@ import { Lane, LaneType } from '../entities/Lane.js';
 import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { ForecastService } from '../services/ForecastService.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
-import { EventType } from '../entities/Event.js';
+import { EventType } from '../entities/EventType.js';
 import { RequestParser } from '../helpers/RequestParser.js';
 import { InvalidRequestQueryParameterError } from '../errors/InvalidRequestQueryParameterError.js';
 import { TimeSpanExceedsLimitError } from '../errors/TimeSpanExceedsLimitError.js';
 import { InvalidTimeSpanError } from '../errors/InvalidTimeSpanError.js';
+import { ObjectId } from 'mongodb';
+import { EntityHelper } from '../helpers/EntityHelper.js';
 
 const parseRange = (query: QueryString.ParsedQs) => {
   if (!RequestParser.isValidDateString(query.start)) {
@@ -65,13 +66,13 @@ const parseRange = (query: QueryString.ParsedQs) => {
 const achieved = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const { start, end } = parseRange(req.query);
-    const userId = req.query.userId?.toString();
+    const userId = new ObjectId(req.query.userId?.toString());
 
-    const statisticService = new ForecastService(datasource);
+    const statisticService = new ForecastService();
 
     const forecast = await statisticService.getByLaneType(
       LaneType.ClosedWon,
-      req.jwt.team.id!.toString(),
+      req.jwt.team._id!,
       start,
       end,
       userId
@@ -86,13 +87,13 @@ const achieved = async (req: AuthenticatedRequest, res: Response, next: NextFunc
 const predicted = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const { start, end } = parseRange(req.query);
-    const userId = req.query.userId?.toString();
+    const userId = new ObjectId(req.query.userId?.toString());
 
-    const statisticService = new ForecastService(datasource);
+    const statisticService = new ForecastService();
 
     const forecast = await statisticService.getByLaneType(
       LaneType.Normal,
-      req.jwt.team.id!.toString(),
+      req.jwt.team._id,
       start,
       end,
       userId
@@ -113,22 +114,22 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
 
     if (req.query.mode === 'predicted') {
       const query = {
-        teamId: req.jwt.team.id!.toString(),
+        teamId: req.jwt.team._id,
         tags: {
           type: LaneType.Normal,
         },
         inForecast: true,
       };
 
-      const lanes = await datasource.getMongoRepository(Lane).find(query);
+      const lanes = await EntityHelper.findBy(Lane, query);
 
       const { start, end } = parseRange(req.query);
 
       match = {
         $match: {
-          teamId: { $eq: req.jwt.team.id?.toString() },
+          teamId: { $eq: req.jwt.team._id },
           status: { $ne: CardStatus.Deleted },
-          laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
+          laneId: { $in: lanes.map((lane) => lane._id) },
           closedAt: {
             $gt: start,
             $lt: end,
@@ -137,21 +138,21 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
       };
     } else {
       const query = {
-        teamId: req.jwt.team.id!.toString(),
+        teamId: req.jwt.team._id,
         tags: {
           type: LaneType.ClosedWon,
         },
       };
 
-      const lanes = await datasource.getMongoRepository(Lane).find(query);
+      const lanes = await EntityHelper.findBy(Lane, query);
 
       const { start, end } = parseRange(req.query);
 
       match = {
         $match: {
-          teamId: { $eq: req.jwt.team.id?.toString() },
+          teamId: { $eq: req.jwt.team._id },
           status: { $ne: CardStatus.Deleted },
-          laneId: { $in: lanes.map((lane) => lane.id?.toString()) },
+          laneId: { $in: lanes.map((lane) => lane._id) },
           updatedAt: {
             $gt: start,
             $lt: end,
@@ -195,7 +196,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const initialMatch: any = {
       $match: {
-        teamId: req.jwt.team.id!.toString(),
+        teamId: req.jwt.team._id,
         type: { $eq: EventType.LaneAmountChanged },
         createdAt: {
           $lt: start,
@@ -204,7 +205,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
     };
 
     if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
-      initialMatch.$match.userId = req.query.userId;
+      initialMatch.$match.userId = new ObjectId(req.query.userId.toString());
     } else {
       initialMatch.$match.userId = { $exists: false };
     }
@@ -238,7 +239,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const match: any = {
       $match: {
-        teamId: req.jwt.team.id!.toString(),
+        teamId: req.jwt.team._id,
         type: { $eq: EventType.LaneAmountChanged },
         createdAt: {
           $gt: start,
@@ -248,7 +249,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
     };
 
     if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
-      match.$match.userId = req.query.userId;
+      match.$match.userId = new ObjectId(req.query.userId.toString());
     } else {
       match.$match.userId = { $exists: false };
     }

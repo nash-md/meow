@@ -5,7 +5,7 @@ export const LoginResponseSchema = {
     user: {
       type: 'object',
       properties: {
-        id: {
+        _id: {
           type: 'string',
         },
         teamId: {
@@ -24,6 +24,12 @@ export const LoginResponseSchema = {
           type: 'string',
           enum: ['invited', 'enabled', 'disabled', 'deleted', 'single-sign-on'],
         },
+        authentication: {
+          type: 'string',
+        },
+        lastLoginAt: {
+          type: ['string', 'null'],
+        },
         board: {
           type: 'object',
           additionalProperties: {
@@ -40,16 +46,19 @@ export const LoginResponseSchema = {
           type: 'string',
         },
       },
-      required: ['id', 'teamId', 'name', 'status'],
+      required: ['_id', 'teamId', 'name', 'status'],
       additionalProperties: false,
     },
     team: {
       type: 'object',
       properties: {
-        id: { type: 'string' },
+        _id: { type: 'string' },
         currency: { type: 'string' },
+        integrations: {
+          type: 'array',
+        },
       },
-      required: ['id', 'currency'],
+      required: ['_id', 'currency'],
       additionalProperties: false,
     },
     board: {

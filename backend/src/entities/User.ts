@@ -1,70 +1,70 @@
-import { Entity, ObjectIdColumn, BeforeUpdate, BeforeInsert, Column, ObjectId } from 'typeorm';
+import { Entity } from '../helpers/EntityDecorator.js';
+import { ExistingEntity, NewEntity } from './BaseEntity.js';
+import { ObjectId } from 'mongodb';
 import { Card } from './Card.js';
+import { Team } from './Team.js';
 
 @Entity({ name: 'Users' })
-export class User {
-  @ObjectIdColumn()
-  id: ObjectId | undefined;
-
-  @Column()
-  teamId: string;
-
-  @Column()
+export class User implements ExistingEntity {
+  _id: ObjectId;
+  teamId: ObjectId;
   name: string;
-
-  @Column({ select: false })
-  password?: string | null;
-
-  @Column()
+  status: UserStatus;
   animal?: string;
-
-  @Column()
   locale?: string;
-
-  @Column()
+  lastLoginAt?: Date;
   invite?: string | null;
-
-  @Column()
   authentication?: UserAuthentication | null;
-
-  @Column()
-  status?: UserStatus;
-
-  @Column()
   color?: string;
-
-  @Column()
   flags?: Flag[];
+  board?: { [key: string]: Card['_id'][] };
+  createdAt: Date;
+  updatedAt: Date;
 
-  @Column()
-  board?: { [key: string]: Card['id'][] };
-
-  @Column({ type: 'timestamp' })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp' })
-  updatedAt?: Date;
-
-  constructor(teamId: string, name: string, status: UserStatus) {
+  constructor(
+    _id: ObjectId,
+    teamId: ObjectId,
+    name: string,
+    status: UserStatus,
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    this._id = _id;
     this.teamId = teamId;
     this.name = name;
     this.status = status;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   toJSON() {
-    delete this.password;
-    delete this.authentication;
-    return this;
-  }
+    const authenticationType = this.authentication?.google ? 'google' : 'local';
 
-  @BeforeInsert()
-  insertCreated() {
-    this.updatedAt = new Date();
+    return { ...this, authentication: authenticationType };
+  }
+}
+
+@Entity({ name: 'Users' })
+export class NewUser implements NewEntity {
+  teamId: ObjectId;
+  name: string;
+  status: UserStatus;
+  animal?: string;
+  locale?: string;
+  lastLoginAt?: Date;
+  invite?: string | null;
+  authentication?: UserAuthentication | null;
+  color?: string;
+  flags?: Flag[];
+  board?: { [key: string]: Card['_id'][] };
+  createdAt: Date;
+  updatedAt: Date;
+
+  constructor(team: Team, name: string, status: UserStatus) {
+    this.teamId = team._id!;
+    this.name = name;
+    this.status = status;
     this.createdAt = new Date();
-  }
-
-  @BeforeUpdate()
-  insertUpdated() {
     this.updatedAt = new Date();
   }
 }
@@ -80,6 +80,9 @@ export enum UserStatus {
 export interface UserAuthentication {
   local?: {
     password: string;
+  };
+  google?: {
+    id: string;
   };
 }
 

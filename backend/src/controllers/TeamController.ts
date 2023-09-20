@@ -1,9 +1,9 @@
 import { Response, NextFunction } from 'express';
-import { CurrencyCode, Team } from '../entities/Team.js';
+import { CurrencyCode } from '../entities/Team.js';
 import { InvalidRequestBodyError } from '../errors/InvalidRequestBodyError.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
+import { validateAndFetchTeam } from '../helpers/EntityFetchHelper.js';
 
 const parseCurrencyCode = (value: string): CurrencyCode => {
   if (value in CurrencyCode) {
@@ -12,80 +12,46 @@ const parseCurrencyCode = (value: string): CurrencyCode => {
   throw new InvalidRequestBodyError('invalid currency code');
 };
 
-const update = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (req.params.id) {
-      const team = await EntityHelper.findOneById(
-        req.jwt.user,
-        Team,
-        req.params.id
-      );
+    const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-      team.currency = parseCurrencyCode(req.body.currency);
+    team.currency = parseCurrencyCode(req.body.currency);
 
-      const updated = await datasource.manager.save(team);
+    const updated = await EntityHelper.update(team);
 
-      return res.json(updated);
-    }
+    return res.json(updated);
   } catch (error) {
     return next(error);
   }
 };
 
-const updateIntegration = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const updateIntegration = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    if (req.params.id) {
-      const team = await EntityHelper.findOneById(
-        req.jwt.user,
-        Team,
-        req.params.id
-      );
+    const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-      const integrations = team.integrations ?? [];
+    const integrations = team.integrations ?? [];
 
-      const updatedIntegrations = integrations.filter(
-        (integration) => integration.key !== req.body.key
-      );
+    const updatedIntegrations = integrations.filter(
+      (integration) => integration.key !== req.body.key
+    );
 
-      updatedIntegrations.push(req.body);
+    updatedIntegrations.push(req.body);
 
-      team.integrations = updatedIntegrations;
+    team.integrations = updatedIntegrations;
 
-      const updated = await datasource.manager.save(team);
+    const updated = await EntityHelper.update(team);
 
-      return res.json(updated);
-    }
+    return res.json(updated);
   } catch (error) {
     return next(error);
   }
 };
 
-const get = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (req.params.id) {
-      const team = await EntityHelper.findOneById(
-        req.jwt.user,
-        Team,
-        req.params.id
-      );
+const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-      return res.json(team);
-    }
-  } catch (error) {
-    return next(error);
-  }
+  return res.json(team);
 };
 
 export const TeamController = {

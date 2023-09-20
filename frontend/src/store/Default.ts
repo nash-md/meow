@@ -11,7 +11,7 @@ export const Default: ApplicationStore = {
     token: undefined,
     alerts: 0,
     team: {
-      id: undefined,
+      _id: undefined,
       currency: undefined,
       integrations: [],
     },
@@ -19,11 +19,13 @@ export const Default: ApplicationStore = {
   },
   browser: {
     state: 'unknown',
-    isPageLoaded: false,
+  },
+  application: {
+    state: 'uninitialized',
   },
   ui: {
     state: 'default',
-    id: undefined,
+    _id: undefined,
     modal: undefined,
     text: '',
     filters: {

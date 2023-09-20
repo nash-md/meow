@@ -6,7 +6,10 @@ import { log } from '../worker.js';
 
 export const validateAgainst = (schema: {}) => {
   // @ts-ignore
-  const ajv = new Ajv();
+  const ajv = new Ajv({
+    strict: true,
+    allowUnionTypes: true,
+  });
 
   const validate = ajv.compile(schema);
 

@@ -12,11 +12,11 @@ import {
   store,
 } from '../../store/Store';
 import { Translations } from '../../Translations';
-import { Events } from '../card/Events';
 import { Form } from './Form';
 import useMobileLayout from '../../hooks/useMobileLayout';
 import { SchemaReferenceAttribute, SchemaType } from '../../interfaces/Schema';
 import { Reference } from './Reference';
+import { Events } from './Events';
 
 export const Layer = () => {
   const { client } = useContext(RequestHelperContext);
@@ -33,7 +33,7 @@ export const Layer = () => {
     store.dispatch(hideLayer());
   };
 
-  const update = async (id: Account['id'] | undefined, preview: AccountPreview) => {
+  const update = async (id: Account['_id'] | undefined, preview: AccountPreview) => {
     if (id) {
       const updated = await client!.updateAccount({ ...account!, ...preview }); // TODO refactor
 
@@ -96,7 +96,7 @@ export const Layer = () => {
     if (id) {
       list.push(
         <Item key="events">
-          <Events entity="account" id={id} />
+          <Events id={id} />
         </Item>
       );
 

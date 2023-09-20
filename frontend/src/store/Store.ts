@@ -21,9 +21,10 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 
-export const selectIsPageLoaded = (store: RootState) => store.browser.isPageLoaded;
+export const selectApplicationState = (store: RootState) => store.application.state;
 export const selectBrowserState = (store: RootState) => store.browser.state;
 export const selectToken = (store: RootState) => store.session.token;
+export const selectSessionUser = (store: RootState) => store.session.user;
 export const selectCards = (store: RootState) => store.cards;
 export const selectCardsByLaneId = (store: ApplicationStore, id: string | undefined) =>
   store.cards.filter((card) => card.laneId === id);
@@ -31,34 +32,34 @@ export const selectBoard = (store: RootState) => store.board;
 export const selectBoardByLaneId = (store: ApplicationStore, id: string) => store.board[id];
 export const selectAccounts = (store: RootState) => store.accounts;
 export const selectAccount = (store: ApplicationStore, id: string | undefined) =>
-  store.accounts.find((account) => account.id === id);
+  store.accounts.find((account) => account._id === id);
 export const selectUsers = (store: ApplicationStore) => store.users;
 export const selectActiveUsers = (store: ApplicationStore) =>
   store.users.filter((user) => user.status === UserStatus.Enabled);
 export const selectUser = (store: ApplicationStore, id: string | undefined) =>
-  store.users.find((user) => user.id === id);
+  store.users.find((user) => user._id === id);
 export const selectLanes = (store: ApplicationStore) => store.lanes;
 export const selectLane = (store: ApplicationStore, id?: string) => {
-  return id ? store.lanes.find((lane) => lane.id === id) : undefined;
+  return id ? store.lanes.find((lane) => lane._id === id) : undefined;
 };
 
 export const selectSchemas = (store: ApplicationStore) => store.schemas;
 export const selectSchemaByType = (store: ApplicationStore, type: SchemaType) =>
   store.schemas.find((schema) => schema.type === type);
 export const selectSchemaAttributeById = (store: ApplicationStore, id: string) =>
-  store.schemas.find((schema) => schema.id === id);
+  store.schemas.find((schema) => schema._id === id);
 export const selectName = (store: ApplicationStore) => store.session.user?.name;
-export const selectUserId = (store: ApplicationStore) => store.session.user?.id;
+export const selectUserId = (store: ApplicationStore) => store.session.user?._id;
 export const selectAnimal = (store: ApplicationStore) => store.session.user?.animal;
 export const selectColor = (store: ApplicationStore) => store.session.user?.color;
 export const selectCurrency = (store: ApplicationStore) => store.session.team.currency;
-export const selectTeamId = (store: ApplicationStore) => store.session.team.id;
+export const selectTeamId = (store: ApplicationStore) => store.session.team._id;
 export const selectInterfaceState = (store: ApplicationStore) => store.ui.state;
-export const selectInterfaceStateId = (store: ApplicationStore) => store.ui.id;
+export const selectInterfaceStateId = (store: ApplicationStore) => store.ui._id;
 export const selectModal = (store: ApplicationStore) => store.ui.modal;
 export const selectModalText = (store: ApplicationStore) => store.ui.text;
 export const selectCard = (store: ApplicationStore, id: string | undefined) =>
-  store.cards.find((card) => card.id === id);
+  store.cards.find((card) => card._id === id);
 export const selectFilters = (store: ApplicationStore) => {
   return {
     mode: new Set(store.ui.filters.mode),

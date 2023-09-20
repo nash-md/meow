@@ -1,7 +1,7 @@
-import { Event } from '../../../interfaces/Event';
+import { CardEvent } from '../../../interfaces/CardEvent';
 
 interface NameProps {
-  event: Event;
+  event: CardEvent;
 }
 
 export const Name = ({ event }: NameProps) => {

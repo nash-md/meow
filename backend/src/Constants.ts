@@ -52,6 +52,14 @@ export const DefaultCardSchema = {
       type: 'textarea',
       name: 'Notes',
     },
+    {
+      key: '1a3231bb-73e4-7e97-8d77-1304dd674c54',
+      index: 2,
+      type: 'reference',
+      name: 'Account',
+      entity: 'account',
+      relationship: 'many-to-one',
+    },
   ],
 } as {
   type: SchemaType;

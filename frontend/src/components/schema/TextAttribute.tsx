@@ -33,7 +33,7 @@ export const TextAttribute = ({
         width="100%"
         aria-label={name}
         label={name}
-        value={value?.toString()}
+        value={value ?? ''}
         isDisabled={isDisabled}
         onChange={(value) => updateValue(value)}
       />

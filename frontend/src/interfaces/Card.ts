@@ -3,7 +3,7 @@ import { Attribute } from './Attribute';
 export type id = string;
 
 export interface Card {
-  readonly id: id;
+  readonly _id: id;
   name: string;
   readonly teamId: string;
   userId: string;

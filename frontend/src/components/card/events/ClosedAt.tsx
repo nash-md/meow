@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { Event } from '../../../interfaces/Event';
+import { CardEvent } from '../../../interfaces/CardEvent';
 
 interface ClosedAtProps {
-  event: Event;
+  event: CardEvent;
 }
 
 export const ClosedAt = ({ event }: ClosedAtProps) => {

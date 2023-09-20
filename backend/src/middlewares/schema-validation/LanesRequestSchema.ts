@@ -6,7 +6,7 @@ export const LanesRequestSchema = {
     required: ['name', 'index', 'inForecast'],
     additionalProperties: false,
     properties: {
-      id: {
+      _id: {
         type: 'string',
       },
       name: {

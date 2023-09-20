@@ -26,9 +26,9 @@ export class Chart extends PureComponent<ChartProps> {
             {lanes.map((lane, index) => {
               return (
                 <Line
-                  key={lane.id}
+                  key={lane._id}
                   type="monotone"
-                  dataKey={lane.id}
+                  dataKey={lane._id}
                   stroke={colors[index]}
                   strokeWidth={2}
                   animationDuration={250}

@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
-import { Event } from '../../../interfaces/Event';
 import { selectLanes } from '../../../store/Store';
 import { DateTime } from 'luxon';
+import { CardEvent } from '../../../interfaces/CardEvent';
 
 interface LaneProps {
-  event: Event;
+  event: CardEvent;
 }
 
 const durationInLane = (enter: string, exit: string) => {
@@ -47,8 +47,8 @@ const durationInLane = (enter: string, exit: string) => {
 export const Lane = ({ event }: LaneProps) => {
   const lanes = useSelector(selectLanes);
 
-  const laneFrom = lanes.find((lane) => lane.id === event.body.from);
-  const laneTo = lanes.find((lane) => lane.id === event.body.to);
+  const laneFrom = lanes.find((lane) => lane._id === event.body.from);
+  const laneTo = lanes.find((lane) => lane._id === event.body.to);
 
   return (
     <div className="body">

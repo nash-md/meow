@@ -4,10 +4,9 @@ import { SESSION_MAX_AGE } from '../Constants.js';
 import { Team } from '../entities/Team.js';
 import { User, UserStatus } from '../entities/User.js';
 import { AuthenticationFailedError } from '../errors/AuthenticationFailedError.js';
-import { TeamNotFoundError } from '../errors/TeamNotFoundError.js';
 import { TokenHelper } from '../helpers/TokenHelper.js';
-import { datasource } from '../helpers/DatabaseHelper.js';
-import { ObjectId } from 'mongodb';
+import { EntityHelper } from '../helpers/EntityHelper.js';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 
 const handle = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,10 +15,11 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
     if (req.body.token) {
       const payload = TokenHelper.verifyJwt(req.body.token);
 
-      user = await datasource.manager.findOneById(User, new ObjectId(payload.userId));
+      user = await EntityHelper.findOneById(User, payload.userId);
     }
+
     if (req.body.name) {
-      user = await datasource.manager.findOneBy(User, {
+      user = await EntityHelper.findOneBy(User, {
         name: req.body.name,
       });
 
@@ -41,18 +41,27 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
       throw new AuthenticationFailedError();
     }
 
-    const team = await datasource.manager.findOneById(Team, new ObjectId(user.teamId));
+    const team = await EntityHelper.findOneById(Team, user.teamId);
 
     if (!team) {
-      throw new TeamNotFoundError('Team not found');
+      throw new EntityNotFoundError('Team not found');
     }
+
+    user.lastLoginAt = new Date();
+
+    await EntityHelper.update(user);
 
     const payload = {
       token: TokenHelper.createJwt(user, SESSION_MAX_AGE),
       user: user,
       team: {
-        id: user.teamId.toString(),
+        _id: user.teamId.toString(),
         currency: team.currency,
+        integrations: Array.isArray(team.integrations)
+          ? team.integrations.map((integration) => {
+              return { key: integration.key };
+            })
+          : [],
       },
       board: user.board,
     };
