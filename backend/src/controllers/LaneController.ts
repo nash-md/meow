@@ -51,7 +51,7 @@ const updateAll = async (req: AuthenticatedRequest, res: Response, next: NextFun
 
     /* TODO temporary migration, if board does not exist just create it */
     if (!board) {
-      board = await EntityHelper.create(new NewBoard(req.jwt.team, 'xxx'), Board);
+      board = await EntityHelper.create(new NewBoard(req.jwt.team, 'default'), Board);
     }
 
     const list: Lane[] = [];

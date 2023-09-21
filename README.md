@@ -33,7 +33,7 @@ Forecast your sales performance. Select your preferred time range, and get an ov
 
 ## How to Install
 
-This project is written in Typescript and split into two parts, the frontend written in [React](https://reactjs.org/) and the backend based on [Express](https://expressjs.com/) and [TypeORM](https://typeorm.io/). You find the React UI sources in `/frontend`, the server in `/backend`.
+This project is written in Typescript and split into two parts, the frontend written in [React](https://reactjs.org/) and the backend based on [Express](https://expressjs.com/). You find the React UI sources in `/frontend`, the server in `/backend`.
 
 ### Your own Server - Backend
 
@@ -106,7 +106,7 @@ The root directory of this project contains a `Dockerfile` and a `docker-compose
 
 ### Database Support
 
-This project leverages TypeORM, a powerful Object-Relational Mapping (ORM) library. In addition to TypeORM, this project heavily depends on MongoDB](https://www.mongodb.com/).
+This project heavily depends on MongoDB](https://www.mongodb.com/).
 
 While it is possible to replace MongoDB with another database, please note that due to the significant dependencies and specific optimizations tailored for MongoDB, such a migration might be challenging.
 
