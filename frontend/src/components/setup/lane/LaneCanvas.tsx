@@ -86,6 +86,7 @@ export const LanesCanvas = () => {
         name: name,
         index: lanes.length,
         inForecast: true,
+        type: LaneType.Normal,
       },
     ]);
   };

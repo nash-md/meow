@@ -174,7 +174,7 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
       card.laneId = lane._id!;
 
-      if (lane.tags?.type !== LaneType.Normal) {
+      if (lane.tags?.type && lane.tags.type !== LaneType.Normal) {
         const closedAt = DateTime.utc().startOf('day');
 
         card.closedAt = closedAt.toJSDate();

@@ -2,8 +2,7 @@ import { Response, NextFunction } from 'express';
 import { Lane, LaneRequest, NewLane } from '../entities/Lane.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { Board } from '../entities/Board.js';
-import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
+import { Board, NewBoard } from '../entities/Board.js';
 import { validateAndFetchLane } from '../helpers/EntityFetchHelper.js';
 
 const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -50,8 +49,9 @@ const updateAll = async (req: AuthenticatedRequest, res: Response, next: NextFun
 
     let board = await EntityHelper.findOneByTeam(Board, req.jwt.team);
 
+    /* TODO temporary migration, if board does not exist just create it */
     if (!board) {
-      throw new EntityNotFoundError();
+      board = await EntityHelper.create(new NewBoard(req.jwt.team, 'xxx'), Board);
     }
 
     const list: Lane[] = [];
