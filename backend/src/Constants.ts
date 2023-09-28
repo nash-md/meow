@@ -12,9 +12,9 @@ export const IS_ISO_8601_DATE_REGEXP = /^\d{4}-\d{2}-\d{2}$/;
 export const FILTER_BY_NONE = { name: 'Everyone', key: 'all' };
 
 export const DefaultLanes = [
-  { name: 'Not Qualified', inForecast: true, tags: { type: 'normal' } },
-  { name: 'Qualified', inForecast: true, tags: { type: 'normal' } },
-  { name: 'Comitted', inForecast: true, tags: { type: 'normal' } },
+  { name: 'Not Qualified', inForecast: true, tags: { type: LaneType.Normal } },
+  { name: 'Qualified', inForecast: true, tags: { type: LaneType.Normal } },
+  { name: 'Comitted', inForecast: true, tags: { type: LaneType.Normal } },
   {
     name: 'Closed Won',
     color: '#00b359',

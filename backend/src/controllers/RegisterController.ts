@@ -86,6 +86,15 @@ export const setupAccountWithExampleData = async (
     })
   );
 
+  /* emit a lane event for each lane to calculate statistic values */
+  lanes.forEach((lane) => {
+    EventHelper.get().emit('lane', {
+      teamId: team._id,
+      laneId: lane._id,
+      userId: user._id,
+    });
+  });
+
   await Promise.all(
     DefaultAccounts.map(async (item, index) => {
       await EntityHelper.create(new NewAccount(team, item.name));

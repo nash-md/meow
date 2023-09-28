@@ -66,7 +66,8 @@ const parseRange = (query: QueryString.ParsedQs) => {
 const achieved = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const { start, end } = parseRange(req.query);
-    const userId = new ObjectId(req.query.userId?.toString());
+
+    const userId = req.query.userId ? new ObjectId(req.query.userId?.toString()) : undefined;
 
     const statisticService = new ForecastService();
 
@@ -87,7 +88,8 @@ const achieved = async (req: AuthenticatedRequest, res: Response, next: NextFunc
 const predicted = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const { start, end } = parseRange(req.query);
-    const userId = new ObjectId(req.query.userId?.toString());
+
+    const userId = req.query.userId ? new ObjectId(req.query.userId?.toString()) : undefined;
 
     const statisticService = new ForecastService();
 
@@ -114,7 +116,7 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
 
     if (req.query.mode === 'predicted') {
       const query = {
-        teamId: req.jwt.team._id,
+        teamId: req.jwt.team._id!,
         tags: {
           type: LaneType.Normal,
         },
@@ -196,7 +198,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const initialMatch: any = {
       $match: {
-        teamId: req.jwt.team._id,
+        teamId: req.jwt.team._id!,
         type: { $eq: EventType.LaneAmountChanged },
         createdAt: {
           $lt: start,
@@ -239,7 +241,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const match: any = {
       $match: {
-        teamId: req.jwt.team._id,
+        teamId: req.jwt.team._id!,
         type: { $eq: EventType.LaneAmountChanged },
         createdAt: {
           $gt: start,
