@@ -6,6 +6,7 @@ import { DatabaseHelper } from '../helpers/DatabaseHelper.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { DateTime } from 'luxon';
+import { ObjectId } from 'mongodb';
 
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
@@ -28,10 +29,10 @@ function parseFilterParameter(filter: string): Set<FilterMode> {
 }
 
 const getActiveStatisticsByLanes = async (
-  teamId: string,
+  teamId: ObjectId,
   lanes: Lane[],
   filter?: Set<FilterMode>,
-  userId?: string,
+  userId?: ObjectId,
   filterText?: string
 ) => {
   const direct = DatabaseHelper.get();
@@ -41,12 +42,12 @@ const getActiveStatisticsByLanes = async (
     $match: {
       teamId: { $eq: teamId },
       status: { $ne: CardStatus.Deleted },
-      laneId: { $in: lanes.map((lane) => lane._id?.toString()) },
+      laneId: { $in: lanes.map((lane) => lane._id) },
     },
   };
 
   if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
-    match.$match.userId = { $eq: userId.toString() };
+    match.$match.userId = { $eq: userId };
   }
 
   if (filterText) {
@@ -87,8 +88,7 @@ const getActiveStatisticsByLanes = async (
 
   const project = {
     $project: {
-      _id: 0,
-      id: '$_id',
+      _id: 1,
       timeInLaneAvg: { $divide: ['$timeInLaneTotal', '$count'] },
       timeSinceCreationAvg: { $divide: ['$timeSinceCreationTotal', '$count'] },
       cycleTimeAvg: {
@@ -106,10 +106,10 @@ const getActiveStatisticsByLanes = async (
 };
 
 const getMovementStatisticsByLanes = async (
-  teamId: string,
+  teamId: ObjectId,
   lanes: Lane[],
   filter?: Set<FilterMode>,
-  userId?: string,
+  userId?: ObjectId,
   filterText?: string
 ) => {
   const direct = DatabaseHelper.get();
@@ -183,7 +183,7 @@ const getMovementStatisticsByLanes = async (
   };
 
   if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
-    matchNotDeletedAndFound.$match['card.userId'] = { $eq: userId.toString() };
+    matchNotDeletedAndFound.$match['card.userId'] = { $eq: userId };
   }
 
   if (filterText) {
@@ -215,8 +215,7 @@ const getMovementStatisticsByLanes = async (
 
   const project = {
     $project: {
-      _id: 0,
-      id: '$_id',
+      _id: 1,
       count: 1,
       amount: 1,
     },
@@ -243,8 +242,8 @@ const getMovementStatisticsByLanes = async (
 
 const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
-    const teamId = req.jwt.team._id!.toString();
-    const userId = req.jwt.user._id?.toString();
+    const teamId = req.jwt.team._id;
+    const userId = req.jwt.user._id;
 
     const lanes = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
