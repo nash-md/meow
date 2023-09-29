@@ -43,8 +43,8 @@ const getStatisticsByLane = (statistics: BoardStatistics | undefined, lane: Lane
   }
 
   const active = statistics.active.find((l) => l._id === lane._id);
-  const won = statistics.won.find((l) => l.id === lane._id);
-  const lost = statistics.lost.find((l) => l.id === lane._id);
+  const won = statistics.won.find((l) => l._id === lane._id);
+  const lost = statistics.lost.find((l) => l._id === lane._id);
 
   return { active, won, lost };
 };

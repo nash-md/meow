@@ -133,9 +133,11 @@ export const ForecastPage = () => {
                   <h4 style={{ display: 'inline-block', marginRight: '10px' }}>
                     <Currency value={achieved.amount} />{' '}
                   </h4>
-                  <span>
-                    {((achieved.amount * 100) / (achieved.amount + predicted.amount)).toFixed(2)}%
-                  </span>
+                  {achieved.amount + predicted.amount !== 0 ? (
+                    <span>
+                      {((achieved.amount * 100) / (achieved.amount + predicted.amount)).toFixed(2)}%
+                    </span>
+                  ) : null}
                 </div>
 
                 <span>Value</span>

@@ -11,8 +11,8 @@ export interface BoardProps {
 
 export interface BoardStatistics {
   active: LaneStatistic[];
-  won: { count: number; amount: number; id: string }[];
-  lost: { count: number; amount: number; id: string }[];
+  won: { count: number; amount: number; _id: string }[];
+  lost: { count: number; amount: number; _id: string }[];
 }
 export const StatisticsBoard = ({ lanes }: BoardProps) => {
   const { client } = useContext(RequestHelperContext);
@@ -23,7 +23,7 @@ export const StatisticsBoard = ({ lanes }: BoardProps) => {
   useEffect(() => {
     if (client) {
       client
-        .getLanesStatistic(filters.mode, filters.text)
+        .getLanesStatistic(filters)
         .then((payload) => {
           setStatistics(payload);
         })

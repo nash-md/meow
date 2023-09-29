@@ -46,7 +46,7 @@ const getActiveStatisticsByLanes = async (
     },
   };
 
-  if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
+  if (userId) {
     match.$match.userId = { $eq: userId };
   }
 
@@ -60,8 +60,10 @@ const getActiveStatisticsByLanes = async (
     match.$match.updatedAt = { $gt: threeDaysAgo.toJSDate() };
   }
 
+  const today = DateTime.utc().startOf('day').toJSDate();
+
   if (filter && filter.has(FilterMode.RequireUpdate)) {
-    match.$match.$or = [{ nextFollowUpAt: { $lt: new Date() } }, { closedAt: { $lt: new Date() } }];
+    match.$match.$or = [{ nextFollowUpAt: { $lt: today } }, { closedAt: { $lt: today } }];
   }
 
   const group = {
@@ -108,7 +110,6 @@ const getActiveStatisticsByLanes = async (
 const getMovementStatisticsByLanes = async (
   teamId: ObjectId,
   lanes: Lane[],
-  filter?: Set<FilterMode>,
   userId?: ObjectId,
   filterText?: string
 ) => {
@@ -130,21 +131,21 @@ const getMovementStatisticsByLanes = async (
 
   const groupByCardId = {
     $group: {
-      _id: '$entityId',
+      _id: '$cardId',
       latest: { $first: '$$ROOT' },
     },
   };
 
   const matchLatestLaneMove = {
     $match: {
-      'latest.body.to': { $in: lanes.map((lane) => lane._id!.toString()) },
+      'latest.body.to': { $in: lanes.map((lane) => lane._id.toString()) },
     },
   };
 
   const lookupCard = {
     $lookup: {
       from: 'Cards',
-      let: { cardId: { $toObjectId: '$latest.entityId' } },
+      let: { cardId: { $toObjectId: '$latest.cardId' } },
       pipeline: [
         {
           $match: {
@@ -182,7 +183,7 @@ const getMovementStatisticsByLanes = async (
     },
   };
 
-  if (filter && filter.has(FilterMode.OwnedByMe) && userId) {
+  if (userId) {
     matchNotDeletedAndFound.$match['card.userId'] = { $eq: userId };
   }
 
@@ -243,7 +244,7 @@ const getMovementStatisticsByLanes = async (
 const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const teamId = req.jwt.team._id;
-    const userId = req.jwt.user._id;
+    const userId = req.query.userId ? new ObjectId(req.query.userId?.toString()) : undefined;
 
     const lanes = await EntityHelper.findByTeam(Lane, req.jwt.team);
 
@@ -262,7 +263,6 @@ const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction)
     const won = await getMovementStatisticsByLanes(
       teamId,
       lanes.filter((lane) => lane.tags.type === LaneType.ClosedWon),
-      filter,
       userId,
       filterText
     );
@@ -270,7 +270,6 @@ const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction)
     const lost = await getMovementStatisticsByLanes(
       teamId,
       lanes.filter((lane) => lane.tags.type === LaneType.ClosedLost),
-      filter,
       userId,
       filterText
     );

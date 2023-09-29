@@ -12,6 +12,7 @@ import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 import { RequestHelperUrlError } from '../errors/RequestHelperUrlError';
+import { FILTER_BY_NONE } from '../Constants';
 
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
 
@@ -229,18 +230,30 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
-  async getLanesStatistic(filter?: Set<FilterMode>, text?: string) {
+  async getLanesStatistic(filter?: {
+    text: string | undefined;
+    mode: Set<FilterMode>;
+    userId: string;
+  }) {
     let url = this.getUrl(`/api/lanes/statistic`);
 
-    if (filter && filter.size > 0) {
-      const list = Array.from(filter).map((mode) => mode.toString());
+    const params = new URLSearchParams({});
 
-      url.searchParams.append('filter', list.join(','));
+    if (filter?.mode && filter.mode.size !== 0) {
+      const list = Array.from(filter.mode).map((mode) => mode.toString());
+
+      params.append('filter', list.join(','));
     }
 
-    if (text) {
-      url.searchParams.append('text', text);
+    if (filter?.text) {
+      params.append('text', filter?.text);
     }
+
+    if (filter?.userId && filter.userId !== FILTER_BY_NONE.key) {
+      params.set('userId', filter?.userId);
+    }
+
+    url.search = params.toString();
 
     return this.doFetch(url, 'GET');
   }
