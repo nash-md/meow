@@ -8,7 +8,7 @@ import { ObjectId } from 'mongodb';
 import { User } from '../entities/User.js';
 
 const updateForecastEvent = async (teamId: ObjectId, laneId: ObjectId, userId?: ObjectId) => {
-  let event = await EntityHelper.findForecastEventByDay(teamId, laneId, new Date(), laneId);
+  let event = await EntityHelper.findForecastEventByDay(teamId, laneId, new Date(), userId);
 
   const amount = await EntityHelper.getTotalAmountByLaneId(teamId, laneId, userId);
 
@@ -35,8 +35,8 @@ export const LaneEventListener = {
     const team = await EntityHelper.findOneByIdOrFail(Team, teamId);
 
     /* update team */
-    await updateForecastEvent(team._id!, laneId);
+    await updateForecastEvent(team._id, laneId);
     /* update user */
-    await updateForecastEvent(team._id!, laneId, userId);
+    await updateForecastEvent(team._id, laneId, userId);
   },
 };
