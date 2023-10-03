@@ -6,30 +6,29 @@ import { findAttributeById, getAttributeListDifference } from '../helpers/Attrib
 import { CardEventPayload } from '../events/EventStrategy.js';
 import { log } from '../worker.js';
 import { Account } from '../entities/Account.js';
-import { Team } from '../entities/Team.js';
-import { NewCardEvent } from '../entities/CardEvent.js';
+import { CardEvent, NewCardEvent } from '../entities/CardEvent.js';
 import { Card } from '../entities/Card.js';
+import { User } from '../entities/User.js';
+import { EventHelper } from '../helpers/EventHelper.js';
 
 export const CardEventListener = {
-  async onCardUpdateOrCreate({ user, card, updated }: CardEventPayload) {
-    log.debug(`execute onCardUpdateOrCreate for card ${card._id}`);
+  async onCardUpdateOrCreate({ user, latest, previous }: CardEventPayload) {
+    log.debug(`execute onCardUpdateOrCreate for card ${latest._id}`);
 
     let { teamId } = user;
 
     const schema = await EntityHelper.findSchemaByType(teamId, SchemaType.Card);
-    const team = await EntityHelper.findOneById(Team, teamId);
+    const entity = await EntityHelper.findOneByIdOrFail(Card, latest._id);
 
-    const entity = await EntityHelper.findOneByIdOrFail(Card, card._id);
-
-    /* if just one plain card was provided we assume it is a new card */
-    if (!updated) {
-      await EntityHelper.create(new NewCardEvent(entity, user, EventType.Created));
+    /* if no previous card was provided, we assume it is a new card */
+    if (!previous) {
+      await CardEventListener.persist(user, new NewCardEvent(entity, user, EventType.Created));
 
       return;
     }
 
-    if (updated.attributes) {
-      const changes = getAttributeListDifference(card.attributes, updated.attributes);
+    if (previous.attributes) {
+      const changes = getAttributeListDifference(latest.attributes, previous.attributes);
 
       /* enrich event data */
       for (const change of changes) {
@@ -53,68 +52,85 @@ export const CardEventListener = {
       }
 
       if (changes.length !== 0) {
-        await EntityHelper.create(
+        await CardEventListener.persist(
+          user,
           new NewCardEvent(entity, user, EventType.AttributeChanged, changes)
         );
       }
     }
 
-    if (card.amount !== updated.amount) {
-      await EntityHelper.create(
+    if (previous.amount !== latest.amount) {
+      await CardEventListener.persist(
+        user,
         new NewCardEvent(entity, user, EventType.AmountChanged, {
-          from: card.amount,
-          to: updated.amount,
+          from: previous.amount,
+          to: latest.amount,
         })
       );
     }
 
-    if (updated.closedAt && !RequestParser.isEqualDates(updated.closedAt, card.closedAt)) {
-      await EntityHelper.create(
+    if (latest.closedAt && !RequestParser.isEqualDates(latest.closedAt, previous.closedAt)) {
+      await CardEventListener.persist(
+        user,
         new NewCardEvent(entity, user, EventType.ClosedAtChanged, {
-          from: card.closedAt,
-          to: updated.closedAt,
+          from: previous.closedAt,
+          to: latest.closedAt,
         })
       );
     }
 
     if (
-      updated.nextFollowUpAt &&
-      !RequestParser.isEqualDates(updated.nextFollowUpAt, card.nextFollowUpAt)
+      latest.nextFollowUpAt &&
+      !RequestParser.isEqualDates(latest.nextFollowUpAt, previous.nextFollowUpAt)
     ) {
-      await EntityHelper.create(
+      await CardEventListener.persist(
+        user,
         new NewCardEvent(entity, user, EventType.NextFollowUpAtChanged, {
-          from: card.nextFollowUpAt,
-          to: updated.nextFollowUpAt,
+          from: previous.nextFollowUpAt,
+          to: latest.nextFollowUpAt,
         })
       );
     }
 
-    if (updated.userId!.toString() !== card.userId.toString()) {
-      await EntityHelper.create(
+    if (latest.userId!.toString() !== previous.userId.toString()) {
+      await CardEventListener.persist(
+        user,
         new NewCardEvent(entity, user, EventType.Assigned, {
-          from: card.userId,
-          to: updated.userId,
+          from: previous.userId,
+          to: latest.userId,
         })
       );
     }
 
-    if (card.laneId !== updated.laneId) {
+    if (previous.laneId !== latest.laneId) {
       const body = {
-        from: card.laneId,
-        to: updated.laneId,
-        inLaneSince: card.inLaneSince,
+        from: previous.laneId,
+        to: latest.laneId,
+        inLaneSince: previous.inLaneSince,
       };
 
-      await EntityHelper.create(new NewCardEvent(entity, user, EventType.CardMoved, body));
+      await CardEventListener.persist(
+        user,
+        new NewCardEvent(entity, user, EventType.CardMoved, body)
+      );
     }
 
-    if (card.name !== updated.name) {
+    if (previous.name !== latest.name) {
       const body = {
-        from: card.name,
-        to: updated.name,
+        from: previous.name,
+        to: latest.name,
       };
 
-      await EntityHelper.create(new NewCardEvent(entity, user, EventType.NameChanged, body));
+      await CardEventListener.persist(
+        user,
+        new NewCardEvent(entity, user, EventType.NameChanged, body)
+      );
     }
+  },
+
+  async persist(user: User, event: NewCardEvent) {
+    const latest = await EntityHelper.create(event, CardEvent);
+
+    EventHelper.get().emit('event', { user: user, event: latest });
   },
 };

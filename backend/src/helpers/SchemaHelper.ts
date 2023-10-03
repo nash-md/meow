@@ -27,35 +27,47 @@ const getSchemaReferenceAttributes = (
 
 const getCreatedReference = (
   reference: SchemaReferenceAttribute,
-  updated: Attribute = {},
-  original: Attribute = {}
+  latest: Attribute = {},
+  previous?: Attribute
 ) => {
-  return updated.hasOwnProperty(reference.key) && !original.hasOwnProperty(reference.key)
-    ? new ObjectId(updated[reference.key]!)
+  if (!previous) {
+    return latest.hasOwnProperty(reference.key) ? new ObjectId(latest[reference.key]!) : null;
+  }
+
+  return latest.hasOwnProperty(reference.key) && !previous.hasOwnProperty(reference.key)
+    ? new ObjectId(latest[reference.key]!)
     : null;
 };
 
 const getDeletedReference = (
   reference: SchemaReferenceAttribute,
-  updated: Attribute = {},
-  original: Attribute = {}
+  latest: Attribute = {},
+  previous?: Attribute
 ) => {
-  return original.hasOwnProperty(reference.key) && !updated.hasOwnProperty(reference.key)
-    ? new ObjectId(original[reference.key]!)
+  if (!previous) {
+    return null;
+  }
+
+  return previous.hasOwnProperty(reference.key) && !latest.hasOwnProperty(reference.key)
+    ? new ObjectId(previous[reference.key]!)
     : null;
 };
 
 const getChangedReference = (
   reference: SchemaReferenceAttribute,
-  updated: Attribute = {},
-  original: Attribute = {}
+  latest: Attribute = {},
+  previous?: Attribute
 ) => {
-  return updated.hasOwnProperty(reference.key) &&
-    original.hasOwnProperty(reference.key) &&
-    updated[reference.key] !== original[reference.key]
+  if (!previous) {
+    return null;
+  }
+
+  return latest.hasOwnProperty(reference.key) &&
+    previous.hasOwnProperty(reference.key) &&
+    latest[reference.key] !== previous[reference.key]
     ? {
-        updatedId: new ObjectId(updated[reference.key]!),
-        originalId: new ObjectId(original[reference.key]!),
+        latestId: new ObjectId(latest[reference.key]!),
+        previousId: new ObjectId(previous[reference.key]!),
       }
     : null;
 };

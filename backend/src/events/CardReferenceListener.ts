@@ -1,5 +1,5 @@
 import { EntityHelper } from '../helpers/EntityHelper.js';
-import { SchemaReferenceAttribute, SchemaType } from '../entities/Schema.js';
+import { SchemaType } from '../entities/Schema.js';
 import { CardEventPayload } from './EventStrategy.js';
 import { log } from '../worker.js';
 import { SchemaHelper } from '../helpers/SchemaHelper.js';
@@ -7,22 +7,23 @@ import { EntityReferenceHelper } from '../helpers/EntityReferenceHelper.js';
 import { ObjectId } from 'mongodb';
 
 export const CardReferenceListener = {
-  async onCardUpdateOrCreate({ user, card, updated }: CardEventPayload) {
-    log.debug(`execute onCardUpdateOrCreate for card ${card._id}`);
+  async onCardUpdateOrCreate({ user, latest, previous }: CardEventPayload) {
+    log.debug(`execute onCardUpdateOrCreate for card ${latest._id}`);
 
     let { teamId } = user;
 
-    const cardId = new ObjectId(card._id);
-
+    const cardId = new ObjectId(latest._id);
     const schema = await EntityHelper.findSchemaByType(teamId, SchemaType.Card);
 
     const references = SchemaHelper.getSchemaReferenceAttributes(schema?.attributes);
 
-    const promises = references.map(async (reference: SchemaReferenceAttribute) => {
-      const createdId = SchemaHelper.getCreatedReference(
+    for (const reference of references) {
+      let createdId: ObjectId | null = null;
+
+      createdId = SchemaHelper.getCreatedReference(
         reference,
-        updated?.attributes,
-        card.attributes
+        latest?.attributes,
+        previous?.attributes
       );
 
       if (createdId) {
@@ -35,8 +36,8 @@ export const CardReferenceListener = {
 
       const deletedId = SchemaHelper.getDeletedReference(
         reference,
-        updated?.attributes,
-        card.attributes
+        latest?.attributes,
+        previous?.attributes
       );
 
       if (deletedId) {
@@ -49,20 +50,18 @@ export const CardReferenceListener = {
 
       const changed = SchemaHelper.getChangedReference(
         reference,
-        updated?.attributes,
-        card.attributes
+        latest?.attributes,
+        previous?.attributes
       );
 
       if (changed) {
-        await EntityReferenceHelper.setReference(user, changed.updatedId, cardId, reference);
-        await EntityReferenceHelper.unsetReference(user, changed.originalId, cardId, reference);
+        await EntityReferenceHelper.setReference(user, changed.latestId, cardId, reference);
+        await EntityReferenceHelper.unsetReference(user, changed.previousId, cardId, reference);
 
         log.debug(
-          `update reference from ${changed.originalId} to ${changed.updatedId} on entity ${cardId} - reference ${reference.key} - ${reference.name}`
+          `update reference from ${changed.previousId} to ${changed.latestId} on entity ${cardId} - reference ${reference.key} - ${reference.name}`
         );
       }
-    });
-
-    await Promise.all(promises);
+    }
   },
 };

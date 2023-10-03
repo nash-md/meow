@@ -81,11 +81,11 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       card.nextFollowUpAt = RequestParser.toJsDate(body.nextFollowUpAt);
     }
 
-    const updated = await EntityHelper.create(card, Card);
+    const latest = await EntityHelper.create(card, Card);
 
     EventHelper.get().emit('card', {
       user: req.jwt.user,
-      card: updated!.toPlain(),
+      latest: latest!.toPlain(),
     });
 
     EventHelper.get().emit('lane', {
@@ -94,7 +94,7 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       laneId: card.laneId,
     });
 
-    return res.status(201).json(updated);
+    return res.status(201).json(latest);
   } catch (error) {
     return next(error);
   }
@@ -114,7 +114,7 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
   try {
     const card = await validateAndFetchCard(req.params.id, req.jwt.user);
 
-    const original = card.toPlain();
+    const previous = card.toPlain();
 
     const { body } = req;
 
@@ -181,7 +181,7 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       }
     }
 
-    const updated = await EntityHelper.update(card);
+    const latest = await EntityHelper.update(card);
 
     /* emit events */
 
@@ -202,9 +202,13 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       emitLaneEvent(card.teamId, card.laneId, card.userId);
     }
 
-    EventHelper.get().emit('card', { user: req.jwt.user, card: original, updated: card.toPlain() });
+    EventHelper.get().emit('card', {
+      user: req.jwt.user,
+      latest: latest.toPlain(),
+      previous: previous,
+    });
 
-    return res.json(updated);
+    return res.json(latest);
   } catch (error) {
     return next(error);
   }

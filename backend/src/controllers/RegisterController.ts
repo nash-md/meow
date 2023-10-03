@@ -82,7 +82,7 @@ export const setupAccountWithExampleData = async (
 
       const updated = await EntityHelper.create(card, Card);
 
-      EventHelper.get().emit('card', { user: user, card: updated!.toPlain() });
+      EventHelper.get().emit('card', { user: user, latest: updated!.toPlain() });
     })
   );
 

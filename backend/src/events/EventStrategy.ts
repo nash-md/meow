@@ -9,8 +9,8 @@ export type EventType = 'account' | 'lane' | 'card' | 'event';
 
 export interface CardEventPayload {
   user: User;
-  card: PlainCard;
-  updated?: PlainCard;
+  latest: PlainCard;
+  previous?: PlainCard;
 }
 
 export interface LaneEventPayload {
