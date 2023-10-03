@@ -22,39 +22,39 @@ function getCommonKeys(a: object, b: object): string[] {
 }
 
 export const getAttributeListDifference = (
-  existing: Attribute = {},
-  updated: Attribute = {}
+  latest: Attribute = {},
+  previous: Attribute = {}
 ): AttributeChange[] => {
   const list: AttributeChange[] = [];
 
-  for (const key in existing) {
-    if (isEmptyOrNull(existing[key]!)) {
-      delete existing[key];
+  for (const key in previous) {
+    if (isEmptyOrNull(previous[key]!)) {
+      delete previous[key];
     }
   }
 
-  for (const key in updated) {
-    if (isEmptyOrNull(updated[key]!)) {
-      delete updated[key];
+  for (const key in latest) {
+    if (isEmptyOrNull(latest[key]!)) {
+      delete latest[key];
     }
   }
 
-  getCommonKeys(existing, updated).forEach((key) => {
-    if (updated[key] !== existing[key]) {
-      const item: AttributeChange = { attribute: { key }, type: 'updated', value: updated[key] };
+  getCommonKeys(previous, latest).forEach((key) => {
+    if (latest[key] !== previous[key]) {
+      const item: AttributeChange = { attribute: { key }, type: 'updated', value: latest[key] };
 
       list.push(item);
     }
   });
 
-  for (const key in updated) {
-    if (!existing.hasOwnProperty(key)) {
-      list.push({ attribute: { key }, type: 'added', value: updated[key] });
+  for (const key in latest) {
+    if (!previous.hasOwnProperty(key)) {
+      list.push({ attribute: { key }, type: 'added', value: latest[key] });
     }
   }
 
-  for (const key in existing) {
-    if (!updated.hasOwnProperty(key)) {
+  for (const key in previous) {
+    if (!latest.hasOwnProperty(key)) {
       list.push({ attribute: { key }, type: 'removed', value: null });
     }
   }

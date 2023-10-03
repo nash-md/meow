@@ -1,7 +1,7 @@
 import { Button, Item, TabList, TabPanels, Tabs } from '@adobe/react-spectrum';
 import { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { addAccoount, hideLayer, showModalSuccess, updateAccount } from '../../actions/Actions';
+import { addAccount, hideLayer, showModalSuccess, updateAccount } from '../../actions/Actions';
 import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { Account, AccountPreview } from '../../interfaces/Account';
 import { ApplicationStore } from '../../store/ApplicationStore';
@@ -43,7 +43,7 @@ export const Layer = () => {
     } else {
       const updated = await client!.createAccount(preview); // TODO refactor
 
-      store.dispatch(addAccoount({ ...updated }));
+      store.dispatch(addAccount({ ...updated }));
       store.dispatch(showModalSuccess(Translations.AccountCreatedConfirmation.en));
     }
   };

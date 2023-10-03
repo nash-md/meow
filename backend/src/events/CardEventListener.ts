@@ -41,11 +41,11 @@ export const CardEventListener = {
         change.attribute.name = attribute.name;
 
         if (change.value && attribute.type === SchemaAttributeType.Reference) {
-          const accoount = await EntityHelper.findOneById(Account, change.value.toString());
+          const account = await EntityHelper.findOneById(Account, change.value.toString());
 
-          if (accoount) {
+          if (account) {
             change.reference = {
-              name: accoount.name,
+              name: account.name,
             };
           }
         }

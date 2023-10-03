@@ -520,7 +520,7 @@ components:
           format: date-time
           readOnly: true
     SchemaAttribute:
-      description: response to a create accoount request
+      description: response to a create account request
       type: object
       properties:
         key:
@@ -687,7 +687,7 @@ components:
             type: object
             $ref: '#/components/schemas/Account'
     AccountListResponse:
-      description: response to a create accoount request
+      description: response to a create account request
       content:
         application/json:
           schema:

@@ -361,7 +361,7 @@ export const updateCardFromServer = (card: Card): ApplicationCardUpdateOnServerA
   };
 };
 
-export const addAccoount = (account: Account): ApplicationAccountAddAction => {
+export const addAccount = (account: Account): ApplicationAccountAddAction => {
   return {
     type: ActionType.ACCOUNT_ADD,
     payload: account,
