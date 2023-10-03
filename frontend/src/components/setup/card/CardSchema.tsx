@@ -4,7 +4,12 @@ import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { RESERVED_ATTRIBUTES } from '../../../Constants';
 import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { Schema, SchemaSelectAttribute, SchemaType } from '../../../interfaces/Schema';
+import {
+  Schema,
+  SchemaReferenceAttribute,
+  SchemaSelectAttribute,
+  SchemaType,
+} from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
@@ -12,7 +17,14 @@ import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { hasDuplicateEntries } from '../../../helpers/Helper';
 import { SchemaHelper } from '../../../helpers/SchemaHelper';
 
-export const CardSchema = () => {
+const protocol = window.location.protocol;
+const domain = window.location.hostname;
+
+export interface CardSchemaProps {
+  isDeveloperMode: boolean;
+}
+
+export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
   const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState('');
 
@@ -69,6 +81,24 @@ export const CardSchema = () => {
       return;
     }
 
+    const references: SchemaReferenceAttribute[] = list
+      .filter((item) => SchemaHelper.isReferenceAttribute(item))
+      .map((item) => item as SchemaReferenceAttribute);
+
+    if (references.some((r) => !r.reverseName)) {
+      setError('A reverse relationship name cannot be empty');
+      setIsValid(false);
+
+      return;
+    }
+
+    if (filtered.some((i) => i.options && hasDuplicateEntries(i.options))) {
+      setError('Each value in a dropdown must be unique');
+      setIsValid(false);
+
+      return;
+    }
+
     if (list.some((item) => RESERVED_ATTRIBUTES.includes(item.name.toLocaleLowerCase()))) {
       setError('This name is reserved by the system and cannot be used');
       setIsValid(false);
@@ -112,7 +142,17 @@ export const CardSchema = () => {
 
   return (
     <div className="content-box">
-      <h2>Opportunity</h2>
+      <div className="schema-editor-header">
+        <div className="title">
+          <h2>Opportunity</h2>
+        </div>
+        {isDeveloperMode ? (
+          <div className="endpoint">
+            <b>POST/GET:</b> {protocol}//
+            {domain}/cards
+          </div>
+        ) : null}
+      </div>
 
       <SchemaCanvas schema={updatedSchema} validate={validate} />
       <div style={{ marginTop: '10px' }}>

@@ -789,13 +789,6 @@ h3 {
   font-weight: 400;
 }
 
-.layer .body .card-events .warning {
-  padding: 15px 10px 15px 10px;
-  background-color: #ffb700;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
 .layer .body .card-dates {
   display: flex;
   padding: 10px 15px 20px 15px;
@@ -875,6 +868,40 @@ h3 {
   white-space: pre-wrap;
 }
 
+.developer-mode {
+  margin-bottom: 10px;
+  display: flex;
+  align-content: center;
+}
+
+.developer-mode .switch {
+  flex-grow: 1;
+}
+
+.developer-mode .link {
+  display: flex;
+  align-content: center;
+  cursor: pointer;
+}
+
+.developer-mode .link a {
+  display: flex;
+  text-decoration: underline;
+}
+
+.developer-mode .link a .icon {
+  opacity: 0.75;
+}
+
+.developer-mode .link a span {
+  padding-left: 8px;
+  font-size: 1em;
+}
+
+.developer-mode .link a:hover {
+  text-decoration: none;
+}
+
 .setup-funnel {
   background-color: var(--spectrum-global-color-gray-100);
   padding: 10px;
@@ -904,21 +931,18 @@ h3 {
 
 .setup-funnel .lane .button {
   width: 30px;
-  min-width: 30px;
+  height: 30px;
   background-color: var(--spectrum-global-color-gray-300);
-  position: relative;
   border-radius: 2px;
   border: 1px solid var(--spectrum-global-color-gray-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .setup-funnel .lane .button .drag {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 80%;
-  background-image: url(../public/drag-icon.svg);
-  opacity: 0.3;
-  width: 100%;
-  height: 100%;
+  opacity: 0.6;
+  width: 75%;
 }
 
 .setup-funnel .lane .button .remove {
@@ -1079,23 +1103,36 @@ h3 {
   margin-left: 10px;
 }
 
+.setup-card .item-reverse-relationship {
+  display: flex;
+  padding-top: 5px;
+  padding-bottom: 10px;
+}
+
+.setup-card .item-reverse-relationship > div:nth-child(1) {
+  margin-left: 100px;
+}
+
+.setup-card .item-reverse-relationship .arrow {
+  opacity: 0.7;
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
 .setup-card .item .button {
   width: 30px;
   height: 30px;
   background-color: var(--spectrum-global-color-gray-300);
-  position: relative;
   border-radius: 2px;
   border: 1px solid var(--spectrum-global-color-gray-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .setup-card .item .button .drag {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 80%;
-  background-image: url(../public/drag-icon.svg);
-  opacity: 0.3;
-  width: 100%;
-  height: 100%;
+  opacity: 0.6;
+  width: 75%;
 }
 
 .setup-card .item .button .remove {
@@ -1180,17 +1217,16 @@ h3 {
 .setup-card .item .select .option .remove {
   vertical-align: middle;
   line-height: 100%;
-  opacity: 0.5;
+  opacity: 0.8;
 }
 
-.setup-card .item .select .option .remove img {
-  width: 24px;
+.setup-card .item .select .option .remove {
   padding: 4px;
 }
 
-.setup-card .item .select .add img {
-  width: 24px;
-  opacity: 0.5;
+.setup-card .item .select .add {
+  opacity: 0.8;
+  padding-top: 5px;
 }
 
 .setup-card .add-attribute {
@@ -1201,6 +1237,20 @@ h3 {
 
 .setup-card .add-attribute div:first-child {
   margin-right: 10px;
+}
+
+.schema-editor-header {
+  display: flex;
+  align-items: center;
+}
+
+.schema-editor-header .title {
+  flex-grow: 1;
+}
+
+.schema-editor-header .endpoint {
+  font-family: Monaco;
+  padding-left: 20px;
 }
 
 #success-modal {
@@ -1395,7 +1445,7 @@ h3 {
 
 .lane .statistics-canvas span {
   color: var(--spectrum-global-color-gray-400);
-  font-size: 1.4em;
+  font-size: 1.1em;
 }
 
 .screen-resolution-warning {

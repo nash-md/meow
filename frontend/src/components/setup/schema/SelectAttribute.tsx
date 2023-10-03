@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { ANIMALS } from '../../../Constants';
 import { SchemaAttribute } from '../../../interfaces/Schema';
+import { IconRemove } from '../IconRemove';
+import { IconAdd } from '../IconAdd';
+import { IconDrag } from '../IconDrag';
 
 function removeOption<T>(items: T[], index: number): T[] {
   items.splice(index, 1);
@@ -57,7 +60,9 @@ export const SelectAttribute = ({
           <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`item ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
-                <div className="drag"></div>
+                <div className="drag">
+                  <IconDrag />
+                </div>
               </div>
 
               <div className="name">
@@ -76,14 +81,14 @@ export const SelectAttribute = ({
                         />
                       </div>
                       <div className="remove" onClick={() => removeOptiom(index)}>
-                        <img src="/remove-icon.svg" />
+                        <IconRemove />
                       </div>
                     </div>
                   );
                 })}
 
                 <div className="add" onClick={addOption}>
-                  <img src="/add-icon.svg" />
+                  <IconAdd />
                 </div>
               </div>
 

@@ -2,9 +2,8 @@ export interface Schema {
   _id?: string;
   type: SchemaType;
   attributes: SchemaAttribute[];
-  createdAt?: string;
-  updateAt?: string;
-  teamId?: string;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
 }
 
 export enum SchemaType {
@@ -30,6 +29,7 @@ export interface BaseSchemaAttribute {
 
 export interface SchemaReferenceAttribute extends BaseSchemaAttribute {
   entity: SchemaType | null;
+  reverseName: string;
   relationship: 'one-to-one' | 'one-to-many' | 'many-to-one';
 }
 

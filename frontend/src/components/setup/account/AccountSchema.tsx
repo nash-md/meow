@@ -18,7 +18,14 @@ import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { hasDuplicateEntries } from '../../../helpers/Helper';
 import { SchemaHelper } from '../../../helpers/SchemaHelper';
 
-export const AccountSchema = () => {
+const protocol = window.location.protocol;
+const domain = window.location.hostname;
+
+export interface AccountSchemaProps {
+  isDeveloperMode: boolean;
+}
+
+export const AccountSchema = ({ isDeveloperMode }: AccountSchemaProps) => {
   const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState('');
 
@@ -131,7 +138,17 @@ export const AccountSchema = () => {
 
   return (
     <div className="content-box">
-      <h2>Account</h2>
+      <div className="schema-editor-header">
+        <div className="title">
+          <h2>Account</h2>
+        </div>
+        {isDeveloperMode ? (
+          <div className="endpoint">
+            <b>POST/GET:</b> {protocol}//
+            {domain}/accounts
+          </div>
+        ) : null}
+      </div>
 
       <SchemaCanvas schema={updatedSchema} validate={validate} />
       <div style={{ marginTop: '10px' }}>

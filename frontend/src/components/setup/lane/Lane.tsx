@@ -1,8 +1,9 @@
 import { Checkbox, Item, Picker, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { LaneListItem } from './LaneCanvas';
+import { LaneListItem } from './LaneSchema';
 import { LaneType } from '../../../interfaces/Lane';
+import { IconDrag } from '../IconDrag';
 
 export interface LaneProps {
   id: number;
@@ -39,8 +40,11 @@ export const Lane = (props: LaneProps) => {
           <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`lane ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
-                <div className="drag"></div>
+                <div className="drag">
+                  <IconDrag />
+                </div>
               </div>
+
               <div className="attribute">
                 <TextField
                   onChange={setName}

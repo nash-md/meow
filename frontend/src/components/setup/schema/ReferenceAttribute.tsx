@@ -2,10 +2,13 @@ import { Item, Picker, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { SchemaReferenceAttribute, SchemaType } from '../../../interfaces/Schema';
+import { IconReverseNameArrow } from '../IconReverseNameArrow';
+import { IconDrag } from '../IconDrag';
 
 export interface ReferenceAttributeProps {
   attributeKey: string;
   name: string;
+  reverseName: string;
   index: number;
   entity: SchemaType | null;
   remove: (index: number) => void;
@@ -15,18 +18,20 @@ export interface ReferenceAttributeProps {
 export const ReferenceAttribute = ({
   attributeKey,
   name: nameDefault,
+  reverseName: reverseNameDefault,
   entity: entityDefault,
   index,
   remove,
   update,
 }: ReferenceAttributeProps) => {
   const [name, setName] = useState(nameDefault);
+  const [reverseName, setReverseName] = useState(reverseNameDefault);
   const [entity, setEntity] = useState(entityDefault);
   const relationship = 'many-to-one';
 
   useEffect(() => {
-    update(attributeKey, { name, entity, relationship });
-  }, [name, entity]);
+    update(attributeKey, { name, entity, relationship, reverseName });
+  }, [name, entity, reverseName]);
 
   return (
     <Draggable draggableId={`drag_${attributeKey}`} index={index}>
@@ -35,7 +40,9 @@ export const ReferenceAttribute = ({
           <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`item ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
-                <div className="drag"></div>
+                <div className="drag">
+                  <IconDrag />
+                </div>
               </div>
 
               <div className="name">
@@ -54,8 +61,22 @@ export const ReferenceAttribute = ({
                     })}
                 </Picker>
               </div>
+
               <div onClick={() => remove(index)} className="button">
                 <div className="remove"></div>
+              </div>
+            </div>
+            <div className="item-reverse-relationship">
+              <div>
+                <div>Reverse Relationship Name</div>
+                <TextField
+                  value={reverseName}
+                  onChange={setReverseName}
+                  onBlur={() => setReverseName(reverseName.trim())}
+                />
+              </div>
+              <div className="arrow">
+                <IconReverseNameArrow />
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { SchemaAttribute } from '../../../interfaces/Schema';
+import { IconDrag } from '../IconDrag';
 
 export interface TextAttributeProps {
   attributeKey: string;
@@ -31,7 +32,9 @@ export const TextAttribute = ({
           <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
             <div className={`item ${snaphot.isDragging ? 'is-dragging' : ''}`}>
               <div className="button">
-                <div className="drag"></div>
+                <div className="drag">
+                  <IconDrag />
+                </div>
               </div>
 
               <div className="name">
@@ -41,7 +44,7 @@ export const TextAttribute = ({
               <div onClick={() => remove(index)} className="button">
                 <div className="remove"></div>
               </div>
-            </div>
+            </div>{' '}
           </div>
         );
       }}
