@@ -116,7 +116,7 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
 
     if (req.query.mode === 'predicted') {
       const query = {
-        teamId: req.jwt.team._id!,
+        teamId: req.jwt.team._id,
         tags: {
           type: LaneType.Normal,
         },
@@ -164,7 +164,7 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     }
 
     if (req.query.userId && req.query.userId !== FILTER_BY_NONE.key) {
-      match.$match.userId = req.query.userId;
+      match.$match.userId = new ObjectId(req.query.userId.toString());
     }
 
     const project = {
@@ -198,7 +198,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const initialMatch: any = {
       $match: {
-        teamId: req.jwt.team._id!,
+        teamId: req.jwt.team._id,
         type: { $eq: EventType.LaneAmountChanged },
         createdAt: {
           $lt: start,
