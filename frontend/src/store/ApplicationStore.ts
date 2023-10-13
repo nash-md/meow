@@ -11,7 +11,6 @@ import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 
 export type InterfaceState = 'default' | 'card-detail' | 'lane-detail' | 'account-detail';
-
 export type ListName = 'accounts' | 'users' | 'forecast';
 
 export interface ApplicationStore {
@@ -50,5 +49,10 @@ export interface ApplicationStore {
     accounts: ListView;
     users: ListView;
     forecast: ListView;
+    date: {
+      start: string | null;
+      end: string | null;
+      userId: string;
+    };
   };
 }

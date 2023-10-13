@@ -3,7 +3,7 @@ import { Board } from '../interfaces/Board';
 import { BrowserState } from '../interfaces/BrowserState';
 import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
-import { ListView, ListViewItem, ListViewSortDirection } from '../interfaces/ListView';
+import { ListViewItem, ListViewSortDirection } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
 import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
@@ -38,6 +38,7 @@ export enum ActionType {
   LIST_VIEW_SORT_BY = 'LIST_VIEW_SORT_BY',
   LIST_VIEW_FILTER_BY = 'LIST_VIEW_FILTER_BY',
   LIST_VIEW_COLUMNS = 'LIST_VIEW_COLUMNS',
+  DATE = 'DATE',
 }
 
 export interface Action<T extends ActionType> {
@@ -120,7 +121,7 @@ export interface ApplicationAccountsAction extends Action<ActionType.ACCOUNTS> {
 }
 
 export interface ApplicationTeamUpdateAction extends Action<ActionType.TEAM_UPDATE> {
-  payload: CurrencyCode;
+  payload: { currency: CurrencyCode; integrations: Integration[] };
 }
 
 export interface ApplicationSchemasAction extends Action<ActionType.SCHEMAS> {
@@ -185,6 +186,14 @@ export interface ApplicationListViewColumnAction extends Action<ActionType.LIST_
   };
 }
 
+export interface ApplicationDateAction extends Action<ActionType.DATE> {
+  payload: {
+    start: string | null;
+    end: string | null;
+    userId: string;
+  };
+}
+
 export type ApplicationAction =
   | ApplicationPageLoadAction
   | ApplicationPageLoadValidateTokenAction
@@ -213,7 +222,8 @@ export type ApplicationAction =
   | ApplicationFilterAction
   | ApplicationListViewSortByAction
   | ApplicationListViewFilterByAction
-  | ApplicationListViewColumnAction;
+  | ApplicationListViewColumnAction
+  | ApplicationDateAction;
 
 export function showModalSuccess(text?: string) {
   return {

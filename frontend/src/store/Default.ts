@@ -1,4 +1,6 @@
+import { DateTime } from 'luxon';
 import { ApplicationStore } from './ApplicationStore';
+import { FILTER_BY_NONE } from '../Constants';
 
 export const Default: ApplicationStore = {
   accounts: [],
@@ -56,6 +58,11 @@ export const Default: ApplicationStore = {
       },
       filterBy: {},
       columns: [],
+    },
+    date: {
+      start: DateTime.now().startOf('month').toISODate(),
+      end: DateTime.now().endOf('month').toISODate(),
+      userId: FILTER_BY_NONE.key,
     },
   },
 };

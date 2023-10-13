@@ -57,6 +57,7 @@ export const selectTeamId = (store: ApplicationStore) => store.session.team._id;
 export const selectInterfaceState = (store: ApplicationStore) => store.ui.state;
 export const selectInterfaceStateId = (store: ApplicationStore) => store.ui._id;
 export const selectModal = (store: ApplicationStore) => store.ui.modal;
+export const selectDate = (store: ApplicationStore) => store.ui.date;
 export const selectModalText = (store: ApplicationStore) => store.ui.text;
 export const selectCard = (store: ApplicationStore, id: string | undefined) =>
   store.cards.find((card) => card._id === id);
