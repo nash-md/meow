@@ -1,11 +1,9 @@
 import { Item, Picker } from '@adobe/react-spectrum';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TableHeader } from '../view/table/TableHeader';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { useSelector } from 'react-redux';
-import { selectUsers, selectView, selectViewColumns, store } from '../../store/Store';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { CalendarDate } from '@internationalized/date';
+import { selectToken, selectUsers, selectView, selectViewColumns, store } from '../../store/Store';
 import { DateTime } from 'luxon';
 import {
   ActionType,
@@ -24,11 +22,12 @@ import { Item as ListItem } from '../../components/view/list/Item';
 import { Row } from '../view/table/Row';
 import { TableCanvas } from '../view/table/TableCanvas';
 import useMobileLayout from '../../hooks/useMobileLayout';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 interface CardListProps {
   userId: string;
-  start: CalendarDate;
-  end: CalendarDate;
+  start: string | null;
+  end: string | null;
 }
 
 const createListViewItems = (): ListViewItem[] => {
@@ -67,7 +66,10 @@ const createListViewItems = (): ListViewItem[] => {
 };
 
 export const CardList = ({ userId, start, end }: CardListProps) => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
+
   const users = useSelector(selectUsers);
   const [mode, setMode] = useState<'achieved' | 'predicted'>('achieved');
   const [list, setList] = useState<Array<any>>([]); // TODO remove any
@@ -90,7 +92,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
 
   useEffect(() => {
     const execute = async () => {
-      let cards = await client!.getCards(); // TODO missing fetch
+      let cards = await client.getCards(); // TODO missing fetch
 
       store.dispatch({
         type: ActionType.CARDS,
@@ -98,20 +100,19 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
       });
     };
 
-    if (client) {
-      execute();
-    }
-  }, [client]);
+    execute();
+  }, []);
 
   useEffect(() => {
-    start.toString();
-    end.toString();
+    if (!start || !end) {
+      return;
+    }
 
     const execute = async () => {
       try {
-        const list = await client!.fetchForecastList(
-          DateTime.fromISO(start.toString()),
-          DateTime.fromISO(end.toString()),
+        const list = await client.fetchForecastList(
+          DateTime.fromISO(start),
+          DateTime.fromISO(end),
           mode,
           userId === FILTER_BY_NONE.key ? undefined : userId
         );
@@ -125,10 +126,10 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
       }
     };
 
-    if (start && end && client && userId && mode) {
+    if (start && end && userId && mode) {
       execute();
     }
-  }, [client, start, end, userId, mode]);
+  }, [start, end, userId, mode]);
 
   const toDataRows = (list: any[]) => {
     return list.map((card) => {

@@ -1,16 +1,26 @@
 import { Button, Item, Picker } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
-import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { selectAnimal, selectColor, selectUserId, selectUsers, store } from '../../../store/Store';
+import {
+  selectAnimal,
+  selectColor,
+  selectToken,
+  selectUserId,
+  selectUsers,
+  store,
+} from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { USER_COLORS } from '../../../Constants';
 import { ColorCircleSelected } from './ColorCircleSelected';
 import { ColorCircle } from './ColorCircle';
+import { getRequestClient } from '../../../helpers/RequestHelper';
 
 export const FormCanvas = () => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
+
   const userId = useSelector(selectUserId);
   const users = useSelector(selectUsers);
   const animalDefault = useSelector(selectAnimal);
@@ -30,7 +40,7 @@ export const FormCanvas = () => {
     user.color = avatarColor;
 
     try {
-      const updated = await client!.updateUser(user);
+      const updated = await client.updateUser(user);
 
       store.dispatch({
         type: ActionType.USER_SETTINGS_UPDATE,

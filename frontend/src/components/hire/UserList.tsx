@@ -1,10 +1,16 @@
 import { Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, setListViewColumn, setListViewSortBy } from '../../actions/Actions';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { User, UserStatus } from '../../interfaces/User';
-import { selectUserId, selectUsers, selectView, selectViewColumns, store } from '../../store/Store';
+import {
+  selectToken,
+  selectUserId,
+  selectUsers,
+  selectView,
+  selectViewColumns,
+  store,
+} from '../../store/Store';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { TableHeader } from '../view/table/TableHeader';
 import { ApplicationStore } from '../../store/ApplicationStore';
@@ -12,6 +18,7 @@ import { toRelativeDate } from '../../helpers/DateHelper';
 import { DataRow, ListViewItem } from '../../interfaces/ListView';
 import { TableCanvas } from '../view/table/TableCanvas';
 import { Row } from '../view/table/Row';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 const createListViewItems = (): ListViewItem[] => {
   return [
@@ -44,11 +51,23 @@ const createListViewItems = (): ListViewItem[] => {
 };
 
 export const UserList = (props: any) => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
+
   const id = useSelector(selectUserId);
   const users = useSelector(selectUsers);
   const view = useSelector((store: ApplicationStore) => selectView(store, 'users'));
   const columns = useSelector((store: ApplicationStore) => selectViewColumns(store, 'users'));
+
+  interface Row {
+    id: string;
+    name: string;
+    status: UserStatus;
+    invite: string | undefined;
+    createdAt: string | undefined;
+    [key: string]: string | number | null | boolean | undefined;
+  }
 
   useEffect(() => {
     if (columns.length === 0) {
@@ -77,14 +96,20 @@ export const UserList = (props: any) => {
   }, [view, users, columns]);
 
   const deleteUser = async (id: string) => {
+    const shouldDelete = confirm('Delete user?');
+
+    if (!shouldDelete) {
+      return;
+    }
+
     const user = users.find((user) => user._id === id)!;
 
     user.status = UserStatus.Deleted;
 
     try {
-      await client?.updateUser(user);
+      await client.updateUser(user);
 
-      let users = await client!.getUsers(); // TODO refactor
+      let users = await client.getUsers(); // TODO refactor
 
       store.dispatch({
         type: ActionType.USERS,

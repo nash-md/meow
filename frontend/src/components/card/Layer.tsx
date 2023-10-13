@@ -13,21 +13,25 @@ import {
   selectCard,
   selectInterfaceStateId,
   selectLanes,
+  selectToken,
   store,
 } from '../../store/Store';
 import { Form } from './Form';
 import { Events } from './Events';
 import { Card, CardPreview } from '../../interfaces/Card';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
 import { User } from '../../interfaces/User';
 import { Translations } from '../../Translations';
 import useMobileLayout from '../../hooks/useMobileLayout';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export const Layer = () => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
+
   const id = useSelector(selectInterfaceStateId);
   const card = useSelector((store: ApplicationStore) => selectCard(store, id));
   const [isUserLayerVisible, setIsUserLayerVisible] = useState(false);
@@ -61,7 +65,7 @@ export const Layer = () => {
         preview.laneId = lanes[0]._id;
       }
 
-      const updated = await client!.createCard(preview); // TODO refactor
+      const updated = await client.createCard(preview); // TODO refactor
 
       // TODO combine both dispatch to one
       store.dispatch(addCard({ ...updated }));
@@ -72,15 +76,15 @@ export const Layer = () => {
 
   useEffect(() => {
     const execute = async () => {
-      const updated = await client!.getCard(id!);
+      const updated = await client.getCard(id!);
 
       store.dispatch(updateCardFromServer(updated));
     };
 
-    if (client && id) {
+    if (id) {
       execute();
     }
-  }, [id, client]);
+  }, [id]);
 
   return (
     <div className={`layer ${isMobileLayout ? 'mobile' : 'desktop'}`}>

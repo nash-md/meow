@@ -1,14 +1,14 @@
 import { Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { ANIMALS, LANE_COLOR } from '../../../Constants';
-import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
-import { LaneRequest, LaneType } from '../../../interfaces/Lane';
-import { selectLanes, store } from '../../../store/Store';
+import { LaneRequest, LaneType, Tags } from '../../../interfaces/Lane';
+import { selectLanes, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { Lane } from './Lane';
+import { getRequestClient } from '../../../helpers/RequestHelper';
 
 const protocol = window.location.protocol;
 const domain = window.location.hostname;
@@ -20,6 +20,7 @@ export interface LaneListItem {
   inForecast: boolean;
   type?: LaneType;
   color?: string;
+  tags?: Tags;
   externalId?: string;
 }
 
@@ -51,7 +52,9 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
   const [warning, setWarning] = useState<string | undefined>();
   const existingLanes = useSelector(selectLanes);
 
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   useEffect(() => {
     const list = existingLanes.map((lane, index) => {
@@ -62,6 +65,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
         inForecast: lane.inForecast,
         color: lane.color,
         externalId: lane._id,
+        tags: lane.tags,
         type: (lane.tags?.type?.toString() as LaneType) ?? undefined,
       };
     });
@@ -168,10 +172,11 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
         index: lane.index,
         inForecast: lane.inForecast,
         color: undefined,
+        tags: lane.tags,
       };
 
       if (lane.type) {
-        payload.tags = { type: lane.type };
+        payload.tags = { ...lane.tags, type: lane.type };
         payload.color = getLaneColorCode(lane.type);
       }
 
@@ -179,7 +184,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
     });
 
     try {
-      const lanes = await client?.updateLanes(updated);
+      const lanes = await client.updateLanes(updated);
 
       store.dispatch({
         type: ActionType.LANES,
@@ -203,7 +208,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
         {isDeveloperMode ? (
           <div className="endpoint">
             <b>POST/GET:</b> {protocol}//
-            {domain}/lanes
+            {domain}/api/lanes
           </div>
         ) : null}
       </div>

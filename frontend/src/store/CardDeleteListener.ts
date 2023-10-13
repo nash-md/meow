@@ -1,6 +1,6 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { ActionType, ApplicationCardDeleteAction, showModalError } from '../actions/Actions';
-import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
+import { getRequestClient } from '../helpers/RequestHelper';
 import { CardStatus } from '../interfaces/Card';
 import { ApplicationStore } from './ApplicationStore';
 import { store } from './Store';
@@ -13,7 +13,7 @@ cardDeleteListener.startListening({
   effect: async (action, listenerApi) => {
     const state = listenerApi.getState() as ApplicationStore;
 
-    const client = new RequestHelper(getBaseUrl(), state.session.token);
+    const client = getRequestClient(state.session.token);
 
     const casted = action as ApplicationCardDeleteAction;
 

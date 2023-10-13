@@ -1,15 +1,16 @@
 import { Button, TextField } from '@adobe/react-spectrum';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { showModalError, showModalSuccess } from '../../actions/Actions';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { selectUserId, store } from '../../store/Store';
+import { selectToken, selectUserId, store } from '../../store/Store';
 import { Translations } from '../../Translations';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export const PasswordCanvas = () => {
   const id = useSelector(selectUserId);
+  const token = useSelector(selectToken);
 
-  const { client } = useContext(RequestHelperContext);
+  const client = getRequestClient(token);
 
   const [existing, setExisting] = useState<string>('');
   const [updated, setUpdated] = useState<string>('');
@@ -30,7 +31,7 @@ export const PasswordCanvas = () => {
     setUpdated('');
 
     try {
-      await client!.updatePassword(id!, existing, updated);
+      await client.updatePassword(id!, existing, updated);
 
       store.dispatch(showModalSuccess(Translations.PasswordChangedConfirmation.en));
     } catch (error: any) {

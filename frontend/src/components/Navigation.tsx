@@ -1,21 +1,17 @@
-import { useContext, useEffect, useRef, useState, MouseEvent } from 'react';
+import { useEffect, useRef, useState, MouseEvent } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ActionType } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { selectCurrency, selectUserId, store } from '../store/Store';
 import { Avatar } from './Avatar';
 
 export const Navigation = () => {
-  const { setClient } = useContext(RequestHelperContext);
   const userId = useSelector(selectUserId);
   const currency = useSelector(selectCurrency);
   const [userMenue, setUserMenu] = useState(false);
   const layerRef = useRef<HTMLDivElement>(null);
 
   const logout = () => {
-    setClient!(undefined);
-
     store.dispatch({
       type: ActionType.LOGOUT,
     });

@@ -5,7 +5,6 @@ import { SessionOrNot } from './SessionOrNot';
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from './store/Store';
 import { defaultTheme, Provider } from '@adobe/react-spectrum';
-import { RequestHelperContextProvider } from './context/RequestHelperContextProvider';
 import { getBrowserLocale } from './helpers/Helper';
 import ErrorBoundary from './ErrorBoundary';
 
@@ -15,9 +14,7 @@ root.render(
   <Provider height="100%" locale={getBrowserLocale()} theme={defaultTheme}>
     <ErrorBoundary>
       <ReduxProvider store={store}>
-        <RequestHelperContextProvider>
-          <SessionOrNot />
-        </RequestHelperContextProvider>
+        <SessionOrNot />
       </ReduxProvider>
     </ErrorBoundary>
   </Provider>

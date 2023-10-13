@@ -1,21 +1,17 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ActionType } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { selectCurrency, selectUserId, store } from '../store/Store';
 import { Avatar } from './Avatar';
 import { IconBurger } from './IconBurger';
 
 export const NavigationMobile = () => {
-  const { setClient } = useContext(RequestHelperContext);
   const userId = useSelector(selectUserId);
   const currency = useSelector(selectCurrency);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const logout = () => {
-    setClient!(undefined);
-
     store.dispatch({
       type: ActionType.LOGOUT,
     });

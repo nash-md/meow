@@ -2,11 +2,9 @@ import { Tabs, TabList, Item, TabPanels } from '@adobe/react-spectrum';
 import { Login } from './Login';
 import { Register } from './Register';
 
-export interface RegisterOrLoginProps {
-  token: string | null;
-}
+export interface RegisterOrLoginProps {}
 
-export const RegisterOrLogin = ({ token }: RegisterOrLoginProps) => {
+export const RegisterOrLogin = ({}: RegisterOrLoginProps) => {
   return (
     <form>
       <Tabs>
@@ -16,7 +14,7 @@ export const RegisterOrLogin = ({ token }: RegisterOrLoginProps) => {
         </TabList>
         <TabPanels>
           <Item key="login">
-            <Login token={token} />
+            <Login />
           </Item>
           <Item key="register">
             <Register />

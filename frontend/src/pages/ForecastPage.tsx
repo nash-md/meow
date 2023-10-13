@@ -1,16 +1,15 @@
-import {
-  today,
-  startOfMonth,
-  endOfMonth,
-  getLocalTimeZone,
-  CalendarDate,
-} from '@internationalized/date';
+import { today, parseDate, getLocalTimeZone, CalendarDate } from '@internationalized/date';
 import { DateRangePicker, Item, Picker } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState } from 'react';
-import { selectActiveUsers, selectInterfaceState, store } from '../store/Store';
+import { useEffect, useState } from 'react';
+import {
+  selectActiveUsers,
+  selectDate,
+  selectInterfaceState,
+  selectToken,
+  store,
+} from '../store/Store';
 import { useSelector } from 'react-redux';
-import { showModalError } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
+import { ActionType, showModalError } from '../actions/Actions';
 import { DateTime } from 'luxon';
 import { FILTER_BY_NONE } from '../Constants';
 import { Currency } from '../components/Currency';
@@ -20,6 +19,7 @@ import { CardList } from '../components/forecast/CardList';
 import { getErrorMessage } from '../helpers/ErrorHelper';
 import { Link } from 'react-router-dom';
 import { TrendIcon } from '../components/forecast/TrendIcon';
+import { getRequestClient } from '../helpers/RequestHelper';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -34,33 +34,56 @@ const min = today(getLocalTimeZone()).subtract({
 });
 
 export const ForecastPage = () => {
-  const { client } = useContext(RequestHelperContext);
-  const [start, setStart] = useState<CalendarDate>(startOfMonth(today(getLocalTimeZone())));
-  const [end, setEnd] = useState<CalendarDate>(endOfMonth(today(getLocalTimeZone())));
-  const [userId, setUserId] = useState(FILTER_BY_NONE.key);
+  const token = useSelector(selectToken);
+
   const [achieved, setAchieved] = useState({ amount: 0, count: 0 });
   const [predicted, setPredicted] = useState({ amount: 0, count: 0 });
   const users = useSelector(selectActiveUsers);
   const state = useSelector(selectInterfaceState);
+  const date = useSelector(selectDate);
+  const [userId, setUserId] = useState(date.userId);
 
   const setRange = (range: { start: CalendarDate; end: CalendarDate }) => {
-    setEnd(range.end);
-    setStart(range.start);
+    store.dispatch({
+      type: ActionType.DATE,
+      payload: {
+        start: range.start.toString(),
+        end: range.end.toString(),
+        userId: userId,
+      },
+    });
   };
 
   useEffect(() => {
+    store.dispatch({
+      type: ActionType.DATE,
+      payload: {
+        start: date.start,
+        end: date.end,
+        userId: userId,
+      },
+    });
+  }, [userId]);
+
+  useEffect(() => {
+    const client = getRequestClient(token);
+
     const execute = async () => {
+      if (!date.start || !date.end) {
+        return;
+      }
+
       try {
         const [achieved, predicted] = await Promise.all([
-          client!.fetchForecastAchieved(
-            DateTime.fromISO(start.toString()),
-            DateTime.fromISO(end.toString()),
-            userId === FILTER_BY_NONE.key ? undefined : userId
+          client.fetchForecastAchieved(
+            DateTime.fromISO(date.start),
+            DateTime.fromISO(date.end),
+            date.userId === FILTER_BY_NONE.key ? undefined : userId
           ),
-          client!.fetchForecastPredicted(
-            DateTime.fromISO(start.toString()),
-            DateTime.fromISO(end.toString()),
-            userId === FILTER_BY_NONE.key ? undefined : userId
+          client.fetchForecastPredicted(
+            DateTime.fromISO(date.start),
+            DateTime.fromISO(date.end),
+            date.userId === FILTER_BY_NONE.key ? undefined : userId
           ),
         ]);
         setAchieved(achieved);
@@ -74,10 +97,10 @@ export const ForecastPage = () => {
       }
     };
 
-    if (start && end && client && userId) {
+    if ((date.start && date.end, date.userId)) {
       execute();
     }
-  }, [client, start, end, userId]);
+  }, [date.start, date.end, date.userId]);
 
   return (
     <>
@@ -101,8 +124,8 @@ export const ForecastPage = () => {
             <DateRangePicker
               aria-label="date"
               value={{
-                start: start,
-                end: end,
+                start: parseDate(date.start!),
+                end: parseDate(date.end!),
               }}
               maxVisibleMonths={2}
               hourCycle={24}
@@ -184,7 +207,7 @@ export const ForecastPage = () => {
             </div>
           </section>
 
-          <CardList userId={userId} start={start} end={end} />
+          <CardList userId={userId} start={date.start} end={date.end} />
         </div>
       </div>
     </>

@@ -1,60 +1,75 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
-import { ActionType } from './actions/Actions';
+import { ActionType, showModalError } from './actions/Actions';
 import './App.css';
 import { ErrorModal } from './components/ErrorModal';
 import { Layout } from './components/Layout';
 import { SuccessModal } from './components/SuccessModal';
-import { RequestHelperContext } from './context/RequestHelperContextProvider';
 import { AccountsPage } from './pages/AccountsPage';
 import { ForecastPage } from './pages/ForecastPage';
 import { HirePage } from './pages/HirePage';
 import { HomePage } from './pages/HomePage';
 import { SetupPage } from './pages/SetupPage';
 import { UserSetupPage } from './pages/UserSetupPage';
-import { store } from './store/Store';
+import { selectToken, store } from './store/Store';
 import { StatisticPage } from './pages/StatisticPage';
+import { getErrorMessage } from './helpers/ErrorHelper';
+import { useSelector } from 'react-redux';
+import { getRequestClient } from './helpers/RequestHelper';
 
 function Application() {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
 
-  // TODO combine this to one call
+  const client = getRequestClient(token);
+
   useEffect(() => {
     const execute = async () => {
-      let users = await client!.getUsers();
+      try {
+        let users = await client.getUsers();
 
-      store.dispatch({
-        type: ActionType.USERS,
-        payload: [...users],
-      });
+        store.dispatch({
+          type: ActionType.USERS,
+          payload: [...users],
+        });
 
-      let schemas = await client!.fetchSchemas();
+        let schemas = await client.fetchSchemas();
 
-      store.dispatch({
-        type: ActionType.SCHEMAS,
-        payload: [...schemas],
-      });
+        store.dispatch({
+          type: ActionType.SCHEMAS,
+          payload: [...schemas],
+        });
 
-      let accounts = await client!.getAccounts();
+        let accounts = await client.getAccounts();
 
-      store.dispatch({
-        type: ActionType.ACCOUNTS,
-        payload: [...accounts],
-      });
+        store.dispatch({
+          type: ActionType.ACCOUNTS,
+          payload: [...accounts],
+        });
 
-      let lanes = await client!.getLanes();
+        let lanes = await client.getLanes();
 
-      store.dispatch({
-        type: ActionType.LANES,
-        payload: [...lanes],
-      });
+        store.dispatch({
+          type: ActionType.LANES,
+          payload: [...lanes],
+        });
+      } catch (error) {
+        console.error(error);
+
+        const message = await getErrorMessage(error);
+
+        store.dispatch(showModalError(message));
+      }
     };
 
-    if (client) {
+    if (token) {
       execute();
     }
-  }, [client]);
+
+    return () => {
+      client.destroy();
+    };
+  }, [token]);
 
   return (
     <BrowserRouter>

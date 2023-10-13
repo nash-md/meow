@@ -1,14 +1,14 @@
 import { Button, Item, TabList, TabPanels, Tabs } from '@adobe/react-spectrum';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { addAccount, hideLayer, showModalSuccess, updateAccount } from '../../actions/Actions';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { Account, AccountPreview } from '../../interfaces/Account';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import {
   selectAccount,
   selectInterfaceStateId,
   selectReferencesTo,
+  selectToken,
   store,
 } from '../../store/Store';
 import { Translations } from '../../Translations';
@@ -17,9 +17,12 @@ import useMobileLayout from '../../hooks/useMobileLayout';
 import { SchemaReferenceAttribute, SchemaType } from '../../interfaces/Schema';
 import { Reference } from './Reference';
 import { Events } from './Events';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export const Layer = () => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const id = useSelector(selectInterfaceStateId);
   const account = useSelector((store: ApplicationStore) => selectAccount(store, id));
@@ -35,13 +38,13 @@ export const Layer = () => {
 
   const update = async (id: Account['_id'] | undefined, preview: AccountPreview) => {
     if (id) {
-      const updated = await client!.updateAccount({ ...account!, ...preview }); // TODO refactor
+      const updated = await client.updateAccount({ ...account!, ...preview }); // TODO refactor
 
       store.dispatch(updateAccount({ ...updated }));
 
       store.dispatch(showModalSuccess(Translations.AccountUpdatedConfirmation.en));
     } else {
-      const updated = await client!.createAccount(preview); // TODO refactor
+      const updated = await client.createAccount(preview); // TODO refactor
 
       store.dispatch(addAccount({ ...updated }));
       store.dispatch(showModalSuccess(Translations.AccountCreatedConfirmation.en));
@@ -50,15 +53,15 @@ export const Layer = () => {
 
   useEffect(() => {
     const execute = async () => {
-      const updated = await client!.getAccount(id!);
+      const updated = await client.getAccount(id!);
 
       store.dispatch(updateAccount({ ...updated }));
     };
 
-    if (client && id) {
+    if (id) {
       execute();
     }
-  }, [id, client]);
+  }, [id]);
 
   const getItems = (id?: string, references?: SchemaReferenceAttribute[]) => {
     const list = [
@@ -77,7 +80,7 @@ export const Layer = () => {
       references?.map((attribute) => {
         list.push(
           <Item key={attribute.name}>
-            <span className="tab-title">{attribute.name}</span>
+            <span className="tab-title">{attribute.reverseName}</span>
           </Item>
         );
       });
@@ -103,7 +106,7 @@ export const Layer = () => {
       references?.map((attribute) => {
         list.push(
           <Item key={attribute.name}>
-            <Reference account={account} />
+            <Reference attribute={attribute} account={account} />
           </Item>
         );
       });

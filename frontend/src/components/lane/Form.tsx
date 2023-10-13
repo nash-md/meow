@@ -1,11 +1,11 @@
-import { Button, Checkbox, TextField } from '@adobe/react-spectrum';
-import { useState, useMemo, useContext } from 'react';
+import { Button, Checkbox, Item, Picker, TextField } from '@adobe/react-spectrum';
+import { useState, useMemo, useEffect, Key } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType } from '../../actions/Actions';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { Lane } from '../../interfaces/Lane';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import { selectLane, store } from '../../store/Store';
+import { selectLane, selectToken, store } from '../../store/Store';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export interface FormProps {
   id: Lane['_id'] | undefined;
@@ -13,31 +13,64 @@ export interface FormProps {
 
 export const Form = ({ id }: FormProps) => {
   const lane = useSelector((store: ApplicationStore) => selectLane(store, id!));
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const [name, setName] = useState<string>(lane!.name);
   const [inForecast, setInForecast] = useState<boolean>(lane!.inForecast);
+  const [hideAfterDays, setHideAfterDays] = useState<Key>(
+    lane!.tags?.hideAfterDays?.toString() as Key
+  );
+
+  const [isSaved, setIsSaved] = useState(false);
 
   let isValidForm = useMemo(() => {
-    if (name) {
-      return true;
+    if (!name) {
+      return false;
     }
 
-    return false;
+    return true;
   }, [name, inForecast]);
 
   const save = async () => {
-    await client!.updateLane({ ...lane!, name, inForecast });
+    const payload = {
+      ...lane!,
+      name,
+      inForecast,
+      tags: lane?.tags ? { ...lane.tags } : undefined,
+    };
+
+    if (hideAfterDays) {
+      payload.tags = {
+        ...payload.tags,
+        hideAfterDays: hideAfterDays.toString(),
+      };
+    } else if (payload.tags) {
+      delete payload.tags.hideAfterDays;
+    }
+
+    const updated = await client.updateLane(payload);
 
     store.dispatch({
       type: ActionType.LANE_UPDATE,
-      payload: { ...lane!, name: name, inForecast: inForecast },
+      payload: { ...updated },
     });
+
+    setIsSaved(true);
   };
+
+  useEffect(() => {
+    if (lane) {
+      setName(lane.name);
+      setInForecast(lane.inForecast);
+      setHideAfterDays(lane?.tags?.['hideAfterDays'] as Key);
+    }
+  }, [lane]);
 
   return (
     <div>
-      <div style={{ padding: '10px' }}>
+      <div style={{ padding: '20px' }}>
         <TextField
           onChange={setName}
           value={name}
@@ -47,7 +80,19 @@ export const Form = ({ id }: FormProps) => {
           label="Name"
         />
 
-        <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
+        {lane?.tags?.type !== 'normal' ? (
+          <div style={{ paddingTop: '10px' }}>
+            <span style={{ lineHeight: '2em' }}>Hide opportunities when closed for more than</span>
+            <Picker onSelectionChange={setHideAfterDays} defaultSelectedKey={hideAfterDays}>
+              <Item key="">never</Item>
+              <Item key="30">30</Item>
+              <Item key="60">60</Item>
+              <Item key="90">90</Item>
+            </Picker>{' '}
+            days.
+          </div>
+        ) : null}
+        <div style={{ paddingTop: '10px' }}>
           <Checkbox isSelected={!inForecast} onChange={(value) => setInForecast(!value)}>
             Exclude from Forecast
           </Checkbox>
@@ -56,6 +101,7 @@ export const Form = ({ id }: FormProps) => {
         <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
           Save
         </Button>
+        {isSaved && <div style={{ marginTop: '10px' }}>Changes saved</div>}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Item, Picker } from '@adobe/react-spectrum';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   selectCards,
@@ -9,6 +9,7 @@ import {
   selectLanes,
   selectActiveUsers,
   store,
+  selectToken,
 } from '../store/Store';
 import {
   ActionType,
@@ -17,7 +18,6 @@ import {
   updateCards,
   updateFilter,
 } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Trash } from '../components/Trash';
@@ -32,6 +32,7 @@ import { FILTER_BY_NONE } from '../Constants';
 import { CardHelper } from '../helpers/CardHelper';
 import useMobileLayout from '../hooks/useMobileLayout';
 import { getErrorMessage } from '../helpers/ErrorHelper';
+import { getRequestClient } from '../helpers/RequestHelper';
 
 export const enum FilterMode {
   OwnedByMe = 'owned-by-me',
@@ -50,8 +51,11 @@ export const HomePage = () => {
   const [text, setText] = useState<string>('');
   const [userId, setUserId] = useState(FILTER_BY_NONE.key);
 
-  const { client } = useContext(RequestHelperContext);
   const isMobileLayout = useMobileLayout();
+
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const navigate = useNavigate();
 
@@ -73,7 +77,7 @@ export const HomePage = () => {
   useEffect(() => {
     const execute = async () => {
       try {
-        let cards = await client!.getCards();
+        let cards = await client.getCards();
 
         store.dispatch(updateCards([...cards]));
       } catch (error) {
@@ -83,10 +87,8 @@ export const HomePage = () => {
       }
     };
 
-    if (client) {
-      execute();
-    }
-  }, [client]);
+    execute();
+  }, []);
 
   const openCard = (id?: string) => {
     store.dispatch(showCardLayer(id));
@@ -150,7 +152,7 @@ export const HomePage = () => {
         });
       } else {
         card!.laneId = result.destination.droppableId;
-
+        // TODO create action
         store.dispatch({
           type: ActionType.CARD_MOVE,
           payload: {

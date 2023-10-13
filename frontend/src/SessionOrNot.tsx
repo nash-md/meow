@@ -10,8 +10,8 @@ import {
   selectUserId,
   store,
 } from './store/Store';
-import { useContext, useEffect } from 'react';
-import { RequestHelper, getBaseUrl } from './helpers/RequestHelper';
+import { useEffect } from 'react';
+import { getRequestClient } from './helpers/RequestHelper';
 import {
   readContextFromLocalStorage,
   writeContextToLocalStorage,
@@ -23,22 +23,29 @@ import {
   pageLoadValidateToken,
   pageLoadWithError,
 } from './actions/Actions';
-import { RequestHelperContext } from './context/RequestHelperContextProvider';
 import { YouAreOffline } from './components/YouAreOffline';
 import { RequestTimeoutError } from './errors/RequestTimeoutError';
 import { Translations } from './Translations';
 import { RequestHelperUrlError } from './errors/RequestHelperUrlError';
+import { deleteCookie, readValueFromCookie } from './helpers/CookieHelper';
 
 export const SessionOrNot = () => {
-  const { setClient } = useContext(RequestHelperContext);
   const applicationState = useSelector(selectApplicationState);
-  const token = useSelector(selectToken);
   const userId = useSelector(selectUserId);
+  const token = useSelector(selectToken);
+
   const state = useSelector(selectBrowserState);
 
   useEffect(() => {
     const initiate = async () => {
       const context = readContextFromLocalStorage();
+
+      /* if we found a cookie, we use it */
+      if (readValueFromCookie('token')) {
+        context.token = readValueFromCookie('token');
+
+        deleteCookie('token');
+      }
 
       try {
         if (!context.token) {
@@ -48,7 +55,7 @@ export const SessionOrNot = () => {
 
         console.debug(`found token ${context.token.substring(0, 10)}...`);
 
-        const client = new RequestHelper(getBaseUrl());
+        const client = getRequestClient();
 
         store.dispatch(pageLoadValidateToken());
 
@@ -61,15 +68,7 @@ export const SessionOrNot = () => {
 
         store.dispatch(pageLoad(context.token));
 
-        const { token, user, team, board } = await client.loginWithToken(context.token);
-
-        if (setClient) {
-          client.token = token;
-
-          setClient(client);
-        }
-
-        client.token = token;
+        const { token: token, user, team, board } = await client.loginWithToken(context.token);
 
         store.dispatch(login(token, user, team, board));
       } catch (error) {
@@ -118,7 +117,7 @@ export const SessionOrNot = () => {
   }, [browserState]);
 
   const getPage = (userId: string | undefined) => {
-    return userId ? <Application /> : <LoginPage />;
+    return userId && token ? <Application /> : <LoginPage />;
   };
   return (
     <>

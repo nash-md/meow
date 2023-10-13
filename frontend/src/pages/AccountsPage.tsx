@@ -24,6 +24,7 @@ import useMobileLayout from '../hooks/useMobileLayout';
 import { Account } from '../interfaces/Account';
 import { Item } from '../components/view/list/Item';
 import { Row } from '../components/view/table/Row';
+import { Layer as CardLayer } from '../components/card/Layer';
 
 const createListViewItemsFromSchema = (schema: Schema | undefined): ListViewItem[] => {
   const list = [
@@ -138,6 +139,8 @@ export const AccountsPage = () => {
   return (
     <>
       {state === 'account-detail' && <AccountLayer />}
+      {state === 'card-detail' && <CardLayer />}
+
       <div className="canvas">
         <div className="list-view-header">
           <div>

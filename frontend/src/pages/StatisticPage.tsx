@@ -6,10 +6,9 @@ import {
   CalendarDate,
 } from '@internationalized/date';
 import { Checkbox, DateRangePicker, Item, Picker } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState, useRef } from 'react';
-import { selectActiveUsers, selectLanes, store } from '../store/Store';
+import { useEffect, useState, useRef } from 'react';
+import { selectActiveUsers, selectLanes, selectToken, store } from '../store/Store';
 import { showModalError } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
 import { DateTime } from 'luxon';
 import { getErrorMessage } from '../helpers/ErrorHelper';
 import { useSelector } from 'react-redux';
@@ -17,6 +16,7 @@ import { Lane } from '../interfaces/Lane';
 import { Link } from 'react-router-dom';
 import { FILTER_BY_NONE } from '../Constants';
 import { Chart } from '../components/forecast/Chart';
+import { getRequestClient } from '../helpers/RequestHelper';
 
 const colors = [
   '#e60049',
@@ -93,11 +93,13 @@ const min = today(getLocalTimeZone()).subtract({
 });
 
 export const StatisticPage = () => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
   const users = useSelector(selectActiveUsers);
   const [start, setStart] = useState<CalendarDate>(startOfMonth(today(getLocalTimeZone())));
   const [end, setEnd] = useState<CalendarDate>(endOfMonth(today(getLocalTimeZone())));
   const [userId, setUserId] = useState(FILTER_BY_NONE.key);
+
+  const client = getRequestClient(token);
 
   const setRange = (range: { start: CalendarDate; end: CalendarDate }) => {
     setEnd(range.end);
@@ -129,7 +131,7 @@ export const StatisticPage = () => {
 
     const execute = async () => {
       try {
-        const payload = await client!.fetchLaneTimeSeries(
+        const payload = await client.fetchLaneTimeSeries(
           DateTime.fromISO(start.toString()),
           DateTime.fromISO(end.toString()),
           userId === FILTER_BY_NONE.key ? undefined : userId
@@ -159,10 +161,10 @@ export const StatisticPage = () => {
       }
     };
 
-    if (start && end && userId && client && lanes.length > 0) {
+    if (start && end && userId && lanes.length > 0) {
       execute();
     }
-  }, [client, start, end, lanes, userId]);
+  }, [start, end, lanes, userId]);
 
   useEffect(() => {
     const laneList: LaneWithSelection[] = lanes.map((lane) => {

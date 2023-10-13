@@ -1,16 +1,13 @@
 import { TextField, Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { login } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
+import { getRequestClient } from '../helpers/RequestHelper';
 import { store } from '../store/Store';
 import { PasswordStrength } from './register/PasswordStrength';
 import { getErrorMessage } from '../helpers/ErrorHelper';
 import { UserHelper } from '../helpers/UserHelper';
 
 export const Register = () => {
-  const { setClient } = useContext(RequestHelperContext);
-
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,7 +23,7 @@ export const Register = () => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(getBaseUrl());
+      const client = getRequestClient();
 
       await client.register(name, password);
 
@@ -34,7 +31,6 @@ export const Register = () => {
 
       client.token = token;
 
-      setClient!(client);
       setIsLoading(false);
 
       store.dispatch(login(token, user, team, board));

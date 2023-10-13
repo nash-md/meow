@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { ActionType, ApplicationAction } from '../actions/Actions';
 import { BoardHelper } from '../helpers/BoardHelper';
 import { isValidId } from '../helpers/Helper';
@@ -9,6 +10,7 @@ import { ListViewSortDirection } from '../interfaces/ListView';
 import { User } from '../interfaces/User';
 import { InterfaceState } from '../store/ApplicationStore';
 import { Default } from '../store/Default';
+import { FILTER_BY_NONE } from '../Constants';
 
 export const application = (state = Default, action: ApplicationAction) => {
   switch (action.type) {
@@ -116,6 +118,11 @@ export const application = (state = Default, action: ApplicationAction) => {
             },
             filterBy: {},
             columns: [],
+          },
+          date: {
+            start: DateTime.now().startOf('month').toISODate(),
+            end: DateTime.now().endOf('month').toISODate(),
+            userId: FILTER_BY_NONE.key,
           },
         },
       };
@@ -301,7 +308,8 @@ export const application = (state = Default, action: ApplicationAction) => {
           ...state.session,
           team: {
             ...state.session.team,
-            currency: action.payload,
+            currency: action.payload.currency,
+            integrations: action.payload.integrations,
           },
         },
       };
@@ -406,6 +414,17 @@ export const application = (state = Default, action: ApplicationAction) => {
           [action.payload.name]: {
             ...state.ui[action.payload.name],
             columns: [...action.payload.columns],
+          },
+        },
+      };
+
+    case ActionType.DATE:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          date: {
+            ...action.payload,
           },
         },
       };

@@ -1,8 +1,7 @@
 import { TextField, Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { login } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
+import { RequestHelper, getBaseUrl, getRequestClient } from '../helpers/RequestHelper';
 import { store } from '../store/Store';
 import { PasswordStrength } from './register/PasswordStrength';
 import { getErrorMessage } from '../helpers/ErrorHelper';
@@ -12,8 +11,6 @@ export interface RegisterWithInviteProps {
 }
 
 export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
-  const { setClient } = useContext(RequestHelperContext);
-
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -52,15 +49,12 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
     try {
       setIsLoading(true);
 
-      const client = new RequestHelper(getBaseUrl());
+      const client = getRequestClient();
 
       await client.register(name, password, invite);
 
       const { token, user, team, board } = await client.login(name, password);
 
-      client.token = token;
-
-      setClient!(client);
       setIsLoading(false);
 
       store.dispatch(login(token, user, team, board));
@@ -116,9 +110,12 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
           <a href="/">Leave Sign Up</a>
         </>
       ) : (
-        <div style={{ paddingTop: '10px' }}>
-          You register with an invite link, your name is already set, just define your password.
-        </div>
+        <>
+          {' '}
+          <div style={{ paddingTop: '10px' }}>
+            You register with an invite link, your name is already set, just define your password.
+          </div>
+        </>
       )}
     </>
   );

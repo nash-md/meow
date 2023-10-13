@@ -1,11 +1,11 @@
 import { Picker, Item } from '@adobe/react-spectrum';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
-import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import { CurrencyCode } from '../../../interfaces/Team';
-import { selectCurrency, selectTeamId, store } from '../../../store/Store';
+import { selectCurrency, selectTeamId, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
+import { getRequestClient } from '../../../helpers/RequestHelper';
 
 function parseCurrencyKey(value: React.Key): CurrencyCode {
   switch (value) {
@@ -21,7 +21,9 @@ function parseCurrencyKey(value: React.Key): CurrencyCode {
 }
 
 export const CurrencyCanvas = () => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const configuredCurrency = useSelector(selectCurrency);
   const teamId = useSelector(selectTeamId);
@@ -33,13 +35,13 @@ export const CurrencyCanvas = () => {
     setCurrency(c);
 
     try {
-      await client!.updateTeam(teamId!, c);
+      const payload = await client.updateTeam(teamId!, c);
 
       store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
 
       store.dispatch({
         type: ActionType.TEAM_UPDATE,
-        payload: c,
+        payload: { currency: payload.currency, integrations: payload.integrations },
       });
     } catch (error) {
       console.error(error);

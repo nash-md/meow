@@ -29,6 +29,10 @@ const createUrlOrThrow = (url: string): URL => {
   }
 };
 
+export const getRequestClient = (token?: string) => {
+  return new RequestHelper(getBaseUrl(), token);
+};
+
 export const getBaseUrl = (): URL => {
   if (import.meta.env.VITE_URL) {
     const url = import.meta.env.VITE_URL.toString() as string;
@@ -49,6 +53,8 @@ export class RequestHelper {
   token: string | undefined;
   base: URL;
   timeout: number;
+  private controllers: AbortController[] = [];
+  destroyed = false;
 
   constructor(base: URL, token?: string, timeout: number = 8000) {
     this.base = base;
@@ -104,9 +110,10 @@ export class RequestHelper {
   ): Promise<Response> {
     try {
       const controller = new AbortController();
+      this.controllers.push(controller);
 
       const id = setTimeout(() => {
-        controller.abort();
+        controller.abort('timeout');
       }, timeout);
 
       const response = await fetch(url, {
@@ -116,11 +123,13 @@ export class RequestHelper {
 
       clearTimeout(id);
 
+      this.removeController(controller);
+
       if (!response.ok) {
         throw new RequestError(request, response, 'request failed');
       }
 
-      return response; // TODO return  return { promise, controller };
+      return response;
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         throw new RequestTimeoutError(error);
@@ -132,6 +141,7 @@ export class RequestHelper {
 
   parseJson = async (response: Response) => {
     try {
+      // TODO check if json
       const body = await response.json();
 
       return body as any; // TODO return body as unknown
@@ -139,6 +149,22 @@ export class RequestHelper {
       throw new ResponseParseError(response, 'Invalid JSON document');
     }
   };
+
+  private removeController(controller: AbortController) {
+    const index = this.controllers.indexOf(controller);
+    if (index !== -1) {
+      this.controllers.splice(index, 1);
+    }
+  }
+
+  destroy() {
+    this.destroyed = true;
+
+    for (const controller of this.controllers) {
+      controller.abort('cancel');
+    }
+    this.controllers = [];
+  }
 
   async getCards(): Promise<Card[]> {
     const url = this.getUrl(`/api/cards`);
@@ -266,6 +292,7 @@ export class RequestHelper {
       inForecast: lane.inForecast,
       index: lane.index,
       color: lane.color,
+      tags: lane.tags,
     });
   }
 

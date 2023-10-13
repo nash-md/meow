@@ -1,20 +1,16 @@
 import { TextField, Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState, KeyboardEvent } from 'react';
-import { login, pageLoad } from '../actions/Actions';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
-import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
+import { useEffect, useState, KeyboardEvent } from 'react';
+import { login } from '../actions/Actions';
+import { getRequestClient } from '../helpers/RequestHelper';
 import { selectApplicationState, store } from '../store/Store';
 import { getErrorMessage } from '../helpers/ErrorHelper';
 import { UserHelper } from '../helpers/UserHelper';
 import { useSelector } from 'react-redux';
 
-export interface LoginProps {
-  token: string | null;
-}
+export interface LoginProps {}
 
-export const Login = ({ token }: LoginProps) => {
-  const { setClient } = useContext(RequestHelperContext);
-
+export const Login = ({}: LoginProps) => {
+  const client = getRequestClient();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -35,44 +31,18 @@ export const Login = ({ token }: LoginProps) => {
   };
 
   useEffect(() => {
-    const execute = async (token: string) => {
-      store.dispatch(pageLoad(token));
-
-      const client = new RequestHelper(getBaseUrl());
-
-      const { user, team, board } = await client.loginWithToken(token);
-
-      if (setClient) {
-        client.token = token;
-
-        setClient(client);
-      }
-
-      client.token = token;
-
-      store.dispatch(login(token, user, team, board));
+    return () => {
+      client.destroy(); // Abort all ongoing requests when the component is unmounted
     };
-
-    if (token) {
-      const path = window.location.pathname;
-
-      window.history.replaceState({}, '', path);
-
-      execute(token);
-    }
-  }, [token]);
+  }, []);
 
   const authenticate = async () => {
     try {
       setError('');
       setIsLoading(true);
 
-      const client = new RequestHelper(getBaseUrl());
       const { token, user, team, board } = await client.login(name, password);
 
-      client.token = token;
-
-      setClient!(client);
       setIsLoading(false);
 
       store.dispatch(login(token, user, team, board));

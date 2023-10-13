@@ -60,12 +60,14 @@ export const Lane = ({ lane, numberOfLanes }: LaneProps) => {
         <div style={{ flexGrow: 1 }}>{lane.name}</div>
         {lane.inForecast === false && <div className="forecast-icon"></div>}
       </div>
+
       <div className={`sum ${getLaneColorClassName(lane.color)}`}>
         {getTitle(count)}-{' '}
         <b>
           <Currency value={sum} />
         </b>
       </div>
+
       <Droppable droppableId={lane._id}>
         {(provided, snaphot) => {
           return (

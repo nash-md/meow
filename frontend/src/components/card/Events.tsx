@@ -3,7 +3,6 @@ import { DateTime } from 'luxon';
 import { Lane } from './events/Lane';
 import { Comment } from './events/Comment';
 import { Button, TextArea } from '@adobe/react-spectrum';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { EventType } from '../../interfaces/EventType';
 import { CreatedAt } from './events/CreatedAt';
 import { Amount } from './events/Amount';
@@ -13,11 +12,12 @@ import { Attribute } from './events/Attribute';
 import { NextFollowUpAt } from './events/NextFollowUpAt';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import { selectCard, selectUsers } from '../../store/Store';
+import { selectCard, selectToken, selectUsers } from '../../store/Store';
 import { Avatar } from '../Avatar';
 import { Name } from './events/Name';
 import { NextFollowUpAtWarning } from './events/NextFollowUpAtWarning';
 import { CardEvent } from '../../interfaces/CardEvent';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export interface EventsProps {
   id?: string;
@@ -25,7 +25,9 @@ export interface EventsProps {
 }
 
 export const Events = ({ id, entity }: EventsProps) => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const [list, setList] = useState([]);
   const [comment, setComment] = useState('');
@@ -36,15 +38,15 @@ export const Events = ({ id, entity }: EventsProps) => {
 
   useEffect(() => {
     const execute = async () => {
-      let payload = await client!.getCardEvents(id!);
+      let payload = await client.getCardEvents(id!);
 
       setList(payload);
     };
 
-    if (client && id) {
+    if (id) {
       execute();
     }
-  }, [client, id]);
+  }, [id]);
 
   useMemo(() => {
     setIsValid(comment.length > 0);
@@ -55,10 +57,10 @@ export const Events = ({ id, entity }: EventsProps) => {
       return;
     }
 
-    await client!.createCardEvent(id, comment);
+    await client.createCardEvent(id, comment);
     setComment('');
 
-    let payload = await client!.getCardEvents(id);
+    let payload = await client.getCardEvents(id);
 
     setList(payload);
   };
@@ -95,7 +97,7 @@ export const Events = ({ id, entity }: EventsProps) => {
       {card ? (
         <div className="statistics">
           <div className="tile">
-            <span>Opportunity Created</span>
+            <span>Opportunity Age</span>
             <h4>{DateTime.fromISO(card.createdAt!).toRelative()}</h4>
           </div>
           <div className="tile">
@@ -123,7 +125,18 @@ export const Events = ({ id, entity }: EventsProps) => {
         const user = users.find((user) => user._id === event.userId);
 
         if (event.type === EventType.NextFollowUpAtWarning) {
-          return <div className="warning">{getTitle(event)}</div>;
+          return (
+            <div
+              style={{
+                padding: '15px 10px 15px 10px',
+                backgroundColor: '#FFB700',
+                borderRadius: '5px',
+                marginBottom: '10px',
+              }}
+            >
+              {getTitle(event)}
+            </div>
+          );
         }
 
         return (
@@ -136,6 +149,7 @@ export const Events = ({ id, entity }: EventsProps) => {
 
               <div className="date">{ago}</div>
             </div>
+
             {getTitle(event)}
           </div>
         );

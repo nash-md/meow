@@ -120,7 +120,6 @@ export const Form = ({ update, id }: FormProps) => {
           </div>
         </div>
       )}
-
       <div className="card">
         <TextField
           onChange={(value) => handlePreviewUpdate('name', value)}
@@ -157,7 +156,8 @@ export const Form = ({ update, id }: FormProps) => {
       </div>
 
       <div className="card-dates">
-        <div>
+        <div style={{ backgroundColor: 'red' }}>
+          ss
           <DatePicker
             value={
               preview.nextFollowUpAt
@@ -180,7 +180,6 @@ export const Form = ({ update, id }: FormProps) => {
           />
         </div>
       </div>
-
       <div className="card-submit">
         <Button variant="primary" onPress={save} isDisabled={!isValidForm || isDisabled}>
           Save

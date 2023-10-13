@@ -1,9 +1,8 @@
 import { Button } from '@adobe/react-spectrum';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { RESERVED_ATTRIBUTES } from '../../../Constants';
-import { RequestHelperContext } from '../../../context/RequestHelperContextProvider';
 import {
   Schema,
   SchemaReferenceAttribute,
@@ -11,11 +10,12 @@ import {
   SchemaType,
 } from '../../../interfaces/Schema';
 import { ApplicationStore } from '../../../store/ApplicationStore';
-import { selectSchemaByType, store } from '../../../store/Store';
+import { selectSchemaByType, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { hasDuplicateEntries } from '../../../helpers/Helper';
 import { SchemaHelper } from '../../../helpers/SchemaHelper';
+import { getRequestClient } from '../../../helpers/RequestHelper';
 
 const protocol = window.location.protocol;
 const domain = window.location.hostname;
@@ -43,7 +43,9 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
     }
   }, [schema]);
 
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const validate = (schema: Schema | undefined) => {
     if (!schema) {
@@ -123,11 +125,11 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
 
   const save = async () => {
     try {
-      await client!.updateSchema(updatedSchema);
+      await client.updateSchema(updatedSchema);
 
       store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
 
-      let schemas = await client!.fetchSchemas();
+      let schemas = await client.fetchSchemas();
 
       store.dispatch({
         type: ActionType.SCHEMAS,
@@ -149,7 +151,7 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
         {isDeveloperMode ? (
           <div className="endpoint">
             <b>POST/GET:</b> {protocol}//
-            {domain}/cards
+            {domain}/api/cards
           </div>
         ) : null}
       </div>

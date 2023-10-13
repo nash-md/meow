@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
-import { RequestHelperContext } from '../context/RequestHelperContextProvider';
+import { useEffect, useState } from 'react';
 import { Lane as LaneInterface, LaneStatistic } from '../interfaces/Lane';
 import { StatisticLane } from './StatisticLane';
 import { useSelector } from 'react-redux';
-import { selectFilters } from '../store/Store';
+import { selectFilters, selectToken } from '../store/Store';
+import { getRequestClient } from '../helpers/RequestHelper';
 
 export interface BoardProps {
   lanes: LaneInterface[];
@@ -15,20 +15,21 @@ export interface BoardStatistics {
   lost: { count: number; amount: number; _id: string }[];
 }
 export const StatisticsBoard = ({ lanes }: BoardProps) => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
+
   const [statistics, setStatistics] = useState<BoardStatistics | undefined>();
 
   const filters = useSelector(selectFilters);
 
   useEffect(() => {
-    if (client) {
-      client
-        .getLanesStatistic(filters)
-        .then((payload) => {
-          setStatistics(payload);
-        })
-        .catch((error) => console.error(error));
-    }
+    client
+      .getLanesStatistic(filters)
+      .then((payload) => {
+        setStatistics(payload);
+      })
+      .catch((error) => console.error(error));
   }, [filters]);
 
   return (

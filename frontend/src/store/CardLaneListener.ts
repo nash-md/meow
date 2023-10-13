@@ -5,7 +5,7 @@ import {
   updateCardFromServer,
   showModalError,
 } from '../actions/Actions';
-import { RequestHelper, getBaseUrl } from '../helpers/RequestHelper';
+import { getRequestClient } from '../helpers/RequestHelper';
 import { ApplicationStore } from './ApplicationStore';
 import { store } from './Store';
 import { getErrorMessage } from '../helpers/ErrorHelper';
@@ -17,7 +17,7 @@ cardLaneListener.startListening({
   effect: async (action, listenerApi) => {
     const state = listenerApi.getState() as ApplicationStore;
 
-    const client = new RequestHelper(getBaseUrl(), state.session.token);
+    const client = getRequestClient(state.session.token);
 
     const casted = action as ApplicationCardLaneAction;
 

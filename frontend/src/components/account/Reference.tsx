@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Account } from '../../interfaces/Account';
 import { Reference as ReferenceInterface } from '../../interfaces/Reference';
 import { ReferenceItem } from './ReferenceItem';
+import { SchemaReferenceAttribute } from '../../interfaces/Schema';
 
 export interface ReferenceProps {
+  attribute: SchemaReferenceAttribute;
   account?: Account;
 }
 
-export const Reference = ({ account }: ReferenceProps) => {
+export const Reference = ({ account, attribute }: ReferenceProps) => {
   const [references, setReferences] = useState<ReferenceInterface[]>([]);
 
   useEffect(() => {
@@ -18,9 +20,11 @@ export const Reference = ({ account }: ReferenceProps) => {
 
   return (
     <div>
-      {references?.map((reference, index) => {
-        return <ReferenceItem key={index} reference={reference} />;
-      })}
+      {references
+        .filter((reference) => reference.schemaAttributeKey === attribute.key)
+        .map((reference, index) => {
+          return <ReferenceItem key={index} reference={reference} />;
+        })}
     </div>
   );
 };

@@ -1,10 +1,9 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DateTime } from 'luxon';
 import { Button, TextArea } from '@adobe/react-spectrum';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../../store/ApplicationStore';
-import { selectCard, selectUsers } from '../../store/Store';
+import { selectCard, selectToken, selectUsers } from '../../store/Store';
 import { Avatar } from '../Avatar';
 import { AccountEvent } from '../../interfaces/AccountEvent';
 import { EventType } from '../../interfaces/EventType';
@@ -12,13 +11,16 @@ import { CreatedAt } from './events/CreatedAt';
 import { Name } from './events/Name';
 import { Comment } from './events/Comment';
 import { Attribute } from './events/Attribute';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export interface EventsProps {
   id?: string;
 }
 
 export const Events = ({ id }: EventsProps) => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const [list, setList] = useState([]);
   const [comment, setComment] = useState('');
@@ -29,15 +31,15 @@ export const Events = ({ id }: EventsProps) => {
 
   useEffect(() => {
     const execute = async () => {
-      let payload = await client!.getAccountEvents(id!);
+      let payload = await client.getAccountEvents(id!);
 
       setList(payload);
     };
 
-    if (client && id) {
+    if (id) {
       execute();
     }
-  }, [client, id]);
+  }, [id]);
 
   useMemo(() => {
     setIsValid(comment.length > 0);
@@ -48,11 +50,11 @@ export const Events = ({ id }: EventsProps) => {
       return;
     }
 
-    await client!.createAccountEvent(id, comment);
+    await client.createAccountEvent(id, comment);
 
     setComment('');
 
-    let payload = await client!.getAccountEvents(id);
+    let payload = await client.getAccountEvents(id);
 
     setList(payload);
   };

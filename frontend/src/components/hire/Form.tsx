@@ -1,22 +1,22 @@
 import { Button, TextField } from '@adobe/react-spectrum';
-import { useState, useMemo, useContext } from 'react';
-import { ActionType } from '../../actions/Actions';
-import { RequestHelperContext } from '../../context/RequestHelperContextProvider';
-import { store } from '../../store/Store';
+import { useState, useMemo } from 'react';
+import { ActionType, showModalSuccess } from '../../actions/Actions';
+import { selectToken, store } from '../../store/Store';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
 import { UserHelper } from '../../helpers/UserHelper';
+import { useSelector } from 'react-redux';
+import { getRequestClient } from '../../helpers/RequestHelper';
 
 export const Form = (props: any) => {
-  const { client } = useContext(RequestHelperContext);
+  const token = useSelector(selectToken);
+
+  const client = getRequestClient(token);
 
   const [name, setName] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [invite, setInvite] = useState<string>('');
 
   let isValidForm = useMemo(() => {
     if (UserHelper.isValidName(name)) {
-      setInvite('');
-
       return true;
     }
 
@@ -27,15 +27,16 @@ export const Form = (props: any) => {
     setError('');
 
     try {
-      const user = await client!.createUser(name); // TODO remove any
+      const user = await client.createUser(name); // TODO remove any
 
       setName('');
-      setInvite(user.invite);
 
       store.dispatch({
         type: ActionType.USER_ADD,
         payload: user,
       });
+
+      store.dispatch(showModalSuccess('User created'));
     } catch (error) {
       console.error(error);
 
@@ -66,20 +67,6 @@ export const Form = (props: any) => {
         </div>
       </div>
       <div style={{ color: 'red', paddingTop: '5px' }}> {error}</div>
-
-      {invite && (
-        <div className="create-user-confirmation">
-          <div>
-            <b>{props.createInviteUrl(invite)}</b>
-          </div>
-          <Button
-            variant="primary"
-            onPress={() => props.copyToClipboard(props.createInviteUrl(invite))}
-          >
-            Copy Invite
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

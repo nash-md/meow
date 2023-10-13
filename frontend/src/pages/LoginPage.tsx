@@ -13,7 +13,6 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
 
     params.get('invite') !== null && setInvite(params.get('invite'));
-    params.get('token') !== null && setToken(params.get('token'));
   }, []);
 
   return (
@@ -22,7 +21,7 @@ export default function LoginPage() {
         <div style={{ marginBottom: '10px' }}>
           <CursorHeadline text={['Hello!', 'Hallo!', 'Hej!', 'こんにち', 'Hola!']} />
         </div>
-        {invite ? <RegisterWithInvite invite={invite} /> : <RegisterOrLogin token={token} />}
+        {invite ? <RegisterWithInvite invite={invite} /> : <RegisterOrLogin />}
         <ScreenResolutionWarning message="This application is built for desktops, small screens are not supported." />
       </div>
       <ErrorModal />
