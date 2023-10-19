@@ -73,7 +73,7 @@ const achieved = async (req: AuthenticatedRequest, res: Response, next: NextFunc
 
     const forecast = await statisticService.getByLaneType(
       LaneType.ClosedWon,
-      req.jwt.team._id!,
+      req.jwt.team._id,
       start,
       end,
       userId
@@ -117,9 +117,7 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     if (req.query.mode === 'predicted') {
       const query = {
         teamId: req.jwt.team._id,
-        tags: {
-          type: LaneType.Normal,
-        },
+        'tags.type': { $eq: LaneType.Normal },
         inForecast: true,
       };
 
@@ -141,9 +139,7 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     } else {
       const query = {
         teamId: req.jwt.team._id,
-        tags: {
-          type: LaneType.ClosedWon,
-        },
+        'tags.type': { $eq: LaneType.ClosedWon },
       };
 
       const lanes = await EntityHelper.findBy(Lane, query);
@@ -241,7 +237,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const match: any = {
       $match: {
-        teamId: req.jwt.team._id!,
+        teamId: req.jwt.team._id,
         type: { $eq: EventType.LaneAmountChanged },
         createdAt: {
           $gt: start,

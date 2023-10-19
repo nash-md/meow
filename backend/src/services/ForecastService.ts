@@ -17,9 +17,7 @@ export class ForecastService {
 
     const query: any = {
       teamId: teamId,
-      tags: {
-        type: type,
-      },
+      'tags.type': { $eq: type },
     };
 
     if (type === LaneType.Normal) {
@@ -33,8 +31,8 @@ export class ForecastService {
         status: { $ne: CardStatus.Deleted },
         laneId: { $in: lanes.map((lane) => lane._id) },
         closedAt: {
-          $gt: start,
-          $lt: end,
+          $gte: start,
+          $lte: end,
         },
       },
     };
