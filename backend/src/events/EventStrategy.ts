@@ -27,8 +27,8 @@ export interface HistoryEventPayload {
 
 export interface AccountEventPayload {
   user: User;
-  account: PlainAccount;
-  updated?: PlainAccount;
+  latest: PlainAccount;
+  previous?: PlainAccount;
 }
 
 export type EventPayload =

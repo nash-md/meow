@@ -20,7 +20,7 @@ function isValidPort(port: string | undefined): boolean {
 
 const PORT = isValidPort(process.env.PORT) ? parseInt(process.env.PORT!) : 9000;
 
-const mandatory = ['MONGODB_URI', 'SESSION_SECRET', 'BASE_URL'];
+const mandatory = ['MONGODB_URI', 'SESSION_SECRET'];
 
 mandatory.forEach((param) => {
   if (!process.env[param]) {
@@ -76,8 +76,8 @@ import pino from 'pino';
 import { CardReferenceListener } from './events/CardReferenceListener.js';
 import { CardEventController } from './controllers/CardEventController.js';
 import { AccountEventController } from './controllers/AccountEventController.js';
-import Scheduler from './job-scheduler.js';
-import { notifyOnMissedFollowUpDates } from './jobs/notifyOnMissedFollowUpDates.js';
+import { notifyOnMissedFollowUpDatesTimeline } from './jobs/notifyOnMissedFollowUpDatesTimeline.js';
+import JobDailyScheduler from './job-daily-scheduler.js';
 
 /* spinning up express */
 export const app = express();
@@ -255,6 +255,7 @@ try {
       validateAgainst(BoardRequestSchema),
       UserController.board
     );
+  user.route('/:id/flags').get(UserController.flags);
   user
     .route('/:id/password')
     .post(
@@ -352,11 +353,10 @@ server.listen(PORT, IP_ADDRESS, () => {
 });
 
 try {
-  Scheduler.register(() => {
-    notifyOnMissedFollowUpDates();
-  });
-
-  Scheduler.every({ hour: 24 }).start();
+  const timelineNotification = new JobDailyScheduler(
+    notifyOnMissedFollowUpDatesTimeline,
+    '10:00'
+  ).start();
 } catch (error) {
   log.error(error);
 }

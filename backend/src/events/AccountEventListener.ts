@@ -8,14 +8,14 @@ import { NewAccountEvent } from '../entities/AccountEvent.js';
 import { Account } from '../entities/Account.js';
 
 export const AccountEventListener = {
-  async onAccountUpdate({ user, account, updated }: AccountEventPayload) {
-    log.debug(`execute onAccountUpdate for account ${account._id}`);
+  async onAccountUpdate({ user, latest, previous }: AccountEventPayload) {
+    log.debug(`execute onAccountUpdate for account ${latest._id}`);
 
     const { teamId } = user;
 
-    const entity = await EntityHelper.findOneByIdOrFail(Account, account._id);
+    const entity = await EntityHelper.findOneByIdOrFail(Account, latest._id);
 
-    if (!updated) {
+    if (!previous) {
       await EntityHelper.create(new NewAccountEvent(entity, user, EventType.Created));
 
       return;
@@ -23,8 +23,8 @@ export const AccountEventListener = {
 
     const schema = await EntityHelper.findSchemaByType(teamId, SchemaType.Account);
 
-    if (updated.attributes) {
-      const changes = getAttributeListDifference(account.attributes, updated.attributes);
+    if (latest.attributes) {
+      const changes = getAttributeListDifference(latest.attributes, previous.attributes);
       /* enrich event data */
       for (const key in changes) {
         const change = changes[key]!;
@@ -45,10 +45,10 @@ export const AccountEventListener = {
       }
     }
 
-    if (account.name !== updated.name) {
+    if (latest.name !== previous.name) {
       const body = {
-        from: account.name,
-        to: updated.name,
+        from: latest.name,
+        to: previous.name,
       };
 
       await EntityHelper.create(new NewAccountEvent(entity, user, EventType.NameChanged, body));

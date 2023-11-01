@@ -156,8 +156,7 @@ export const Form = ({ update, id }: FormProps) => {
       </div>
 
       <div className="card-dates">
-        <div style={{ backgroundColor: 'red' }}>
-          ss
+        <div>
           <DatePicker
             value={
               preview.nextFollowUpAt

@@ -15,7 +15,7 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const updated = await EntityHelper.create(account, Account);
 
-    EventHelper.get().emit('account', { user: req.jwt.user, account: updated.toPlain() });
+    EventHelper.get().emit('account', { user: req.jwt.user, latest: updated.toPlain() });
 
     return res.status(201).json(updated);
   } catch (error) {
@@ -37,11 +37,10 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const updated = await EntityHelper.update(account);
 
-    // TODO rename account to original
     EventHelper.get().emit('account', {
       user: req.jwt.user,
-      account: original,
-      updated: updated.toPlain(),
+      latest: original,
+      previous: updated.toPlain(),
     });
 
     return res.json(updated);

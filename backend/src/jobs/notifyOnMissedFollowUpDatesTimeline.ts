@@ -6,14 +6,14 @@ import { NewCardEvent } from '../entities/CardEvent.js';
 import { User } from '../entities/User.js';
 import { EventType } from '../entities/EventType.js';
 
-export const notifyOnMissedFollowUpDates = async () => {
-  log.info(`run job ${notifyOnMissedFollowUpDates.name}`);
+export const notifyOnMissedFollowUpDatesTimeline = async () => {
+  log.info(`run job ${notifyOnMissedFollowUpDatesTimeline.name}`);
 
   const oneWeekAgo = DateTime.now().startOf('day').minus({ days: 7 });
 
   log.info(
     `${
-      notifyOnMissedFollowUpDates.name
+      notifyOnMissedFollowUpDatesTimeline.name
     }: find all cards with nextFollowUpAt on ${oneWeekAgo.toString()}`
   );
 
@@ -39,5 +39,7 @@ export const notifyOnMissedFollowUpDates = async () => {
     })
   );
 
-  log.info(`complete job ${notifyOnMissedFollowUpDates.name}: created ${list.length} events`);
+  log.info(
+    `complete job ${notifyOnMissedFollowUpDatesTimeline.name}: created ${list.length} events`
+  );
 };
