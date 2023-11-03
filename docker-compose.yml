@@ -9,11 +9,10 @@ services:
       - MONGODB_URI=mongodb://db:27017/meow
       - SESSION_SECRET=$(bash -c 'echo $(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 32)')
       - PORT=9000
-      - IP_ADDRESS=0.0.0.0
       - LOG_LEVEL=info
       - NODE_ENV=production
     ports:
-      - "80:80"
+      - '3000:80'
     restart: always
     depends_on:
       - db
