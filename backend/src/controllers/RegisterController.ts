@@ -20,8 +20,9 @@ import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterE
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { isValidName, isValidPassword } from './RegisterControllerValidator.js';
 import { Board, NewBoard } from '../entities/Board.js';
-import { EventHelper } from '../helpers/EventHelper.js';
+import { emitBoardEvent, emitCardEvent, emitLaneEvent } from '../helpers/EventHelper.js';
 import { log } from '../worker.js';
+import { InvalidRequestError } from '../errors/InvalidRequestError.js';
 
 export const setupUserWithInvite = async (invite: string, authentication: UserAuthentication) => {
   const user = await EntityHelper.findUserByInvite(invite);
@@ -42,7 +43,12 @@ export const setupAccountWithExampleData = async (
   name: string,
   authentication: UserAuthentication
 ): Promise<User> => {
-  const team = await EntityHelper.create(new NewTeam(`${name}'s Team`, CurrencyCode.USD), Team);
+  const isFirstTeam = await EntityHelper.isFirstTeam();
+
+  const team = await EntityHelper.create(
+    new NewTeam(`${name}'s Team`, CurrencyCode.USD, isFirstTeam),
+    Team
+  );
   const board = await EntityHelper.create(new NewBoard(team, 'default'), Board);
 
   const lanes: Lane[] = [];
@@ -75,25 +81,23 @@ export const setupAccountWithExampleData = async (
         .plus({ days: 7 })
         .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
-      const card = new NewCard(user, lanes[laneIndex]!, item.name, item.amount);
+      let card = new NewCard(user, lanes[laneIndex]!, item.name, item.amount);
 
       card.closedAt = oneWeekFromNow.toJSDate();
       card.nextFollowUpAt = tomorrow.toJSDate();
 
       const updated = await EntityHelper.create(card, Card);
 
-      EventHelper.get().emit('card', { user: user, latest: updated!.toPlain() });
+      emitCardEvent(user, updated!.toPlain());
     })
   );
 
   /* emit a lane event for each lane to calculate statistic values */
   lanes.forEach((lane) => {
-    EventHelper.get().emit('lane', {
-      teamId: team._id,
-      laneId: lane._id,
-      userId: user._id,
-    });
+    emitLaneEvent(lane._id, user._id);
   });
+
+  emitBoardEvent(board._id, user._id);
 
   await Promise.all(
     DefaultAccounts.map(async (item, index) => {
@@ -128,10 +132,32 @@ const invite = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
-  log.debug(`get user by name: ${req.body.name}`);
+const status = async (req: Request, res: Response, next: NextFunction) => {
+  const payload: { allowTeamRegistration: boolean } = { allowTeamRegistration: true };
 
   try {
+    const flag = await EntityHelper.findGlobalFlagByName('allow-team-registration');
+
+    if (flag && flag.value === false) {
+      payload.allowTeamRegistration = false;
+    }
+
+    res.status(201).json(payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const register = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const flag = await EntityHelper.findGlobalFlagByName('allow-team-registration');
+
+    if (flag && flag.value === false) {
+      throw new InvalidRequestError('team registration is disabled');
+    }
+
+    log.debug(`get user by name: ${req.body.name}`);
+
     const name = req.body.name.trim();
     const password = req.body.password;
 
@@ -165,5 +191,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
 export const RegisterController = {
   register,
+  status,
   invite,
 };

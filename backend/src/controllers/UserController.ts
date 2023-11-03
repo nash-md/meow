@@ -115,7 +115,7 @@ const flags = async (req: AuthenticatedRequest, res: Response, next: NextFunctio
     throw new EntityNotFoundError();
   }
 
-  return res.json(user.flags);
+  return res.json(user.flags ? user.flags : {});
 };
 
 const password = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

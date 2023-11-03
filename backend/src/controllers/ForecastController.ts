@@ -195,7 +195,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
     const initialMatch: any = {
       $match: {
         teamId: req.jwt.team._id,
-        type: { $eq: EventType.LaneAmountChanged },
+        type: { $eq: EventType.ForecastTotal },
         createdAt: {
           $lt: start,
         },
@@ -238,7 +238,7 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
     const match: any = {
       $match: {
         teamId: req.jwt.team._id,
-        type: { $eq: EventType.LaneAmountChanged },
+        type: { $eq: EventType.ForecastTotal },
         createdAt: {
           $gt: start,
           $lt: end,

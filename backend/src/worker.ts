@@ -78,6 +78,8 @@ import { CardEventController } from './controllers/CardEventController.js';
 import { AccountEventController } from './controllers/AccountEventController.js';
 import { notifyOnMissedFollowUpDatesTimeline } from './jobs/notifyOnMissedFollowUpDatesTimeline.js';
 import JobDailyScheduler from './job-daily-scheduler.js';
+import { BoardEventListener } from './events/BoardEventListener.js';
+import { CardForecastEventListener } from './events/CardForecastEventListener.js';
 
 /* spinning up express */
 export const app = express();
@@ -110,8 +112,10 @@ try {
 
   const strategy = new NodeEventStrategy();
 
+  strategy.register('board', BoardEventListener.onBoardEvent);
   strategy.register('lane', LaneEventListener.onLaneUpdate);
   strategy.register('card', CardEventListener.onCardUpdateOrCreate);
+  strategy.register('card', CardForecastEventListener.onCardUpdateOrCreate);
   strategy.register('card', CardReferenceListener.onCardUpdateOrCreate);
   strategy.register('account', AccountEventListener.onAccountUpdate);
 
@@ -166,6 +170,9 @@ try {
   team
     .route('/:id/integrations')
     .post(rejectIfContentTypeIsNot('application/json'), TeamController.updateIntegration);
+  team
+    .route('/:id/allow-team-registration')
+    .post(rejectIfContentTypeIsNot('application/json'), TeamController.allowTeamRegistration);
 
   app.use('/api/teams', team);
 
@@ -326,6 +333,7 @@ try {
       RegisterController.register
     );
   unprotected.route('/register/invite').get(RegisterController.invite);
+  unprotected.route('/register/status').get(RegisterController.status);
   unprotected
     .route('/validate-token')
     .post(

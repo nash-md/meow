@@ -8,6 +8,7 @@ export class Team implements ExistingEntity {
   name: string;
   currency: CurrencyCode;
   integrations?: Integration[];
+  isFirstTeam?: boolean;
   createdAt: Date;
   updatedAt: Date;
 
@@ -26,16 +27,14 @@ export class Team implements ExistingEntity {
   }
 
   toJSON() {
-    if (!this.integrations) return this;
+    if (!this.integrations)
+      return {
+        ...this,
+        integrations: [],
+      };
 
     const filteredIntegrations = this.integrations.map((integration) => {
-      return {
-        key: integration.key,
-        attributes: Object.keys(integration.attributes).reduce(
-          (accumulated, current) => ({ ...accumulated, [current]: null }),
-          {}
-        ),
-      };
+      return { key: integration.key };
     });
 
     return {
@@ -55,14 +54,19 @@ export class Team implements ExistingEntity {
 export class NewTeam implements NewEntity {
   name: string;
   currency: CurrencyCode;
+  isFirstTeam?: boolean;
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(name: string, currency: CurrencyCode) {
+  constructor(name: string, currency: CurrencyCode, isFirstTeam?: boolean) {
     this.name = name;
     this.currency = currency;
     this.createdAt = new Date();
     this.updatedAt = new Date();
+
+    if (isFirstTeam) {
+      this.isFirstTeam = isFirstTeam;
+    }
   }
 }
 

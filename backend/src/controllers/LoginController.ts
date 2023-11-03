@@ -36,7 +36,6 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
         throw new AuthenticationFailedError();
       }
     }
-
     if (!user || user.status !== UserStatus.Enabled) {
       throw new AuthenticationFailedError();
     }
@@ -54,15 +53,7 @@ const handle = async (req: Request, res: Response, next: NextFunction) => {
     const payload = {
       token: TokenHelper.createJwt(user, SESSION_MAX_AGE),
       user: user,
-      team: {
-        _id: user.teamId.toString(),
-        currency: team.currency,
-        integrations: Array.isArray(team.integrations)
-          ? team.integrations.map((integration) => {
-              return { key: integration.key };
-            })
-          : [],
-      },
+      team: team.toJSON(),
       board: user.board,
     };
 
