@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2023-11-02
+
+- Updated forecast events, there is now an additional event published with the total sum on that particular day. This can be used to report on pipeline change over time.
+- The first registration on a new installation is now flagged on the database. This flag will be used to initiate the first setup steps on the frontend.
+
 ## 2023-09-20
 
 - Removed TypeORM from the project. The project's dependence on MongoDB has increased in recent months. This is due to certain features that could not be implemented without a direct database connection. As a result, the initial idea of keeping the project database-agnostic using an ORM is no longer feasible.

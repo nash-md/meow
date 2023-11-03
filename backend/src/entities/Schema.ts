@@ -69,6 +69,7 @@ export interface BaseSchemaAttribute {
 
 export interface SchemaReferenceAttribute extends BaseSchemaAttribute {
   entity: SchemaType | null;
+  reverseName: string;
   relationship: 'one-to-one' | 'one-to-many' | 'many-to-one';
 }
 

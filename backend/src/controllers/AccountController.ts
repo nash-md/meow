@@ -13,11 +13,11 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       account.attributes = req.body.attributes;
     }
 
-    const updated = await EntityHelper.create(account, Account);
+    const latest = await EntityHelper.create(account, Account);
 
-    EventHelper.get().emit('account', { user: req.jwt.user, latest: updated.toPlain() });
+    EventHelper.get().emit('account', { user: req.jwt.user, latest: latest.toPlain() });
 
-    return res.status(201).json(updated);
+    return res.status(201).json(latest);
   } catch (error) {
     return next(error);
   }
@@ -27,7 +27,7 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
   try {
     let account = await validateAndFetchAccount(req.params.id, req.jwt.user);
 
-    const original = account.toPlain();
+    const previous = account.toPlain();
 
     account.name = req.body.name;
 
@@ -35,15 +35,16 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
       account.attributes = req.body.attributes;
     }
 
-    const updated = await EntityHelper.update(account);
+    const latest = await EntityHelper.update(account);
 
+    // TODO rename account to original
     EventHelper.get().emit('account', {
       user: req.jwt.user,
-      latest: original,
-      previous: updated.toPlain(),
+      latest: latest.toPlain(),
+      previous: previous,
     });
 
-    return res.json(updated);
+    return res.json(latest);
   } catch (error) {
     return next(error);
   }

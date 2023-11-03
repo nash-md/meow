@@ -1,58 +1,59 @@
+import { EventType } from './EventType.js';
 import { Entity } from '../helpers/EntityDecorator.js';
 import { ExistingEntity, NewEntity } from './BaseEntity.js';
-import { Card } from './Card.js';
-import { EventType } from './EventType.js';
 import { ObjectId } from 'mongodb';
-import { User } from './User.js';
+import { Lane } from './Lane.js';
+import { Card } from './Card.js';
 
 @Entity({ name: 'Events' })
-export class CardEvent implements ExistingEntity {
+export class ForecastCardEvent implements ExistingEntity {
   _id: ObjectId;
   teamId: ObjectId;
   cardId: ObjectId;
-  userId: ObjectId;
+  laneId: ObjectId;
   type: EventType;
-  body: any;
+  amount: number;
   createdAt: Date;
   updatedAt: Date;
 
   constructor(
     _id: ObjectId,
     teamId: ObjectId,
+    laneId: ObjectId,
     cardId: ObjectId,
-    userId: ObjectId,
-    type: EventType,
-    body: any,
+    amount: number,
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    userId: ObjectId
   ) {
     this._id = _id;
     this.teamId = teamId;
+    this.laneId = laneId;
     this.cardId = cardId;
-    this.userId = userId;
-    this.type = type;
-    this.body = body;
+    this.amount = amount;
+    this.type = EventType.ForecastCard;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
 }
 
 @Entity({ name: 'Events' })
-export class NewCardEvent implements NewEntity {
+export class NewForecastCardEvent implements NewEntity {
   teamId: ObjectId;
-  userId: ObjectId;
+  laneId: ObjectId;
   cardId: ObjectId;
   type: EventType;
-  body: any;
+  amount: number;
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(card: Card, user: User, type: EventType, body: any | null = null) {
-    this.teamId = card.teamId;
-    this.userId = user._id;
+  constructor(lane: Lane, card: Card, amount: number) {
+    this.teamId = lane.teamId;
+    this.laneId = lane._id;
     this.cardId = card._id;
-    this.type = type;
-    this.body = body;
+    this.amount = amount;
+    this.type = EventType.ForecastCard;
+
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }

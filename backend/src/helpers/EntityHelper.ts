@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { User, UserAuthentication, UserStatus } from '../entities/User.js';
+import { Flags, User, UserAuthentication, UserStatus } from '../entities/User.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { Card, CardStatus } from '../entities/Card.js';
 import { Team } from '../entities/Team.js';
@@ -9,12 +9,15 @@ import { Lane } from '../entities/Lane.js';
 import { DatabaseHelper } from './DatabaseHelper.js';
 import { Filter, ObjectId, Sort } from 'mongodb';
 import { DateTime } from 'luxon';
-import { ForecastEvent } from '../entities/ForecastEvent.js';
+import { LaneEvent } from '../entities/LaneEvent.js';
 import { getEntityMetadata } from './EntityDecorator.js';
-import { CreateEntityError } from '../errors/CreateEntityError.js';
+import { EntityCreateError } from '../errors/EntityCreateError.js';
 import { ExistingEntity, NewEntity } from '../entities/BaseEntity.js';
 import { CardEvent } from '../entities/CardEvent.js';
 import { InvalidRequestParameterError } from '../errors/InvalidRequestParameterError.js';
+import { ForecastTotalEvent } from '../entities/ForecastTotalEvent.js';
+import { ForecastCardEvent } from '../entities/ForecastCardEvent.js';
+import { GlobalFlag, NewGlobalFlag } from '../entities/GlobalFlag.js';
 
 type EntityConstructor<T> = new (...args: any[]) => T;
 
@@ -113,6 +116,14 @@ async function findOneBy<T extends ExistingEntity>(
   }
 }
 
+async function countBy<T extends ExistingEntity>(
+  entityClass: new (...args: any[]) => T,
+  query: Filter<T>
+): Promise<number> {
+  const collection = getCollectionForEntity(entityClass);
+  return await collection.countDocuments(query);
+}
+
 async function findBy<T extends ExistingEntity>(
   entityClass: new (...args: any[]) => T,
   query: Filter<T>,
@@ -179,17 +190,6 @@ async function findSchemaByType(teamId: ObjectId, type: SchemaType) {
   return schema;
 }
 
-async function findCardsByTeam(team: Team) {
-  const query = {
-    teamId: { $eq: team._id! },
-    $or: [{ status: { $exists: false } }, { status: { $ne: CardStatus.Deleted } }],
-  };
-
-  const list = await findBy(Card, query);
-
-  return list;
-}
-
 async function findUserByInvite(invite: string) {
   const query = {
     invite: { $eq: invite },
@@ -209,6 +209,32 @@ async function findCardByName(teamId: ObjectId, name: string) {
   let user = await findOneBy(Card, query);
 
   return user;
+}
+
+async function findGlobalFlagByName(name: string) {
+  const query = {
+    name: { $eq: name },
+    teamId: { $exists: false },
+  };
+
+  let flag = await findOneBy(GlobalFlag, query);
+
+  return flag;
+}
+
+async function findOrCreateGlobalFlagByName(name: string) {
+  const query = {
+    name: { $eq: name },
+    teamId: { $exists: false },
+  };
+
+  let flag = await findOneBy(GlobalFlag, query);
+
+  if (!flag) {
+    flag = await EntityHelper.create(new NewGlobalFlag(name, null), GlobalFlag);
+  }
+
+  return flag;
 }
 
 async function findUserByName(teamId: ObjectId, name: string) {
@@ -247,10 +273,30 @@ async function findUserByAuthentication(authentication: UserAuthentication) {
   return user;
 }
 
-async function findForecastEventByDay(
+async function findForecastEventByDay(teamId: ObjectId, date: Date, userId?: ObjectId) {
+  const d = DateTime.fromJSDate(date).toUTC();
+  const startOfDay = d.startOf('day').toJSDate();
+  const endOfDay = d.endOf('day').toJSDate();
+
+  const query = {
+    teamId: { $eq: teamId },
+    laneId: { $exists: false },
+    type: { $eq: EventType.ForecastTotal },
+    ...(userId ? { userId: userId } : { userId: { $exists: false } }),
+    createdAt: {
+      $gt: startOfDay,
+      $lt: endOfDay,
+    },
+  };
+  let event = await findOneBy(ForecastTotalEvent, query);
+
+  return event;
+}
+
+async function findForecastLaneEventByDay(
   teamId: ObjectId,
-  laneId: ObjectId,
   date: Date,
+  laneId: ObjectId,
   userId?: ObjectId
 ) {
   const d = DateTime.fromJSDate(date).toUTC();
@@ -260,7 +306,7 @@ async function findForecastEventByDay(
   const query = {
     teamId: { $eq: teamId },
     laneId: { $eq: laneId },
-    type: { $eq: EventType.LaneAmountChanged },
+    type: { $eq: EventType.ForecastTotal },
     ...(userId ? { userId: userId } : { userId: { $exists: false } }),
     createdAt: {
       $gt: startOfDay,
@@ -268,12 +314,39 @@ async function findForecastEventByDay(
     },
   };
 
-  let event = await findOneBy(ForecastEvent, query);
-
+  let event = await findOneBy(LaneEvent, query);
   return event;
 }
 
-async function getTotalAmountByLaneId(teamId: ObjectId, laneId: ObjectId, userId?: ObjectId) {
+async function findLatestForecastCardEventForLane(
+  teamId: ObjectId,
+  date: Date,
+  laneId: ObjectId,
+  cardId: ObjectId
+) {
+  const d = DateTime.fromJSDate(date).toUTC();
+  const endOfDay = d.endOf('day').toJSDate();
+
+  const query = {
+    teamId: { $eq: teamId },
+    cardId: { $eq: cardId },
+    laneId: { $eq: laneId },
+    type: { $eq: EventType.ForecastCard },
+    createdAt: {
+      $lte: endOfDay,
+    },
+  };
+
+  const sort: Sort = {
+    createdAt: -1,
+  };
+
+  let events = await findBy(ForecastCardEvent, query, sort);
+
+  return events[0] ? events[0] : null;
+}
+
+async function getForecastByLaneId(teamId: ObjectId, laneId: ObjectId, userId?: ObjectId) {
   const collection = DatabaseHelper.getCollection('Cards');
 
   const pipeline = [
@@ -284,6 +357,46 @@ async function getTotalAmountByLaneId(teamId: ObjectId, laneId: ObjectId, userId
         laneId: laneId,
         ...(userId ? { userId: userId } : {}),
       },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$amount' },
+      },
+    },
+  ];
+
+  const cursor = collection.aggregate(pipeline);
+
+  const result = await cursor.toArray();
+
+  return result && result[0] ? result[0].total : 0;
+}
+
+async function getForecast(teamId: ObjectId, userId?: ObjectId) {
+  const collection = DatabaseHelper.getCollection('Cards');
+
+  const pipeline = [
+    {
+      $match: {
+        status: { $ne: CardStatus.Deleted },
+        teamId: teamId,
+        ...(userId ? { userId: userId } : {}),
+      },
+    },
+    {
+      $lookup: {
+        from: 'Lanes',
+        localField: 'laneId',
+        foreignField: '_id',
+        as: 'lane',
+      },
+    },
+    {
+      $unwind: '$lane',
+    },
+    {
+      $match: { 'lane.inForecast': true, 'lane.tags.type': 'normal' },
     },
     {
       $group: {
@@ -315,9 +428,15 @@ async function update<T extends ExistingEntity>(entity: T) {
 
   entity.updatedAt = new Date();
 
-  await collection.updateOne({ _id: entity._id }, { $set: entity }, { upsert: true });
+  await collection.replaceOne({ _id: entity._id }, entity, { upsert: true });
 
   return entity;
+}
+
+async function isFirstTeam(): Promise<boolean> {
+  const collection = getCollectionForEntity(Team);
+  const count = await collection.countDocuments();
+  return count === 0;
 }
 
 async function create<T extends NewEntity>(entity: T): Promise<void>;
@@ -335,7 +454,7 @@ async function create<T extends NewEntity, U extends ExistingEntity>(
   const document = await collection.insertOne(newEntity);
 
   if (!document || !document.insertedId) {
-    throw new CreateEntityError();
+    throw new EntityCreateError();
   }
 
   if (entity) {
@@ -360,9 +479,9 @@ export const EntityHelper = {
   isEntityOwnedBy,
   findOneBy,
   findBy,
+  countBy,
   findByTeam,
   findOneByTeam,
-  findCardsByTeam,
   findSchemaByType,
   findUserByInvite,
   isValidEntityId,
@@ -370,9 +489,15 @@ export const EntityHelper = {
   findUserByName,
   findEventsByUserId,
   findForecastEventByDay,
-  getTotalAmountByLaneId,
+  findLatestForecastCardEventForLane,
+  findForecastLaneEventByDay,
+  getForecast,
+  getForecastByLaneId,
   getLanes,
+  findOrCreateGlobalFlagByName,
+  findGlobalFlagByName,
   findUserByAuthentication,
+  isFirstTeam,
   create,
   update,
   remove,

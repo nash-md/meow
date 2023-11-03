@@ -16,7 +16,7 @@ export class User implements ExistingEntity {
   invite?: string | null;
   authentication?: UserAuthentication | null;
   color?: string;
-  flags?: Flag[];
+  flags?: Flags;
   board?: { [key: string]: Card['_id'][] };
   createdAt: Date;
   updatedAt: Date;
@@ -55,7 +55,7 @@ export class NewUser implements NewEntity {
   invite?: string | null;
   authentication?: UserAuthentication | null;
   color?: string;
-  flags?: Flag[];
+  flags?: Flags;
   board?: { [key: string]: Card['_id'][] };
   createdAt: Date;
   updatedAt: Date;
@@ -84,8 +84,11 @@ export interface UserAuthentication {
   google?: {
     id: string;
   };
+  github?: {
+    id: string;
+  };
 }
 
-export interface Flag {
+export interface Flags {
   [key: string]: string | number | boolean | null;
 }

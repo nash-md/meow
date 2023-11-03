@@ -1,7 +1,7 @@
 export enum EventType {
+  /* card */
   CommentCreated = 'comment-created',
   CardMoved = 'card-moved',
-  LaneAmountChanged = 'lane-amount-changed',
   AmountChanged = 'amount-changed',
   AttributeChanged = 'attribute-changed',
   NameChanged = 'name-changed',
@@ -11,6 +11,10 @@ export enum EventType {
   Created = 'created',
   Assigned = 'assigned',
   Deleted = 'deleted',
+
+  /* lane */
+  ForecastTotal = 'forecast-total',
+  ForecastCard = 'forecast-card',
 }
 
 // TODO split event types into CardEvent and AccountEven

@@ -16,6 +16,7 @@ const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     const query = {
       cardId: { $eq: new ObjectId(req.params.id) },
       teamId: { $eq: req.jwt.team._id },
+      type: { $ne: EventType.ForecastCard },
     };
 
     const sort: Sort = {

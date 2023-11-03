@@ -6,7 +6,7 @@ import { InvalidCardPropertyError } from '../errors/InvalidCardPropertyError.js'
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { RequestParser } from '../helpers/RequestParser.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
-import { EventHelper } from '../helpers/EventHelper.js';
+import { emitBoardEvent, emitCardEvent, emitLaneEvent } from '../helpers/EventHelper.js';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError.js';
 import { ObjectId } from 'mongodb';
 import {
@@ -15,13 +15,25 @@ import {
   validateAndFetchUser,
 } from '../helpers/EntityFetchHelper.js';
 
-function emitLaneEvent(teamId: ObjectId, laneId: ObjectId, userId: ObjectId) {
-  EventHelper.get().emit('lane', {
-    teamId,
-    laneId,
-    userId,
-  });
-}
+const extractDateLimitFromRequest = (req: AuthenticatedRequest): DateTime | undefined => {
+  const maxDaysAgo = req.query['max-days-ago']
+    ? parseInt(req.query['max-days-ago'] as string)
+    : undefined;
+
+  if (maxDaysAgo && !isNaN(maxDaysAgo)) {
+    return DateTime.utc().startOf('day').minus({ days: maxDaysAgo });
+  }
+
+  return undefined;
+};
+
+const extractDateFromRequest = (req: AuthenticatedRequest, name: string): DateTime | undefined => {
+  const date = req.query[name] as string;
+  if (date) {
+    return DateTime.fromISO(date, { zone: 'utc' });
+  }
+  return undefined;
+};
 
 function parseCardStatus(value: unknown): CardStatus {
   switch (value) {
@@ -35,8 +47,25 @@ function parseCardStatus(value: unknown): CardStatus {
 }
 
 const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const query: any = {
+    teamId: { $eq: req.jwt.team._id! },
+    status: { $ne: CardStatus.Deleted },
+  };
+
+  const limit = extractDateLimitFromRequest(req);
+  const start = extractDateFromRequest(req, 'start');
+  const end = extractDateFromRequest(req, 'end');
+
+  if (start && end) {
+    query.closedAt = { $gte: start.toJSDate(), $lte: end.endOf('day').toJSDate() };
+  }
+
+  if (limit) {
+    query.$or = [{ closedAt: { $exists: false } }, { closedAt: { $gte: limit.toJSDate() } }];
+  }
+
   try {
-    const cards = await EntityHelper.findCardsByTeam(req.jwt.team);
+    const cards = await EntityHelper.findBy(Card, query);
 
     return res.json(cards);
   } catch (error) {
@@ -83,16 +112,9 @@ const create = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     const latest = await EntityHelper.create(card, Card);
 
-    EventHelper.get().emit('card', {
-      user: req.jwt.user,
-      latest: latest!.toPlain(),
-    });
-
-    EventHelper.get().emit('lane', {
-      teamId: card.teamId,
-      userId: card.userId,
-      laneId: card.laneId,
-    });
+    emitCardEvent(req.jwt.user, latest!.toPlain());
+    emitLaneEvent(card.laneId, card.userId);
+    emitBoardEvent(lane.boardId, card.userId);
 
     return res.status(201).json(latest);
   } catch (error) {
@@ -187,26 +209,27 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
 
     /* if lane has hanged emit events for the previous and current lane */
     if (previousLaneId) {
-      emitLaneEvent(card.teamId, previousLaneId, card.userId);
-      emitLaneEvent(card.teamId, card.laneId, card.userId);
+      emitLaneEvent(previousLaneId, card.userId);
+      emitLaneEvent(card.laneId, card.userId);
     }
 
     /* if card has a changed amount update the lane and user */
     if (previousAmount) {
-      emitLaneEvent(card.teamId, card.laneId, card.userId);
+      emitLaneEvent(card.laneId, card.userId);
     }
+
+    const lane = await EntityHelper.findOneById(Lane, card.laneId);
 
     /* if card assignment has changed update lane and both users */
     if (previousUserId) {
-      emitLaneEvent(card.teamId, card.laneId, previousUserId);
-      emitLaneEvent(card.teamId, card.laneId, card.userId);
+      emitLaneEvent(card.laneId, previousUserId);
+      emitLaneEvent(card.laneId, card.userId);
+
+      emitBoardEvent(lane!.boardId, previousUserId);
     }
 
-    EventHelper.get().emit('card', {
-      user: req.jwt.user,
-      latest: latest.toPlain(),
-      previous: previous,
-    });
+    emitCardEvent(req.jwt.user, latest.toPlain(), previous);
+    emitBoardEvent(lane!.boardId, card.userId);
 
     return res.json(latest);
   } catch (error) {

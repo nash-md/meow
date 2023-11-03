@@ -6,7 +6,7 @@ import { Lane } from './Lane.js';
 import { User } from './User.js';
 
 @Entity({ name: 'Events' })
-export class ForecastEvent implements ExistingEntity {
+export class LaneEvent implements ExistingEntity {
   _id: ObjectId;
   teamId: ObjectId;
   laneId: ObjectId;
@@ -29,7 +29,7 @@ export class ForecastEvent implements ExistingEntity {
     this.teamId = teamId;
     this.laneId = laneId;
     this.amount = amount;
-    this.type = EventType.LaneAmountChanged;
+    this.type = EventType.ForecastTotal;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
 
@@ -40,7 +40,7 @@ export class ForecastEvent implements ExistingEntity {
 }
 
 @Entity({ name: 'Events' })
-export class NewForecastEvent implements NewEntity {
+export class NewLaneEvent implements NewEntity {
   teamId: ObjectId;
   laneId: ObjectId;
   userId?: ObjectId;
@@ -53,7 +53,7 @@ export class NewForecastEvent implements NewEntity {
     this.teamId = lane.teamId;
     this.laneId = lane._id;
     this.amount = amount;
-    this.type = EventType.LaneAmountChanged;
+    this.type = EventType.ForecastTotal;
 
     if (user) {
       this.userId = user._id;

@@ -4,6 +4,7 @@ import { EntityHelper } from '../helpers/EntityHelper.js';
 import { AuthenticatedRequest } from '../requests/AuthenticatedRequest.js';
 import { Board, NewBoard } from '../entities/Board.js';
 import { validateAndFetchLane } from '../helpers/EntityFetchHelper.js';
+import { emitLaneEvent } from '../helpers/EventHelper.js';
 
 const list = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
@@ -24,6 +25,8 @@ const update = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
     lane.tags = req.body.tags;
 
     const updated = await EntityHelper.update(lane);
+
+    emitLaneEvent(lane._id);
 
     return res.json(updated);
   } catch (error) {
@@ -84,6 +87,8 @@ const updateAll = async (req: AuthenticatedRequest, res: Response, next: NextFun
             lane.tags = item.tags ?? {};
 
             const updated = await EntityHelper.update(lane);
+
+            emitLaneEvent(updated._id);
 
             list.push(updated);
           }

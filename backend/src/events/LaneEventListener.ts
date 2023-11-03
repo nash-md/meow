@@ -2,41 +2,44 @@ import { Lane } from '../entities/Lane.js';
 import { EntityHelper } from '../helpers/EntityHelper.js';
 import { LaneEventPayload } from './EventStrategy.js';
 import { log } from '../worker.js';
-import { NewForecastEvent } from '../entities/ForecastEvent.js';
-import { Team } from '../entities/Team.js';
 import { ObjectId } from 'mongodb';
 import { User } from '../entities/User.js';
+import { NewForecastLaneEvent } from '../entities/ForecastLaneEvent.js';
 
-const updateForecastEvent = async (teamId: ObjectId, laneId: ObjectId, userId?: ObjectId) => {
-  let event = await EntityHelper.findForecastEventByDay(teamId, laneId, new Date(), userId);
+const updateLaneForecast = async (lane: Lane, userId?: ObjectId) => {
+  let event = await EntityHelper.findForecastLaneEventByDay(
+    lane.teamId,
+    new Date(),
+    lane._id,
+    userId
+  );
 
-  const amount = await EntityHelper.getTotalAmountByLaneId(teamId, laneId, userId);
+  const amount = await EntityHelper.getForecastByLaneId(lane.teamId, lane._id, userId);
 
   if (event) {
     event.amount = amount;
 
     await EntityHelper.update(event);
   } else {
-    const lane = await EntityHelper.findOneByIdOrFail(Lane, laneId);
-
     let user: User | null = null;
 
     if (userId) {
       user = await EntityHelper.findOneBy(User, userId);
     }
-    await EntityHelper.create(new NewForecastEvent(lane, amount, user ?? undefined));
+
+    await EntityHelper.create(new NewForecastLaneEvent(lane, amount, user ?? undefined));
   }
 };
 
 export const LaneEventListener = {
-  async onLaneUpdate({ teamId, laneId, userId }: LaneEventPayload) {
+  async onLaneUpdate({ laneId, userId }: LaneEventPayload) {
     log.debug(`execute onLaneUpdate for lane ${laneId} - userId: ${userId}`);
 
-    const team = await EntityHelper.findOneByIdOrFail(Team, teamId);
+    const lane = await EntityHelper.findOneByIdOrFail(Lane, laneId);
 
-    /* update team */
-    await updateForecastEvent(team._id, laneId);
-    /* update user */
-    await updateForecastEvent(team._id, laneId, userId);
+    /* update lane - team */
+    await updateLaneForecast(lane);
+    /* update lane - user */
+    await updateLaneForecast(lane, userId);
   },
 };

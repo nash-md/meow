@@ -64,6 +64,7 @@ export interface PlainAccount {
   updatedAt: Date;
 }
 
+// TODO move to base entity
 export interface Reference {
   _id: ObjectId;
   entity: string | null;

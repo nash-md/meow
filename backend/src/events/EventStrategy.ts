@@ -5,7 +5,7 @@ import { CardEvent } from '../entities/CardEvent.js';
 import { AccountEvent } from '../entities/AccountEvent.js';
 import { ObjectId } from 'mongodb';
 
-export type EventType = 'account' | 'lane' | 'card' | 'event';
+export type EventType = 'account' | 'lane' | 'board' | 'card' | 'event';
 
 export interface CardEventPayload {
   user: User;
@@ -14,9 +14,13 @@ export interface CardEventPayload {
 }
 
 export interface LaneEventPayload {
-  teamId: ObjectId;
   laneId: ObjectId;
-  userId: ObjectId;
+  userId?: ObjectId;
+}
+
+export interface BoardEventPayload {
+  boardId: ObjectId;
+  userId?: ObjectId;
 }
 
 export interface HistoryEventPayload {
@@ -34,6 +38,7 @@ export interface AccountEventPayload {
 export type EventPayload =
   | CardEventPayload
   | LaneEventPayload
+  | BoardEventPayload
   | AccountEventPayload
   | HistoryEventPayload;
 
