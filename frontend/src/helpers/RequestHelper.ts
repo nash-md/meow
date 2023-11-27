@@ -172,6 +172,18 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
+  async getCardsByDateRange(start: string, end: string): Promise<Card[]> {
+    const url = this.getUrl(`/api/cards`);
+    const params = new URLSearchParams({
+      start: start,
+      end: end,
+    });
+
+    url.search = params.toString();
+
+    return this.doFetch(url, 'GET');
+  }
+
   async getCard(id: Card['_id']): Promise<Card> {
     const url = this.getUrl(`/api/cards/${id}`);
 
@@ -446,6 +458,23 @@ export class RequestHelper {
 
   async fetchLaneTimeSeries(start: DateTime, end: DateTime, userId?: string) {
     let url = this.getUrl(`/api/forecast/time-series`);
+
+    const params: any = new URLSearchParams({
+      start: start.toISODate() ?? '',
+      end: end.toISODate() ?? '',
+    });
+
+    if (userId) {
+      params.set('userId', userId);
+    }
+
+    url.search = params.toString();
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async fetchPipelineGenerated(start: DateTime, end: DateTime, userId?: string) {
+    let url = this.getUrl(`/api/forecast/generated`); // TODO change naming
 
     const params: any = new URLSearchParams({
       start: start.toISODate() ?? '',

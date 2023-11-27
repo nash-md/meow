@@ -334,9 +334,90 @@ const series = async (req: AuthenticatedRequest, res: Response, next: NextFuncti
   }
 };
 
+const generated = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    const direct = DatabaseHelper.get();
+    const collection = direct.collection('Events');
+
+    const { start, end } = parseRange(req.query);
+
+    const match: any = {
+      $match: {
+        teamId: req.jwt.team._id,
+        type: EventType.ForecastCard,
+        createdAt: {
+          $gte: start,
+          $lte: end,
+        },
+      },
+    };
+
+    const add = {
+      $addFields: {
+        month: {
+          $dateToString: {
+            format: '%Y-%m',
+            date: '$createdAt',
+          },
+        },
+      },
+    };
+
+    const groupByLane = {
+      $group: {
+        _id: {
+          month: '$month',
+          laneId: '$laneId',
+        },
+        totalAmount: {
+          $sum: '$amount',
+        },
+      },
+    };
+
+    const groupByMonth = {
+      $group: {
+        _id: '$_id.month',
+        lanes: {
+          $push: {
+            laneId: '$_id.laneId',
+            amount: '$totalAmount',
+          },
+        },
+      },
+    };
+
+    const project = {
+      $project: {
+        _id: 0,
+        month: '$_id',
+        lanes: 1,
+      },
+    };
+
+    const sort = { $sort: { month: 1 } };
+
+    const cursor = await collection.aggregate([
+      match,
+      add,
+      groupByLane,
+      groupByMonth,
+      project,
+      sort,
+    ]);
+
+    const list = await cursor.toArray();
+
+    return res.json(list);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const ForecastController = {
   achieved,
   predicted,
   list,
   series,
+  generated,
 };

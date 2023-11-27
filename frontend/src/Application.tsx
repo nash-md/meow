@@ -75,7 +75,7 @@ function Application() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/forecast" element={<ForecastPage />}></Route>
+          <Route path="/forecast/*" element={<ForecastPage />}></Route>
           <Route path="/statistic" element={<StatisticPage />}></Route>
           <Route path="/setup" element={<SetupPage />}></Route>
           <Route path="/user-setup" element={<UserSetupPage />}></Route>

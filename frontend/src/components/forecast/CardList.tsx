@@ -91,8 +91,8 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
   }, []);
 
   useEffect(() => {
-    const execute = async () => {
-      let cards = await client.getCards(); // TODO missing fetch
+    const execute = async (start: string, end: string) => {
+      let cards = await client.getCardsByDateRange(start, end); // TODO missing fetch
 
       store.dispatch({
         type: ActionType.CARDS,
@@ -100,8 +100,10 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
       });
     };
 
-    execute();
-  }, []);
+    if (start && end) {
+      execute(start, end);
+    }
+  }, [start, end]);
 
   useEffect(() => {
     if (!start || !end) {
@@ -163,7 +165,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
             </span>
           </td>
         );
-      case 'createdAt':
+      case 'amount':
         return (
           <td key={item.column}>
             <b>

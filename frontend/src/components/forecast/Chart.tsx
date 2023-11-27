@@ -1,6 +1,6 @@
 import { LineChart, Line, ResponsiveContainer, YAxis, XAxis } from 'recharts';
 import { PureComponent } from 'react';
-import { TimeSeries } from '../../pages/StatisticPage';
+import { TimeSeries } from './TrendView';
 import { Lane } from '../../interfaces/Lane';
 
 interface ChartProps {
