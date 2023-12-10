@@ -731,6 +731,15 @@ h3 {
   margin-top: 10px;
 }
 
+.layer .body .email-attribute {
+  display: flex;
+}
+
+.layer .body .email-attribute .send {
+  align-self: flex-end;
+  margin-left: 5px;
+}
+
 .layer .body .card {
   padding: 15px;
 }
@@ -987,12 +996,6 @@ h3 {
 
 .forecast .filter > div {
   margin-top: 5px;
-}
-
-@media (min-width: 768px) {
-  .forecast .filter > div:nth-child(2) {
-    margin-top: 0px;
-  }
 }
 
 .forecast .filter > div:nth-child(2) {
@@ -1522,7 +1525,34 @@ h3 {
   color: var(--spectrum-global-color-gray-800);
 }
 
+.chart-labels {
+  display: flex;
+  flex-direction: row;
+  padding-top: 20px;
+  padding-left: 60px;
+}
+
+.chart-labels .item {
+  margin-right: 10px;
+  padding: 5px 8px 5px 8px;
+  border-radius: 8px;
+}
+
 .error-boundary {
   padding: 10px;
   font-size: 1.1em;
+}
+
+.allow-team-registration-modal {
+  margin: auto;
+  max-width: 600px;
+}
+
+.allow-team-registration-modal h1 {
+  line-height: 1.3em;
+}
+
+.allow-team-registration-modal .confirmation-canvas {
+  display: flex;
+  margin-top: 20px;
 }

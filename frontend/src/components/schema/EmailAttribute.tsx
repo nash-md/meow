@@ -1,4 +1,4 @@
-import { TextField } from '@adobe/react-spectrum';
+import { Button, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
 
 export interface EmailAttributeProps {
@@ -27,8 +27,28 @@ export const EmailAttribute = ({
     update(attributeKey, value);
   };
 
+  const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    if (!value) {
+      setIsValid(false);
+      return;
+    }
+
+    const pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    setIsValid(pattern.test(value));
+  }, [value]);
+
+  const handleEmailClick = (email: string | null) => {
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent('tbd')}`;
+
+    console.log(mailtoLink);
+
+    window.open(mailtoLink, 'mail');
+  };
+
   return (
-    <div className="attribute">
+    <div className="attribute email-attribute">
       <TextField
         width="100%"
         aria-label={name}
@@ -37,6 +57,11 @@ export const EmailAttribute = ({
         isDisabled={isDisabled}
         onChange={(value) => updateValue(value)}
       />
+      <div className="send">
+        <Button isDisabled={!isValid} onPress={() => handleEmailClick(value)} variant="secondary">
+          Send
+        </Button>
+      </div>
     </div>
   );
 };
