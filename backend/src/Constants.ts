@@ -58,6 +58,7 @@ export const DefaultCardSchema = {
       type: 'reference',
       name: 'Account',
       entity: 'account',
+      reverseName: 'Opportunities',
       relationship: 'many-to-one',
     },
   ],
