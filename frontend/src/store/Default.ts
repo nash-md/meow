@@ -12,11 +12,7 @@ export const Default: ApplicationStore = {
   session: {
     token: undefined,
     alerts: 0,
-    team: {
-      _id: undefined,
-      currency: undefined,
-      integrations: [],
-    },
+    team: undefined,
     user: undefined,
   },
   browser: {

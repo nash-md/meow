@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { CurrencyCode } from '../../../interfaces/Team';
-import { selectCurrency, selectTeamId, selectToken, store } from '../../../store/Store';
+import { selectCurrency, selectTeam, selectTeamId, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { getRequestClient } from '../../../helpers/RequestHelper';
 
@@ -26,22 +26,26 @@ export const CurrencyCanvas = () => {
   const client = getRequestClient(token);
 
   const configuredCurrency = useSelector(selectCurrency);
-  const teamId = useSelector(selectTeamId);
+  const team = useSelector(selectTeam);
   const [currency, setCurrency] = useState<CurrencyCode>(configuredCurrency ?? CurrencyCode.USD);
 
   const updateCurrencyCode = async (key: React.Key) => {
+    if (!team) {
+      console.error('Team not set');
+    }
+
     const c = parseCurrencyKey(key);
 
     setCurrency(c);
 
     try {
-      const payload = await client.updateTeam(teamId!, c);
+      const payload = await client.updateTeam(team!._id, c);
 
       store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
 
       store.dispatch({
         type: ActionType.TEAM_UPDATE,
-        payload: { currency: payload.currency, integrations: payload.integrations },
+        payload: { ...team!, currency: payload.currency, integrations: payload.integrations },
       });
     } catch (error) {
       console.error(error);
