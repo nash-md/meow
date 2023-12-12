@@ -331,6 +331,12 @@ export class RequestHelper {
     return this.doFetch(url, 'GET');
   }
 
+  async allowTeamRegistration(id: Team['_id'], allowTeamRegistration: boolean) {
+    let url = this.getUrl(`/api/teams/${id}/allow-team-registration`);
+
+    return this.doFetch(url, 'POST', { allowTeamRegistration: allowTeamRegistration });
+  }
+
   async getUsers(): Promise<User[]> {
     const url = this.getUrl(`/api/users`);
 
@@ -556,6 +562,18 @@ export class RequestHelper {
     url.search = new URLSearchParams({
       invite: invite,
     }).toString();
+
+    const response = await this.fetchWithTimeout(url, {
+      ...this.getHeaders('GET'),
+    });
+
+    const parsed = await this.parseJson(response);
+
+    return parsed;
+  }
+
+  async registerStatus() {
+    const url = this.getUrl(`/public/register/status`);
 
     const response = await this.fetchWithTimeout(url, {
       ...this.getHeaders('GET'),

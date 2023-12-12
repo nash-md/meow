@@ -5,6 +5,7 @@ export interface Team {
   readonly name: string;
   currency: CurrencyCode;
   integrations: Integration[];
+  readonly isFirstTeam?: boolean;
   readonly createdAt?: string;
   readonly updatedAt?: string;
 }

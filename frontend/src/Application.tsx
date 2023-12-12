@@ -12,14 +12,15 @@ import { HirePage } from './pages/HirePage';
 import { HomePage } from './pages/HomePage';
 import { SetupPage } from './pages/SetupPage';
 import { UserSetupPage } from './pages/UserSetupPage';
-import { selectToken, store } from './store/Store';
-import { StatisticPage } from './pages/StatisticPage';
+import { selectTeam, selectToken, store } from './store/Store';
 import { getErrorMessage } from './helpers/ErrorHelper';
 import { useSelector } from 'react-redux';
 import { getRequestClient } from './helpers/RequestHelper';
+import { AllowTeamRegistrationModal } from './components/modal/AllowTeamRegistrationModal';
 
 function Application() {
   const token = useSelector(selectToken);
+  const team = useSelector(selectTeam);
 
   const client = getRequestClient(token);
 
@@ -73,10 +74,10 @@ function Application() {
 
   return (
     <BrowserRouter>
+      {team!.isFirstTeam === true ? <AllowTeamRegistrationModal /> : null}
       <Layout>
         <Routes>
           <Route path="/forecast/*" element={<ForecastPage />}></Route>
-          <Route path="/statistic" element={<StatisticPage />}></Route>
           <Route path="/setup" element={<SetupPage />}></Route>
           <Route path="/user-setup" element={<UserSetupPage />}></Route>
           <Route path="/hire" element={<HirePage />}></Route>

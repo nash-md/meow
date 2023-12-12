@@ -56,11 +56,7 @@ export interface ApplicationLoginAction extends Action<ActionType.LOGIN> {
   payload: {
     token: string;
     user: User;
-    team: {
-      _id: string;
-      currency: CurrencyCode;
-      integrations: Integration[];
-    };
+    team: Team;
     board: Board;
   };
 }
@@ -121,7 +117,7 @@ export interface ApplicationAccountsAction extends Action<ActionType.ACCOUNTS> {
 }
 
 export interface ApplicationTeamUpdateAction extends Action<ActionType.TEAM_UPDATE> {
-  payload: { currency: CurrencyCode; integrations: Integration[] };
+  payload: Team;
 }
 
 export interface ApplicationSchemasAction extends Action<ActionType.SCHEMAS> {

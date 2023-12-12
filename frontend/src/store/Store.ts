@@ -52,8 +52,9 @@ export const selectName = (store: ApplicationStore) => store.session.user?.name;
 export const selectUserId = (store: ApplicationStore) => store.session.user?._id;
 export const selectAnimal = (store: ApplicationStore) => store.session.user?.animal;
 export const selectColor = (store: ApplicationStore) => store.session.user?.color;
-export const selectCurrency = (store: ApplicationStore) => store.session.team.currency;
-export const selectTeamId = (store: ApplicationStore) => store.session.team._id;
+export const selectCurrency = (store: ApplicationStore) => store.session.team?.currency;
+export const selectTeam = (store: ApplicationStore) => store.session.team;
+export const selectTeamId = (store: ApplicationStore) => store.session.team?._id;
 export const selectInterfaceState = (store: ApplicationStore) => store.ui.state;
 export const selectInterfaceStateId = (store: ApplicationStore) => store.ui._id;
 export const selectModal = (store: ApplicationStore) => store.ui.modal;
@@ -87,4 +88,4 @@ export const selectReferencesTo = (store: ApplicationStore, entity: string) => {
 };
 
 export const selectIntegrationByKey = (store: ApplicationStore, key: string) =>
-  store.session.team.integrations.some((integration) => integration.key === key);
+  store.session.team?.integrations.some((integration) => integration.key === key);

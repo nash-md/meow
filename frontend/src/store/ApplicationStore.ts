@@ -6,7 +6,7 @@ import { Card } from '../interfaces/Card';
 import { Lane } from '../interfaces/Lane';
 import { ListView } from '../interfaces/ListView';
 import { Schema } from '../interfaces/Schema';
-import { CurrencyCode, Integration } from '../interfaces/Team';
+import { CurrencyCode, Integration, Team } from '../interfaces/Team';
 import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 
@@ -23,11 +23,7 @@ export interface ApplicationStore {
   session: {
     token: string | undefined;
     alerts: number;
-    team: {
-      _id: string | undefined;
-      currency: CurrencyCode | undefined;
-      integrations: Integration[];
-    };
+    team: Team | undefined;
     user: User | undefined;
   };
   browser: {

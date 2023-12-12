@@ -71,11 +71,7 @@ export const application = (state = Default, action: ApplicationAction) => {
           token: undefined,
           alerts: 0,
           user: undefined,
-          team: {
-            _id: undefined,
-            currency: undefined,
-            integrations: [],
-          },
+          team: undefined,
         },
         application: {
           state: <ApplicationState>'logout',
@@ -307,9 +303,7 @@ export const application = (state = Default, action: ApplicationAction) => {
         session: {
           ...state.session,
           team: {
-            ...state.session.team,
-            currency: action.payload.currency,
-            integrations: action.payload.integrations,
+            ...action.payload,
           },
         },
       };
