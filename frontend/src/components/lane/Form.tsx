@@ -83,7 +83,10 @@ export const Form = ({ id }: FormProps) => {
         {lane?.tags?.type !== 'normal' ? (
           <div style={{ paddingTop: '10px' }}>
             <span style={{ lineHeight: '2em' }}>Hide opportunities when closed for more than</span>
-            <Picker onSelectionChange={setHideAfterDays} defaultSelectedKey={hideAfterDays}>
+            <Picker
+              onSelectionChange={setHideAfterDays}
+              defaultSelectedKey={hideAfterDays.toString()}
+            >
               <Item key="">never</Item>
               <Item key="30">30</Item>
               <Item key="60">60</Item>

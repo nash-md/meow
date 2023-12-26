@@ -14,7 +14,7 @@ const protocol = window.location.protocol;
 const domain = window.location.hostname;
 
 export interface LaneListItem {
-  id: number;
+  id: string;
   name: string;
   index: number;
   inForecast: boolean;
@@ -26,12 +26,10 @@ export interface LaneListItem {
 
 function moveLane<T>(lanes: T[], from: number, to: number): T[] {
   const lane = lanes[from];
-
   const updated = [...lanes];
 
   updated.splice(from, 1);
   updated.splice(to, 0, lane);
-
   return updated;
 }
 
@@ -59,7 +57,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
   useEffect(() => {
     const list = existingLanes.map((lane, index) => {
       return {
-        id: index,
+        id: lane._id,
         name: lane.name,
         index: index,
         inForecast: lane.inForecast,
@@ -93,7 +91,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
     setLanes([
       ...lanes,
       {
-        id: lanes.length,
+        id: lanes.length.toString(),
         name: name,
         index: lanes.length,
         inForecast: true,
@@ -102,10 +100,17 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
     ]);
   };
 
-  const update = (index: number, item: Pick<LaneListItem, 'inForecast' | 'name' | 'type'>) => {
+  const update = (
+    index: number,
+    item: Pick<LaneListItem, 'inForecast' | 'name' | 'type' | 'tags'>
+  ) => {
     lanes[index].name = item.name;
     lanes[index].inForecast = item.inForecast;
     lanes[index].type = item.type;
+
+    if (item.tags) {
+      lanes[index].tags = { ...item.tags };
+    }
 
     validate();
   };
@@ -227,6 +232,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
                         name={lane.name}
                         index={lane.index}
                         type={lane.type}
+                        tags={lane.tags}
                         inForecast={lane.inForecast}
                         remove={remove}
                         update={update}
@@ -240,7 +246,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
           </Droppable>
         </DragDropContext>
         <div className="add-stage">
-          <Button onPress={add} variant="secondary">
+          <Button aria-label="Add Stage" onPress={add} variant="secondary">
             Add Stage
           </Button>
         </div>
@@ -249,7 +255,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
 
       <div style={{ marginTop: '10px' }}>
         <div style={{ marginBottom: '5px' }}>{error}</div>
-        <Button onPress={save} variant="primary" isDisabled={!isValid}>
+        <Button aria-label="Save" onPress={save} variant="primary" isDisabled={!isValid}>
           Save
         </Button>
       </div>

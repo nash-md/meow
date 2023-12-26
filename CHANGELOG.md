@@ -1,5 +1,9 @@
 # Change Log
 
+## 2023-12-26
+
+- Refactored lane configuration. Added setting to hide opportunities after a certain period. Lane options are now displayed per lane type.
+
 All notable changes to this project will be documented in this file.
 
 ## 2023-11-02

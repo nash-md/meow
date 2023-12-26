@@ -5,29 +5,28 @@
   "author": "Matthias Damm",
   "license": "AGPLv3",
   "dependencies": {
-    "@adobe/react-spectrum": "^3.29.0",
+    "@adobe/react-spectrum": "^3.33.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^27.5.2",
-    "@types/luxon": "^3.3.2",
-    "@types/node": "^16.18.11",
-    "@types/react": "^18.2.1",
-    "@types/react-beautiful-dnd": "^13.1.4",
-    "@types/react-dom": "^18.2.7",
-    "@types/redux-logger": "^3.0.9",
-    "luxon": "^3.4.3",
+    "@types/luxon": "^3.3.7",
+    "@types/react": "^18.2.45",
+    "@types/react-beautiful-dnd": "^13.1.7",
+    "@types/react-dom": "^18.2.18",
+    "@types/redux-logger": "^3.0.12",
+    "luxon": "^3.4.4",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.1",
-    "react-router-dom": "^6.14.1",
+    "react-router-dom": "^6.21.1",
     "redux": "^4.2.1",
     "redux-logger": "^3.0.6",
     "typescript": "^4.9.5",
-    "web-vitals": "^3.4.0",
-    "recharts": "^2.7.3"
+    "web-vitals": "^3.5.0",
+    "recharts": "^2.10.3"
   },
   "scripts": {
     "start": "vite",
@@ -53,7 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.0.4",
+    "@vitejs/plugin-react": "^4.2.1",
     "vite": "^4.4.9",
     "vite-plugin-svgr": "3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
