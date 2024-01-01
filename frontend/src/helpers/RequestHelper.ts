@@ -13,6 +13,7 @@ import { User } from '../interfaces/User';
 import { FilterMode } from '../pages/HomePage';
 import { RequestHelperUrlError } from '../errors/RequestHelperUrlError';
 import { FILTER_BY_NONE } from '../Constants';
+import { CardEvent } from '../interfaces/CardEvent';
 
 type HttpMethod = 'POST' | 'GET' | 'DELETE';
 
@@ -492,6 +493,18 @@ export class RequestHelper {
     }
 
     url.search = params.toString();
+
+    return this.doFetch(url, 'GET');
+  }
+
+  async getActivities(params?: {
+    [key: string]: string;
+  }): Promise<(CardEvent & { userName: string; cardName: string })[]> {
+    let url = this.getUrl(`/api/activities`);
+
+    url.search = new URLSearchParams({
+      ...params,
+    }).toString();
 
     return this.doFetch(url, 'GET');
   }

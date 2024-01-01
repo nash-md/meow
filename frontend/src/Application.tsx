@@ -17,6 +17,7 @@ import { getErrorMessage } from './helpers/ErrorHelper';
 import { useSelector } from 'react-redux';
 import { getRequestClient } from './helpers/RequestHelper';
 import { AllowTeamRegistrationModal } from './components/modal/AllowTeamRegistrationModal';
+import { ActivityPage } from './pages/ActivityPage';
 
 function Application() {
   const token = useSelector(selectToken);
@@ -79,6 +80,7 @@ function Application() {
         <Routes>
           <Route path="/forecast/*" element={<ForecastPage />}></Route>
           <Route path="/setup" element={<SetupPage />}></Route>
+          <Route path="/activity" element={<ActivityPage />}></Route>
           <Route path="/user-setup" element={<UserSetupPage />}></Route>
           <Route path="/hire" element={<HirePage />}></Route>
           <Route path="/accounts" element={<AccountsPage />}></Route>

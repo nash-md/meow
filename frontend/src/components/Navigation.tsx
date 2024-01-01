@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ActionType } from '../actions/Actions';
 import { selectCurrency, selectUserId, store } from '../store/Store';
 import { Avatar } from './Avatar';
+import { IconActivity } from './IconActivity';
 
 export const Navigation = () => {
   const userId = useSelector(selectUserId);
@@ -45,6 +46,13 @@ export const Navigation = () => {
       <div className="item">
         <Link to="/" title="Opportunities">
           <img alt="Opportunities" src={`/${currency?.toLocaleLowerCase()}-icon.svg`} />
+        </Link>
+      </div>
+      <div className="item">
+        <Link to="/activity" title="Activities">
+          <span className="icon">
+            <IconActivity />
+          </span>
         </Link>
       </div>
       <div className="item">

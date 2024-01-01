@@ -17,4 +17,4 @@ export enum EventType {
   ForecastCard = 'forecast-card',
 }
 
-// TODO split event types into CardEvent and AccountEven
+// TODO split event types into CardEvent and AccountEvent

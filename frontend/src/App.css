@@ -144,6 +144,10 @@ h3 {
   width: 28px;
 }
 
+.page .navigation .item a {
+  color: white;
+}
+
 .page .navigation .burger {
   color: white;
   display: flex;
@@ -185,6 +189,12 @@ h3 {
 }
 
 .page .navigation .item-mobile img {
+  width: 28px;
+  margin-right: 10px;
+  display: block;
+}
+
+.page .navigation .item-mobile .icon {
   width: 28px;
   margin-right: 10px;
   display: block;
@@ -768,6 +778,13 @@ h3 {
 .layer .body .lock.negative {
   background-color: var(--spectrum-global-color-static-red-500);
   color: #860100;
+}
+
+.layer .card-events .next-follow-up-warning {
+  padding: 15px 10px 15px 10px;
+  background-color: #ffb700;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
 .layer .body .card-events .statistics {
@@ -1555,4 +1572,21 @@ h3 {
 .allow-team-registration-modal .confirmation-canvas {
   display: flex;
   margin-top: 20px;
+}
+
+.activity-list td {
+  padding-bottom: 5px;
+}
+
+.activity-list td:nth-child(n + 2) {
+  padding-left: 10px;
+  color: var(--spectrum-global-color-gray-600);
+}
+
+.activity-list td.title {
+  font-size: 1rem;
+}
+
+.activity-list h2 {
+  line-height: 1.8em;
 }

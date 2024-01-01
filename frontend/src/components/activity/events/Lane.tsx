@@ -51,7 +51,7 @@ export const Lane = ({ event }: LaneProps) => {
   const laneTo = lanes.find((lane) => lane._id === event.body.to);
 
   return (
-    <div className="body">
+    <>
       Set stage from <b>{laneFrom?.name}</b> to <b>{laneTo?.name}</b>
       {event.body.inLaneSince && (
         <span>
@@ -59,6 +59,6 @@ export const Lane = ({ event }: LaneProps) => {
           {durationInLane(event.body.inLaneSince, event.createdAt.toString())}
         </span>
       )}
-    </div>
+    </>
   );
 };

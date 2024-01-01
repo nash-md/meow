@@ -16,7 +16,18 @@ import { selectCard, selectToken, selectUsers } from '../../store/Store';
 import { Avatar } from '../Avatar';
 import { Name } from './events/Name';
 import { NextFollowUpAtWarning } from './events/NextFollowUpAtWarning';
-import { CardEvent } from '../../interfaces/CardEvent';
+import {
+  AmountEvent,
+  AssignEvent,
+  AttributeEvent,
+  CardEvent,
+  ClosedAtEvent,
+  CommentEvent,
+  LaneEvent,
+  NameEvent,
+  NextFollowUpAtEvent,
+  NextFollowUpAtWarningEvent,
+} from '../../interfaces/CardEvent';
 import { getRequestClient } from '../../helpers/RequestHelper';
 
 export interface EventsProps {
@@ -68,25 +79,25 @@ export const Events = ({ id, entity }: EventsProps) => {
   const getTitle = (event: CardEvent) => {
     switch (event.type) {
       case EventType.ClosedAtChanged:
-        return <ClosedAt event={event} />;
+        return <ClosedAt event={event as ClosedAtEvent} />;
       case EventType.NameChanged:
-        return <Name event={event} />;
+        return <Name event={event as NameEvent} />;
       case EventType.NextFollowUpAtChanged:
-        return <NextFollowUpAt event={event} />;
+        return <NextFollowUpAt event={event as NextFollowUpAtEvent} />;
       case EventType.NextFollowUpAtWarning:
-        return <NextFollowUpAtWarning event={event} />;
+        return <NextFollowUpAtWarning event={event as NextFollowUpAtWarningEvent} />;
       case EventType.CardMoved:
-        return <Lane event={event} />;
+        return <Lane event={event as LaneEvent} />;
       case EventType.AmountChanged:
-        return <Amount event={event} />;
+        return <Amount event={event as AmountEvent} />;
       case EventType.CommentCreated:
-        return <Comment event={event} />;
+        return <Comment event={event as CommentEvent} />;
       case EventType.Created:
         return <CreatedAt />;
       case EventType.Assigned:
-        return <Assign event={event} />;
+        return <Assign event={event as AssignEvent} />;
       case EventType.AttributeChanged:
-        return <Attribute event={event} />;
+        return <Attribute event={event as AttributeEvent} />;
       default:
         break;
     }
@@ -125,18 +136,7 @@ export const Events = ({ id, entity }: EventsProps) => {
         const user = users.find((user) => user._id === event.userId);
 
         if (event.type === EventType.NextFollowUpAtWarning) {
-          return (
-            <div
-              style={{
-                padding: '15px 10px 15px 10px',
-                backgroundColor: '#FFB700',
-                borderRadius: '5px',
-                marginBottom: '10px',
-              }}
-            >
-              {getTitle(event)}
-            </div>
-          );
+          return <div className="next-follow-up-warning">{getTitle(event)}</div>;
         }
 
         return (

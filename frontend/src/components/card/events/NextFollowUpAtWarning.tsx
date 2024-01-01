@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
-import { CardEvent } from '../../../interfaces/CardEvent';
+import { NextFollowUpAtWarningEvent } from '../../../interfaces/CardEvent';
 
 interface NextFollowUpAtWarningProps {
-  event: CardEvent;
+  event: NextFollowUpAtWarningEvent;
 }
 
 export const NextFollowUpAtWarning = ({ event }: NextFollowUpAtWarningProps) => {

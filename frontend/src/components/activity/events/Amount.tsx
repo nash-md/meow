@@ -1,4 +1,4 @@
-import { AmountEvent } from '../../../interfaces/CardEvent';
+import { AmountEvent, CardEvent } from '../../../interfaces/CardEvent';
 import { Currency } from '../../Currency';
 
 interface AmountProps {
@@ -10,7 +10,7 @@ export const Amount = ({ event }: AmountProps) => {
   const to = event.body.to ? parseInt(event.body.to.toString()) : 0;
 
   return (
-    <div className="body">
+    <>
       Updated opportunity size from{' '}
       <b>
         <Currency value={from} />
@@ -24,6 +24,6 @@ export const Amount = ({ event }: AmountProps) => {
       <b>
         <Currency value={to - from} />
       </b>
-    </div>
+    </>
   );
 };

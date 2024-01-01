@@ -80,6 +80,7 @@ import { notifyOnMissedFollowUpDatesTimeline } from './jobs/notifyOnMissedFollow
 import JobDailyScheduler from './job-daily-scheduler.js';
 import { BoardEventListener } from './events/BoardEventListener.js';
 import { CardForecastEventListener } from './events/CardForecastEventListener.js';
+import { ActivityController } from './controllers/ActivityController.js';
 
 /* spinning up express */
 export const app = express();
@@ -289,6 +290,7 @@ try {
   forecast.route('/predicted').get(ForecastController.predicted);
   forecast.route('/list').get(ForecastController.list);
   forecast.route('/time-series').get(ForecastController.series);
+  forecast.route('/generated').get(ForecastController.generated);
 
   app.use('/api/forecast', forecast);
 
@@ -311,6 +313,22 @@ try {
   schema.route('/').get(SchemaController.list);
 
   app.use('/api/schemas', schema);
+
+  const activity = express.Router();
+
+  activity.use(express.json({ limit: '5kb' }));
+
+  activity.use(
+    verifyJwt,
+    addEntityToHeader,
+    setHeaders,
+    setHeaders,
+    isDatabaseConnectionEstablished
+  );
+
+  activity.route('/').get(ActivityController.list);
+
+  app.use('/api/activities', activity);
 
   const unprotected = express.Router();
 

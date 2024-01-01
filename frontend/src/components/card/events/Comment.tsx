@@ -1,7 +1,7 @@
-import { CardEvent } from '../../../interfaces/CardEvent';
+import { CardEvent, CommentEvent } from '../../../interfaces/CardEvent';
 
 interface CommentProps {
-  event: CardEvent;
+  event: CommentEvent;
 }
 
 export const Comment = ({ event }: CommentProps) => {

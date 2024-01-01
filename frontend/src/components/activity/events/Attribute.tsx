@@ -17,7 +17,7 @@ export const Attribute = ({ event }: AttributeProps) => {
   const [list] = useState(event.body);
 
   return (
-    <div className="body">
+    <>
       {Array.isArray(list) &&
         list.map((item: any, index: number) => {
           switch (item?.type) {
@@ -46,6 +46,6 @@ export const Attribute = ({ event }: AttributeProps) => {
               break;
           }
         })}
-    </div>
+    </>
   );
 };

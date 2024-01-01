@@ -10,6 +10,6 @@ export interface AccountEvent {
   accountId: string;
   readonly type: EventType;
   body: Record<string, EventBodyType>;
-  readonly updatedAt: Date;
-  readonly createdAt: Date;
+  readonly updatedAt: string;
+  readonly createdAt: string;
 }
