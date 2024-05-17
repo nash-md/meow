@@ -120,6 +120,15 @@ export const Form = ({ update, id }: FormProps) => {
           </div>
         </div>
       )}
+
+      {!isDisabled ? (
+        <div className="card-submit">
+          <Button variant="primary" onPress={save} isDisabled={!isValidForm || isDisabled}>
+            Save
+          </Button>
+        </div>
+      ) : null}
+
       <div className="card">
         <TextField
           onChange={(value) => handlePreviewUpdate('name', value)}
@@ -178,11 +187,6 @@ export const Form = ({ update, id }: FormProps) => {
             isDisabled={isDisabled}
           />
         </div>
-      </div>
-      <div className="card-submit">
-        <Button variant="primary" onPress={save} isDisabled={!isValidForm || isDisabled}>
-          Save
-        </Button>
       </div>
     </>
   );
