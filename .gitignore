@@ -30,3 +30,7 @@ yarn-error.log*
 
 # misc
 .rest
+
+.idea
+.vscode
+.DS_Store
