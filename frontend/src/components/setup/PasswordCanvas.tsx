@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { showModalError, showModalSuccess } from '../../actions/Actions';
 import { selectToken, selectUserId, store } from '../../store/Store';
 import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 import { getRequestClient } from '../../helpers/RequestHelper';
 
 export const PasswordCanvas = () => {
@@ -33,7 +34,7 @@ export const PasswordCanvas = () => {
     try {
       await client.updatePassword(id!, existing, updated);
 
-      store.dispatch(showModalSuccess(Translations.PasswordChangedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.PasswordChangedConfirmation[DEFAULT_LANGUAGE]));
     } catch (error: any) {
       if (error?.response.status === 401) {
         setError('Current Password is invalid');

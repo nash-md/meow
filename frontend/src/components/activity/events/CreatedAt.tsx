@@ -1,3 +1,3 @@
 export const CreatedAt = () => {
-  return <>Opportunity created...</>;
+  return <>Opportunité crée le ...</>;
 };

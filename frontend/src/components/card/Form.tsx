@@ -9,7 +9,7 @@ import { SchemaType } from '../../interfaces/Schema';
 import { Translations } from '../../Translations';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { Attribute } from '../../interfaces/Attribute';
-import { LANE_COLOR } from '../../Constants';
+import { LANE_COLOR, DEFAULT_LANGUAGE } from '../../Constants';
 import { IconLock } from './IconLock';
 
 const getBannerColorClassName = (color: string | undefined) => {
@@ -152,14 +152,14 @@ export const Form = ({ update, id }: FormProps) => {
           <TextField
             onChange={(value) => handlePreviewUpdate('amount', value)}
             value={preview.amount}
-            aria-label={Translations.OpportunityAmount.en}
+            aria-label={Translations.OpportunityAmount[DEFAULT_LANGUAGE]}
             width="100%"
             key="amount"
             inputMode="decimal"
             isDisabled={isDisabled}
-            label={Translations.OpportunityAmount.en}
+            label={Translations.OpportunityAmount[DEFAULT_LANGUAGE]}
             validationState={isValidAmount ? 'valid' : 'invalid'}
-            errorMessage={Translations.OpportunityAmountInvalid.en}
+            errorMessage={Translations.OpportunityAmountInvalid[DEFAULT_LANGUAGE]}
           />
         </div>
       </div>

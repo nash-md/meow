@@ -17,7 +17,7 @@ export const ClosedAt = ({ event }: ClosedAtProps) => {
 
   return (
     <>
-      Changed close date to <b>{parsed?.toFormat('dd LLL yyyy')}</b>
+      Cloturé le <b>{parsed?.toFormat('dd LLL yyyy')}</b>
     </>
   );
 };

@@ -7,7 +7,7 @@ interface CommentProps {
 export const Comment = ({ event }: CommentProps) => {
   return (
     <>
-      Added note: <i>{event.body?.text}</i>
+      Note ajoutée: <i>{event.body?.text}</i>
     </>
   );
 };

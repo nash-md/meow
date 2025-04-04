@@ -11,10 +11,11 @@ import {
   store,
 } from '../../../store/Store';
 import { Translations } from '../../../Translations';
-import { USER_COLORS } from '../../../Constants';
+import { USER_COLORS, DEFAULT_LANGUAGE } from '../../../Constants';
 import { ColorCircleSelected } from './ColorCircleSelected';
 import { ColorCircle } from './ColorCircle';
 import { getRequestClient } from '../../../helpers/RequestHelper';
+
 
 export const FormCanvas = () => {
   const token = useSelector(selectToken);
@@ -47,7 +48,7 @@ export const FormCanvas = () => {
         payload: updated,
       });
 
-      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation[DEFAULT_LANGUAGE]));
     } catch (error) {
       console.error(error);
 

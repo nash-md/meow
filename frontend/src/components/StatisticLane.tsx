@@ -4,7 +4,7 @@ import { selectCards, store } from '../store/Store';
 import { showLaneLayer } from '../actions/Actions';
 import { Currency } from './Currency';
 import { useSelector } from 'react-redux';
-import { LANE_COLOR } from '../Constants';
+import { LANE_COLOR, DEFAULT_LANGUAGE } from '../Constants';
 import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
 import { BoardStatistics } from './StatisticsBoard';
@@ -33,8 +33,8 @@ const getTitle = (cards: Card[], lane: LaneInterface) => {
   const count = cards.filter((card) => card.laneId === lane._id).length;
 
   return count === 1
-    ? `${count} ${Translations.BoardTitle.en}`
-    : `${count} ${Translations.BoardTitlePlural.en}`;
+    ? `${count} ${Translations.BoardTitle[DEFAULT_LANGUAGE]}`
+    : `${count} ${Translations.BoardTitlePlural[DEFAULT_LANGUAGE]}`;
 };
 
 const getStatisticsByLane = (statistics: BoardStatistics | undefined, lane: Lane) => {

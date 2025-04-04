@@ -12,6 +12,7 @@ import {
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectSchemaByType, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { hasDuplicateEntries } from '../../../helpers/Helper';
 import { SchemaHelper } from '../../../helpers/SchemaHelper';
@@ -127,7 +128,7 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
     try {
       await client.updateSchema(updatedSchema);
 
-      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation[DEFAULT_LANGUAGE]));
 
       let schemas = await client.fetchSchemas();
 

@@ -28,7 +28,7 @@ import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
 import { useNavigate } from 'react-router-dom';
 import { StatisticsBoard } from '../components/StatisticsBoard';
-import { FILTER_BY_NONE } from '../Constants';
+import { FILTER_BY_NONE, DEFAULT_LANGUAGE } from '../Constants';
 import { CardHelper } from '../helpers/CardHelper';
 import useMobileLayout from '../hooks/useMobileLayout';
 import { getErrorMessage } from '../helpers/ErrorHelper';
@@ -100,8 +100,8 @@ export const HomePage = () => {
     const count = cards.length;
 
     return count === 1
-      ? `${count} ${Translations.BoardTitle.en}`
-      : `${count} ${Translations.BoardTitlePlural.en}`;
+      ? `${count} ${Translations.BoardTitle[DEFAULT_LANGUAGE]}`
+      : `${count} ${Translations.BoardTitlePlural[DEFAULT_LANGUAGE]}`;
   };
 
   useEffect(() => {

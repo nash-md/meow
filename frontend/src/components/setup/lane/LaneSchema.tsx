@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
-import { ANIMALS, LANE_COLOR } from '../../../Constants';
+import { ANIMALS, LANE_COLOR, DEFAULT_LANGUAGE } from '../../../Constants';
 import { LaneRequest, LaneType, Tags } from '../../../interfaces/Lane';
 import { selectLanes, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
@@ -196,7 +196,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
         payload: [...lanes],
       });
 
-      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation[DEFAULT_LANGUAGE]));
     } catch (error) {
       console.error(error);
 

@@ -18,6 +18,7 @@ import { SchemaReferenceAttribute, SchemaType } from '../../interfaces/Schema';
 import { Reference } from './Reference';
 import { Events } from './Events';
 import { getRequestClient } from '../../helpers/RequestHelper';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export const Layer = () => {
   const token = useSelector(selectToken);
@@ -42,12 +43,12 @@ export const Layer = () => {
 
       store.dispatch(updateAccount({ ...updated }));
 
-      store.dispatch(showModalSuccess(Translations.AccountUpdatedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.AccountUpdatedConfirmation[DEFAULT_LANGUAGE]));
     } else {
       const updated = await client.createAccount(preview); // TODO refactor
 
       store.dispatch(addAccount({ ...updated }));
-      store.dispatch(showModalSuccess(Translations.AccountCreatedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.AccountCreatedConfirmation[DEFAULT_LANGUAGE]));
     }
   };
 
