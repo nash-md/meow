@@ -138,5 +138,5 @@ Setting `origin` to `false` in production mode means that the server will not al
 ### License
 
 All files on this GitHub repository are subject to the AGPLv3 license. Please read the License file at the root of the project.
-# new-meow
+### new-meow
 établissement d'une version française en cours
