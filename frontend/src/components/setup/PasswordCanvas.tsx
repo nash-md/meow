@@ -20,11 +20,9 @@ export const PasswordCanvas = () => {
   let isValid = useMemo(() => {
     setError('');
 
-    if (existing.length >= 3 && updated.length >= 3) {
-      return true;
-    }
+    return existing.length >= 3 && updated.length >= 3;
 
-    return false;
+
   }, [existing, updated]);
 
   const save = async () => {
@@ -37,7 +35,7 @@ export const PasswordCanvas = () => {
       store.dispatch(showModalSuccess(Translations.PasswordChangedConfirmation[DEFAULT_LANGUAGE]));
     } catch (error: any) {
       if (error?.response.status === 401) {
-        setError('Current Password is invalid');
+        setError(Translations.CurrentPasswordInvalidError[DEFAULT_LANGUAGE]);
       } else {
         store.dispatch(showModalError(error?.toString()));
       }
@@ -46,17 +44,17 @@ export const PasswordCanvas = () => {
 
   return (
     <div className="content-box">
-      <h2>Change Your Password</h2>
+      <h2>{Translations.ChangeYourPasswordTitle[DEFAULT_LANGUAGE]}</h2>
 
       <div style={{ marginTop: '10px', width: '200px' }}>
         <TextField
           onChange={setExisting}
           value={existing}
-          aria-label="Current Password"
+          aria-label={Translations.CurrentPasswordLabel[DEFAULT_LANGUAGE]}
           width="100%"
           type="password"
           key="name"
-          label="Current Password"
+          label={Translations.CurrentPasswordLabel[DEFAULT_LANGUAGE]}
         />
       </div>
 

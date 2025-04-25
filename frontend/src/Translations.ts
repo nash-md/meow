@@ -102,11 +102,6 @@ export const Translations = {
     fr: 'Inscription',
   },
 
-  NameLabel: {
-    en: 'Name',
-    fr: 'Nom',
-  },
-
   PasswordLabel: {
     en: 'Password',
     fr: 'Mot de passe',
@@ -327,5 +322,219 @@ export const Translations = {
   DownloadApiDefinitionLabel: {
     en: 'Download API Definition',
     fr: 'Télécharger la Définition de l\'API',
+  },
+
+  // Offline message
+  YouAreOffline: {
+    en: 'You are offline',
+    fr: 'Vous êtes hors ligne',
+  },
+
+  // Search by name
+  SearchByNamePlaceholder: {
+    en: 'Search by Name',
+    fr: 'Rechercher par Nom',
+  },
+
+  // User management
+  UserCreatedConfirmation: {
+    en: 'User created',
+    fr: 'Utilisateur créé',
+  },
+
+  CreateNewUserTitle: {
+    en: 'Create New User',
+    fr: 'Créer un Nouvel Utilisateur',
+  },
+
+  CreateButton: {
+    en: 'Create',
+    fr: 'Créer',
+  },
+
+  UsersTitle: {
+    en: 'Users',
+    fr: 'Utilisateurs',
+  },
+
+  StatusLabel: {
+    en: 'Status',
+    fr: 'Statut',
+  },
+
+  InviteLabel: {
+    en: 'Invite',
+    fr: 'Invitation',
+  },
+
+  CopyInviteButton: {
+    en: 'Copy Invite',
+    fr: 'Copier l\'Invitation',
+  },
+
+  DeleteUserConfirmation: {
+    en: 'Delete user?',
+    fr: 'Supprimer l\'utilisateur?',
+  },
+
+  DeleteButton: {
+    en: 'delete',
+    fr: 'supprimer',
+  },
+
+  // Password management
+  ChangeYourPasswordTitle: {
+    en: 'Change Your Password',
+    fr: 'Changer Votre Mot de Passe',
+  },
+
+  CurrentPasswordLabel: {
+    en: 'Current Password',
+    fr: 'Mot de Passe Actuel',
+  },
+
+  NewPasswordLabel: {
+    en: 'New Password',
+    fr: 'Nouveau Mot de Passe',
+  },
+
+  CurrentPasswordInvalidError: {
+    en: 'Current Password is invalid',
+    fr: 'Le mot de passe actuel est invalide',
+  },
+
+  // User setup
+  AnimalQuestionTitle: {
+    en: 'If You Were An Animal What Would You Be?',
+    fr: 'Si Vous Étiez un Animal, Lequel Seriez-Vous?',
+  },
+
+  AnimalInfoShared: {
+    en: 'This information will definitely be shared with your coworkers',
+    fr: 'Cette information sera définitivement partagée avec vos collègues',
+  },
+
+  HorseOption: {
+    en: 'Horse',
+    fr: 'Cheval',
+  },
+
+  RaccoonOption: {
+    en: 'Raccoon',
+    fr: 'Raton Laveur',
+  },
+
+  CatOption: {
+    en: 'Cat',
+    fr: 'Chat',
+  },
+
+  DogOption: {
+    en: 'Dog',
+    fr: 'Chien',
+  },
+
+  BirdOption: {
+    en: 'Bird',
+    fr: 'Oiseau',
+  },
+
+  NoAnswerOption: {
+    en: 'I don\'t want to answer',
+    fr: 'Je ne veux pas répondre',
+  },
+
+  CareerWarning: {
+    en: 'Warning: This answer will slow down your career progression.',
+    fr: 'Attention: Cette réponse ralentira votre progression de carrière.',
+  },
+
+  YourColorLabel: {
+    en: 'Your Color',
+    fr: 'Votre Couleur',
+  },
+
+  // Currency
+  CurrencyTitle: {
+    en: 'Currency',
+    fr: 'Devise',
+  },
+
+  USDollarOption: {
+    en: 'US Dollar',
+    fr: 'Dollar Américain',
+  },
+
+  EuroOption: {
+    en: 'Euro',
+    fr: 'Euro',
+  },
+
+  SwedishKronaOption: {
+    en: 'Swedish Krona',
+    fr: 'Couronne Suédoise',
+  },
+
+  UnsupportedValueError: {
+    en: 'Unsupported value: {0}',
+    fr: 'Valeur non prise en charge: {0}',
+  },
+
+  TeamNotSetError: {
+    en: 'Team not set',
+    fr: 'Équipe non définie',
+  },
+
+  // Account
+  AccountTab: {
+    en: 'Account',
+    fr: 'Compte',
+  },
+
+  // Lane
+  HideOpportunitiesMessage: {
+    en: 'Hide opportunities when closed for more than',
+    fr: 'Masquer les opportunités fermées depuis plus de',
+  },
+
+  NeverOption: {
+    en: 'never',
+    fr: 'jamais',
+  },
+
+  DaysLabel: {
+    en: 'days.',
+    fr: 'jours.',
+  },
+
+  ExcludeFromForecastLabel: {
+    en: 'Exclude from Forecast',
+    fr: 'Exclure des Prévisions',
+  },
+
+  ChangesSavedMessage: {
+    en: 'Changes saved',
+    fr: 'Modifications enregistrées',
+  },
+
+  // Team registration
+  WelcomeMessage: {
+    en: 'Welcome to our Meow! Before you dive in, take a moment to configure how you\'d like your workspace to function',
+    fr: 'Bienvenue sur notre Meow! Avant de commencer, prenez un moment pour configurer le fonctionnement de votre espace de travail',
+  },
+
+  TeamRegistrationQuestion: {
+    en: 'Would you like to allow other people to register and create their own teams on your workspace? Remember that regardless of your choice, you will still have the ability to manage your own team and add individual users to it. This decision simply affects the creation of new teams by others.',
+    fr: 'Souhaitez-vous autoriser d\'autres personnes à s\'inscrire et à créer leurs propres équipes sur votre espace de travail? N\'oubliez pas que, quel que soit votre choix, vous aurez toujours la possibilité de gérer votre propre équipe et d\'y ajouter des utilisateurs individuels. Cette décision affecte simplement la création de nouvelles équipes par d\'autres.',
+  },
+
+  AllowTeamRegistrationsButton: {
+    en: 'Allow Team Registrations',
+    fr: 'Autoriser les Inscriptions d\'Équipe',
+  },
+
+  RestrictToMyTeamButton: {
+    en: 'Restrict to My Team Only',
+    fr: 'Restreindre à Mon Équipe Uniquement',
   },
 };
