@@ -4,6 +4,8 @@ import { Draggable } from 'react-beautiful-dnd';
 import { SchemaReferenceAttribute, SchemaType } from '../../../interfaces/Schema';
 import { IconReverseNameArrow } from '../IconReverseNameArrow';
 import { IconDrag } from '../IconDrag';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 export interface ReferenceAttributeProps {
   attributeKey: string;
@@ -68,7 +70,7 @@ export const ReferenceAttribute = ({
             </div>
             <div className="item-reverse-relationship">
               <div>
-                <div>Reverse Relationship Name</div>
+                <div>{Translations.ReverseRelationshipNameLabel[DEFAULT_LANGUAGE]}</div>
                 <TextField
                   value={reverseName}
                   onChange={setReverseName}

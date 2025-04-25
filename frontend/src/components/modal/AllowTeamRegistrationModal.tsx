@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { ActionType } from '../../actions/Actions';
 import { getRequestClient } from '../../helpers/RequestHelper';
 import { selectToken, selectTeam, store } from '../../store/Store';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export const AllowTeamRegistrationModal = () => {
   const token = useSelector(selectToken);
@@ -29,20 +31,16 @@ export const AllowTeamRegistrationModal = () => {
       {isOpen && (
         <div className="allow-team-registration-modal">
           <h1>
-            Welcome to our Meow! Before you dive in, take a moment to configure how you'd like your
-            workspace to function
+            {Translations.WelcomeMessage[DEFAULT_LANGUAGE]}
           </h1>
-          Would you like to allow other people to register and create their own teams on your
-          workspace? Remember that regardless of your choice, you will still have the ability to
-          manage your own team and add individual users to it. This decision simply affects the
-          creation of new teams by others.
+          {Translations.TeamRegistrationQuestion[DEFAULT_LANGUAGE]}
           <div className="confirmation-canvas">
             <Button onPress={() => update(true)} variant="primary">
-              Allow Team Registrations
+              {Translations.AllowTeamRegistrationsButton[DEFAULT_LANGUAGE]}
             </Button>
             &nbsp; &nbsp;
             <Button onPress={() => update(false)} variant="accent">
-              Restrict to My Team Only
+              {Translations.RestrictToMyTeamButton[DEFAULT_LANGUAGE]}
             </Button>
           </div>
         </div>

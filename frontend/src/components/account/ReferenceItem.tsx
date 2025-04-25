@@ -7,6 +7,8 @@ import { selectToken, store } from '../../store/Store';
 import { useSelector } from 'react-redux';
 import { getRequestClient } from '../../helpers/RequestHelper';
 import { showCardLayer } from '../../actions/Actions';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export interface ReferenceItemProps {
   reference: Reference;
@@ -44,9 +46,9 @@ export const ReferenceItem = ({ reference }: ReferenceItemProps) => {
               {card.name}
             </span>
           </h4>
-          <div>Close Date: {DateTime.fromISO(card.closedAt!).toRelative()}</div>
+          <div>{Translations.CloseDateLabel[DEFAULT_LANGUAGE]}: {DateTime.fromISO(card.closedAt!).toRelative()}</div>
           <div>
-            Amount: <Currency value={card.amount} />
+            {Translations.OpportunityAmount[DEFAULT_LANGUAGE]}: <Currency value={card.amount} />
           </div>
         </div>
       )}

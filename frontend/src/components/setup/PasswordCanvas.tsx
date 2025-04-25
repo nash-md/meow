@@ -63,16 +63,16 @@ export const PasswordCanvas = () => {
           onChange={setUpdated}
           value={updated}
           type="password"
-          aria-label="New Password"
+          aria-label={Translations.NewPasswordLabel[DEFAULT_LANGUAGE]}
           width="100%"
           key="name"
-          label="New Password"
+          label={Translations.NewPasswordLabel[DEFAULT_LANGUAGE]}
         />
       </div>
 
       <div style={{ marginTop: '10px' }}>
         <Button variant="primary" onPress={save} isDisabled={!isValid}>
-          Save
+          {Translations.SaveButton[DEFAULT_LANGUAGE]}
         </Button>
       </div>
       <div style={{ paddingTop: '10px' }}>{error}</div>

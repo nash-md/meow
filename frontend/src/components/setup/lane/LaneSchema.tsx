@@ -117,25 +117,21 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
 
   const validate = () => {
     if (lanes.some((lane) => !lane.name)) {
-      setError('A stage name cannot be empty');
+      setError(Translations.StageNameEmptyError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
     }
 
     if (!lanes.some((lane) => lane.type === LaneType.ClosedWon)) {
-      setError(
-        'At least one stage must be labeled as closed won. This stage will be used to mark opportunities that are won'
-      );
+      setError(Translations.NeedClosedWonStageError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
     }
 
     if (!lanes.some((lane) => lane.type === LaneType.ClosedLost)) {
-      setError(
-        'At least one stage must be labeled as closed lost. This stage will be used to mark opportunities you lost'
-      );
+      setError(Translations.NeedClosedLostStageError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
@@ -146,9 +142,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
   };
 
   const remove = (index: number) => {
-    setWarning(
-      "You've removed a lane. If you save now, all cards in this lane will be permanently deleted."
-    );
+    setWarning(Translations.LaneRemovedWarning[DEFAULT_LANGUAGE]);
 
     const list = removeLane(lanes, index).map((item, index) => {
       return { ...item, index };
@@ -208,7 +202,7 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
     <div className="content-box">
       <div className="schema-editor-header">
         <div className="title">
-          <h2>Stages</h2>
+          <h2>{Translations.StagesTitle[DEFAULT_LANGUAGE]}</h2>
         </div>
         {isDeveloperMode ? (
           <div className="endpoint">
@@ -246,8 +240,8 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
           </Droppable>
         </DragDropContext>
         <div className="add-stage">
-          <Button aria-label="Add Stage" onPress={add} variant="secondary">
-            Add Stage
+          <Button aria-label={Translations.AddStageButton[DEFAULT_LANGUAGE]} onPress={add} variant="secondary">
+            {Translations.AddStageButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
         {warning && <div className="remove-stage-warning">{warning}</div>}
@@ -255,8 +249,8 @@ export const LanesSchema = ({ isDeveloperMode }: LanesSchemaProps) => {
 
       <div style={{ marginTop: '10px' }}>
         <div style={{ marginBottom: '5px' }}>{error}</div>
-        <Button aria-label="Save" onPress={save} variant="primary" isDisabled={!isValid}>
-          Save
+        <Button aria-label={Translations.SaveButton[DEFAULT_LANGUAGE]} onPress={save} variant="primary" isDisabled={!isValid}>
+          {Translations.SaveButton[DEFAULT_LANGUAGE]}
         </Button>
       </div>
     </div>

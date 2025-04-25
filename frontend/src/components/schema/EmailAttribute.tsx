@@ -1,5 +1,7 @@
 import { Button, TextField } from '@adobe/react-spectrum';
 import { useEffect, useState } from 'react';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export interface EmailAttributeProps {
   attributeKey: string;
@@ -52,14 +54,14 @@ export const EmailAttribute = ({
       <TextField
         width="100%"
         aria-label={name}
-        label={`${name} (email)`}
+        label={`${name} ${Translations.EmailLabelSuffix[DEFAULT_LANGUAGE]}`}
         value={value?.toString()}
         isDisabled={isDisabled}
         onChange={(value) => updateValue(value)}
       />
       <div className="send">
         <Button isDisabled={!isValid} onPress={() => handleEmailClick(value)} variant="secondary">
-          Send
+          {Translations.SendButton[DEFAULT_LANGUAGE]}
         </Button>
       </div>
     </div>

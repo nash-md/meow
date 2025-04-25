@@ -34,7 +34,7 @@ export const TableHeader = ({ name, view, columns, sort }: TableHeaderProps) => 
   return (
     <tr>
       {columns
-        .filter(({ isHidden }) => isHidden === false)
+        .filter(({ isHidden }) => !isHidden)
         .map((item, index) => {
           if (item.column === null) {
             return <td key={`column_${index}`}></td>;

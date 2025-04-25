@@ -414,6 +414,11 @@ export const Translations = {
     fr: 'Cette information sera définitivement partagée avec vos collègues',
   },
 
+  AnimalLabel: {
+    en: 'Animal',
+    fr: 'Animal',
+  },
+
   HorseOption: {
     en: 'Horse',
     fr: 'Cheval',
@@ -492,6 +497,61 @@ export const Translations = {
   },
 
   // Lane
+  StagesTitle: {
+    en: 'Stages',
+    fr: 'Étapes',
+  },
+
+  AddStageButton: {
+    en: 'Add Stage',
+    fr: 'Ajouter une Étape',
+  },
+
+  HideAfterDaysLabel: {
+    en: 'Hide After Days',
+    fr: 'Masquer Après Jours',
+  },
+
+  LaneTypeLabel: {
+    en: 'Lane Type',
+    fr: 'Type de Voie',
+  },
+
+  NormalLaneType: {
+    en: 'Normal',
+    fr: 'Normal',
+  },
+
+  ClosedWonLaneType: {
+    en: 'Closed Won',
+    fr: 'Gagné Fermé',
+  },
+
+  ClosedLostLaneType: {
+    en: 'Closed Lost',
+    fr: 'Perdu Fermé',
+  },
+
+  StageNameEmptyError: {
+    en: 'A stage name cannot be empty',
+    fr: 'Le nom d\'une étape ne peut pas être vide',
+  },
+
+  NeedClosedWonStageError: {
+    en: 'At least one stage must be labeled as closed won. This stage will be used to mark opportunities that are won',
+    fr: 'Au moins une étape doit être étiquetée comme gagnée fermée. Cette étape sera utilisée pour marquer les opportunités gagnées',
+  },
+
+  NeedClosedLostStageError: {
+    en: 'At least one stage must be labeled as closed lost. This stage will be used to mark opportunities you lost',
+    fr: 'Au moins une étape doit être étiquetée comme perdue fermée. Cette étape sera utilisée pour marquer les opportunités que vous avez perdues',
+  },
+
+  LaneRemovedWarning: {
+    en: 'You\'ve removed a lane. If you save now, all cards in this lane will be permanently deleted.',
+    fr: 'Vous avez supprimé une voie. Si vous enregistrez maintenant, toutes les cartes dans cette voie seront définitivement supprimées.',
+  },
+
   HideOpportunitiesMessage: {
     en: 'Hide opportunities when closed for more than',
     fr: 'Masquer les opportunités fermées depuis plus de',
@@ -537,4 +597,354 @@ export const Translations = {
     en: 'Restrict to My Team Only',
     fr: 'Restreindre à Mon Équipe Uniquement',
   },
+
+  // Attribute events
+  AttributeWasAdded: {
+    en: 'was added, value is',
+    fr: 'a été ajouté, la valeur est',
+  },
+
+  AttributeWasChanged: {
+    en: 'was changed to',
+    fr: 'a été modifié en',
+  },
+
+  AttributeWasRemoved: {
+    en: 'was removed',
+    fr: 'a été supprimé',
+  },
+
+  // Name change event
+  NameChangedFrom: {
+    en: 'Changed name from',
+    fr: 'Nom changé de',
+  },
+
+  NameChangedTo: {
+    en: 'to',
+    fr: 'à',
+  },
+
+  // Event statistics
+  OpportunityCreatedLabel: {
+    en: 'Opportunity Created',
+    fr: 'Opportunité Créée',
+  },
+
+  InStageSinceLabel: {
+    en: 'In Stage Since',
+    fr: 'Dans l\'Étape Depuis',
+  },
+
+  LastUpdateLabel: {
+    en: 'Last Update',
+    fr: 'Dernière Mise à Jour',
+  },
+  // Amount event translations
+  UpdatedOpportunitySize: {
+    en: 'Updated opportunity size from',
+    fr: 'Taille de l\'opportunité mise à jour de',
+  },
+
+  OpportunityAmountTo: {
+    en: 'to',
+    fr: 'à',
+  },
+
+  OpportunityAmountDecrease: {
+    en: '. This is a decrease of',
+    fr: '. C\'est une diminution de',
+  },
+
+  OpportunityAmountIncrease: {
+    en: '. This is an increase of',
+    fr: '. C\'est une augmentation de',
+  },
+
+  // Assign event translations
+  AssignedOpportunityFrom: {
+    en: 'Assigned opportunity from',
+    fr: 'Opportunité assignée de',
+  },
+
+  // ClosedAt event translations
+  ClosedAtLabel: {
+    en: 'Closed on',
+    fr: 'Cloturé le',
+  },
+
+  // Comment event translations
+  NoteAdded: {
+    en: 'Note added:',
+    fr: 'Note ajoutée:',
+  },
+
+  // CreatedAt event translations
+  OpportunityCreated: {
+    en: 'Opportunity created on ...',
+    fr: 'Opportunité crée le ...',
+  },
+
+  // Lane event translations
+  SetStageFrom: {
+    en: 'Set stage from',
+    fr: 'Étape changée de',
+  },
+
+  OpportunityWasInStage: {
+    en: '. The opportunity was in stage',
+    fr: '. L\'opportunité était dans l\'étape',
+  },
+
+  For: {
+    en: 'for',
+    fr: 'pendant',
+  },
+
+  // Time duration translations
+  Days: {
+    en: 'days',
+    fr: 'jours',
+  },
+
+  Day: {
+    en: 'day',
+    fr: 'jour',
+  },
+
+  Hours: {
+    en: 'hours',
+    fr: 'heures',
+  },
+
+  Hour: {
+    en: 'hour',
+    fr: 'heure',
+  },
+
+  Minutes: {
+    en: 'minutes',
+    fr: 'minutes',
+  },
+
+  Minute: {
+    en: 'minute',
+    fr: 'minute',
+  },
+
+  LessThanAMinute: {
+    en: 'less than a minute',
+    fr: 'moins d\'une minute',
+  },
+
+  // NextFollowUpAt event translations
+  NextFollowUpChangedTo: {
+    en: 'Next follow-up changed to',
+    fr: 'Prochain suivi changé à',
+  },
+
+  // NextFollowUpAtWarning event translations
+  OpportunityDueForUpdate: {
+    en: 'This opportunity was due for an update',
+    fr: 'Cette opportunité devait être mise à jour',
+  },
+
+  DaysAgoWithFollowUpDate: {
+    en: 'days ago, with a follow-up date of',
+    fr: 'jours auparavant, avec une date de suivi du',
+  },
+
+  // Forecast component translations
+  DealDurationLabel: {
+    en: 'Deal Duration',
+    fr: 'Durée de l\'Affaire',
+  },
+
+  ClosedWonOption: {
+    en: 'Closed Won',
+    fr: 'Gagné Fermé',
+  },
+
+  AllOpenOption: {
+    en: 'All Open',
+    fr: 'Tous Ouverts',
+  },
+
+  ValueLabel: {
+    en: 'Value',
+    fr: 'Valeur',
+  },
+
+  PipelineNotClosedYet: {
+    en: 'Pipeline - not closed yet',
+    fr: 'Pipeline - pas encore fermé',
+  },
+
+  PredictionValue: {
+    en: 'Prediction - Value',
+    fr: 'Prévision - Valeur',
+  },
+
+  NumberOfDeals: {
+    en: 'Number of Deals',
+    fr: 'Nombre d\'Affaires',
+  },
+
+  PipelineNotClosedYetDeals: {
+    en: 'Pipeline - not closed yet - Number of Deals',
+    fr: 'Pipeline - pas encore fermé - Nombre d\'Affaires',
+  },
+
+  PredictionCount: {
+    en: 'Prediction - Count',
+    fr: 'Prévision - Nombre',
+  },
+
+  // Email component translations
+  EmailLabelSuffix: {
+    en: '(email)',
+    fr: '(email)',
+  },
+
+  SendButton: {
+    en: 'Send',
+    fr: 'Envoyer',
+  },
+
+  // Reference component translations
+  NoneOption: {
+    en: 'none',
+    fr: 'aucun',
+  },
+
+  // Schema component translations
+  ReverseRelationshipNameLabel: {
+    en: 'Reverse Relationship Name',
+    fr: 'Nom de la Relation Inverse',
+  },
+
+  TextAttributeLabel: {
+    en: 'Text',
+    fr: 'Texte',
+  },
+
+  EmailAttributeLabel: {
+    en: 'Email',
+    fr: 'Email',
+  },
+
+  TextAreaAttributeLabel: {
+    en: 'TextArea',
+    fr: 'Zone de Texte',
+  },
+
+  DropdownAttributeLabel: {
+    en: 'Dropdown',
+    fr: 'Liste Déroulante',
+  },
+
+  CheckboxAttributeLabel: {
+    en: 'Checkbox',
+    fr: 'Case à Cocher',
+  },
+
+  ReferenceAttributeLabel: {
+    en: 'Reference',
+    fr: 'Référence',
+  },
+
+  UnknownAttributeTypeError: {
+    en: 'Unknown attribute type',
+    fr: 'Type d\'attribut inconnu',
+  },
+
+  AddAttributeButton: {
+    en: 'Add',
+    fr: 'Ajouter',
+  },
+
+  // Schema error messages
+  AttributeNameEmptyError: {
+    en: 'An attribute name cannot be empty',
+    fr: 'Un nom d\'attribut ne peut pas être vide',
+  },
+
+  DropdownEmptyError: {
+    en: 'A dropdown list or a value cannot be empty',
+    fr: 'Une liste déroulante ou une valeur ne peut pas être vide',
+  },
+
+  DropdownUniqueError: {
+    en: 'Each value in a dropdown must be unique',
+    fr: 'Chaque valeur dans une liste déroulante doit être unique',
+  },
+
+  ReservedNameError: {
+    en: 'This name is reserved by the system and cannot be used',
+    fr: 'Ce nom est réservé par le système et ne peut pas être utilisé',
+  },
+
+  SelfReferenceError: {
+    en: 'You cannot reference the same item',
+    fr: 'Vous ne pouvez pas référencer le même élément',
+  },
+
+  SpacesInNameError: {
+    en: 'A field cannot start or end with spaces',
+    fr: 'Un champ ne peut pas commencer ou se terminer par des espaces',
+  },
+
+  ReverseNameEmptyError: {
+    en: 'A reverse relationship name cannot be empty',
+    fr: 'Un nom de relation inverse ne peut pas être vide',
+  },
+
+  // API endpoint label
+  ApiEndpointLabel: {
+    en: 'POST/GET:',
+    fr: 'POST/GET:',
+  },
+
+  // Card component translations
+  NotSetLabel: {
+    en: 'not set',
+    fr: 'non défini',
+  },
+
+  ClosedLabel: {
+    en: 'closed',
+    fr: 'fermé',
+  },
+
+  // Hire component translations
+  HireTitle: {
+    en: 'Hire',
+    fr: 'Embaucher',
+  },
+
+  HireButton: {
+    en: 'Hire',
+    fr: 'Embaucher',
+  },
+
+  // Navigation menu items
+  OpportunitiesNavItem: {
+    en: 'Opportunities',
+    fr: 'Opportunités',
+  },
+
+  SetupNavItem: {
+    en: 'Setup',
+    fr: 'Configuration',
+  },
+
+  SettingsNavItem: {
+    en: 'Settings',
+    fr: 'Paramètres',
+  },
+
+  LogoutButton: {
+    en: 'Logout',
+    fr: 'Déconnexion',
+  }
 };

@@ -12,6 +12,8 @@ import { Name } from './events/Name';
 import { Comment } from './events/Comment';
 import { Attribute } from './events/Attribute';
 import { getRequestClient } from '../../helpers/RequestHelper';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export interface EventsProps {
   id?: string;
@@ -79,15 +81,15 @@ export const Events = ({ id }: EventsProps) => {
       {card ? (
         <div className="statistics">
           <div className="tile">
-            <span>Opportunity Created</span>
+            <span>{Translations.OpportunityCreatedLabel[DEFAULT_LANGUAGE]}</span>
             <h4>{DateTime.fromISO(card.createdAt!).toRelative()}</h4>
           </div>
           <div className="tile">
-            <span>In Stage Since</span>
+            <span>{Translations.InStageSinceLabel[DEFAULT_LANGUAGE]}</span>
             <h4>{DateTime.fromISO(card.inLaneSince!).toRelative()}</h4>
           </div>
           <div className="tile">
-            <span>Last Update</span>
+            <span>{Translations.LastUpdateLabel[DEFAULT_LANGUAGE]}</span>
             <h4>{DateTime.fromISO(card.updatedAt).toRelative()}</h4>
           </div>
         </div>
@@ -97,7 +99,7 @@ export const Events = ({ id }: EventsProps) => {
         <TextArea onChange={setComment} width="100%" height="80px"></TextArea>
         <div className="submit">
           <Button isDisabled={!isValid} variant="primary" onPress={save}>
-            Save
+            {Translations.SaveButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       </div>

@@ -9,6 +9,8 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Currency } from './Currency';
 import { Avatar } from './Avatar';
 import { CardHelper } from '../helpers/CardHelper';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export interface CardProps {
   card: CardEntity;
@@ -26,7 +28,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
 
       setAgo(ago);
     } else {
-      setAgo('not set');
+      setAgo(Translations.NotSetLabel[DEFAULT_LANGUAGE]);
     }
 
     if (card && card.closedAt) {
@@ -48,7 +50,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
             ref={provided.innerRef}
             className="card"
           >
-            {CardHelper.isOverDue(card) && lane.inForecast === true && (
+            {CardHelper.isOverDue(card) && lane.inForecast && (
               <div className="overdue"></div>
             )}
             <div
@@ -80,7 +82,7 @@ export const Card = ({ card, lane, index }: CardProps) => {
                   </span>
                   <div>
                     <span style={{ fontWeight: '700' }}>
-                      closed {DateTime.fromISO(card.closedAt!).toRelative()}
+                      {Translations.ClosedLabel[DEFAULT_LANGUAGE]} {DateTime.fromISO(card.closedAt!).toRelative()}
                     </span>
                   </div>
                 </>
