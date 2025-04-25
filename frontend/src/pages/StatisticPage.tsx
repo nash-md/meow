@@ -14,9 +14,10 @@ import { getErrorMessage } from '../helpers/ErrorHelper';
 import { useSelector } from 'react-redux';
 import { Lane } from '../interfaces/Lane';
 import { Link } from 'react-router-dom';
-import { FILTER_BY_NONE } from '../Constants';
+import { FILTER_BY_NONE, DEFAULT_LANGUAGE } from '../Constants';
 import { Chart } from '../components/forecast/Chart';
 import { getRequestClient } from '../helpers/RequestHelper';
+import { Translations } from '../Translations';
 
 const colors = [
   '#e60049',
@@ -225,7 +226,7 @@ export const StatisticPage = () => {
             </Picker>
           </div>
           <div>
-            <b>Close Date</b>&nbsp;
+            <b>{Translations.CloseDateLabel[DEFAULT_LANGUAGE]}</b>&nbsp;
             <DateRangePicker
               aria-label="date"
               value={{
@@ -245,7 +246,7 @@ export const StatisticPage = () => {
             <Link to="/forecast">
               <div className="forecast-button">
                 <div>
-                  <div className="text">Forecast</div>
+                  <div className="text">{Translations.ForecastOption[DEFAULT_LANGUAGE]}</div>
                 </div>
               </div>
             </Link>

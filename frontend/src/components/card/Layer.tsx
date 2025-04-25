@@ -104,7 +104,7 @@ export const Layer = () => {
 
         <div>
           <Button variant="primary" onPress={() => hideCardDetail()}>
-            Close
+            {Translations.CloseButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       </div>
@@ -123,7 +123,7 @@ export const Layer = () => {
                     </td>
                     <td>
                       <Button variant="primary" onPress={() => assign(user._id)}>
-                        Assign
+                        {Translations.AssignButton[DEFAULT_LANGUAGE]}
                       </Button>
                     </td>
                     <td></td>
@@ -139,16 +139,16 @@ export const Layer = () => {
           {(id && (
             <TabList>
               <Item key="opportunity">
-                <span className="tab-title">Opportunity</span>
+                <span className="tab-title">{Translations.OpportunityTab[DEFAULT_LANGUAGE]}</span>
               </Item>
               <Item key="events">
-                <span className="tab-title">History</span>
+                <span className="tab-title">{Translations.HistoryTab[DEFAULT_LANGUAGE]}</span>
               </Item>
             </TabList>
           )) || (
             <TabList>
               <Item key="opportunity">
-                <span className="tab-title">Opportunity</span>
+                <span className="tab-title">{Translations.OpportunityTab[DEFAULT_LANGUAGE]}</span>
               </Item>
             </TabList>
           )}

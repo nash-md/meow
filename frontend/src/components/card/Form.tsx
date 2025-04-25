@@ -114,7 +114,7 @@ export const Form = ({ update, id }: FormProps) => {
     <>
       {isDisabled && (
         <div className={`lock ${getBannerColorClassName(lane?.color)}`}>
-          <div>This opportunity is closed, do you want to unlock? </div>
+          <div>{Translations.OpportunityClosedMessage[DEFAULT_LANGUAGE]}</div>
           <div className="button" onClick={() => setIsDisabled(!isDisabled)}>
             <IconLock />
           </div>
@@ -124,7 +124,7 @@ export const Form = ({ update, id }: FormProps) => {
       {!isDisabled ? (
         <div className="card-submit">
           <Button variant="primary" onPress={save} isDisabled={!isValidForm || isDisabled}>
-            Save
+            {Translations.SaveButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       ) : null}
@@ -136,7 +136,7 @@ export const Form = ({ update, id }: FormProps) => {
           aria-label="Name"
           width="100%"
           key="name"
-          label="Name"
+          label={Translations.NameLabel[DEFAULT_LANGUAGE]}
           isDisabled={isDisabled}
           validationState={preview.name ? 'valid' : 'invalid'}
         />
@@ -173,7 +173,7 @@ export const Form = ({ update, id }: FormProps) => {
                 : undefined
             }
             onChange={(value) => handlePreviewUpdate('nextFollowUpAt', value.toString())}
-            label="Next Follow Up"
+            label={Translations.NextFollowUpLabel[DEFAULT_LANGUAGE]}
             validationState={isValidNextFollowUp ? 'valid' : 'invalid'}
             isDisabled={isDisabled}
           />
@@ -183,7 +183,7 @@ export const Form = ({ update, id }: FormProps) => {
           <DatePicker
             value={preview.closedAt ? parseDate(preview.closedAt.substring(0, 10)) : undefined}
             onChange={(value) => handlePreviewUpdate('closedAt', value.toString())}
-            label="Expected Close Date"
+            label={Translations.ExpectedCloseDateLabel[DEFAULT_LANGUAGE]}
             isDisabled={isDisabled}
           />
         </div>

@@ -214,7 +214,7 @@ export const HomePage = () => {
 
               <div style={{ paddingLeft: '10px' }}>
                 <Button variant="primary" onPress={() => openCard()}>
-                  Add
+                  {Translations.AddButton[DEFAULT_LANGUAGE]}
                 </Button>
               </div>
             </div>
@@ -224,7 +224,7 @@ export const HomePage = () => {
             <div>
               <input
                 onChange={(event) => setText(event.target.value)}
-                placeholder="Search by name or stage"
+                placeholder={Translations.SearchPlaceholder[DEFAULT_LANGUAGE]}
                 aria-label="Name or Stage"
                 type="text"
               />
@@ -239,7 +239,7 @@ export const HomePage = () => {
                 }`}
                 onClick={() => handleFilterToggle(FilterMode.RecentlyUpdated)}
               >
-                Recently Updated
+                {Translations.RecentlyUpdatedFilter[DEFAULT_LANGUAGE]}
               </button>
               <Picker
                 UNSAFE_style={{ display: 'inline-block' }}
@@ -260,7 +260,7 @@ export const HomePage = () => {
                   }`}
                   onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
                 >
-                  Only My Opportunities
+                  {Translations.OnlyMyOpportunitiesFilter[DEFAULT_LANGUAGE]}
                 </button>
               )}
               <button
@@ -271,7 +271,7 @@ export const HomePage = () => {
                 }`}
                 onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}
               >
-                Requires Update
+                {Translations.RequiresUpdateFilter[DEFAULT_LANGUAGE]}
               </button>
             </div>
           </div>

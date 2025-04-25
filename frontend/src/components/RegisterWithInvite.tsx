@@ -5,6 +5,8 @@ import { RequestHelper, getBaseUrl, getRequestClient } from '../helpers/RequestH
 import { store } from '../store/Store';
 import { PasswordStrength } from './register/PasswordStrength';
 import { getErrorMessage } from '../helpers/ErrorHelper';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export interface RegisterWithInviteProps {
   invite?: string;
@@ -73,7 +75,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
         <div className="register" style={{ marginTop: '20px' }}>
           <div>
             <TextField
-              label="Name"
+              label={Translations.NameLabel[DEFAULT_LANGUAGE]}
               isDisabled={isLoading || Boolean(invite)}
               value={name}
               onChange={setName}
@@ -84,7 +86,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
           <div>
             <TextField
               type="password"
-              label="Password"
+              label={Translations.PasswordLabel[DEFAULT_LANGUAGE]}
               onChange={setPassword}
               width={200}
               isDisabled={isLoading}
@@ -94,7 +96,7 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
           </div>
           <div style={{ marginTop: '25px' }}>
             <Button onPress={authenticate} isDisabled={isLoading || !isValid} variant="cta">
-              Register
+              {Translations.RegisterButton[DEFAULT_LANGUAGE]}
             </Button>
           </div>
         </div>
@@ -104,16 +106,15 @@ export const RegisterWithInvite = ({ invite: i }: RegisterWithInviteProps) => {
         <>
           {' '}
           <div style={{ paddingTop: '10px', paddingBottom: '10px' }}>
-            The invite link you used was invalid. Please check if you added or removed characters,
-            if this does not help check with the person who invited you.
+            {Translations.InvalidInviteLink[DEFAULT_LANGUAGE]}
           </div>
-          <a href="/">Leave Sign Up</a>
+          <a href="/">{Translations.LeaveSignUp[DEFAULT_LANGUAGE]}</a>
         </>
       ) : (
         <>
           {' '}
           <div style={{ paddingTop: '10px' }}>
-            You register with an invite link, your name is already set, just define your password.
+            {Translations.InviteLinkInstruction[DEFAULT_LANGUAGE]}
           </div>
         </>
       )}

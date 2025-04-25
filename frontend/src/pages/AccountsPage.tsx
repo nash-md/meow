@@ -25,11 +25,13 @@ import { Account } from '../interfaces/Account';
 import { Item } from '../components/view/list/Item';
 import { Row } from '../components/view/table/Row';
 import { Layer as CardLayer } from '../components/card/Layer';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 const createListViewItemsFromSchema = (schema: Schema | undefined): ListViewItem[] => {
   const list = [
     {
-      name: 'Name',
+      name: Translations.NameLabel[DEFAULT_LANGUAGE],
       column: 'name',
       isHidden: false,
     },
@@ -44,7 +46,7 @@ const createListViewItemsFromSchema = (schema: Schema | undefined): ListViewItem
   });
 
   list.push({
-    name: 'Created At',
+    name: Translations.CreatedAtLabel[DEFAULT_LANGUAGE],
     column: 'createdAt',
     isHidden: false,
   });
@@ -124,7 +126,7 @@ export const AccountsPage = () => {
       case 'createdAt':
         return (
           <div key={item.column}>
-            <b>Created:</b> {toRelativeDate(row.createdAt)}
+            <b>{Translations.CreatedLabel[DEFAULT_LANGUAGE]}</b> {toRelativeDate(row.createdAt)}
           </div>
         );
       default:
@@ -144,10 +146,10 @@ export const AccountsPage = () => {
       <div className="canvas">
         <div className="list-view-header">
           <div>
-            <h2>Accounts {rows.length}</h2>
+            <h2>{Translations.AccountsTitle[DEFAULT_LANGUAGE]} {rows.length}</h2>
             <div style={{ paddingLeft: '10px' }}>
               <Button variant="primary" onPress={() => openAccount()}>
-                Add
+                {Translations.AddButton[DEFAULT_LANGUAGE]}
               </Button>
             </div>
           </div>

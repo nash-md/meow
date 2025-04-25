@@ -6,6 +6,8 @@ import { store } from '../store/Store';
 import { PasswordStrength } from './register/PasswordStrength';
 import { getErrorMessage } from '../helpers/ErrorHelper';
 import { UserHelper } from '../helpers/UserHelper';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export const Register = () => {
   const [name, setName] = useState('');
@@ -47,7 +49,7 @@ export const Register = () => {
       <div className="register" style={{ marginTop: '20px' }}>
         <div>
           <TextField
-            label="Name"
+            label={Translations.NameLabel[DEFAULT_LANGUAGE]}
             isDisabled={isLoading}
             value={name}
             onChange={setName}
@@ -58,7 +60,7 @@ export const Register = () => {
         <div>
           <TextField
             type="password"
-            label="Password"
+            label={Translations.PasswordLabel[DEFAULT_LANGUAGE]}
             onChange={setPassword}
             width="100%"
             isDisabled={isLoading}
@@ -68,7 +70,7 @@ export const Register = () => {
         </div>
         <div style={{ marginTop: '25px' }}>
           <Button onPress={register} isDisabled={isLoading || !isValid} variant="cta">
-            Register
+            {Translations.RegisterButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
         <div className="spinner-canvas">{isLoading ? <div className="spinner"></div> : null}</div>
@@ -77,7 +79,7 @@ export const Register = () => {
       {error}
 
       <div style={{ paddingTop: '10px', display: 'none' }}>
-        There is no password reset so you better remember!
+        {Translations.NoPasswordReset[DEFAULT_LANGUAGE]}
       </div>
     </>
   );

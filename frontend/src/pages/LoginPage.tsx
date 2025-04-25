@@ -4,6 +4,8 @@ import { ErrorModal } from '../components/ErrorModal';
 import { RegisterWithInvite } from '../components/RegisterWithInvite';
 import ScreenResolutionWarning from '../ScreenResolutionWarning';
 import { RegisterOrLogin } from '../components/RegisterOrLogin';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export default function LoginPage() {
   const [invite, setInvite] = useState<string | null>(null);
@@ -19,10 +21,10 @@ export default function LoginPage() {
     <>
       <div className="welcome-page">
         <div style={{ marginBottom: '10px' }}>
-          <CursorHeadline text={['Hello!', 'Hallo!', 'Hej!', 'こんにち', 'Hola!']} />
+          <CursorHeadline text={Translations.Greetings[DEFAULT_LANGUAGE]} />
         </div>
         {invite ? <RegisterWithInvite invite={invite} /> : <RegisterOrLogin />}
-        <ScreenResolutionWarning message="This application is built for desktops, small screens are not supported." />
+        <ScreenResolutionWarning message={Translations.ScreenResolutionWarning[DEFAULT_LANGUAGE]} />
       </div>
       <ErrorModal />
     </>
