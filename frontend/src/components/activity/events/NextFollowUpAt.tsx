@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { NextFollowUpAtEvent } from '../../../interfaces/CardEvent';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 interface NextFollowUpAtProps {
   event: NextFollowUpAtEvent;
@@ -17,7 +19,7 @@ export const NextFollowUpAt = ({ event }: NextFollowUpAtProps) => {
 
   return (
     <>
-      Next follow-up changed to <b>{parsed?.toFormat('dd LLL yyyy')}</b>
+      {Translations.NextFollowUpChangedTo[DEFAULT_LANGUAGE]} <b>{parsed?.toFormat('dd LLL yyyy')}</b>
     </>
   );
 };

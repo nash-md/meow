@@ -2,6 +2,8 @@ import { useSelector } from 'react-redux';
 import { selectLanes } from '../../../store/Store';
 import { DateTime } from 'luxon';
 import { LaneEvent } from '../../../interfaces/CardEvent';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 interface LaneProps {
   event: LaneEvent;
@@ -18,30 +20,30 @@ const durationInLane = (enter: string, exit: string) => {
   const minutes = Math.round(duration.as('minutes'));
 
   if (days > 1) {
-    return `${days} days`;
+    return `${days} ${Translations.Days[DEFAULT_LANGUAGE]}`;
   }
 
   if (days === 1) {
-    return `${days} days`;
+    return `${days} ${Translations.Day[DEFAULT_LANGUAGE]}`;
   }
 
   if (hours > 1) {
-    return `${hours} hours`;
+    return `${hours} ${Translations.Hours[DEFAULT_LANGUAGE]}`;
   }
 
   if (hours === 1) {
-    return `${hours} hour`;
+    return `${hours} ${Translations.Hour[DEFAULT_LANGUAGE]}`;
   }
 
   if (minutes > 1) {
-    return `${minutes} minutes`;
+    return `${minutes} ${Translations.Minutes[DEFAULT_LANGUAGE]}`;
   }
 
-  if (hours === 1) {
-    return `${hours} minute`;
+  if (minutes === 1) {
+    return `${minutes} ${Translations.Minute[DEFAULT_LANGUAGE]}`;
   }
 
-  return `less than a minute`;
+  return Translations.LessThanAMinute[DEFAULT_LANGUAGE];
 };
 
 export const Lane = ({ event }: LaneProps) => {
@@ -52,10 +54,10 @@ export const Lane = ({ event }: LaneProps) => {
 
   return (
     <>
-      Set stage from <b>{laneFrom?.name}</b> to <b>{laneTo?.name}</b>
+      {Translations.SetStageFrom[DEFAULT_LANGUAGE]} <b>{laneFrom?.name}</b> {Translations.OpportunityAmountTo[DEFAULT_LANGUAGE]} <b>{laneTo?.name}</b>
       {event.body.inLaneSince && (
         <span>
-          . The opportunity was in stage <b>{laneFrom?.name}</b> for{' '}
+          {Translations.OpportunityWasInStage[DEFAULT_LANGUAGE]} <b>{laneFrom?.name}</b> {Translations.For[DEFAULT_LANGUAGE]}{' '}
           {durationInLane(event.body.inLaneSince, event.createdAt.toString())}
         </span>
       )}

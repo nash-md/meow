@@ -6,6 +6,8 @@ import { Lane } from '../../interfaces/Lane';
 import { ApplicationStore } from '../../store/ApplicationStore';
 import { selectLane, selectToken, store } from '../../store/Store';
 import { getRequestClient } from '../../helpers/RequestHelper';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export interface FormProps {
   id: Lane['_id'] | undefined;
@@ -74,37 +76,37 @@ export const Form = ({ id }: FormProps) => {
         <TextField
           onChange={setName}
           value={name}
-          aria-label="Name"
+          aria-label={Translations.NameLabel[DEFAULT_LANGUAGE]}
           width="100%"
           key="name"
-          label="Name"
+          label={Translations.NameLabel[DEFAULT_LANGUAGE]}
         />
 
         {lane?.tags?.type !== 'normal' ? (
           <div style={{ paddingTop: '10px' }}>
-            <span style={{ lineHeight: '2em' }}>Hide opportunities when closed for more than</span>
+            <span style={{ lineHeight: '2em' }}>{Translations.HideOpportunitiesMessage[DEFAULT_LANGUAGE]}</span>
             <Picker
               onSelectionChange={setHideAfterDays}
               defaultSelectedKey={hideAfterDays.toString()}
             >
-              <Item key="">never</Item>
+              <Item key="">{Translations.NeverOption[DEFAULT_LANGUAGE]}</Item>
               <Item key="30">30</Item>
               <Item key="60">60</Item>
               <Item key="90">90</Item>
             </Picker>{' '}
-            days.
+            {Translations.DaysLabel[DEFAULT_LANGUAGE]}
           </div>
         ) : null}
         <div style={{ paddingTop: '10px' }}>
           <Checkbox isSelected={!inForecast} onChange={(value) => setInForecast(!value)}>
-            Exclude from Forecast
+            {Translations.ExcludeFromForecastLabel[DEFAULT_LANGUAGE]}
           </Checkbox>
         </div>
 
         <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
-          Save
+          {Translations.SaveButton[DEFAULT_LANGUAGE]}
         </Button>
-        {isSaved && <div style={{ marginTop: '10px' }}>Changes saved</div>}
+        {isSaved && <div style={{ marginTop: '10px' }}>{Translations.ChangesSavedMessage[DEFAULT_LANGUAGE]}</div>}
       </div>
     </div>
   );

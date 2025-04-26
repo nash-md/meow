@@ -28,7 +28,7 @@ import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
 import { useNavigate } from 'react-router-dom';
 import { StatisticsBoard } from '../components/StatisticsBoard';
-import { FILTER_BY_NONE } from '../Constants';
+import { FILTER_BY_NONE, DEFAULT_LANGUAGE } from '../Constants';
 import { CardHelper } from '../helpers/CardHelper';
 import useMobileLayout from '../hooks/useMobileLayout';
 import { getErrorMessage } from '../helpers/ErrorHelper';
@@ -100,8 +100,8 @@ export const HomePage = () => {
     const count = cards.length;
 
     return count === 1
-      ? `${count} ${Translations.BoardTitle.en}`
-      : `${count} ${Translations.BoardTitlePlural.en}`;
+      ? `${count} ${Translations.BoardTitle[DEFAULT_LANGUAGE]}`
+      : `${count} ${Translations.BoardTitlePlural[DEFAULT_LANGUAGE]}`;
   };
 
   useEffect(() => {
@@ -214,7 +214,7 @@ export const HomePage = () => {
 
               <div style={{ paddingLeft: '10px' }}>
                 <Button variant="primary" onPress={() => openCard()}>
-                  Add
+                  {Translations.AddButton[DEFAULT_LANGUAGE]}
                 </Button>
               </div>
             </div>
@@ -224,7 +224,7 @@ export const HomePage = () => {
             <div>
               <input
                 onChange={(event) => setText(event.target.value)}
-                placeholder="Search by name or stage"
+                placeholder={Translations.SearchPlaceholder[DEFAULT_LANGUAGE]}
                 aria-label="Name or Stage"
                 type="text"
               />
@@ -239,7 +239,7 @@ export const HomePage = () => {
                 }`}
                 onClick={() => handleFilterToggle(FilterMode.RecentlyUpdated)}
               >
-                Recently Updated
+                {Translations.RecentlyUpdatedFilter[DEFAULT_LANGUAGE]}
               </button>
               <Picker
                 UNSAFE_style={{ display: 'inline-block' }}
@@ -260,7 +260,7 @@ export const HomePage = () => {
                   }`}
                   onClick={() => handleFilterToggle(FilterMode.OwnedByMe)}
                 >
-                  Only My Opportunities
+                  {Translations.OnlyMyOpportunitiesFilter[DEFAULT_LANGUAGE]}
                 </button>
               )}
               <button
@@ -271,7 +271,7 @@ export const HomePage = () => {
                 }`}
                 onClick={() => handleFilterToggle(FilterMode.RequireUpdate)}
               >
-                Requires Update
+                {Translations.RequiresUpdateFilter[DEFAULT_LANGUAGE]}
               </button>
             </div>
           </div>

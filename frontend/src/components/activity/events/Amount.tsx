@@ -1,5 +1,7 @@
-import { AmountEvent, CardEvent } from '../../../interfaces/CardEvent';
+import { AmountEvent } from '../../../interfaces/CardEvent';
 import { Currency } from '../../Currency';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 interface AmountProps {
   event: AmountEvent;
@@ -11,16 +13,16 @@ export const Amount = ({ event }: AmountProps) => {
 
   return (
     <>
-      Updated opportunity size from{' '}
+      {Translations.UpdatedOpportunitySize[DEFAULT_LANGUAGE]}{' '}
       <b>
         <Currency value={from} />
       </b>{' '}
-      to{' '}
+      {Translations.OpportunityAmountTo[DEFAULT_LANGUAGE]}{' '}
       <b>
         <Currency value={to} />
       </b>
-      {from > to && <>. This is an decrease of </>}
-      {from < to && <>. This is an increase of </>}
+      {from > to && <>{Translations.OpportunityAmountDecrease[DEFAULT_LANGUAGE]} </>}
+      {from < to && <>{Translations.OpportunityAmountIncrease[DEFAULT_LANGUAGE]} </>}
       <b>
         <Currency value={to - from} />
       </b>

@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { selectActiveUsers, selectDate, selectInterfaceState, store } from '../store/Store';
 import { useSelector } from 'react-redux';
 import { ActionType } from '../actions/Actions';
-import { FILTER_BY_NONE } from '../Constants';
+import { FILTER_BY_NONE, DEFAULT_LANGUAGE } from '../Constants';
 import { Layer as CardLayer } from '../components/card/Layer';
 import { ForecastView } from '../components/forecast/ForecastView';
 import { useNavigate } from 'react-router-dom';
 import { TrendView } from '../components/forecast/TrendView';
 import { PipelineView } from '../components/forecast/PipelineView';
+import { Translations } from '../Translations';
 
 const max = today(getLocalTimeZone()).add({
   years: 1,
@@ -98,21 +99,21 @@ export const ForecastPage = () => {
           <div>
             <Picker
               width={240}
-              label="Report"
+              label={Translations.ReportLabel[DEFAULT_LANGUAGE]}
               defaultSelectedKey={view}
               onSelectionChange={(key) => {
                 setView(key.toString());
               }}
             >
-              <Item key="">Forecast</Item>
-              <Item key="pipeline-trend">Sales Pipeline Trend</Item>
-              <Item key="pipeline-generated">Sales Pipeline Generated</Item>
+              <Item key="">{Translations.ForecastOption[DEFAULT_LANGUAGE]}</Item>
+              <Item key="pipeline-trend">{Translations.SalesPipelineTrendOption[DEFAULT_LANGUAGE]}</Item>
+              <Item key="pipeline-generated">{Translations.SalesPipelineGeneratedOption[DEFAULT_LANGUAGE]}</Item>
             </Picker>
           </div>
           <div className="users">
             <Picker
               width={240}
-              label="User"
+              label={Translations.UserLabel[DEFAULT_LANGUAGE]}
               isDisabled={!userSelect}
               defaultSelectedKey={userId}
               selectedKey={userId}
@@ -128,7 +129,7 @@ export const ForecastPage = () => {
           <div className="spacer"></div>
           <div>
             <DateRangePicker
-              label="Close Date"
+              label={Translations.CloseDateLabel[DEFAULT_LANGUAGE]}
               aria-label="date"
               value={{
                 start: parseDate(date.start!),

@@ -11,6 +11,8 @@ import { CardEvent } from '../interfaces/CardEvent';
 import { Avatar } from '../components/Avatar';
 import { Layer as CardLayer } from '../components/card/Layer';
 import React from 'react';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export const ActivityPage = () => {
   const state = useSelector(selectInterfaceState);
@@ -99,13 +101,13 @@ export const ActivityPage = () => {
       {state === 'card-detail' && <CardLayer />}
       <div className="canvas">
         <Picker
-          aria-label="Range"
+          aria-label={Translations.RangeLabel[DEFAULT_LANGUAGE]}
           defaultSelectedKey={range}
           onSelectionChange={(value) => setRange(value.toString())}
         >
-          <Item key="today">Today</Item>
-          <Item key="week">This Week</Item>
-          <Item key="">Last 90 Days</Item>
+          <Item key="today">{Translations.TodayOption[DEFAULT_LANGUAGE]}</Item>
+          <Item key="week">{Translations.ThisWeekOption[DEFAULT_LANGUAGE]}</Item>
+          <Item key="">{Translations.Last90DaysOption[DEFAULT_LANGUAGE]}</Item>
         </Picker>
 
         <div className="spinner-canvas">{isLoading ? <div className="spinner"></div> : null}</div>

@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionType, showModalError, showModalSuccess } from '../../../actions/Actions';
 import { CurrencyCode } from '../../../interfaces/Team';
-import { selectCurrency, selectTeam, selectTeamId, selectToken, store } from '../../../store/Store';
+import { selectCurrency, selectTeam, selectToken, store } from '../../../store/Store';
 import { Translations } from '../../../Translations';
 import { getRequestClient } from '../../../helpers/RequestHelper';
+import { DEFAULT_LANGUAGE } from '../../../Constants'
 
 function parseCurrencyKey(value: React.Key): CurrencyCode {
   switch (value) {
@@ -31,7 +32,7 @@ export const CurrencyCanvas = () => {
 
   const updateCurrencyCode = async (key: React.Key) => {
     if (!team) {
-      console.error('Team not set');
+      console.error(Translations.TeamNotSetError[DEFAULT_LANGUAGE]);
     }
 
     const c = parseCurrencyKey(key);
@@ -41,7 +42,7 @@ export const CurrencyCanvas = () => {
     try {
       const payload = await client.updateTeam(team!._id, c);
 
-      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.SetupChangedConfirmation[DEFAULT_LANGUAGE]));
 
       store.dispatch({
         type: ActionType.TEAM_UPDATE,
@@ -56,16 +57,16 @@ export const CurrencyCanvas = () => {
 
   return (
     <div className="content-box">
-      <h2>Currency</h2>
+      <h2>{Translations.CurrencyTitle[DEFAULT_LANGUAGE]}</h2>
       <Picker
         selectedKey={currency}
-        aria-label="Currency"
+        aria-label={Translations.CurrencyTitle[DEFAULT_LANGUAGE]}
         onSelectionChange={(key) => updateCurrencyCode(key)}
         marginTop="10px"
       >
-        <Item key="USD">US Dollar</Item>
-        <Item key="EUR">Euro</Item>
-        <Item key="SEK">Swedish Krona</Item>
+        <Item key="USD">{Translations.USDollarOption[DEFAULT_LANGUAGE]}</Item>
+        <Item key="EUR">{Translations.EuroOption[DEFAULT_LANGUAGE]}</Item>
+        <Item key="SEK">{Translations.SwedishKronaOption[DEFAULT_LANGUAGE]}</Item>
       </Picker>
     </div>
   );

@@ -1,8 +1,9 @@
 import { Button, Item, Picker } from '@adobe/react-spectrum';
 import { Key, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { ANIMALS } from '../../../Constants';
+import { ANIMALS, DEFAULT_LANGUAGE } from '../../../Constants';
 import { generateUUID } from '../../../helpers/Helper';
+import { Translations } from '../../../Translations';
 import {
   Schema,
   SchemaAttribute,
@@ -37,15 +38,15 @@ function removeAttribute<T>(items: T[], index: number): T[] {
 
 const getOptions = (schema: Schema) => {
   const list = [
-    <Item key="text">Text</Item>,
-    <Item key="email">Email</Item>,
-    <Item key="textarea">TextArea</Item>,
-    <Item key="select">Dropdown</Item>,
-    <Item key="boolean">Checkbox</Item>,
+    <Item key="text">{Translations.TextAttributeLabel[DEFAULT_LANGUAGE]}</Item>,
+    <Item key="email">{Translations.EmailAttributeLabel[DEFAULT_LANGUAGE]}</Item>,
+    <Item key="textarea">{Translations.TextAreaAttributeLabel[DEFAULT_LANGUAGE]}</Item>,
+    <Item key="select">{Translations.DropdownAttributeLabel[DEFAULT_LANGUAGE]}</Item>,
+    <Item key="boolean">{Translations.CheckboxAttributeLabel[DEFAULT_LANGUAGE]}</Item>,
   ];
 
   if (schema.type === SchemaType.Card) {
-    list.push(<Item key="reference">Reference</Item>);
+    list.push(<Item key="reference">{Translations.ReferenceAttributeLabel[DEFAULT_LANGUAGE]}</Item>);
   }
 
   return list;
@@ -168,7 +169,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
           <BooleanAttribute update={update} remove={remove} attributeKey={item.key} {...item} />
         );
       default:
-        return <div>Unknown attribute type</div>; // TODO should throw
+        return <div>{Translations.UnknownAttributeTypeError[DEFAULT_LANGUAGE]}</div>; // TODO should throw
     }
   };
 
@@ -198,7 +199,7 @@ export const SchemaCanvas = ({ schema: schemaImported, validate }: SchemaCanvasP
         </Picker>
 
         <Button onPress={add} variant="secondary">
-          Add
+          {Translations.AddAttributeButton[DEFAULT_LANGUAGE]}
         </Button>
       </div>
     </div>

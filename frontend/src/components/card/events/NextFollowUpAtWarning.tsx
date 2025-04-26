@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
 import { NextFollowUpAtWarningEvent } from '../../../interfaces/CardEvent';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 interface NextFollowUpAtWarningProps {
   event: NextFollowUpAtWarningEvent;
@@ -24,7 +26,7 @@ export const NextFollowUpAtWarning = ({ event }: NextFollowUpAtWarningProps) => 
 
   return (
     <div className="body">
-      This opportunity was due for an update <b>{days} days</b> ago, with a follow-up date of{' '}
+      {Translations.OpportunityDueForUpdate[DEFAULT_LANGUAGE]} <b>{days} {Translations.Days[DEFAULT_LANGUAGE]}</b> {Translations.DaysAgoWithFollowUpDate[DEFAULT_LANGUAGE]}{' '}
       {DateTime.fromISO(event.createdAt.toString()).toFormat('d LLLL')}.
     </div>
   );

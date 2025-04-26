@@ -6,7 +6,7 @@ import { showLaneLayer } from '../actions/Actions';
 import { Currency } from './Currency';
 import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../store/ApplicationStore';
-import { LANE_COLOR } from '../Constants';
+import { LANE_COLOR, DEFAULT_LANGUAGE } from '../Constants';
 import { Card } from '../interfaces/Card';
 import { Translations } from '../Translations';
 import { CardHelper } from '../helpers/CardHelper';
@@ -27,8 +27,8 @@ const getLaneColorClassName = (color: string | undefined) => {
 
 const getTitle = (count: number) => {
   return count === 1
-    ? `${count} ${Translations.BoardTitle.en}`
-    : `${count} ${Translations.BoardTitlePlural.en}`;
+    ? `${count} ${Translations.BoardTitle[DEFAULT_LANGUAGE]}`
+    : `${count} ${Translations.BoardTitlePlural[DEFAULT_LANGUAGE]}`;
 };
 
 export interface LaneProps {

@@ -24,6 +24,7 @@ import { ApplicationStore } from '../../store/ApplicationStore';
 import { Avatar } from '../Avatar';
 import { User } from '../../interfaces/User';
 import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 import useMobileLayout from '../../hooks/useMobileLayout';
 import { getRequestClient } from '../../helpers/RequestHelper';
 
@@ -59,7 +60,7 @@ export const Layer = () => {
       store.dispatch(updateCard({ ...card!, ...preview }));
 
       // TODO combine both dispatch to one
-      store.dispatch(showModalSuccess(Translations.CardUpdatedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.CardUpdatedConfirmation[DEFAULT_LANGUAGE]));
     } else {
       if (!preview.laneId) {
         preview.laneId = lanes[0]._id;
@@ -70,7 +71,7 @@ export const Layer = () => {
       // TODO combine both dispatch to one
       store.dispatch(addCard({ ...updated }));
 
-      store.dispatch(showModalSuccess(Translations.CardCreatedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.CardCreatedConfirmation[DEFAULT_LANGUAGE]));
     }
   };
 
@@ -103,7 +104,7 @@ export const Layer = () => {
 
         <div>
           <Button variant="primary" onPress={() => hideCardDetail()}>
-            Close
+            {Translations.CloseButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       </div>
@@ -122,7 +123,7 @@ export const Layer = () => {
                     </td>
                     <td>
                       <Button variant="primary" onPress={() => assign(user._id)}>
-                        Assign
+                        {Translations.AssignButton[DEFAULT_LANGUAGE]}
                       </Button>
                     </td>
                     <td></td>
@@ -138,16 +139,16 @@ export const Layer = () => {
           {(id && (
             <TabList>
               <Item key="opportunity">
-                <span className="tab-title">Opportunity</span>
+                <span className="tab-title">{Translations.OpportunityTab[DEFAULT_LANGUAGE]}</span>
               </Item>
               <Item key="events">
-                <span className="tab-title">History</span>
+                <span className="tab-title">{Translations.HistoryTab[DEFAULT_LANGUAGE]}</span>
               </Item>
             </TabList>
           )) || (
             <TabList>
               <Item key="opportunity">
-                <span className="tab-title">Opportunity</span>
+                <span className="tab-title">{Translations.OpportunityTab[DEFAULT_LANGUAGE]}</span>
               </Item>
             </TabList>
           )}

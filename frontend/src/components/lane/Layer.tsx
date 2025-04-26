@@ -4,6 +4,8 @@ import { hideLayer } from '../../actions/Actions';
 import { selectInterfaceStateId, store } from '../../store/Store';
 import { Form } from './Form';
 import useMobileLayout from '../../hooks/useMobileLayout';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export const Layer = () => {
   const id = useSelector(selectInterfaceStateId);
@@ -18,7 +20,7 @@ export const Layer = () => {
       <div className="header">
         <div style={{ float: 'right' }}>
           <Button variant="primary" onPress={() => hideCardDetail()}>
-            Close
+            {Translations.CloseButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       </div>

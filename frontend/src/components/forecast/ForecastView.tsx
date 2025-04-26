@@ -5,10 +5,11 @@ import { Space } from './Space';
 import { useSelector } from 'react-redux';
 import { selectDate, store, selectToken } from '../../store/Store';
 import { DateTime } from 'luxon';
-import { FILTER_BY_NONE } from '../../Constants';
+import { FILTER_BY_NONE, DEFAULT_LANGUAGE } from '../../Constants';
 import { showModalError } from '../../actions/Actions';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
 import { getRequestClient } from '../../helpers/RequestHelper';
+import { Translations } from '../../Translations';
 
 export const ForecastView = () => {
   const token = useSelector(selectToken);
@@ -63,7 +64,7 @@ export const ForecastView = () => {
   return (
     <>
       <section className="content-box tile">
-        <h3 className="name">Closed Won</h3>
+        <h3 className="name">{Translations.ClosedWonOption[DEFAULT_LANGUAGE]}</h3>
         <div>
           <div className="metric" style={{ width: '320px' }}>
             <div>
@@ -77,7 +78,7 @@ export const ForecastView = () => {
               ) : null}
             </div>
 
-            <span>Value</span>
+            <span>{Translations.ValueLabel[DEFAULT_LANGUAGE]}</span>
           </div>
 
           <Space />
@@ -86,7 +87,7 @@ export const ForecastView = () => {
             <h4>
               <Currency value={predicted.amount} />
             </h4>
-            <span>Pipeline - not closed yet</span>
+            <span>{Translations.PipelineNotClosedYet[DEFAULT_LANGUAGE]}</span>
           </div>
 
           <Space />
@@ -95,28 +96,28 @@ export const ForecastView = () => {
             <h4>
               <Currency value={predicted.amount + achieved.amount} />
             </h4>
-            <span>Prediction - Value</span>
+            <span>{Translations.PredictionValue[DEFAULT_LANGUAGE]}</span>
           </div>
         </div>
 
         <div>
           <div className="metric" style={{ width: '320px' }}>
             <h4>{achieved.count}</h4>
-            <span>Number of Deals</span>
+            <span>{Translations.NumberOfDeals[DEFAULT_LANGUAGE]}</span>
           </div>
 
           <Space />
 
           <div className="metric" style={{ width: '320px' }}>
             <h4>{predicted.count}</h4>
-            <span>Pipeline - not closed yet - Number of Deals</span>
+            <span>{Translations.PipelineNotClosedYetDeals[DEFAULT_LANGUAGE]}</span>
           </div>
 
           <Space />
 
           <div className="metric">
             <h4>{predicted.count + achieved.count}</h4>
-            <span>Prediction - Count</span>
+            <span>{Translations.PredictionCount[DEFAULT_LANGUAGE]}</span>
           </div>
         </div>
       </section>

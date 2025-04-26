@@ -1,3 +1,6 @@
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
+
 export const CreatedAt = () => {
-  return <>Opportunity created...</>;
+  return <>{Translations.OpportunityCreated[DEFAULT_LANGUAGE]}</>;
 };

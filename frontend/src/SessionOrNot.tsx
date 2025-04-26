@@ -28,6 +28,7 @@ import { RequestTimeoutError } from './errors/RequestTimeoutError';
 import { Translations } from './Translations';
 import { RequestHelperUrlError } from './errors/RequestHelperUrlError';
 import { deleteCookie, readValueFromCookie } from './helpers/CookieHelper';
+import { DEFAULT_LANGUAGE } from './Constants';
 
 export const SessionOrNot = () => {
   const applicationState = useSelector(selectApplicationState);
@@ -62,7 +63,7 @@ export const SessionOrNot = () => {
         const code = await client.isValidToken(context.token);
 
         if (code === 'expired') {
-          store.dispatch(pageLoadWithError(Translations.SessionExpiredError.en));
+          store.dispatch(pageLoadWithError(Translations.SessionExpiredError[DEFAULT_LANGUAGE]));
           return;
         }
 
@@ -72,17 +73,17 @@ export const SessionOrNot = () => {
 
         store.dispatch(login(token, user, team, board));
       } catch (error) {
-        let text = Translations.SessionUnhandledError.en;
+        let text = Translations.SessionUnhandledError[DEFAULT_LANGUAGE];
         let token = undefined;
 
         if (error instanceof RequestHelperUrlError) {
-          text = Translations.RequestHelperError.en;
+          text = Translations.RequestHelperError[DEFAULT_LANGUAGE];
           token = context.token;
         } else if (error instanceof RequestTimeoutError) {
-          text = Translations.SessionTimeoutError.en;
+          text = Translations.SessionTimeoutError[DEFAULT_LANGUAGE];
           token = context.token;
         } else if (error instanceof TypeError) {
-          text = Translations.SessionTypeError.en;
+          text = Translations.SessionTypeError[DEFAULT_LANGUAGE];
           token = context.token;
         }
 

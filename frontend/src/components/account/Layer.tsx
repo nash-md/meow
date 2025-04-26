@@ -18,6 +18,7 @@ import { SchemaReferenceAttribute, SchemaType } from '../../interfaces/Schema';
 import { Reference } from './Reference';
 import { Events } from './Events';
 import { getRequestClient } from '../../helpers/RequestHelper';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export const Layer = () => {
   const token = useSelector(selectToken);
@@ -42,12 +43,12 @@ export const Layer = () => {
 
       store.dispatch(updateAccount({ ...updated }));
 
-      store.dispatch(showModalSuccess(Translations.AccountUpdatedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.AccountUpdatedConfirmation[DEFAULT_LANGUAGE]));
     } else {
       const updated = await client.createAccount(preview); // TODO refactor
 
       store.dispatch(addAccount({ ...updated }));
-      store.dispatch(showModalSuccess(Translations.AccountCreatedConfirmation.en));
+      store.dispatch(showModalSuccess(Translations.AccountCreatedConfirmation[DEFAULT_LANGUAGE]));
     }
   };
 
@@ -66,14 +67,14 @@ export const Layer = () => {
   const getItems = (id?: string, references?: SchemaReferenceAttribute[]) => {
     const list = [
       <Item key="account">
-        <span className="tab-title">Account</span>
+        <span className="tab-title">{Translations.AccountTab[DEFAULT_LANGUAGE]}</span>
       </Item>,
     ];
 
     if (id) {
       list.push(
         <Item key="events">
-          <span className="tab-title">History</span>
+          <span className="tab-title">{Translations.HistoryTab[DEFAULT_LANGUAGE]}</span>
         </Item>
       );
 
@@ -120,7 +121,7 @@ export const Layer = () => {
       <div className="header">
         <div style={{ float: 'right' }}>
           <Button variant="primary" onPress={() => hideAccountDetail()}>
-            Close
+            {Translations.CloseButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       </div>

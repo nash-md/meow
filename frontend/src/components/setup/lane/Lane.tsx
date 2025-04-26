@@ -4,6 +4,8 @@ import { Draggable } from 'react-beautiful-dnd';
 import { LaneListItem } from './LaneSchema';
 import { LaneType, Tags } from '../../../interfaces/Lane';
 import { IconDrag } from '../IconDrag';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 export interface LaneProps {
   id: string;
@@ -117,30 +119,30 @@ export const Lane = (props: LaneProps) => {
                   onBlur={() => handleNameBlur()}
                   onChange={(value) => handleNameChange(value)}
                   value={laneData.name}
-                  aria-label="Name"
+                  aria-label={Translations.NameLabel[DEFAULT_LANGUAGE]}
                   width="100%"
                   key="name"
                 />
               </div>
               <div className="attribute">
                 <Picker
-                  aria-label="Lane Type"
+                  aria-label={Translations.LaneTypeLabel[DEFAULT_LANGUAGE]}
                   selectedKey={laneData.type}
                   onSelectionChange={(value) => handleTypeChange(value as LaneType)}
                 >
-                  <Item key="normal">Normal</Item>
-                  <Item key="closed-won">Closed Won</Item>
-                  <Item key="closed-lost">Closed Lost</Item>
+                  <Item key="normal">{Translations.NormalLaneType[DEFAULT_LANGUAGE]}</Item>
+                  <Item key="closed-won">{Translations.ClosedWonLaneType[DEFAULT_LANGUAGE]}</Item>
+                  <Item key="closed-lost">{Translations.ClosedLostLaneType[DEFAULT_LANGUAGE]}</Item>
                 </Picker>
               </div>
               <div className="attribute" style={{ width: '185px' }}>
                 {laneData.type === LaneType.Normal ? (
                   <Checkbox
-                    aria-label="Exclude from Forecast"
+                    aria-label={Translations.ExcludeFromForecastLabel[DEFAULT_LANGUAGE]}
                     isSelected={!laneData.inForecast}
                     onChange={() => handleInForecastChange(!laneData.inForecast)}
                   >
-                    <span style={{ whiteSpace: 'nowrap' }}>Exclude from Forecast</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>{Translations.ExcludeFromForecastLabel[DEFAULT_LANGUAGE]}</span>
                   </Checkbox>
                 ) : null}
               </div>
@@ -149,7 +151,7 @@ export const Lane = (props: LaneProps) => {
                   <>
                     <Picker
                       width={100}
-                      aria-label="Hide After Days"
+                      aria-label={Translations.HideAfterDaysLabel[DEFAULT_LANGUAGE]}
                       onSelectionChange={(value) => updateTags(value.toString())}
                       defaultSelectedKey={
                         laneData.tags['hideAfterDays']
@@ -157,13 +159,13 @@ export const Lane = (props: LaneProps) => {
                           : ''
                       }
                     >
-                      <Item key="">never</Item>
+                      <Item key="">{Translations.NeverOption[DEFAULT_LANGUAGE]}</Item>
                       <Item key="30">30</Item>
                       <Item key="60">60</Item>
                       <Item key="90">90</Item>
                     </Picker>
                     <span style={{ whiteSpace: 'nowrap', paddingLeft: '10px' }}>
-                      Hide After Days
+                      {Translations.HideAfterDaysLabel[DEFAULT_LANGUAGE]}
                     </span>
                   </>
                 ) : null}
