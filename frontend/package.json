@@ -3,6 +3,7 @@
   "version": "0.1",
   "description": "Welcome to the world of free sales pipeline management. You can use it setup your sales funnel, opportunities and forecast your sales. Your forecast is automatically update whenever you move the deal down the pipeline. Meow software was built to simplify your sales process, giving you a bird's eye view of your entire pipeline.",
   "author": "Matthias Damm",
+  "type": "module",
   "license": "AGPLv3",
   "dependencies": {
     "@adobe/react-spectrum": "3.41.0",
