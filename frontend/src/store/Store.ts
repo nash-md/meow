@@ -1,5 +1,5 @@
 import logger from 'redux-logger';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, Middleware } from '@reduxjs/toolkit';
 import { application } from '../reducers/ApplicationReducer';
 import { ApplicationStore, ListName } from './ApplicationStore';
 import { cardUpdateListener } from './CardUpdateListener';
@@ -12,7 +12,7 @@ import { SchemaHelper } from '../helpers/SchemaHelper';
 export const store = configureStore({
   reducer: application,
   middleware: [
-    logger,
+    logger as Middleware,
     cardLaneListener.middleware,
     cardUpdateListener.middleware,
     cardDeleteListener.middleware,

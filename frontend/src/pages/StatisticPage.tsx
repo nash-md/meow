@@ -102,7 +102,13 @@ export const StatisticPage = () => {
 
   const client = getRequestClient(token);
 
-  const setRange = (range: { start: CalendarDate; end: CalendarDate }) => {
+  const setRange = (range: { start: CalendarDate; end: CalendarDate } | null) => {
+    if (!range) {
+      console.error('range parameter is null')
+
+      return
+    }
+
     setEnd(range.end);
     setStart(range.start);
   };

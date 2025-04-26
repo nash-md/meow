@@ -35,7 +35,13 @@ export const ForecastPage = () => {
   const [view, setView] = useState('');
   const [userSelect, setUserSelect] = useState(true);
 
-  const setRange = (range: { start: CalendarDate; end: CalendarDate }) => {
+  const setRange = (range: { start: CalendarDate; end: CalendarDate } | null) => {
+    if (!range) {
+      console.error('range parameter is null')
+
+      return;
+    }
+
     store.dispatch({
       type: ActionType.DATE,
       payload: {

@@ -45,7 +45,12 @@ export const Form = ({ update, id }: FormProps) => {
     setAttributes(preview.attributes || {});
   }, [preview.attributes]);
 
-  const handlePreviewUpdate = (key: string, value: string | number) => {
+  const handlePreviewUpdate = (key: string, value?: string | number) => {
+    if (!value) {
+      return;
+    }
+
+
     setPreview({
       ...preview,
       [key]: value,
@@ -172,7 +177,7 @@ export const Form = ({ update, id }: FormProps) => {
                 ? parseDate(preview.nextFollowUpAt.substring(0, 10))
                 : undefined
             }
-            onChange={(value) => handlePreviewUpdate('nextFollowUpAt', value.toString())}
+            onChange={(value) => handlePreviewUpdate('nextFollowUpAt', value?.toString())}
             label={Translations.NextFollowUpLabel[DEFAULT_LANGUAGE]}
             validationState={isValidNextFollowUp ? 'valid' : 'invalid'}
             isDisabled={isDisabled}
@@ -182,7 +187,7 @@ export const Form = ({ update, id }: FormProps) => {
         <div>
           <DatePicker
             value={preview.closedAt ? parseDate(preview.closedAt.substring(0, 10)) : undefined}
-            onChange={(value) => handlePreviewUpdate('closedAt', value.toString())}
+            onChange={(value) => handlePreviewUpdate('closedAt', value?.toString())}
             label={Translations.ExpectedCloseDateLabel[DEFAULT_LANGUAGE]}
             isDisabled={isDisabled}
           />

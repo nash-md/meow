@@ -56,6 +56,11 @@ export const RESERVED_ATTRIBUTES = [
 
 export const RESERVED_USERS = ['id', 'all'];
 
-export const DEFAULT_REGION = 'FR';
-export const DEFAULT_LANGUAGE = 'fr';
+/*
+ * For details on supported languages and the actual translation key-value pairs,
+ * please refer to the `Translations.ts` file.
+ */
+
+export const DEFAULT_REGION = 'EN';
+export const DEFAULT_LANGUAGE = 'en';
 export const DEFAULT_CURRENCY = 'EUR';
