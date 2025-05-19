@@ -5,6 +5,8 @@ import { ActionType } from '../actions/Actions';
 import { selectCurrency, selectUserId, store } from '../store/Store';
 import { Avatar } from './Avatar';
 import { IconActivity } from './IconActivity';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export const Navigation = () => {
   const userId = useSelector(selectUserId);
@@ -44,35 +46,35 @@ export const Navigation = () => {
   return (
     <>
       <div className="item">
-        <Link to="/" title="Opportunities">
-          <img alt="Opportunities" src={`/${currency?.toLocaleLowerCase()}-icon.svg`} />
+        <Link to="/" title={Translations.OpportunitiesNavItem[DEFAULT_LANGUAGE]}>
+          <img alt={Translations.OpportunitiesNavItem[DEFAULT_LANGUAGE]} src={`/${currency?.toLocaleLowerCase()}-icon.svg`} />
         </Link>
       </div>
       <div className="item">
-        <Link to="/activity" title="Activities">
+        <Link to="/activity" title={Translations.ActivitiesNavItem[DEFAULT_LANGUAGE]}>
           <span className="icon">
             <IconActivity />
           </span>
         </Link>
       </div>
       <div className="item">
-        <Link to="/forecast" title="Forecast">
-          <img alt="Forecast" src="/forecast-icon.svg" />
+        <Link to="/forecast" title={Translations.ForecastNavItem[DEFAULT_LANGUAGE]}>
+          <img alt={Translations.ForecastNavItem[DEFAULT_LANGUAGE]} src="/forecast-icon.svg" />
         </Link>
       </div>
       <div className="item">
-        <Link to="/accounts" title="Accounts">
-          <img alt="Accounts" src="/accounts-icon.svg" />
+        <Link to="/accounts" title={Translations.AccountsNavItem[DEFAULT_LANGUAGE]}>
+          <img alt={Translations.AccountsNavItem[DEFAULT_LANGUAGE]} src="/accounts-icon.svg" />
         </Link>
       </div>
       <div className="item">
-        <Link to="/hire" title="Hire a Specialist">
-          <img alt="Hire a Specialist" src="/paw-icon.svg" />
+        <Link to="/hire" title={Translations.HireSpecialistNavItem[DEFAULT_LANGUAGE]}>
+          <img alt={Translations.HireSpecialistNavItem[DEFAULT_LANGUAGE]} src="/paw-icon.svg" />
         </Link>
       </div>
       <div className="item">
-        <Link to="/setup" title="Setup">
-          <img alt="Setup" src="/setup-icon.svg" />
+        <Link to="/setup" title={Translations.SetupNavItem[DEFAULT_LANGUAGE]}>
+          <img alt={Translations.SetupNavItem[DEFAULT_LANGUAGE]} src="/setup-icon.svg" />
         </Link>
       </div>
       <div className="item" style={{ flexGrow: 1 }}></div>
@@ -80,10 +82,10 @@ export const Navigation = () => {
         {userMenue && (
           <div className={userMenue ? 'wrapper' : ''} ref={layerRef}>
             <Link onClick={handleLinkClick} to="/user-setup" className="link user-settings">
-              Settings
+              {Translations.SettingsNavItem[DEFAULT_LANGUAGE]}
             </Link>
             <div onClick={logout} className="link logout">
-              Logout
+              {Translations.LogoutButton[DEFAULT_LANGUAGE]}
             </div>
           </div>
         )}

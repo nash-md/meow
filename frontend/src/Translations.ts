@@ -899,11 +899,6 @@ export const Translations = {
     fr: 'Un nom de relation inverse ne peut pas être vide',
   },
 
-  // API endpoint label
-  ApiEndpointLabel: {
-    en: 'POST/GET:',
-    fr: 'POST/GET:',
-  },
 
   // Card component translations
   NotSetLabel: {
@@ -931,6 +926,26 @@ export const Translations = {
   OpportunitiesNavItem: {
     en: 'Opportunities',
     fr: 'Opportunités',
+  },
+
+  ActivitiesNavItem: {
+    en: 'Activities',
+    fr: 'Activités',
+  },
+
+  ForecastNavItem: {
+    en: 'Forecast',
+    fr: 'Prévision',
+  },
+
+  AccountsNavItem: {
+    en: 'Accounts',
+    fr: 'Comptes',
+  },
+
+  HireSpecialistNavItem: {
+    en: 'Hire a Specialist',
+    fr: 'Embaucher un Spécialiste',
   },
 
   SetupNavItem: {
