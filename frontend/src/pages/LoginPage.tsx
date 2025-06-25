@@ -21,7 +21,7 @@ export default function LoginPage() {
     <>
       <div className="welcome-page">
         <div style={{ marginBottom: '10px' }}>
-          <CursorHeadline text={Translations.Greetings[DEFAULT_LANGUAGE]} />
+          <CursorHeadline text={['Hello!', 'Hallo!', 'Hej!', 'こんにち', 'Hola!']} />
         </div>
         {invite ? <RegisterWithInvite invite={invite} /> : <RegisterOrLogin />}
         <ScreenResolutionWarning message={Translations.ScreenResolutionWarning[DEFAULT_LANGUAGE]} />

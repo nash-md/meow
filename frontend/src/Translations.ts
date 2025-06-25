@@ -85,12 +85,6 @@ export const Translations = {
     fr: 'Cette application est conçue pour les ordinateurs de bureau, les petits écrans ne sont pas pris en charge.',
   },
 
-  // Greetings for cursor headline
-  Greetings: {
-    en: ['Hello!', 'Hallo!', 'Hej!', 'こんにち', 'Hola!'],
-    fr: ['Bonjour!', 'Salut!', 'Coucou!', 'Bienvenue!', 'Enchanté!'],
-  },
-
   // Login and Register form translations
   LoginTab: {
     en: 'Login',
