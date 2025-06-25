@@ -3,6 +3,8 @@ import { Login } from './Login';
 import { Register } from './Register';
 import { useEffect, useState } from 'react';
 import { getRequestClient } from '../helpers/RequestHelper';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export interface RegisterOrLoginProps {}
 
@@ -18,7 +20,7 @@ export const RegisterOrLogin = ({}: RegisterOrLoginProps) => {
       .catch((error) => console.error(error));
   }, []);
 
-  const tabItems = [<Item key="login">Login</Item>];
+  const tabItems = [<Item key="login">{Translations.LoginTab[DEFAULT_LANGUAGE]}</Item>];
   const tabPanels = [
     <Item key="login">
       <Login />
@@ -26,7 +28,7 @@ export const RegisterOrLogin = ({}: RegisterOrLoginProps) => {
   ];
 
   if (allowTeamRegistration) {
-    tabItems.push(<Item key="register">Register</Item>);
+    tabItems.push(<Item key="register">{Translations.RegisterTab[DEFAULT_LANGUAGE]}</Item>);
     tabPanels.push(
       <Item key="register">
         <Register />

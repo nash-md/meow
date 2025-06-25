@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { ListName } from '../../store/ApplicationStore';
 import { store } from '../../store/Store';
 import { setListViewFilterBy } from '../../actions/Actions';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export interface ListSearchCanvasProps {
   name: ListName;
@@ -19,8 +21,8 @@ export const ListSearchCanvas = ({ name }: ListSearchCanvasProps) => {
       <input
         onChange={(event) => setSearch(event.target.value)}
         value={search}
-        aria-label="search by Name"
-        placeholder="Search by Name"
+        aria-label={Translations.SearchByNamePlaceholder[DEFAULT_LANGUAGE]}
+        placeholder={Translations.SearchByNamePlaceholder[DEFAULT_LANGUAGE]}
         type="text"
       />
     </div>

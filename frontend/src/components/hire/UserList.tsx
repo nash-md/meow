@@ -19,26 +19,28 @@ import { DataRow, ListViewItem } from '../../interfaces/ListView';
 import { TableCanvas } from '../view/table/TableCanvas';
 import { Row } from '../view/table/Row';
 import { getRequestClient } from '../../helpers/RequestHelper';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 const createListViewItems = (): ListViewItem[] => {
   return [
     {
-      name: 'Name',
+      name: Translations.NameLabel[DEFAULT_LANGUAGE],
       column: 'name',
       isHidden: false,
     },
     {
-      name: 'Status',
+      name: Translations.StatusLabel[DEFAULT_LANGUAGE],
       column: 'status',
       isHidden: false,
     },
     {
-      name: 'Invite',
+      name: Translations.InviteLabel[DEFAULT_LANGUAGE],
       column: 'invite',
       isHidden: false,
     },
     {
-      name: 'Created At',
+      name: Translations.CreatedAtLabel[DEFAULT_LANGUAGE],
       column: 'createdAt',
       isHidden: false,
     },
@@ -96,7 +98,7 @@ export const UserList = (props: any) => {
   }, [view, users, columns]);
 
   const deleteUser = async (id: string) => {
-    const shouldDelete = confirm('Delete user?');
+    const shouldDelete = confirm(Translations.DeleteUserConfirmation[DEFAULT_LANGUAGE]);
 
     if (!shouldDelete) {
       return;
@@ -139,7 +141,7 @@ export const UserList = (props: any) => {
                   variant="primary"
                   onPress={() => props.copyToClipboard(props.createInviteUrl(row.invite))}
                 >
-                  Copy Invite
+                  {Translations.CopyInviteButton[DEFAULT_LANGUAGE]}
                 </Button>
               )}
             </td>
@@ -151,7 +153,7 @@ export const UserList = (props: any) => {
             <td key={item.column} style={{ textAlign: 'right' }}>
               {row.id !== id && row.status !== UserStatus.Deleted && (
                 <Button variant="cta" onPress={() => deleteUser(row.id!.toString())}>
-                  delete
+                  {Translations.DeleteButton[DEFAULT_LANGUAGE]}
                 </Button>
               )}
             </td>
@@ -162,7 +164,7 @@ export const UserList = (props: any) => {
 
   return (
     <div className="content-box">
-      <h2>Users</h2>
+      <h2>{Translations.UsersTitle[DEFAULT_LANGUAGE]}</h2>
       <TableCanvas>
         <TableHeader name="users" sort={setListViewSortBy} columns={columns} view={view} />
 
@@ -170,7 +172,7 @@ export const UserList = (props: any) => {
           return (
             <Row key={index}>
               {columns
-                .filter(({ isHidden }) => isHidden === false)
+                .filter(({ isHidden }) => !isHidden)
                 .map((item) => getCell(row, item))}
             </Row>
           );

@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectAccounts } from '../../store/Store';
 import { Account } from '../../interfaces/Account';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 const getOptions = (accounts: Account[]) => {
   const list: JSX.Element[] = [];
 
-  list.push(<Item key="">none</Item>);
+  list.push(<Item key="">{Translations.NoneOption[DEFAULT_LANGUAGE]}</Item>);
 
   accounts?.map((account) => {
     list.push(<Item key={account._id}>{account.name}</Item>);

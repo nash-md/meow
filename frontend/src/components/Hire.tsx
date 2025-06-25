@@ -1,17 +1,19 @@
 import { Button } from '@adobe/react-spectrum';
 import { useState } from 'react';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export const Hire = () => {
   const [hire, setHire] = useState('');
 
   return (
     <div className="content-box">
-      <h2>Hire</h2>
+      <h2>{Translations.HireTitle[DEFAULT_LANGUAGE]}</h2>
       <table>
         <tbody>
           <tr>
             <td>
-              <img src="a.png" style={{ width: '100px' }} />
+              <img src="a.png" style={{ width: '100px' }} alt="d png" />
             </td>
             <td
               style={{
@@ -37,14 +39,14 @@ export const Hire = () => {
             </td>
             <td style={{ padding: '10px' }}>
               <Button onPress={() => setHire('finn')} variant="primary">
-                Hire
+                {Translations.HireButton[DEFAULT_LANGUAGE]}
               </Button>
             </td>
           </tr>
 
           <tr>
             <td>
-              <img src="d.png" style={{ width: '100px' }} />
+              <img src="d.png" style={{ width: '100px' }} alt="d png"/>
             </td>
             <td style={{ padding: '20px', fontSize: '1.2em' }}>
               <h4 style={{ fontSize: '1.2em', margin: '0' }}>Whisker</h4>
@@ -66,7 +68,7 @@ export const Hire = () => {
 
             <td style={{ padding: '10px' }}>
               <Button onPress={() => setHire('whisker')} variant="primary">
-                Hire
+                {Translations.HireButton[DEFAULT_LANGUAGE]}
               </Button>
             </td>
           </tr>
@@ -97,7 +99,7 @@ export const Hire = () => {
 
             <td style={{ padding: '10px' }}>
               <Button onPress={() => setHire('charly')} variant="primary">
-                Hire
+                {Translations.HireButton[DEFAULT_LANGUAGE]}
               </Button>
             </td>
           </tr>
@@ -129,7 +131,7 @@ export const Hire = () => {
             </td>
             <td style={{ padding: '10px' }}>
               <Button onPress={() => setHire('snickers')} variant="primary">
-                Hire
+                {Translations.HireButton[DEFAULT_LANGUAGE]}
               </Button>
             </td>
           </tr>

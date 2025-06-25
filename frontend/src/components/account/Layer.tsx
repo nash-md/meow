@@ -67,14 +67,14 @@ export const Layer = () => {
   const getItems = (id?: string, references?: SchemaReferenceAttribute[]) => {
     const list = [
       <Item key="account">
-        <span className="tab-title">Account</span>
+        <span className="tab-title">{Translations.AccountTab[DEFAULT_LANGUAGE]}</span>
       </Item>,
     ];
 
     if (id) {
       list.push(
         <Item key="events">
-          <span className="tab-title">History</span>
+          <span className="tab-title">{Translations.HistoryTab[DEFAULT_LANGUAGE]}</span>
         </Item>
       );
 
@@ -121,7 +121,7 @@ export const Layer = () => {
       <div className="header">
         <div style={{ float: 'right' }}>
           <Button variant="primary" onPress={() => hideAccountDetail()}>
-            Close
+            {Translations.CloseButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
       </div>

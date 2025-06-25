@@ -2,6 +2,8 @@ import { useSelector } from 'react-redux';
 import { ApplicationStore } from '../../../store/ApplicationStore';
 import { selectUser } from '../../../store/Store';
 import { AssignEvent } from '../../../interfaces/CardEvent';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 interface AssignProps {
   event: AssignEvent;
@@ -18,7 +20,7 @@ export const Assign = ({ event }: AssignProps) => {
 
   return (
     <div className="body">
-      Assigned opportunity from <b>{userFrom?.name}</b> to <b>{userTo?.name}</b>
+      {Translations.AssignedOpportunityFrom[DEFAULT_LANGUAGE]} <b>{userFrom?.name}</b> {Translations.OpportunityAmountTo[DEFAULT_LANGUAGE]} <b>{userTo?.name}</b>
     </div>
   );
 };

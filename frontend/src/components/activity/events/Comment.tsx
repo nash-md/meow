@@ -1,4 +1,6 @@
 import { CommentEvent } from '../../../interfaces/CardEvent';
+import { Translations } from '../../../Translations';
+import { DEFAULT_LANGUAGE } from '../../../Constants';
 
 interface CommentProps {
   event: CommentEvent;
@@ -7,7 +9,7 @@ interface CommentProps {
 export const Comment = ({ event }: CommentProps) => {
   return (
     <>
-      Note ajoutée: <i>{event.body?.text}</i>
+      {Translations.NoteAdded[DEFAULT_LANGUAGE]} <i>{event.body?.text}</i>
     </>
   );
 };

@@ -56,7 +56,7 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
     const list = schema.attributes;
 
     if (list.some((item) => !item.name)) {
-      setError('An attribute name cannot be empty');
+      setError(Translations.AttributeNameEmptyError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
@@ -71,14 +71,14 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
         (i) => !i.options || i.options.length === 0 || i.options.some((option) => !option)
       )
     ) {
-      setError('A dropdown list or a value cannot be empty');
+      setError(Translations.DropdownEmptyError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
     }
 
     if (filtered.some((i) => i.options && hasDuplicateEntries(i.options))) {
-      setError('Each value in a dropdown must be unique');
+      setError(Translations.DropdownUniqueError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
@@ -89,21 +89,21 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
       .map((item) => item as SchemaReferenceAttribute);
 
     if (references.some((r) => !r.reverseName)) {
-      setError('A reverse relationship name cannot be empty');
+      setError(Translations.ReverseNameEmptyError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
     }
 
     if (filtered.some((i) => i.options && hasDuplicateEntries(i.options))) {
-      setError('Each value in a dropdown must be unique');
+      setError(Translations.DropdownUniqueError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
     }
 
     if (list.some((item) => RESERVED_ATTRIBUTES.includes(item.name.toLocaleLowerCase()))) {
-      setError('This name is reserved by the system and cannot be used');
+      setError(Translations.ReservedNameError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
@@ -112,7 +112,7 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
     let startsOrEndsWithSpaces = /(^\s+)|(\s+$)/;
 
     if (list.some((item) => startsOrEndsWithSpaces.test(item.name))) {
-      setError('A field cannot start or end with spaces');
+      setError(Translations.SpacesInNameError[DEFAULT_LANGUAGE]);
       setIsValid(false);
 
       return;
@@ -147,7 +147,7 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
     <div className="content-box">
       <div className="schema-editor-header">
         <div className="title">
-          <h2>Opportunity</h2>
+          <h2>{Translations.OpportunityTab[DEFAULT_LANGUAGE]}</h2>
         </div>
         {isDeveloperMode ? (
           <div className="endpoint">
@@ -161,7 +161,7 @@ export const CardSchema = ({ isDeveloperMode }: CardSchemaProps) => {
       <div style={{ marginTop: '10px' }}>
         <div style={{ marginBottom: '5px' }}>{error}</div>
         <Button onPress={save} variant="primary" isDisabled={!isValid}>
-          Save
+          {Translations.SaveButton[DEFAULT_LANGUAGE]}
         </Button>
       </div>
     </div>

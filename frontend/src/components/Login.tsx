@@ -6,6 +6,8 @@ import { selectApplicationState, store } from '../store/Store';
 import { getErrorMessage } from '../helpers/ErrorHelper';
 import { UserHelper } from '../helpers/UserHelper';
 import { useSelector } from 'react-redux';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export interface LoginProps {}
 
@@ -59,7 +61,7 @@ export const Login = ({}: LoginProps) => {
       <div className="login">
         <div>
           <TextField
-            label="Name"
+            label={Translations.NameLabel[DEFAULT_LANGUAGE]}
             onChange={setName}
             onKeyDown={handleKeyDown}
             isDisabled={isLoading || state === 'validating'}
@@ -69,7 +71,7 @@ export const Login = ({}: LoginProps) => {
         <div>
           <TextField
             type="password"
-            label="Password"
+            label={Translations.PasswordLabel[DEFAULT_LANGUAGE]}
             onChange={setPassword}
             onKeyDown={handleKeyDown}
             isDisabled={isLoading || state === 'validating'}
@@ -82,7 +84,7 @@ export const Login = ({}: LoginProps) => {
             isDisabled={isLoading || !isValid || state === 'validating'}
             variant="cta"
           >
-            Login
+            {Translations.LoginButton[DEFAULT_LANGUAGE]}
           </Button>
         </div>
         <div className="spinner-canvas">

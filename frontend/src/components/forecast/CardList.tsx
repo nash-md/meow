@@ -16,7 +16,8 @@ import { toIntervalInDays, toRelativeDate } from '../../helpers/DateHelper';
 import { ListViewHelper } from '../../helpers/ListViewHelper';
 import { Currency } from '../Currency';
 import { getErrorMessage } from '../../helpers/ErrorHelper';
-import { FILTER_BY_NONE } from '../../Constants';
+import { FILTER_BY_NONE, DEFAULT_LANGUAGE } from '../../Constants';
+import { Translations } from '../../Translations';
 import { DataRow, ListViewItem } from '../../interfaces/ListView';
 import { Item as ListItem } from '../../components/view/list/Item';
 import { Row } from '../view/table/Row';
@@ -33,32 +34,32 @@ interface CardListProps {
 const createListViewItems = (): ListViewItem[] => {
   return [
     {
-      name: 'Name',
+      name: Translations.NameLabel[DEFAULT_LANGUAGE],
       column: 'name',
       isHidden: false,
     },
     {
-      name: 'Amount',
+      name: Translations.OpportunityAmount[DEFAULT_LANGUAGE],
       column: 'amount',
       isHidden: false,
     },
     {
-      name: 'Created',
+      name: Translations.CreatedLabel[DEFAULT_LANGUAGE],
       column: 'created',
       isHidden: false,
     },
     {
-      name: 'Closed',
+      name: Translations.ClosedAtLabel[DEFAULT_LANGUAGE],
       column: 'closed',
       isHidden: false,
     },
     {
-      name: 'Deal Duration',
+      name: Translations.DealDurationLabel[DEFAULT_LANGUAGE],
       column: 'deal-duration',
       isHidden: false,
     },
     {
-      name: 'User',
+      name: Translations.UserLabel[DEFAULT_LANGUAGE],
       column: 'user',
       isHidden: false,
     },
@@ -217,8 +218,8 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
             setMode(key.toString() as 'achieved' | 'predicted');
           }}
         >
-          <Item key="achieved">Closed Won</Item>
-          <Item key="predicted">All Open</Item>
+          <Item key="achieved">{Translations.ClosedWonOption[DEFAULT_LANGUAGE]}</Item>
+          <Item key="predicted">{Translations.AllOpenOption[DEFAULT_LANGUAGE]}</Item>
         </Picker>
       </section>
 
@@ -228,7 +229,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
             return (
               <ListItem key={index}>
                 {columns
-                  .filter(({ isHidden }) => isHidden === false)
+                  .filter(({ isHidden }) => !isHidden)
                   .map((item) => getListItem(row, item))}
               </ListItem>
             );
@@ -243,7 +244,7 @@ export const CardList = ({ userId, start, end }: CardListProps) => {
               return (
                 <Row key={index}>
                   {columns
-                    .filter(({ isHidden }) => isHidden === false)
+                    .filter(({ isHidden }) => !isHidden)
                     .map((item) => getCell(row, item))}
                 </Row>
               );

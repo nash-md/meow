@@ -1,6 +1,8 @@
 import { RequestError } from '../errors/RequestError';
 import { RequestTimeoutError } from '../errors/RequestTimeoutError';
 import { ResponseParseError } from '../errors/ResponseParseError';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 interface ErrorResponse {
   description?: string;
@@ -22,7 +24,7 @@ export const getErrorMessage = async (error: unknown) => {
       const parsed = await error.response.json();
 
       if (!isErrorResponse(parsed)) {
-        return 'Error parsing server response';
+        return Translations.ErrorParsingResponse[DEFAULT_LANGUAGE];
       }
 
       return parsed.description ? parsed.description : `Error: ${parsed.name}`;
@@ -30,19 +32,19 @@ export const getErrorMessage = async (error: unknown) => {
       console.error(parseError);
 
       if (parseError instanceof Error) {
-        text = `Error parsing server response: ${parseError.message}`;
+        text = Translations.ErrorParsingResponseWithMessage[DEFAULT_LANGUAGE].replace('{0}', parseError.message);
       } else {
-        text = 'Error parsing server response';
+        text = Translations.ErrorParsingResponse[DEFAULT_LANGUAGE];
       }
     }
     return text;
   } else if (error instanceof RequestTimeoutError) {
-    return 'Request Timeout Error, is your backend available?';
+    return Translations.RequestTimeoutErrorMessage[DEFAULT_LANGUAGE];
   } else if (error instanceof ResponseParseError) {
-    return 'Server response is no valid JSON';
+    return Translations.InvalidJsonResponse[DEFAULT_LANGUAGE];
   } else if (error instanceof TypeError) {
-    return 'Network Request Failed, is your backend available?';
+    return Translations.NetworkRequestFailed[DEFAULT_LANGUAGE];
   } else {
-    return 'Failed: unknown, check JS Console';
+    return Translations.UnknownError[DEFAULT_LANGUAGE];
   }
 };

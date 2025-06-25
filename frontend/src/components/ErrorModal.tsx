@@ -4,6 +4,8 @@ import { hideModal } from '../actions/Actions';
 import { selectModal, selectModalText, store } from '../store/Store';
 import { IconClose } from './IconClose';
 import { IconAlert } from './IconAlert';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export const ErrorModal = () => {
   const modal = useSelector(selectModal);
@@ -31,7 +33,7 @@ export const ErrorModal = () => {
         <IconAlert />
         <div className="text">{text}</div>
         <div className="close-button">
-          <div>Close</div>
+          <div>{Translations.CloseButton[DEFAULT_LANGUAGE]}</div>
           <IconClose />
         </div>
       </div>

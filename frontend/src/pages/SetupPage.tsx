@@ -5,6 +5,8 @@ import { AccountSchema } from '../components/setup/account/AccountSchema';
 import { Switch } from '@adobe/react-spectrum';
 import { useState } from 'react';
 import { IconDownload } from '../components/setup/IconDownload';
+import { Translations } from '../Translations';
+import { DEFAULT_LANGUAGE } from '../Constants';
 
 export const SetupPage = () => {
   const [isDeveloperMode, setIsDeveloperMode] = useState(false);
@@ -14,7 +16,7 @@ export const SetupPage = () => {
       <div className="developer-mode">
         <div className="switch">
           <Switch isSelected={isDeveloperMode} onChange={setIsDeveloperMode}>
-            Developer Mode
+            {Translations.DeveloperModeLabel[DEFAULT_LANGUAGE]}
           </Switch>
         </div>
         {isDeveloperMode ? (
@@ -23,7 +25,7 @@ export const SetupPage = () => {
               <div style={{}}>
                 <IconDownload />
               </div>
-              <span>Dowload API Definition</span>
+              <span>{Translations.DownloadApiDefinitionLabel[DEFAULT_LANGUAGE]}</span>
             </a>
           </div>
         ) : null}

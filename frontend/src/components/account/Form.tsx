@@ -7,6 +7,8 @@ import { ApplicationStore } from '../../store/ApplicationStore';
 import { SchemaType } from '../../interfaces/Schema';
 import { SchemaCanvas } from '../schema/SchemaCanvas';
 import { Attribute } from '../../interfaces/Attribute';
+import { Translations } from '../../Translations';
+import { DEFAULT_LANGUAGE } from '../../Constants';
 
 export interface FormProps {
   id: Account['_id'] | undefined;
@@ -73,10 +75,10 @@ export const Form = ({ update, id }: FormProps) => {
         <TextField
           onChange={(value) => handlePreviewUpdate('name', value)}
           value={preview.name}
-          aria-label="Name"
+          aria-label={Translations.NameLabel[DEFAULT_LANGUAGE]}
           width="100%"
           key="name"
-          label="Name"
+          label={Translations.NameLabel[DEFAULT_LANGUAGE]}
         />
       </div>
 
@@ -89,7 +91,7 @@ export const Form = ({ update, id }: FormProps) => {
 
       <div style={{ marginTop: '24px' }}>
         <Button variant="primary" onPress={save} isDisabled={!isValidForm}>
-          Save
+          {Translations.SaveButton[DEFAULT_LANGUAGE]}
         </Button>
       </div>
     </div>
