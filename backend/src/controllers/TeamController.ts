@@ -7,89 +7,91 @@ import { validateAndFetchTeam } from '../helpers/EntityFetchHelper.js';
 import { InvalidRequestError } from '../errors/InvalidRequestError.js';
 
 const parseCurrencyCode = (value: string): CurrencyCode => {
-  if (value in CurrencyCode) {
-    return value as CurrencyCode;
-  }
-  throw new InvalidRequestBodyError('invalid currency code');
+    console.log('Parsing currency code:', value);
+    if (value in CurrencyCode) {
+        return value as CurrencyCode;
+    }
+    throw new InvalidRequestBodyError('invalid currency code');
 };
 
 const update = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
+    console.log('Updating team:', req.body);
+    try {
+        const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-    team.currency = parseCurrencyCode(req.body.currency);
+        team.currency = parseCurrencyCode(req.body.currency);
 
-    const updated = await EntityHelper.update(team);
+        const updated = await EntityHelper.update(team);
 
-    return res.json(updated);
-  } catch (error) {
-    return next(error);
-  }
+        return res.json(updated);
+    } catch (error) {
+        return next(error);
+    }
 };
 
 const updateIntegration = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
+    try {
+        const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-    const integrations = team.integrations ?? [];
+        const integrations = team.integrations ?? [];
 
-    const updatedIntegrations = integrations.filter(
-      (integration) => integration.key !== req.body.key
-    );
+        const updatedIntegrations = integrations.filter(
+            (integration) => integration.key !== req.body.key
+        );
 
-    updatedIntegrations.push(req.body);
+        updatedIntegrations.push(req.body);
 
-    team.integrations = updatedIntegrations;
+        team.integrations = updatedIntegrations;
 
-    const updated = await EntityHelper.update(team);
+        const updated = await EntityHelper.update(team);
 
-    return res.json(updated);
-  } catch (error) {
-    return next(error);
-  }
+        return res.json(updated);
+    } catch (error) {
+        return next(error);
+    }
 };
 
 const allowTeamRegistration = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
 ) => {
-  try {
-    let team = await validateAndFetchTeam(req.params.id, req.jwt.user);
+    try {
+        let team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-    if (team.isFirstTeam !== true) {
-      throw new InvalidRequestError();
+        if (team.isFirstTeam !== true) {
+            throw new InvalidRequestError();
+        }
+
+        let flag = await EntityHelper.findOrCreateGlobalFlagByName('allow-team-registration');
+
+        flag.value = req.body.allowTeamRegistration === true;
+
+        flag = await EntityHelper.update(flag);
+
+        delete team.isFirstTeam;
+
+        team = await EntityHelper.update(team);
+
+        return res.json(team);
+    } catch (error) {
+        return next(error);
     }
-
-    let flag = await EntityHelper.findOrCreateGlobalFlagByName('allow-team-registration');
-
-    flag.value = req.body.allowTeamRegistration === true;
-
-    flag = await EntityHelper.update(flag);
-
-    delete team.isFirstTeam;
-
-    team = await EntityHelper.update(team);
-
-    return res.json(team);
-  } catch (error) {
-    return next(error);
-  }
 };
 
 const get = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  try {
-    const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
+    try {
+        const team = await validateAndFetchTeam(req.params.id, req.jwt.user);
 
-    return res.json(team);
-  } catch (error) {
-    return next(error);
-  }
+        return res.json(team);
+    } catch (error) {
+        return next(error);
+    }
 };
 
 export const TeamController = {
-  update,
-  allowTeamRegistration,
-  updateIntegration,
-  get,
+    update,
+    allowTeamRegistration,
+    updateIntegration,
+    get,
 };

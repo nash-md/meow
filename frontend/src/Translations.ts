@@ -474,6 +474,16 @@ export const Translations = {
     fr: 'Couronne Suédoise',
   },
 
+  M2Option: {
+    en: "m²",
+    fr: "m²",
+  },
+
+  GBPOption: {
+    en: "Great British Pound",
+    fr: "Livre Sterling",
+  },
+
   UnsupportedValueError: {
     en: 'Unsupported value: {0}',
     fr: 'Valeur non prise en charge: {0}',

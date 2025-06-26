@@ -19,4 +19,6 @@ export enum CurrencyCode {
   USD = 'USD',
   EUR = 'EUR',
   SEK = 'SEK',
+  MT2 = 'MT2',
+  GPB = 'GBP',
 }

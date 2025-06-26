@@ -4,18 +4,28 @@ import { DEFAULT_CURRENCY } from '../Constants';
 import { getBrowserLocale } from '../helpers/Helper';
 
 export interface CurrencyProps {
-  value: number;
+    value: number;
+}
+
+function formatValue(value: number, currency: string) {
+  if (currency === 'MT2') {
+    return value.toLocaleString(getBrowserLocale(), {
+      style: 'unit',
+      unit: 'meter',
+      unitDisplay: 'narrow',
+    });
+  }
+
+  return value.toLocaleString(getBrowserLocale(), {
+    style: 'currency',
+    currency: currency ?? DEFAULT_CURRENCY,
+  });
 }
 
 export const Currency = ({ value }: CurrencyProps) => {
-  const currency = useSelector(selectCurrency);
+    const currency = useSelector(selectCurrency);
 
-  return (
-    <>
-      {value?.toLocaleString(getBrowserLocale(), {
-        style: 'currency',
-        currency: currency ?? DEFAULT_CURRENCY,
-      })}
-    </>
-  );
+    return (
+        <>{currency === "MT2" ? formatValue(value, currency) + "²" : formatValue(value, currency)}</>
+    );
 };
